@@ -2,7 +2,7 @@
 #define gconsole_h
 
 #include "keyboard.h"
-#include "console.h"
+#include <console.h>
 #include "font.h"
 #include "sprite.h"
 

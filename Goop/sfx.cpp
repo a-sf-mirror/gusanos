@@ -11,6 +11,7 @@ using namespace std;
 Sfx sfx;
 
 Sfx::Sfx()
+: m_outputMode(-1)
 {
 }
 
@@ -22,7 +23,7 @@ void Sfx::init()
 {
 	// Select a driver
 	
-	//FSOUND_SetOutput(FSOUND_OUTPUT_ALSA); //TODO: Selection of this via console/command line
+	FSOUND_SetOutput(m_outputMode);
 	FSOUND_SetDriver(0);
 	
 	/* We select default driver for now
@@ -57,7 +58,24 @@ void Sfx::shutDown()
 
 void Sfx::registerInConsole()
 {
-
+	{
+		map<string, int> outputModes;
+		outputModes["NOSFX"] = FSOUND_OUTPUT_NOSOUND;
+		outputModes["WINMM"] = FSOUND_OUTPUT_WINMM;
+		outputModes["DSOUND"] = FSOUND_OUTPUT_DSOUND;
+		outputModes["A3D"] = FSOUND_OUTPUT_A3D;
+		outputModes["OSS"] = FSOUND_OUTPUT_OSS;
+		outputModes["ESD"] = FSOUND_OUTPUT_ESD;
+		outputModes["ALSA"] = FSOUND_OUTPUT_ALSA;
+		outputModes["ASIO"] = FSOUND_OUTPUT_ASIO;
+		outputModes["XBOX"] = FSOUND_OUTPUT_XBOX;
+		outputModes["PS2"] = FSOUND_OUTPUT_PS2;
+		outputModes["MAC"] = FSOUND_OUTPUT_MAC;
+		outputModes["GC"] = FSOUND_OUTPUT_GC;
+		outputModes["DEFAULT"] = -1;
+		
+		console.registerEnumVariable("SFX_OUTPUT_MODE", &m_outputMode, -1, outputModes);
+	}
 }
 
 void Sfx::think()

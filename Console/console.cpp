@@ -68,6 +68,20 @@ void Console::registerFloatVariable(const string &name, float* src, float defaul
 	}
 }
 
+void Console::registerEnumVariable(const string &name, int* src, int defaultValue, std::map<std::string, int> const& mapping, void (*func)( int ))
+{
+	if (!name.empty())
+	{
+		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+		if (tempItem == items.end())
+		{
+			items[name] = new EnumVariable(src, name, defaultValue, mapping, func);
+		}
+	}
+}
+
+
+
 void Console::registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&))
 {
 	if (!name.empty())
@@ -227,7 +241,8 @@ string Console::autoComplete(const string &text)
 				
 				if (lastMatch == firstMatch)
 				{
-					returnText = firstMatch->first;
+					// <GLIP> Adds a space after successful matches
+					returnText = firstMatch->first + ' '; 
 				}else
 				{
 					lastMatch++;
@@ -244,10 +259,11 @@ string Console::autoComplete(const string &text)
 							}
 						}
 					}
-					returnText = firstMatch->first.substr(0, text.length() + i -1);
+					returnText = firstMatch->first.substr(0, text.length() + i - 1);
 				}
 			}
 		}
+		
 	}
 	return returnText;
 }

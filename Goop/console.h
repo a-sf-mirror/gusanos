@@ -26,8 +26,10 @@ class Console
 	Console(int logMaxSize, int MaxMsgLength);
 	~Console(void);
 
-	void registerIntVariable(const std::string &name, int* src, int defaultValue, void (*func)( int ) = NULL );
-	void registerFloatVariable(const std::string &name, float* src, float defaultValue, void (*func)( float ) = NULL );
+	void registerIntVariable(const std::string &name, int* src, int defaultValue, void (*func)( int ) = NULL);
+	void registerFloatVariable(const std::string &name, float* src, float defaultValue, void (*func)( float ) = NULL);
+	void registerEnumVariable(std::string const& name, int* src, int defaultValue, std::map<std::string, int> const& mapping, void (*func)( int ) = NULL);
+
 	void registerAlias(const std::string &name, const std::string &action);
 	void registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&));
 	void registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&));

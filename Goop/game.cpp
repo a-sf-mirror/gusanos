@@ -113,6 +113,8 @@ void Game::init()
 	m_defaultPath = "default/";
 	m_modPath = "default/";
 	nextMod = "default";
+	
+	sfx.registerInConsole();
 
 	gfx.init();
 	sfx.init();
@@ -126,9 +128,9 @@ void Game::init()
 		playerOptions.push_back(options);
 	}
 	
-	options.registerInConsole();
+	//TODO: Check and move the rest of registerInConsole() before init()
+	options.registerInConsole(); 
 	gfx.registerInConsole();
-	sfx.registerInConsole();
 	network.registerInConsole();
 	registerGameActions();
 	registerPlayerInput();

@@ -37,6 +37,7 @@ class Sfx
 	std::vector<Listener*> listeners;
 	
 	int m_listenerDistance;
+	int m_outputMode;
 
 };
 

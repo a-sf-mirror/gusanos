@@ -51,32 +51,32 @@ void startGame(const std::string&)
 int main(int argc, char **argv)
 {
 	game.init();
-        gui::init();
-
+	gui::init();
+	
 	//Font *tempFont = fontList.load("minifont.bmp");
-        BITMAP *gusLogo = gfx.loadBitmap("default/gui/gusanos.bmp");
-        gui::windowDecor = gfx.loadBitmap("default/gui/window.bmp");
-        gui::Container top;
-        gui::Window window;
-        gui::ListContainer glist;
-        gui::ListDragItem gdrag;
-        gui::ListButtonItem gstart;
-        window.setTitle("MAIN MENU");
-        window.setPosition(31, 31);
-        window.setSize(96, 64);
-
-        gstart.setText("NEW GAME");
-        gstart.setEvent(startGame);
-
-        glist.setPosition(31, 31);
-        glist.setSize(96, 64);
-        glist.setBackColor(0);
-        glist.setSelColor(makecol(63, 63, 63));
-        glist.addItem(&gstart);
-        glist.addItem(&gdrag);
-
-        window.addWidget(&glist);
-        top.addWidget(&window);
+	BITMAP *gusLogo = gfx.loadBitmap("default/gui/gusanos.bmp");
+	gui::windowDecor = gfx.loadBitmap("default/gui/window.bmp");
+	gui::Container top;
+	gui::Window window;
+	gui::ListContainer glist;
+	gui::ListDragItem gdrag;
+	gui::ListButtonItem gstart;
+	window.setTitle("MAIN MENU");
+	window.setPosition(31, 31);
+	window.setSize(96, 64);
+	
+	gstart.setText("NEW GAME");
+	gstart.setEvent(startGame);
+	
+	glist.setPosition(31, 31);
+	glist.setSize(96, 64);
+	glist.setBackColor(0);
+	glist.setSelColor(makecol(63, 63, 63));
+	glist.addItem(&gstart);
+	glist.addItem(&gdrag);
+	
+	window.addWidget(&glist);
+	top.addWidget(&window);
 	
 	console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
 	console.registerIntVariable("CL_SHOWDEBUG", &showDebug, 1);
