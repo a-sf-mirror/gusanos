@@ -17,16 +17,13 @@ class Gfx
 	void shutDown();
 	void registerInConsole();
 	void fullscreenChange();
+	void doubleResChange();
 	
 	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL);
 	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);
 	
-	inline void updateScreen()
-	{
-		if ( m_vsync == 1 ) vsync();
-		blit(buffer,screen,0,0,0,0,320,240);
-		if (m_clearBuffer == 1 ) clear_bitmap(buffer);
-	}
+	void updateScreen();
+
 	
 	BITMAP* buffer;
 	
@@ -34,8 +31,19 @@ class Gfx
 	
 	int m_fullscreen;
 	int m_doubleRes;
+	int m_vwidth;
+	int m_vheight;
 	int m_vsync;
 	int m_clearBuffer;
+	int m_filter;
+	
+	BITMAP* m_doubleResBuffer;
+	
+	enum Filters
+	{
+		NO_FILTER,
+		SCANLINES
+	};
 
 };
 
