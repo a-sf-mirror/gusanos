@@ -193,7 +193,7 @@ void worm::checkevents()
         int _id=data->getInt(32);
         srand(_t);
         for (o=0;o<14;o++)
-          partlist.shoot_part(rand()%1000*255,(rand()%200)+600,1,_x,_y-4000,_xspd/2,_yspd/2,local_player[local_slot],game->gore);
+          partlist.shoot_part(rand()%1000*255,(rand()%200)+600,1,_x,_y-4000,_xspd/2,_yspd/2,local_slot,game->gore);
         play_sample(game->death->snd, *game->VOLUME, 127, 1000, 0);
         deaths++;
         health=0;
@@ -250,7 +250,7 @@ void worm::checkevents()
                   else spd_rnd=0;
                   xof=fixtof(fixsin(ftofix((_ang-dist)/1000.)))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000)*_dir;
                   yof=fixtof(fixcos(ftofix((_ang-dist)/1000.)))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000);
-                  partlist.shoot_part(_ang-dist,weaps->num[_weap]->shoot_spd-spd_rnd,_dir,_x+xof,_y-4000+yof,_xspd*(weaps->num[_weap]->affected_motion/1000.),_yspd*(weaps->num[_weap]->affected_motion/1000.),local_player[local_slot],weaps->num[_weap]->shoot_obj);
+                  partlist.shoot_part(_ang-dist,weaps->num[_weap]->shoot_spd-spd_rnd,_dir,_x+xof,_y-4000+yof,_xspd*(weaps->num[_weap]->affected_motion/1000.),_yspd*(weaps->num[_weap]->affected_motion/1000.),local_slot,weaps->num[_weap]->shoot_obj);
                 };
                 if (weaps->num[_weap]->aim_recoil!=0)
                   aim_recoil_speed+=(100*weaps->num[_weap]->aim_recoil);/*-weap[curr_weap].weap->aim_recoil/2*1000;*/

@@ -184,6 +184,7 @@ void engine::input()
     if (player[i]->keys->up && (player[i]->ropestate==0||!player[i]->keys->change) && player[i]->aim_speed<*pl_options[player[i]->local_slot].aim_maxspeed)
     {
       player[i]->aim_speed+=*pl_options[player[i]->local_slot].aim_acceleration;
+      //allegro_message("%d",player[i]->local_slot);
     };
     
     if(player[i]->islocal)
