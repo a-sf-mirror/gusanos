@@ -8,6 +8,7 @@
 //
 #include "keyboard.h"
 #include "console.h"
+#include "font.h"
 
 // LOCAL INCLUDES
 //
@@ -33,6 +34,7 @@ class GConsole : public Console
 	
 	KeyHandler keyHandler;
 	int m_mode;
+	Font *m_font;
 	std::string m_inputBuff;
 	
 	enum

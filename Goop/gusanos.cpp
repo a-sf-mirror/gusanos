@@ -1,6 +1,15 @@
 #include <allegro.h>
 
 #include "gconsole.h"
+#include "resource_list.h"
+#include "sprite.h"
+#include "font.h"
+#include "menu_window.h"
+#include "vec.h"
+#include "level.h"
+#include "game.h"
+#include "viewport.h"
+#include "test_particle.h"
 //#include "text.h"
 
 #include <string>
@@ -9,6 +18,8 @@ using namespace std;
 
 struct Object
 {
+	Vec pos;
+	Vec spd;
 	float x;
 	float y;
 };
@@ -38,19 +49,15 @@ int main(int argc, char **argv)
 {
 	Object object;
 	
-	allegro_init();
-	console.init();
 	
-	int consoleTest;
-	int pooo;
+	game.init();
+
 	
-	console.registerIntVariable("TEST", &consoleTest, 100);
-	console.registerIntVariable("POO1", &pooo, 20);
-	console.registerIntVariable("POO2", &pooo, 20);
-	console.registerIntVariable("POO3", &pooo, 20);
-	console.registerIntVariable("POO4", &pooo, 20);
-	console.registerIntVariable("POO5", &pooo, 20);
-	console.registerIntVariable("POP1", &pooo, 20);
+	
+	Sprite *sprite = spriteList.load("sprite.bmp");
+	Font *tempFont = fontList.load("minifont.bmp");
+	
+	
 	console.registerCommand("+FORWARD", forwardStart);
 	console.registerCommand("-FORWARD", forwardEnd);
 	console.registerCommand("QUIT", Exit);
@@ -63,25 +70,47 @@ int main(int argc, char **argv)
 	console.parseLine("BIND B TEST");
 	console.parseLine("BIND W +FORWARD");
 	
+	
+	if ( gameLoad<Level>("bleed",game.level) )
+	{
+		console.addLogMsg("MAP LOADED SUCCESFULLY");
+	}else
+		console.addLogMsg("COULDNT LOAD THE MAP");
 	//allegro_message("%d",consoleTest);
 	
 	BITMAP *buffer;
 	
-	set_color_depth(16);
 
-	set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0);
-			
-	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
-		set_display_switch_mode(SWITCH_BACKGROUND);
+	MenuWindow menu;
+
   
 	buffer = create_bitmap(320,240);
 	
-	object.x = 10;
-	object.y = 10;
+	Viewport testViewport;
+	Viewport testViewport2;
 	
+	testViewport.setDestination(buffer,0,0,320,240);
+	testViewport2.setDestination(buffer,100,50,100,100);
+	
+	for (int i = 0; i < 1000 ; i++)
+	{
+		game.objects.push_back( new TestParticle );
+	}
+	
+	object.pos = Vec(0,0);
+	
+	int x,y;
+	int moo=0;
+	int moox,mooy;
 	while (!quit)
 	{
-		if (forward) object.x+=0.5;
+		if (forward) object.pos= object.pos + Vec(0.3,0);
+		
+		list<BaseObject*>::iterator iter;
+		for ( iter = game.objects.begin(); iter != game.objects.end(); iter++)
+		{
+			(*iter)->think();
+		}
 		
 		console.checkInput();
 		
@@ -89,17 +118,42 @@ int main(int argc, char **argv)
 		
 		textout_ex(buffer, font, "Console", 10, 10, makecol(255,255,255), -1);
 		
-		console.render(buffer);
+		tempFont->draw(buffer,"abcdefghijklmnopqrst ABCDEFGHIJKLMNOPQRST", 10,20,0);
 		
-		putpixel(buffer, object.x, object.y, makecol(255,0,0));
+		//level.draw(buffer,0,object.pos.x);
+		testViewport.render();
+		if ( moo < 200 )
+		{
+			testViewport2.interpolateTo(moox,mooy,0.02);
+			moo++;
+		}else
+		{
+			moox=rand()%150;
+			mooy=rand()%400;
+			moo=0;
+		}
+		testViewport2.render();
+		console.render(buffer);
+		//menu.draw(buffer);
+		
+		putpixel(buffer, object.pos.x, object.pos.y, makecol(255,0,0));
+		sprite->draw(buffer, 1, object.pos.x, object.pos.y);
 		
 		vsync();
+		
+		/*for (int i= 0; i<20; i++)
+		{
+		x = rand()%100;
+		y = rand()%200;
+		if ( level.getMaterial(x,y).worm_pass ) putpixel(buffer,x,y,makecol(255,255,0));
+		}*/
 		
 		blit(buffer,screen,0,0,0,0,320,240);
 
 	}
 	
 	console.shutDown();
+	//level.unload();
 	allegro_exit();
 
 	return(0);

@@ -44,8 +44,8 @@ class Console
 	std::map<std::string, ConsoleItem*> items;
 	std::list<std::string> log;
 	int m_variableCount;
-	int m_logMaxSize;
-	int m_MaxMsgLength;
+	unsigned int m_logMaxSize;
+	unsigned int m_MaxMsgLength;
 	int m_mode;
 };
 

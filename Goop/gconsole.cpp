@@ -1,6 +1,7 @@
 #include "gconsole.h"
 #include "keyboard.h"
 #include "keys.h"
+#include "font.h"
 
 #include <allegro.h>
 
@@ -79,7 +80,10 @@ GConsole::GConsole() : Console(256,39)
 void GConsole::init()
 {
 	keyHandler.init();
+
+	m_font = fontList.load("minifont.bmp");
 	
+	m_MaxMsgLength= (320-5) / m_font->width();
 	m_mode = CONSOLE_MODE_BINDINGS;
 	
 	registerCommand("BIND", bindCmd);
@@ -90,9 +94,10 @@ void GConsole::init()
 void GConsole::shutDown()
 {
 	keyHandler.shutDown();
+	
+	//m_font must be deleted here!!!!
 }
 
-// Temporal implementation (I need bitmap fonts :P)
 void GConsole::render(BITMAP* where)
 {
 	int textIndex = 0;
@@ -100,15 +105,15 @@ void GConsole::render(BITMAP* where)
 	while ((msg != log.begin()) && (textIndex < 20))
 	{
 		msg--;
-		textout_ex(where, font, (*msg).c_str(), 5, where->h - 20 - textIndex * 10, makecol(255,255,255), -1);
+		m_font->draw(where, *msg, 5, where->h - 20 - textIndex * (m_font->height() + 1), 0);
 		textIndex++;
 	}
 	string tempString = (']' + m_inputBuff + '*');
-	if ( tempString.length() < 39 )
-		textout_ex(where, font, tempString.c_str(), 5, where->h - 10, makecol(255,255,255), -1);
+	if ( tempString.length() < (where->w-5) / m_font->width() )
+		m_font->draw(where, tempString, 5, where->h - 10 , 0);
 	else
 	{
-		textout_ex(where, font, tempString.substr(tempString.length() - 39).c_str(), 5, where->h - 10, makecol(255,255,255), -1);
+		m_font->draw(where, tempString.substr(tempString.length() - (where->w-5) / m_font->width()), 5, where->h - 10 , 0);
 	}
 }
 
