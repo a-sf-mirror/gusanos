@@ -210,6 +210,7 @@ int main(int argc, char **argv)
                     stringstream sout;
                     sout << _fps;
                     sout >> fpsStr;
+                    fpsStr += " FPS";
                     font->draw(gfx.buffer, fpsStr, 5, 5, 0);
                 }
                 _fpsCount++;
