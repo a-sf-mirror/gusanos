@@ -403,8 +403,12 @@ void calc_particles()
 		{
 	
 			int i,c;
+      bool friendly;
+      bool ffire=!game->teamplay || *game->FRIENDLYFIRE>=0;
 			for (i=0;i<player_count;i++)
-			if (player[i]->active)
+      {
+      friendly=tmp->owner>=0 && player[tmp->owner] && player[i]->team==player[tmp->owner]->team;
+			if (player[i]->active && (ffire || !friendly))
 			{
 				int dx,dy;
 				dx= abs(tmp->x+tmp->xspd-player[i]->x);
@@ -422,7 +426,9 @@ void calc_particles()
 					};
 					if (player[i]->health>0)
           {
-            player[i]->health-=tmp->type->damage;
+            if (ffire && friendly)
+            player[i]->health-=(tmp->type->damage * *game->FRIENDLYFIRE)/1000;
+            else player[i]->health-=tmp->type->damage;
             if (player[i]->health<=0)
             player[i]->killed_by=tmp->owner;
           };
@@ -442,6 +448,7 @@ void calc_particles()
 					};
 				};
 			};
+      };
 			if (destroyed) break;
 
 			tmp->x+=tmp->xspd;

@@ -386,6 +386,7 @@ void change_level()
         allegro_message("Couldnt start the server.\n");
         exit(-1);
       }else game->host=true;
+      game->init_node(srv,true);
       delete_players();
       if (*game->TEAMPLAY==1)
         game->teamplay=true;

@@ -122,7 +122,7 @@ void worm::deatheventsend()
   data->addInt(xspd,32);
   data->addInt(yspd,32);
   data->addInt(t,32);
-  if (killed_by!=-1 && killed_by!=local_slot)
+  if (killed_by!=-1 && player[killed_by])
   data->addInt(player[killed_by]->node->getNetworkID(),32);
   else data->addInt(-1,32);
 
@@ -201,20 +201,26 @@ void worm::checkevents()
         recharge_weapons(this);
 
         char tmpstr[1024];
-        sprintf(tmpstr,"%s DIED",name);
+        sprintf(tmpstr,"* %s DIED",name);
         if (node->getNetworkID()!=-1)
         {
           if (node->getNetworkID()==_id)
           {
-            sprintf(tmpstr,"%s KILLED HIMSELF, WHAT A N00B",name);
+            sprintf(tmpstr,"* %s KILLED HIMSELF, WHAT A N00B",name);
           }else
           {
             for (i=0;i<player_count;i++)
             {
               if (player[i]->node->getNetworkID()==_id)
               {
-                sprintf(tmpstr,"%s WAS KILLED BY %s",name,player[i]->name);
-              }
+                if (!game->teamplay || team!=player[i]->team)
+                {
+                  sprintf(tmpstr,"* %s KILLED %s",player[i]->name,name);
+                }else
+                {
+                  sprintf(tmpstr,"* %s TEAM KILLED %s",player[i]->name,name);
+                };
+              }              
             };
           };
         };
@@ -307,6 +313,7 @@ worm::worm()
     islocal=false;
     deleteme=false;
     selecting_weaps=true;
+    local_slot=local_players;
 		ropestate=0;
 		ropex=1;
     ropexspd=1;
@@ -343,20 +350,20 @@ worm::worm()
     node->addInterpolationInt((zS32*)&y,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,20000,NULL,-1,-1,0.2f);
     //node->addInterpolationInt(&yspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,1000,NULL,-1,-1,0);
     //node->addInterpolationInt(&xspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,1000,NULL,-1,-1,0);
-    node->addReplicationInt((zS32*)&ropestate,8,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+    node->addReplicationInt((zS32*)&ropestate,3,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
     node->addReplicationInt((zS32*)&ropex,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
     node->addReplicationInt((zS32*)&ropey,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
     node->addReplicationInt((zS32*)&ropexspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
     node->addReplicationInt((zS32*)&ropeyspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
     node->addReplicationInt((zS32*)&aim,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,99,-1,-1);
-    node->addReplicationInt((zS32*)&dir,8,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-    node->addReplicationBool(&keys->fire,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
-    node->addReplicationBool(&keys->left,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
-    node->addReplicationBool(&keys->right,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
-    node->addReplicationBool(&keys->up,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
-    node->addReplicationBool(&keys->down,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
-    node->addReplicationBool(&keys->jump,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
-    node->addReplicationBool(&keys->change,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
+    node->addReplicationInt((zS32*)&dir,2,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+    node->addReplicationBool(&keys->fire,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
+    node->addReplicationBool(&keys->left,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
+    node->addReplicationBool(&keys->right,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
+    node->addReplicationBool(&keys->up,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
+    node->addReplicationBool(&keys->down,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
+    node->addReplicationBool(&keys->jump,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
+    node->addReplicationBool(&keys->change,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
     node->addReplicationBool(&active,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_AUTH_2_ALL,false,-1,-1 );
     node->addReplicationInt((zS32*)&curr_weap,8,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1);
     //node->addReplicationInt((zS32*)&weap[0].ammo,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
@@ -365,6 +372,7 @@ worm::worm()
     for(o=0;o<5;o++)
       node->addReplicationInt((zS32*)&weap[o].weap,32,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1 );
     node->addReplicationString(name,32,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY," ",-1,-1 );
+    node->addReplicationInt((zS32*)&team,8,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
     
     node->endReplicationSetup();
 

@@ -2,7 +2,44 @@
 
 
 struct engine* game;
+ZCom_ClassID  game_classid;
 PALETTE pal;
+
+
+void engine::init_node(ZCom_Control *_cont, bool is_server)
+{
+  node = new ZCom_Node();
+  if (!node)
+  {
+    con->log.create_msg("unable to create node");
+  }
+
+  node->beginReplicationSetup();
+  node->addReplicationInt((zS32*)GRAVITY,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ROPE_GRAVITY,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)AIR_CAPACITY,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FALL_DAMAGE,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)DAMAGE_SPEED,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)WORM_JUMP_FORCE,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FLASHLIGHT,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)WORM_BOUNCINESS,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)AIR_FRICTION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FRICTION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ACELERATION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)MAX_SPEED,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)AIM_RECOIL_FRICTION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)RESPAWN_RELOAD,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ROPE_STRENTH,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ROPE_LENGHT,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FRIENDLYFIRE,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationBool(&teamplay,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,false,-1,-1 );
+  node->endReplicationSetup();
+
+  if(!node->registerNodeUnique(game_classid, (is_server) ? eZCom_RoleAuthority : eZCom_RoleProxy, _cont))
+  allegro_message("unable to register game node");
+
+  node->applyForZoidLevel(2);
+};
 
 void echo()
 {
@@ -44,10 +81,15 @@ void recharge_weapons(struct worm* player)
 
 void respawn_player(struct worm* player)
 {
-	int g,o;
+	int g,o,i,spawn_count;
 	player->health=*game->MAX_HEALTH;
 	g=-1;
-  if (map->spawnpoint_count==0)
+  spawn_count=0;
+  for(i=0;i<map->spawnpoint_count;i++)
+  {
+    if (map->spawnpoint[g].team==player->team) spawn_count++;
+  };
+  if (spawn_count==0)
   {
     while (!map->mat[g+1].worm_pass || map->mat[g+1].flows)
     {
@@ -78,7 +120,7 @@ void respawn_player(struct worm* player)
   player->aim_speed=0;
   player->curr_frame=0;
 	player->dir=1;
-  player->killed_by=local_player[player->local_slot];
+  player->killed_by=player->local_slot;
   player->air=*game->AIR_CAPACITY;
 	play_sample(game->respawn->snd,*game->VOLUME, 127, 1000, 0);
 	player->active=true;
@@ -321,18 +363,24 @@ void engine::calcphysics()
             player[c]->deaths++;
             player[c]->health=0;
             
-            sprintf(tmpstr,"%s DIED",player[c]->name);
+            sprintf(tmpstr,"* %s DIED",player[c]->name);
             if (player[c]->killed_by==-1)
             {
-              sprintf(tmpstr,"%s WAS KILLED BY UNKNOWN FORCES",player[c]->name);
+              sprintf(tmpstr,"* %s WAS KILLED BY UNKNOWN FORCES",player[c]->name);
             }else if(player[player[c]->killed_by])
             {
               if(player[c]->killed_by==player[c]->local_slot)
               {
-                sprintf(tmpstr,"%s KILLED HIMSELF, WHAT A N00B",player[c]->name);
+                sprintf(tmpstr,"* %s KILLED HIMSELF",player[c]->name);
               } else
               {
-                sprintf(tmpstr,"%s WAS KILLED BY %s",player[c]->name,player[player[c]->killed_by]->name);
+                if (!teamplay || player[player[c]->killed_by]->team!=player[c]->team)
+                {
+                  sprintf(tmpstr,"* %s KILLED %s",player[player[c]->killed_by]->name,player[c]->name);
+                }else
+                {
+                  sprintf(tmpstr,"* %s TEAM KILLED %s",player[player[c]->killed_by]->name,player[c]->name);
+                };
               };
             }
             con->echolist.add_echo(tmpstr);
@@ -481,6 +529,7 @@ void engine::init_game()
   VIDEO_FILTER=con->create_variable("V_FILTER",0);
   SPLIT_SCREEN=con->create_variable("SPLITSCREEN",1);
   TEAMPLAY=con->create_variable("TEAMPLAY",0);
+  FRIENDLYFIRE=con->create_variable("FRIENDLY_FIRE",1000);
 
 	con->add_cmd("EXIT",quit);
 	con->add_cmd("QUIT",quit);

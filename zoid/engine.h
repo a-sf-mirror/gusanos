@@ -32,6 +32,8 @@ extern "C" {
 extern volatile int speed_counter;
 extern volatile int t;
 
+extern ZCom_ClassID  game_classid;
+
 class exp_type;
 
 void recharge_weapons( worm* player);
@@ -82,6 +84,7 @@ struct engine
   int *VIDEO_FILTER;
   int *SPLIT_SCREEN;
   int *TEAMPLAY;
+  int *FRIENDLYFIRE;
   bool teamplay;
   struct s_viewport viewport[2];
   int v_width,v_height,v_depth;
@@ -110,6 +113,8 @@ struct engine
 	int w,sync_mode;
 	char mod[1024],level[1024];
   bool host,client,split_screen;
+  ZCom_Node *node;
+  void init_node(ZCom_Control *_cont, bool is_server);
 };
 
 extern struct engine* game;

@@ -26,7 +26,7 @@ class worm
 	int ropex,ropey;
 	int ropexspd,ropeyspd;
 	int rope_length;
-	char ropestate;
+	int ropestate;
 	int xview,yview;
 	int crosshx,crosshy;
 	int health,deaths;
@@ -36,7 +36,7 @@ class worm
   int killed_by;
   int team;
 	unsigned int curr_frame;
-	char dir;
+	int dir;
   sprite *skin,*mask;
   sprite* crosshair;
   sprite* curr_firecone;
@@ -54,7 +54,7 @@ class worm
   int local_slot;
   ZCom_Node *node;
   ZCom_ConnID id;
-  void registerClass(ZCom_Control *_cont);
+  //void registerClass(ZCom_Control *_cont);
   void checkevents();
   void send_dig();
   void sendmsg(char* msg);

@@ -104,6 +104,8 @@ void obs_light(BITMAP *where, int x, int y, int d)
   //int g=where->line[y][x];
   if(map->mat[g+1].blocks_light) obstacle=true;
     
+  if (map->paralax && getpixel(map->mapimg,x,y)==makecol(255,0,255));
+  else
   if(getpixel(lightbuff,x,y)==0/* && !obstacle*/)
   {
 
@@ -190,7 +192,8 @@ void obs_light2(BITMAP *where, int x, int y, int d)
   //g=where->line[y][x]; 
   if(map->mat[g+1].blocks_light) obstacle=true;
     
-  if(/*!obstacle*/true)
+  if (map->paralax && getpixel(map->mapimg,x,y)==makecol(255,0,255));
+  else
   {
     drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
     set_add_blender(0,0,0,255);
@@ -323,23 +326,27 @@ void obs_exp_light(BITMAP *where, int x, int y, int d)
   int g=_material->line[y][x];
   if(map->mat[g+1].blocks_light) obstacle=true;
     
-  wx=_where->w/2;
-  wy=_where->h/2;
-  _x=x-x_origin;
-  _y=y-y_origin;
-  if(lightbuff->line[_y+wy][_x+wx]==0)// && !obstacle)
+  if (map->paralax && getpixel(map->mapimg,x,y)==makecol(255,0,255));
+  else
   {
-    dx= abs(_x);
-    dy= abs(_y);
-    i=fixtoi(fixhypot(itofix(dx),itofix(dy)))*(fadeness/100.);
-    if (randomness)i+=rand()%randomness;
-    col=255-i;
-    drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
-    set_add_blender(0,0,0,col);
-    if(col<=1)obstacle=true;
-    else putpixel(_where,_x+wx,_y+wy,color);
-    solid_mode();
-    lightbuff->line[_y+wy][_x+wx]=1;
+    wx=_where->w/2;
+    wy=_where->h/2;
+    _x=x-x_origin;
+    _y=y-y_origin;
+    if(lightbuff->line[_y+wy][_x+wx]==0)// && !obstacle)
+    {
+      dx= abs(_x);
+      dy= abs(_y);
+      i=fixtoi(fixhypot(itofix(dx),itofix(dy)))*(fadeness/100.);
+      if (randomness)i+=rand()%randomness;
+      col=255-i;
+      drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+      set_add_blender(0,0,0,col);
+      if(col<=1)obstacle=true;
+      else putpixel(_where,_x+wx,_y+wy,color);
+      solid_mode();
+      lightbuff->line[_y+wy][_x+wx]=1;
+    };
   };
 };
 

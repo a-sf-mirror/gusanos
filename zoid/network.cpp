@@ -6,7 +6,6 @@ ZoidCom *zcom;
 ZCom_Address adr_srv;
 
 
-
 Server::Server( int _internalport, int _udpport )
 {
 	// this will allocate the sockets and create local bindings
@@ -24,7 +23,8 @@ Server::Server( int _internalport, int _udpport )
 	ZCom_setDebugName("ZCOM_SRV");
 
 
-	player_classid=ZCom_registerClass("player");
+  game_classid=ZCom_registerClass("game");
+  player_classid=ZCom_registerClass("player");
 
 	ZCom_setUpstreamLimit(0, 0);
 }
@@ -162,32 +162,7 @@ void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _n
 		//sys_print("Server: %d failed to enter zoidmode", _id);
 		return;
 	}
-/*
-	// spawn new playerobject
-	player[player_count] = new worm;
-  sprintf(tmpstr, "NEW PLAYER CREATED AS INDEX %d", player_count);
-  con->log.create_msg(tmpstr);
-  player[player_count]->id = _id;
-	// make connection owner of object so connection may change x and y of object (see NObject::init())
-	player[player_count]->node->setOwner(_id, true);
-  player_count++;
-  
-  // this will create the ZCom_Node and register it with us (we are a ZCom_Control)
-	// store connection id belonging to object
-
-  player[player_count] = new worm;
-  sprintf(tmpstr, "NEW PLAYER CREATED AS INDEX %d", player_count);
-  con->log.create_msg(tmpstr);
-  player[player_count]->id = _id;
-	// make connection owner of object so connection may change x and y of object (see NObject::init())
-	player[player_count]->node->setOwner(_id, true);
-  player_count++;
-  
-  // this will create the ZCom_Node and register it with us (we are a ZCom_Control)
-	// store connection id belonging to object*/
-
-
-}
+};
 
 
 Client::Client( int _internalport, int _udpport )
@@ -205,7 +180,9 @@ Client::Client( int _internalport, int _udpport )
   
 	ZCom_setDebugName("ZCOM_CLI");
   
+  game_classid = ZCom_registerClass("game");
   player_classid = ZCom_registerClass("player");
+  
 
 }
 
@@ -234,6 +211,7 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
   }
 	else
 	{
+    game->init_node(cli,false);
 		ZCom_requestDownstreamLimit(_id, 20, 200);
 		ZCom_requestZoidMode(_id, 2);
     srv_id=_id;
