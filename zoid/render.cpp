@@ -144,8 +144,6 @@ void engine::render()
     viewport[0].y=0;
   };
     
-  printf("b");
-  
 	if (map->mapimg->w<320 && map->mapimg->h<240) smallmap=true;
 		
 	if (*MAP_SHOW_MODE==0 || !smallmap)
@@ -280,9 +278,6 @@ void engine::render()
 	/******HUD*******/
   if (game->selecting)
     render_weapon_selection_menu(buffer);
-  
-  printf("a");
-
   
 	fonty->draw_string(buffer,fpsstr,280,4,false);
 	//  sprintf(ints, "%d",caca);

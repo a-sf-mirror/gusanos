@@ -1,6 +1,3 @@
-#define AA2XSAI
-#define WINDOWS
-
 #include <ctype.h>
 #include <allegro.h>
 #ifdef WINDOWS
@@ -13,8 +10,8 @@
 #include "engine.h"
 #include <zoidcom.h>
 
-#define major 0
-#define minor 8
+#define vmajor 0
+#define vminor 8
 
 
 
@@ -58,7 +55,7 @@ int main(int argc, char **argv)
  game->init_game();
  con->log.create_msg("");
  con->log.create_msg("");
- sprintf(tmp,"GUSANOS v%d.%d",major,minor);
+ sprintf(tmp,"GUSANOS v%d.%d",vmajor,vminor);
  con->log.create_msg(tmp);
  con->log.create_msg("HTTP://GUSANOS.VZE.COM");
  con->log.create_msg("");
@@ -75,7 +72,7 @@ int main(int argc, char **argv)
         speed_counter--;
       };
       game->render();
-      Sleep(0);
+      //Sleep(0);
       game->frame_count++;
       if (t > 100)
       {

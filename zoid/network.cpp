@@ -245,7 +245,10 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
     const char * svmap = _reply.getStringStatic();
     sprintf(tmpstr, "SERVERS MAP IS %s", svmap);
     con->log.create_msg(tmpstr);
-    strcpy(con->arg,svmap);
+    char tmpmapname[256];
+    sprintf(tmpmapname, "../../%s/maps/%s", game->mod, svmap);
+    strcpy(con->arg, tmpmapname);
+    //strcpy(con->arg,svmap);
     change_level();
 		//m_id = _id;
 	};
