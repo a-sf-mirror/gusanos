@@ -250,6 +250,9 @@ struct part_type* load_part(const char* type_name)
   curr->remgnd=0;
   curr->autorotate_speed=0;
   curr->lens_radius=0;
+  //Crate
+  curr->give_weapon=-1;
+  //
 
 	
   //open the configuration file
@@ -335,7 +338,20 @@ struct part_type* load_part(const char* type_name)
 					else if ("affected_by_explosions"==var) curr->affected_by_explosions=atoi(val.c_str());
 					else if ("alpha"==var) curr->alpha=atoi(val.c_str());
           else if ("autorotate_speed"==var) curr->autorotate_speed=atoi(val.c_str());
-          else if ("lens_radius"==var) curr->lens_radius=atoi(val.c_str());
+					else if ("lens_radius"==var) curr->lens_radius=atoi(val.c_str());
+					 //Crate
+					 else if ("give_weapon"==var) 
+					   {
+					     int j;
+					     // creating val again to get the spaces
+					     if ("random" == val)
+					     curr->give_weapon = -2;
+					     else
+					     for (j=0; j < weaps->weap_count; j++)
+					     if (val == weaps->num[j]->name)
+					     curr->give_weapon=j;
+					   };
+					//
 				};
 			};
 		};
@@ -385,6 +401,44 @@ void rem_part(struct particle* tmp)
 	};
 };
 
+//Crate
+bool check_position (int x1, int y1)
+{
+  int x2, y2;
+  for (x2 = x1-2; x2 <= x1+2; x2++)
+    for (y2 = y1-2; y2 <= y1+2; y2++)
+      if (!(map->mat[map->material->line[y2][x2] + 1].particle_pass))
+	return false;
+  return true;
+}
+
+void summon_bonus(struct part_type *item, int chance)
+{
+  if (rand()%chance == 0)
+    {
+      int x, y, num = 0;
+      do
+	{
+	  num++;
+	  x = (rand() % (map->material->w - 10) + 5);
+	  y = (rand() % (map->material->h - 10) + 5);
+	  if (check_position (x,y))
+	    {
+	      partlist.create_part(1000 * x, 1000 * y, 0, 0, 0, item);
+	      num=5000;
+	    }			
+	}
+      while (num < 5000);
+    }
+}
+
+void summon_bonuses ()
+{
+  summon_bonus (game->weapon_box, *game->WEAPON_CHANCE);
+  summon_bonus (game->health_box, *game->HEALTH_CHANCE);
+}
+//
+
 void calc_particles()
 {
 	int cycles,g;
@@ -421,6 +475,19 @@ void calc_particles()
 						player[i]->yspd+=(int) (tmp->yspd*(tmp->type->blow_away/1000.));
 						player[i]->xspd+=(int) (tmp->xspd*(tmp->type->blow_away/1000.));
 					};
+					//Crate
+					if (tmp->type->give_weapon != -1)
+					{
+					  if (tmp->type->give_weapon == -2)
+					    player[i]->weap[player[i]->curr_weap].weap = rand() % (game->weap_count);
+					  else
+					    player[i]->weap[player[i]->curr_weap].weap = tmp->type->give_weapon;
+					  player[i]->weap[player[i]->curr_weap].shoot_time=0;
+					  player[i]->weap[player[i]->curr_weap].ammo=weaps->num[player[i]->weap[player[i]->curr_weap].weap]->ammo;
+					  player[i]->weap[player[i]->curr_weap].reloading=false;
+					  player[i]->weap[player[i]->curr_weap].reload_time=0;
+					};
+					//
 					if (player[i]->health>0)
           {
             if (ffire && friendly)

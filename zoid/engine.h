@@ -86,6 +86,10 @@ struct engine
   int *SPLIT_SCREEN;
   int *TEAMPLAY;
   int *FRIENDLYFIRE;
+  //Crate
+  int *WEAPON_CHANCE;
+  int *HEALTH_CHANCE;
+  //
   bool teamplay;
   struct s_viewport viewport[2];
   int v_width,v_height,v_depth;
@@ -105,6 +109,10 @@ struct engine
 	struct part_type *tmppart;
 	struct part_type *gore;
   struct part_type *chreact;
+  //Crate
+  struct part_type *weapon_box;
+  struct part_type *health_box;
+  //
 	sound *death,*respawn,*throwrope,*bump,*gstart,*menu_move,*menu_select,*breath;
 	bool selecting;
 	 exp_type *exp1;

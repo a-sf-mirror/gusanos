@@ -32,6 +32,9 @@ struct part_type
 	int color,laser_type,alpha,exptime,timeout_variation,shootnum,wormshootnum,shootnumtrail,shootspeed,wormshootspeed,shootspeedtrail;
 	int shootspeedrnd,wormshootspeedrnd,shootspeedrndtrail,detect_range,framenum,framedelay,traildelay,exptraildelay,affected_by_motion,affected_by_explosions;
   int autorotate_speed, lens_radius;
+  //Crate
+  int give_weapon;
+  //
 	char expgnd,expworm,drawonmap,animonground,remworm,remgnd,directional,visible;
 	sprite* sprt;
 	part_type *shootobj,*wormshootobj,*shootobjtrail;
@@ -74,6 +77,9 @@ struct particles
 
 void destroy_particles();
 struct part_type* load_part(const char* type_name);
+//Crate
+void summon_bonuses();
+//
 void calc_particles();
 void dest_part(struct particle* tmp);
 void rem_part(struct particle* tmp);

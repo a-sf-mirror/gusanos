@@ -172,6 +172,9 @@ void engine::calcphysics()
     };
     if (true)
     {
+      //Crate
+      summon_bonuses();
+      //
       calc_particles();
       calc_exps();
       for(c=0;c<player_count;c++)
@@ -531,6 +534,10 @@ void engine::init_game()
   SPLIT_SCREEN=con->create_variable("SPLITSCREEN",1);
   TEAMPLAY=con->create_variable("TEAMPLAY",0);
   FRIENDLYFIRE=con->create_variable("FRIENDLY_FIRE",1000);
+  //Crate
+  WEAPON_CHANCE=con->create_variable("WEAPON_CHANCE",10000);
+  HEALTH_CHANCE=con->create_variable("HEALTH_CHANCE",10000);
+  //
 
 	con->add_cmd("EXIT",quit);
 	con->add_cmd("QUIT",quit);
@@ -579,6 +586,10 @@ void engine::init_game()
   
 	gore=load_part("gore.obj");
   chreact=load_part("chreact.obj");
+  //Crate
+  weapon_box=load_part("box.obj");	
+  health_box=load_part("health_box.obj");
+  //
 	death=sounds->load("death2.wav");
 	respawn=sounds->load("alive.wav");
 	throwrope=sounds->load("throw.wav");
