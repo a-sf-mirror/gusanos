@@ -369,12 +369,15 @@ void change_level()
 	char tmp[1024];
 	if (load_map(con->arg)!=0)
 	{
+	        char *cptr = lcase(con->arg);
 		if (load_map(lcase(con->arg))!=0)
 		{
 		sprintf(tmp,"%s%s%c","COULD NOT FIND MAP \"",con->arg,'\"');
 		con->log.create_msg(tmp);
+		free(cptr);
 			return;
 		}
+		free(cptr);
 	}
     if(*game->HOST==1)
     {

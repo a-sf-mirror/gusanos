@@ -3,21 +3,25 @@
 char *ucase(char *str) 
 {
 	int i = 0;
+	char *newstr = new char[strlen(str) + 1];
 	while(str[i]) {
-		str[i] = toupper(str[i]);
+		newstr[i] = toupper(str[i]);
 		i++;
 	}
-	return(str);
+	newstr[strlen(str)] = '\0';
+	return(newstr);
 }
 
 char *lcase(char *str) 
 {
 	int i = 0;
+	char *newstr = new char[strlen(str) + 1];
 	while(str[i]) {
-		str[i] = tolower(str[i]);
+		newstr[i] = tolower(str[i]);
 		i++;
 	}
-	return(str);
+	newstr[strlen(str)] = '\0';
+	return(newstr);
 }
 
 

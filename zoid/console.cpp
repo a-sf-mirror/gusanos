@@ -531,7 +531,9 @@ void execute_config()
 		{
 			if (fgets(tmp_str, sizeof(tmp_str), fbuf)==NULL) break;
 			if (tmp_str[strlen(tmp_str)-1]=='\n') tmp_str[strlen(tmp_str)-1]='\0';
+			char *cptr = ucase(tmp_str);
 			con->parse(ucase(tmp_str));
+			free(cptr);
 		};
 		fclose(fbuf);
 	};

@@ -66,10 +66,14 @@ void render_weapon_selection_menu(BITMAP *where)
       game->fonty->draw_string(where,"[PRESS CHANGE BUTTON TO RANDOMIZE]",vp->x+vp->w/2-69,18,false);
       rectfill(where,vp->x+vp->w/2-70,72,vp->x+vp->w/2+70,97,makecol(0,0,0));
       rect(where,vp->x+vp->w/2-71,72,vp->x+vp->w/2+71,97,makecol(100,100,100));
-      sprintf(str,"MOD NAME: %s",ucase(game->mod));
-      game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74,false);
-      sprintf(str,"MAP NAME: %s",ucase(map->name));
+      //
+      char *cptr = ucase(game->mod);
+      sprintf(str,"MOD NAME: %s",cptr);
+      game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74,false); free(cptr);
+      cptr = ucase(map->name);
+      sprintf(str,"MAP NAME: %s",cptr); free(cptr);
       game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74+8,false);
+      //
       sprintf(str,"NUMBER OF WEAPONS: %d",game->weap_count);
       game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74+16,false);
     };

@@ -1,6 +1,5 @@
 #ifndef ENGINE_H
 #define ENGINE_H
-#define AA2XSAI
 
 #include <ctype.h>
 #include <allegro.h>
