@@ -8,16 +8,6 @@ inline float distance(float x1, float y1, float x2, float y2)
     return sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
 }
 
-inline float todeg(float rad)
-{
-    return rad / (3.1416/180);
-}
-
-inline float torad(float rad)
-{
-    return rad * (3.1416/180);
-}
-
 const float cAimAccuracy = 8.0;
 
 void PlayerAI::getTarget()
@@ -93,34 +83,34 @@ void PlayerAI::think()
     float targetAngle = atan2(tmpY - y, tmpX - x);
 
     //convert to gusanos angle system
-    targetAngle -= torad(90);
-    targetAngle = torad(180) + targetAngle;
+    targetAngle -= deg2rad(90);
+    targetAngle = deg2rad(180) + targetAngle;
     if (m_worm->getDir() == -1)
-        targetAngle = torad(180) - (targetAngle - torad(180));
+        targetAngle = deg2rad(180) - (targetAngle - deg2rad(180));
 
     while (curAngle < 0)
         curAngle += 360;
     while (curAngle >= 360)
         curAngle -= 360;
 
-    while (todeg(targetAngle) < 0)
-        targetAngle += torad(360);
-    while (todeg(targetAngle) >= 360)
-        targetAngle -= torad(360);
+    while (rad2deg(targetAngle) < 0)
+        targetAngle += deg2rad(360);
+    while (rad2deg(targetAngle) >= 360)
+        targetAngle -= deg2rad(360);
 
     //aim
-    if (curAngle - cAimAccuracy > todeg(targetAngle))
+    if (curAngle - cAimAccuracy > rad2deg(targetAngle))
         actionStart(UP);
     else
         actionStop(UP);
 
-    if (curAngle + cAimAccuracy < todeg(targetAngle))
+    if (curAngle + cAimAccuracy < rad2deg(targetAngle))
         actionStart(DOWN);
     else
         actionStop(DOWN);
 
     //shooting
-    if (curAngle - cAimAccuracy < todeg(targetAngle) && curAngle + cAimAccuracy > todeg(targetAngle))
+    if (curAngle - cAimAccuracy < rad2deg(targetAngle) && curAngle + cAimAccuracy > rad2deg(targetAngle))
     {
 	    //aimed accuratley
 	    actionStart(FIRE);
