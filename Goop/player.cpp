@@ -77,8 +77,15 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStart(Worm::JUMP);
-				m_worm -> actionStop(Worm::NINJAROPE);
+				if (changing)
+				{
+					m_worm->actionStart(Worm::NINJAROPE);
+				}else
+				{
+					m_worm -> actionStart(Worm::JUMP);
+					m_worm -> actionStop(Worm::NINJAROPE);
+				}
+				jumping = true;
 			}
 		}
 		break;
@@ -105,7 +112,11 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStart(Worm::NINJAROPE);
+				changing = true;
+				if (jumping)
+				{
+					m_worm->actionStart(Worm::NINJAROPE);
+				}
 			}
 		}
 		break;
@@ -148,6 +159,7 @@ void Player::actionStop ( Actions action )
 			if ( m_worm )
 			{
 				m_worm -> actionStop(Worm::JUMP);
+				jumping = false;
 			}
 		}
 		break;
@@ -166,6 +178,15 @@ void Player::actionStop ( Actions action )
 			if ( m_worm )
 			{
 				aimingDown = false;
+			}
+		}
+		break;
+		
+		case CHANGE:
+		{
+			if ( m_worm )
+			{
+				changing = false;
 			}
 		}
 		break;

@@ -29,7 +29,7 @@ void Options::registerInConsole()
 	
 	console.registerFloatVariable("SV_WORM_MAX_SPEED", &worm_maxSpeed, 0.45);
 	console.registerFloatVariable("SV_WORM_ACCELERATION", &worm_acceleration, 0.03);
-	console.registerFloatVariable("SV_WORM_FRICTION", &worm_friction, 0.005);
+	console.registerFloatVariable("SV_WORM_FRICTION", &worm_friction, 0.02);
 	console.registerFloatVariable("SV_WORM_AIR_FRICTION", &worm_airFriction, 0.000005);
 	console.registerFloatVariable("SV_WORM_GRAVITY", &worm_gravity, 0.009);
 	console.registerFloatVariable("SV_WORM_BOUNCE_QUOTIENT", &worm_bounceQuotient, 0.3);

@@ -39,6 +39,8 @@ class Player : public BasePlayer
 	
 	bool aimingUp;
 	bool aimingDown;
+	bool changing;
+	bool jumping;
 
 	Viewport* m_viewport;
 };
