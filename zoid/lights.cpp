@@ -485,4 +485,108 @@ void render_lens(int x, int y, int radius, BITMAP* where, BITMAP* buf)
   blit(buf,where,0,0,x-radius,y-radius,buf->w,buf->h);
 };
 
+void c_segments::create_segment(float x1,float x2,float y)
+{
+  
+  seg[segcount].b1.x=x1;
+  seg[segcount].b1.y=yorigin-y;
+  seg[segcount].b1.xinc=(x1-xorigin)/y;
+  seg[segcount].b2.x=x2;
+  seg[segcount].b2.y=yorigin-y;
+  seg[segcount].b2.xinc=(x2-xorigin)/y;
+  segcount++;
+};
+
+void c_segments::remove_segment(int index)
+{
+  segcount--;
+  if (index!=segcount)seg[index]=seg[segcount];
+};
+
+void c_segments::move_segmentsup()
+{
+  int i;
+  for (i=0;i<segcount;i++)
+  {
+    seg[i].b2.x+=seg[i].b2.xinc;
+    seg[i].b1.x+=seg[i].b1.xinc;
+  };
+};
+
+void render_seglight( int x, int y, int angle, int dir, BITMAP *where, BITMAP *material)
+{
+  int x1,y1,x2,y2,i,_y;
+  
+
+  
+  _where=where;
+  _material=material;
+  
+
+  //struct s_segment segment[100];
+  c_segments segs;
+  segs.xorigin=x;
+  segs.yorigin=y;
+  segs.seg[0].b1.x=x;
+  segs.seg[0].b1.y=y;
+  segs.seg[0].b1.xinc=-1;
+  segs.seg[0].b2.x=x;
+  segs.seg[0].b2.y=y;
+  segs.seg[0].b2.xinc=1;
+  segs.segcount=1;
+  
+  _y=0;
+  while (_y<100)
+  {
+    //segs.move_segmentsup();
+    //int p=segs.segcount;
+    for (i=0;i<segs.segcount;i++)
+    {
+      int _x,lastx;
+      bool collision,sthhappened=false;
+      line(where,segs.seg[i].b1.x,y-_y,segs.seg[i].b2.x,y-_y,makecol(255,255,255));
+      segs.seg[i].b1.x+=segs.seg[i].b1.xinc;
+      segs.seg[i].b2.x+=segs.seg[i].b2.xinc;
+      int g=getpixel(material,segs.seg[i].b1.x,y-_y);
+      collision=map->mat[g+1].blocks_light;
+      lastx=segs.seg[i].b1.x;
+      for ( _x=segs.seg[i].b1.x ; _x<segs.seg[i].b2.x ; _x++)
+      {
+        g=getpixel(material,_x,y-_y);
+        if(map->mat[g+1].blocks_light && !collision)
+        {
+          //line(where,lastx,y-_y,_x-1,y-_y,makecol(255,255,255));
+          segs.create_segment(lastx,_x-1,_y);
+          collision=true;
+          sthhappened=true;
+        };
+        if(!map->mat[g+1].blocks_light && collision)
+        {
+          lastx=_x;
+          collision=false;
+          sthhappened=true;
+        };
+      };
+      if (sthhappened)
+      {
+        g=getpixel(material,_x-1,y-_y);
+        if (!map->mat[g+1].blocks_light);
+          segs.create_segment(lastx,_x-1,_y);
+          //segs.seg[segs.segcount-1].b2.xinc=segs.seg[i].b2.xinc;
+          //line(where,lastx,y-_y,_x-1,y-_y,makecol(255,255,255));
+        segs.remove_segment(i);
+      }else
+      {
+        if(collision)
+          segs.remove_segment(i);
+        //line(where,segs.seg[i].b1.x,y-_y,segs.seg[i].b2.x,y-_y,makecol(255,255,255));
+      };
+    };
+    _y++;
+  };
+  
+  //do_line(material,x+x1,y-y1,x+x2,y-y2,0,flahslight_ray);
+};
+
+
 

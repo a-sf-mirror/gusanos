@@ -351,12 +351,12 @@ worm::worm()
     //node->addInterpolationInt(&yspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,1000,NULL,-1,-1,0);
     //node->addInterpolationInt(&xspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,1000,NULL,-1,-1,0);
     node->addReplicationInt((zS32*)&ropestate,3,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-    node->addReplicationInt((zS32*)&ropex,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-    node->addReplicationInt((zS32*)&ropey,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-    node->addReplicationInt((zS32*)&ropexspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-    node->addReplicationInt((zS32*)&ropeyspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+    node->addReplicationInt((zS32*)&ropex,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
+    node->addReplicationInt((zS32*)&ropey,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
+    node->addReplicationInt((zS32*)&ropexspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
+    node->addReplicationInt((zS32*)&ropeyspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
     node->addReplicationInt((zS32*)&aim,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,99,-1,-1);
-    node->addReplicationInt((zS32*)&dir,2,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+    node->addReplicationInt((zS32*)&dir,2,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_PROXY,99,-1,-1);
     node->addReplicationBool(&keys->fire,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
     node->addReplicationBool(&keys->left,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
     node->addReplicationBool(&keys->right,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );

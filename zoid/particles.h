@@ -8,7 +8,7 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <time.h>
 //#include "console.h"
 //#include "water.h"

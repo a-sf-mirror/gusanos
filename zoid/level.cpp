@@ -149,6 +149,15 @@ void level::init_materials()
   mat[8+1].blocks_light=true;
   mat[8+1].chreact=load_part("chreact2.obj");//game->chreact;
   mat[8+1].damage=0;
+  
+  mat[9+1].worm_pass=true;
+  mat[9+1].particle_pass=false;
+  mat[9+1].flows=false;
+  mat[9+1].can_breath=true;
+  mat[9+1].destroyable=false;
+  mat[9+1].draw_exps=false;
+  mat[9+1].blocks_light=true;
+  mat[9+1].damage=0;
 };
 
 level::~level()

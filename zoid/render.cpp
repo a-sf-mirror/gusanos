@@ -238,6 +238,8 @@ void engine::render()
 		};
 	};
   
+  //render_seglight(player[0]->x/1000,player[0]->y/1000-4,player[0]->aim-64000,player[0]->dir,map->buffer,map->material);
+  
 	partlist.render_particles(map->buffer);
   
   render_exps();
@@ -250,7 +252,6 @@ void engine::render()
 		blit(map->buffer,buffer,0,0,160-map->mapimg->w/2,120-map->mapimg->h/2,map->mapimg->w,map->mapimg->h);//160-map->mapimg->w/2,120-map->mapimg->h/2,160+map->mapimg->w/2,120-map->mapimg->h/2
 	
     
-  pepo++;
   for (i=0;i<local_players;i++)
   {
     p=player[local_player[i]];

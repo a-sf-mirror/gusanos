@@ -185,7 +185,7 @@ struct part_type* load_part(const char* type_name)
 {
 	FILE *fbuf;
 	struct part_type *curr;
-	char *tmp1,tmp2[1024],tmp3[1024];
+	std::string tmp1,tmp2,tmp3;
 	char *var,*val;
 	int i;
 	
@@ -253,9 +253,9 @@ struct part_type* load_part(const char* type_name)
 
 	
   //open the configuration file
-  strcpy(tmp3,map->path);
-  strcat(tmp3,"/objects/");
-  strcat(tmp3,curr->name);
+  tmp3=map->path;
+  tmp3+="/objects/";
+  tmp3+=curr->name;
   fbuf=fopen(tmp3,"rt");
     
  	if (fbuf==NULL)
