@@ -1,6 +1,8 @@
 #include "game.h"
 
 #include "base_object.h"
+#include "player.h"
+#include "player_input.h"
 #include "level.h"
 #include "gconsole.h"
 #include "game_actions.h"
@@ -55,8 +57,8 @@ void Game::init()
 	
 	options.registerInConsole();
 	gfx.registerInConsole();
-	
 	registerGameActions();
+	registerPlayerInput();
 	
 }
 

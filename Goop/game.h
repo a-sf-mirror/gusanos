@@ -11,6 +11,10 @@
 #include <list>
 #include <map>
 
+static const int MAX_LOCAL_PLAYERS = 2;
+
+class Player;
+
 struct Options
 {
 	void registerInConsole();
@@ -43,8 +47,11 @@ class Game
 	
 	Level level;
 	
+	std::vector<Player*> localPlayers;
+	std::vector<Player*> players;
 	std::list<BaseObject*> objects;
 	Options options;
+	
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
 	

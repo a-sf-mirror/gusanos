@@ -23,16 +23,6 @@ Player::~Player()
 	if ( m_viewport ) delete m_viewport;
 }
 
-void Player::think()
-{
-	if ( m_worm ) m_viewport->interpolateTo(m_worm->getPos(),0.1);
-}
-
-void Player::render()
-{
-	if ( m_viewport ) m_viewport->render();
-}
-
 void Player::assignWorm(Worm* worm)
 {
 	m_worm = worm;
@@ -41,6 +31,16 @@ void Player::assignWorm(Worm* worm)
 void Player::assignViewport(Viewport* viewport)
 {
 	m_viewport = viewport;
+}
+
+void Player::think()
+{
+	if ( m_worm && m_viewport ) m_viewport->interpolateTo(m_worm->getPos(),0.1);
+}
+
+void Player::render()
+{
+	if ( m_viewport ) m_viewport->render();
 }
 
 void Player::actionStart ( Actions action )

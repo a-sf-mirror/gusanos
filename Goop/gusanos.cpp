@@ -12,6 +12,7 @@
 #include "part_type.h"
 #include "particle.h"
 #include "worm.h"
+#include "player.h"
 #include "text.h"
 #include "gfx.h"
 #include "sfx.h"
@@ -24,79 +25,12 @@
 
 using namespace std;
 
-Worm *worm;
-
-bool forward = false;
 bool quit = false;
 int showFps = false;
 
 //millisecond timer
 volatile unsigned int _timer = 0;
 void _timerUpdate(void) { _timer++; } END_OF_FUNCTION(_timerUpdate);
-
-string rightStart(const list<string> &args)
-{
-	worm->actionStart( Worm::MOVERIGHT );
-	return "";
-}
-
-string rightStop(const list<string> &args)
-{
-	worm->actionStop( Worm::MOVERIGHT );
-	return "";
-}
-
-string leftStart(const list<string> &args)
-{
-	worm->actionStart( Worm::MOVELEFT );
-	return "";
-}
-
-string leftStop(const list<string> &args)
-{
-	worm->actionStop( Worm::MOVELEFT);
-	return "";
-}
-
-string jumpStart(const list<string> &args)
-{
-	worm->actionStart( Worm::JUMP );
-	return "";
-}
-
-string jumpStop(const list<string> &args)
-{
-	worm->actionStop( Worm::JUMP );
-	return "";
-}
-
-bool aimUp = false;
-
-string aimUpStart(const list<string> &args)
-{
-	aimUp = true;
-	return "";
-}
-
-string aimUpStop(const list<string> &args)
-{
-	aimUp = false;
-	return "";
-}
-
-bool aimDown = false;
-
-string aimDownStart(const list<string> &args)
-{
-	aimDown = true;
-	return "";
-}
-
-string aimDownStop(const list<string> &args)
-{
-	aimDown = false;
-	return "";
-}
 
 string Exit(const list<string> &args)
 {
@@ -113,21 +47,13 @@ int main(int argc, char **argv)
 	float aimSpeed;
 	
 	console.registerFloatVariable("CL_TEMP_AIM_SPEED", &aimSpeed, 1.8);
-        console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
+	console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
 	
-	console.registerCommand("+MOVELEFT", leftStart);
-	console.registerCommand("-MOVELEFT", leftStop);
-	console.registerCommand("+MOVERIGHT", rightStart);
-	console.registerCommand("-MOVERIGHT", rightStop);
-	console.registerCommand("+AIMUP", aimUpStart);
-	console.registerCommand("-AIMUP", aimUpStop);
-	console.registerCommand("+AIMDOWN", aimDownStart);
-	console.registerCommand("-AIMDOWN", aimDownStop);
-	console.registerCommand("+JUMP", jumpStart);
-	console.registerCommand("-JUMP", jumpStop);
 	console.registerCommand("QUIT", Exit);
 	
-	console.parseLine("BIND A +MOVELEFT; BIND D +MOVERIGHT; BIND G +JUMP; BIND W +AIMUP; BIND S +AIMDOWN; BIND F12 SCREENSHOT");
+	console.parseLine("BIND A +P0_LEFT; BIND D +P0_RIGHT; BIND G +P0_JUMP; BIND W +P0_UP; BIND S +P0_DOWN");
+	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN");
+	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	
 	if ( gameLoad<Level>("bleed",game.level) )
 	{
@@ -140,14 +66,11 @@ int main(int argc, char **argv)
 
 	MenuWindow menu;
 	
-	Viewport testViewport;
+	/*Viewport* testViewport;
 	Viewport testViewport2;
 
-	testViewport.setDestination(gfx.buffer,0,0,320,240);
-	testViewport2.setDestination(gfx.buffer,110,70,100,100);
-	
-	worm = new Worm();
-	game.objects.push_back(worm);
+	testViewport->setDestination(gfx.buffer,0,0,320,240);
+	testViewport2.setDestination(gfx.buffer,110,70,100,100);*/
 	
 	for (int i = 0; i < 1; i++)
 	{
@@ -160,75 +83,100 @@ int main(int argc, char **argv)
 		BaseObject* tmp = new Particle(testType, pos, angleVec(rnd()*360,rnd()*0.1+1));
 		game.objects.push_back( tmp );
 	}
-
+	
+	if(true)
+	{
+		Worm* worm = new Worm;
+		Player* player = new Player;
+		Viewport* viewport = new Viewport;
+		viewport->setDestination(gfx.buffer,0,0,160,240);
+		player->assignWorm(worm);
+		player->assignViewport(viewport);
+		game.objects.push_back( worm );
+		game.players.push_back( player );
+		game.localPlayers.push_back( player );
+	}
+	if(true)
+	{
+		Worm* worm = new Worm;
+		Player* player = new Player;
+		Viewport* viewport = new Viewport;
+		viewport->setDestination(gfx.buffer,160,0,160,240);
+		player->assignWorm(worm);
+		player->assignViewport(viewport);
+		game.objects.push_back( worm );
+		game.players.push_back( player );
+		game.localPlayers.push_back( player );
+	}
+	
+	
 
 
 	int x,y;
 	int moo=0;
 	int moox,mooy;
 
-        //install millisecond timer
-        install_timer();
-        LOCK_VARIABLE(_timer);
-        LOCK_FUNCTION(_timerUpdate);
-        install_int_ex(_timerUpdate, BPS_TO_TIMER(100));
+	//install millisecond timer
+	install_timer();
+	LOCK_VARIABLE(_timer);
+	LOCK_FUNCTION(_timerUpdate);
+	install_int_ex(_timerUpdate, BPS_TO_TIMER(100));
 
 	int _fpsLast = 0;
-        int _fpsCount = 0;
-        int _fps = 0;
-        Font *font = fontList.load("minifont.bmp");
+	int _fpsCount = 0;
+	int _fps = 0;
+	
+	Font *font = fontList.load("minifont.bmp");
 
 	while (!quit)
 	{
 		//Update FPS
-                if (_fpsLast + 100 < _timer)
-                {
-                    _fps = _fpsCount;
-                    _fpsCount = 0;
-                    _fpsLast = _timer;
-                }
+		if (_fpsLast + 100 <= _timer)
+		{
+			_fps = _fpsCount;
+			_fpsCount = 0;
+			_fpsLast = _timer;
+		}
 
-		list<BaseObject*>::iterator iter;
+		for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
+		{
+			(*iter)->think();
+		}
 		
-		if ( aimUp ) worm->addToAim(-aimSpeed);
-		if ( aimDown ) worm->addToAim(aimSpeed);	
-
-		for ( iter = game.objects.begin(); iter != game.objects.end(); iter++)
+		for ( vector<Player*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 		{
 			(*iter)->think();
 		}
 		
 		console.checkInput();
 
-		testViewport.interpolateTo(worm->getPos(),0.1);
-		testViewport.render();
 
-                //show fps
-	        if (showFps)
-                {
-                    string fpsStr;
-                    stringstream sout;
-                    sout << _fps;
-                    sout >> fpsStr;
-                    fpsStr += " FPS";
-                    font->draw(gfx.buffer, fpsStr, 5, 5, 0);
-                }
-                _fpsCount++;
+		for ( vector<Player*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+		{
+			(*iter)->render();
+		}
+	
+		//show fps
+		if (showFps)
+		{
+			font->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
+		}
+		_fpsCount++;
 	
 		console.think();
 		console.render(gfx.buffer);
 
 		gfx.updateScreen();
 		
-		float pos[3] = { worm->getPos().x, worm->getPos().y, -20 };
-		FSOUND_3D_Listener_SetAttributes(pos,NULL,0,0,1,0,1,0);
+		/*float pos[3] = { worm->getPos().x, worm->getPos().y, -20 };
+		FSOUND_3D_Listener_SetAttributes(pos,NULL,0,0,1,0,1,0);*/
 		FSOUND_Update();
 		
 		sfx.updateChanPositions();
 		
 		sfx.checkForDeletedObjects();
 		
-		for ( iter = game.objects.begin(); iter != game.objects.end(); )
+		for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); )
 		{
 			if ( (*iter)->deleteMe )
 			{
