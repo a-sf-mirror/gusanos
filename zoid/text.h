@@ -2,11 +2,6 @@
 #define TEXT_H
 
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include "sprites.h"
-#include "engine.h"
 
 struct fnt
 {

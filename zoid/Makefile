@@ -35,7 +35,7 @@ console.o: console.cpp console.h
 	$(CC) -c console.cpp $(CFLAGS) $(DEFINES)
 
 text.o: text.cpp text.h
-	$(CC) -c text.cpp $(CFLAGS)) $(DEFINES)
+	$(CC) -c text.cpp $(CFLAGS) $(DEFINES)
 
 keys.o: keys.cpp keys.h
 	$(CC) -c keys.cpp $(CFLAGS) $(DEFINES)

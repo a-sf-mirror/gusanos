@@ -1,4 +1,16 @@
 #include "particles.h"
+#include "sprites.h"
+#include "level.h"
+#include "sounds.h"
+#include "explosions.h"
+#include "weapons.h"
+#include "player.h"
+#include "lights.h"
+#include "engine.h"
+
+#include <fstream>
+using std::ifstream;
+
 
 struct particles partlist;
 struct type_list *types;
@@ -140,8 +152,8 @@ struct particle* particles::create_directional_part(int x,int y,int xspd, int ys
 void particles::shoot_part(int ang,int spd,int dir,int x,int y,int xspdadd,int yspdadd,int owner,struct part_type *type)
 {
 	int xspd,yspd;
-	xspd=fixtof(fixsin(ftofix(ang/1000.)))*spd*dir+xspdadd;
-	yspd=fixtof(fixcos(ftofix(ang/1000.)))*spd+yspdadd;
+	xspd=fixtoi(fixsin(ftofix(ang/1000.))*spd)*dir+xspdadd;
+	yspd=fixtoi(fixcos(ftofix(ang/1000.))*spd)+yspdadd;
 	if (type->directional==1)
 		create_directional_part(x,y,xspd,yspd,dir,ang,owner,type);
 	else create_part(x,y,xspd,yspd,owner,type);
@@ -392,7 +404,7 @@ void dest_part(struct particle* tmp)
 		//check if this particle type shoots other particles when destroyed and act
 		if (tmp->type->shootobj!=NULL)
 		for(i=0;i<tmp->type->shootnum;i++)
-			partlist.shoot_part(((rand()%1000)*256),tmp->type->shootspeed-rand()%(tmp->type->shootspeedrnd)+tmp->type->shootspeedrnd/2,1,tmp->x,tmp->y,tmp->xspd*(tmp->type->affected_by_motion/1000.),tmp->yspd*(tmp->type->affected_by_motion/1000.),tmp->owner,tmp->type->shootobj);
+			partlist.shoot_part(((rand()%1000)*256),tmp->type->shootspeed-rand()%(tmp->type->shootspeedrnd)+tmp->type->shootspeedrnd/2,1,tmp->x,tmp->y,(tmp->xspd*tmp->type->affected_by_motion)/1000,(tmp->yspd*tmp->type->affected_by_motion)/1000,tmp->owner,tmp->type->shootobj);
 		if (tmp->type->expsnd!=NULL)
 			play_sample(tmp->type->expsnd->snd, *game->VOLUME, 127, 1000, 0);
 		if (tmp->type->destroy_exp!=NULL)
@@ -615,13 +627,13 @@ void calc_particles()
 				g=getpixel(map->material,(tmp->x+tmp->xspd)/1000,tmp->y/1000);
 				if (!map->mat[g+1].particle_pass)
 				{
-					tmp->xspd*=-1.*(tmp->type->bounce/1000.);
+					tmp->xspd=(tmp->xspd*tmp->type->bounce)/-1000;
 				};
 				g=getpixel(map->material,tmp->x/1000,(tmp->y+tmp->yspd)/1000);
 				if (!map->mat[g+1].particle_pass)
 				{
-					tmp->yspd*=-1.*(tmp->type->bounce/1000.);
-					tmp->xspd*=(abs(tmp->type->bounce)/1000.);
+					tmp->yspd=( tmp->yspd * tmp->type->bounce ) / -1000;
+					tmp->xspd=( tmp->xspd * abs(tmp->type->bounce) ) / -1000;
 					if (tmp->type->animonground!=1)
 						tmp->framecount=0;
 				};

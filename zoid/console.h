@@ -1,22 +1,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include <ctype.h>
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include <time.h>
-#include "keys.h"
-#include "text.h"
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cctype>
-#include <algorithm>
-
-using std::fstream;
 
 int knametoint(const char *kname);
 

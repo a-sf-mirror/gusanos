@@ -1,25 +1,17 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <ctype.h>
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "engine.h"
 #include <zoidcom.h>
+
+class sprite;
+class exp_type;
 
 extern ZCom_ClassID  player_classid;
 
 class worm
 {
   public:
-  worm();
-  ~worm();
   char name[32];
 	int x,y;
 	int xspd,yspd;
@@ -35,7 +27,7 @@ class worm
 	int aim,aim_speed,aim_recoil_speed;
   int killed_by;
   int team;
-	unsigned int curr_frame;
+	int curr_frame;
 	int dir;
   int flash;
   sprite *skin,*mask;
@@ -55,7 +47,11 @@ class worm
   int local_slot;
   ZCom_Node *node;
   ZCom_ConnID id;
-  //void registerClass(ZCom_Control *_cont);
+  
+  //methods
+  
+  worm();
+  ~worm();
   void checkevents();
   void send_dig();
   void sendmsg(char* msg);
@@ -64,6 +60,12 @@ class worm
   void change_team(int team);
   void render(BITMAP* where, int frame, int x, int y);
   void render_flip(BITMAP* where, int frame, int x, int y);
+  void init_node(bool is_authority);
+  void shoot();
+  void shoot(int x, int y, int xspd, int yspd, int aim, int dir);
+  void jump(int jump_force);
+  void dig(exp_type *hole);
+  void walk(int direction,int acceleration, int maxspeed);
 };
 
 struct KEYS

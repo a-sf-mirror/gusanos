@@ -1,4 +1,15 @@
 #include "player.h"
+#include "engine.h"
+#include "console.h"
+#include "sounds.h"
+#include "network.h"
+#include "weapons.h"
+#include "explosions.h"
+#include "level.h"
+#include "particles.h"
+#include "sprites.h"
+#include "text.h"
+
 
 worm* player[32];
 struct s_player_options pl_options[2];
@@ -123,8 +134,8 @@ void worm::deatheventsend()
   data->addInt(yspd,32);
   data->addInt(t,32);
   if (killed_by!=-1 && player[killed_by])
-  data->addInt(player[killed_by]->node->getNetworkID(),32);
-  else data->addInt(-1,32);
+  data->addSignedInt(player[killed_by]->node->getNetworkID(),32);
+  else data->addSignedInt(-1,32);
 
   node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
   srand(t);
@@ -160,14 +171,14 @@ void worm::checkevents()
         int _ang=data->getInt(32);
         int _dir=data->getSignedInt(8);
         int x2,y2;
-        x2=fixtof(fixsin(ftofix(_ang/1000.)))*2000*_dir;
-        y2=fixtof(fixcos(ftofix(_ang/1000.)))*2000;
+        x2=fixtoi(fixsin(ftofix(_ang/1000.))*2000)*_dir;
+        y2=fixtoi(fixcos(ftofix(_ang/1000.))*2000);
         create_exp(_x+x2,_y-4000+y2,game->worm_hole);
-        x2=fixtof(fixsin(ftofix(_ang/1000.)))*4000*_dir;
-        y2=fixtof(fixcos(ftofix(_ang/1000.)))*4000;
+        x2=fixtoi(fixsin(ftofix(_ang/1000.))*4000)*_dir;
+        y2=fixtoi(fixcos(ftofix(_ang/1000.))*4000);
         create_exp(_x+x2,_y-4000+y2,game->worm_hole);
-        x2=fixtof(fixsin(ftofix(_ang/1000.)))*6000*_dir;
-        y2=fixtof(fixcos(ftofix(_ang/1000.)))*6000;
+        x2=fixtoi(fixsin(ftofix(_ang/1000.))*6000)*_dir;
+        y2=fixtoi(fixcos(ftofix(_ang/1000.))*6000);
         create_exp(_x+x2,_y-4000+y2,game->worm_hole);
       }else if(event==3)
       {
@@ -190,7 +201,7 @@ void worm::checkevents()
         int _xspd=data->getInt(32);
         int _yspd=data->getInt(32);
         int _t=data->getInt(32);
-        int _id=data->getInt(32);
+        int _id=data->getSignedInt(32);
         srand(_t);
         for (o=0;o<14;o++)
           partlist.shoot_part(rand()%1000*255,(rand()%200)+600,1,_x,_y-4000,_xspd/2,_yspd/2,local_slot,game->gore);
@@ -248,16 +259,16 @@ void worm::checkevents()
                   if (weaps->num[_weap]->shoot_spd_rnd!=0)
                     spd_rnd=(rand()%weaps->num[_weap]->shoot_spd_rnd)-weaps->num[_weap]->shoot_spd_rnd/2;
                   else spd_rnd=0;
-                  xof=fixtof(fixsin(ftofix((_ang-dist)/1000.)))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000)*_dir;
-                  yof=fixtof(fixcos(ftofix((_ang-dist)/1000.)))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000);
-                  partlist.shoot_part(_ang-dist,weaps->num[_weap]->shoot_spd-spd_rnd,_dir,_x+xof,_y-4000+yof,_xspd*(weaps->num[_weap]->affected_motion/1000.),_yspd*(weaps->num[_weap]->affected_motion/1000.),local_slot,weaps->num[_weap]->shoot_obj);
+                  xof=fixtoi(fixsin(ftofix((_ang-dist)/1000.))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000))*_dir;
+                  yof=fixtoi(fixcos(ftofix((_ang-dist)/1000.))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000));
+                  partlist.shoot_part(_ang-dist,weaps->num[_weap]->shoot_spd-spd_rnd,_dir,_x+xof,_y-4000+yof,(_xspd*weaps->num[_weap]->affected_motion)/1000,(_yspd*weaps->num[_weap]->affected_motion)/1000,local_slot,weaps->num[_weap]->shoot_obj);
                 };
                 if (weaps->num[_weap]->aim_recoil!=0)
                   aim_recoil_speed+=(100*weaps->num[_weap]->aim_recoil);/*-weap[curr_weap].weap->aim_recoil/2*1000;*/
                 if (weaps->num[_weap]->recoil!=0)
                 {
-                  xspd = xspd + -fixtof(fixsin(ftofix(_ang/1000.)))*weaps->num[_weap]->recoil*_dir;
-                  yspd = yspd + -fixtof(fixcos(ftofix(_ang/1000.)))*weaps->num[_weap]->recoil;
+                  xspd = xspd + -fixtoi(fixsin(ftofix(_ang/1000.))*weaps->num[_weap]->recoil)*_dir;
+                  yspd = yspd + -fixtoi(fixcos(ftofix(_ang/1000.))*weaps->num[_weap]->recoil);
                 };
               };
               weap[curr_weap].shoot_time=0;
@@ -322,9 +333,6 @@ worm::worm()
     ropeyspd=1;
     curr_firecone=NULL;
     firecone_time=0;
-    //aim_acceleration=new int(100);
-    //aim_friction=new int(50);
-    //aim_maxspeed=new int(1200);
     skin=sprites->load_sprite("lskinb.bmp",21,game->mod,game->v_depth);
     mask=sprites->load_sprite("lskinmask.bmp",21,game->mod,game->v_depth);
     keys=new struct KEYS;
@@ -335,29 +343,49 @@ worm::worm()
     keys->jump=false;
     keys->fire=false;
     keys->change=false;
+    node=NULL;
     
     id = ZCom_Invalid_ID;
     
-    int i=1;
+};
+
+worm::~worm()
+{
+  delete node;
+  delete keys;
+  free (weap);
+};
+
+void worm::init_node(bool is_authority)
+{
+  node = new ZCom_Node();
+  if (!node)
+  {
+    con->log.create_msg("unable to create node");
+  }
+  
+  node->beginReplicationSetup();
     
-    node = new ZCom_Node();
-    if (!node)
-    {
-      con->log.create_msg("unable to create node");
-    }
-    
-    node->beginReplicationSetup();
+    //Authority replication items
     node->addInterpolationInt((zS32*)&x,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,20000,NULL,-1,-1,0.2f);
     node->addInterpolationInt((zS32*)&y,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,20000,NULL,-1,-1,0.2f);
-    //node->addInterpolationInt(&yspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,1000,NULL,-1,-1,0);
-    //node->addInterpolationInt(&xspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,1000,NULL,-1,-1,0);
     node->addReplicationInt((zS32*)&ropestate,3,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
     node->addReplicationInt((zS32*)&ropex,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
     node->addReplicationInt((zS32*)&ropey,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
     node->addReplicationInt((zS32*)&ropexspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
     node->addReplicationInt((zS32*)&ropeyspd,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,300,-1);
-    node->addReplicationInt((zS32*)&aim,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,99,-1,-1);
     node->addReplicationInt((zS32*)&dir,2,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_PROXY,99,-1,-1);
+    node->addReplicationInt((zS32*)&health,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
+    node->addReplicationBool(&active,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_AUTH_2_ALL,false,-1,-1 );
+    node->addReplicationInt((zS32*)&team,8,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
+    //node->addReplicationInt((zS32*)&weap[0].ammo,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
+  
+    //Owner replication items
+    node->addReplicationInt((zS32*)&aim,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,99,-1,-1);
+    node->addReplicationInt((zS32*)&color,32,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1 );
+    node->addReplicationString(name,32,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY," ",-1,-1 );
+    
+    //Keys structure replication
     node->addReplicationBool(&keys->fire,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
     node->addReplicationBool(&keys->left,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
     node->addReplicationBool(&keys->right,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
@@ -365,37 +393,136 @@ worm::worm()
     node->addReplicationBool(&keys->down,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
     node->addReplicationBool(&keys->jump,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
     node->addReplicationBool(&keys->change,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
-    node->addReplicationBool(&active,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_AUTH_2_ALL,false,-1,-1 );
-    node->addReplicationInt((zS32*)&curr_weap,8,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1);
-    //node->addReplicationInt((zS32*)&weap[0].ammo,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
-    node->addReplicationInt((zS32*)&health,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
-    node->addReplicationInt((zS32*)&color,32,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1 );
-    for(o=0;o<5;o++)
-      node->addReplicationInt((zS32*)&weap[o].weap,32,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1 );
-    node->addReplicationString(name,32,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY," ",-1,-1 );
-    node->addReplicationInt((zS32*)&team,8,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
     
-    node->endReplicationSetup();
+    //Weapons replication
+    node->addReplicationInt((zS32*)&curr_weap,8,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1);
+    for(int i=0;i<5;i++)
+      node->addReplicationInt((zS32*)&weap[i].weap,32,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1 );
+    
+  node->endReplicationSetup();
 
-    if(srv)
-    {
-      if(!node->registerNodeDynamic(player_classid, srv))
-      allegro_message("unable to register player node");
-    };
-    if(cli)
-    {
-      if(!node->registerRequestedNode(player_classid, cli))
-      allegro_message("was unable to create the player node");
-    };
-      
-      node->applyForZoidLevel(2);
+  if(is_authority)
+  {
+    if(!node->registerNodeDynamic(player_classid, srv))
+    allegro_message("unable to register player node");
+  }else
+  {
+    if(!node->registerRequestedNode(player_classid, cli))
+    allegro_message("was unable to create the player node");
+  };
+    
+  node->applyForZoidLevel(2);
 };
 
-worm::~worm()
+void worm::walk(int direction,int acceleration, int maxspeed)
 {
-  delete node;
-  free (keys);
-  free (weap);
+  dir=direction;
+  if (dir*xspd<maxspeed)
+  {
+    xspd+=acceleration*dir;
+  };
+  curr_frame+=120;
+  if (curr_frame>=3000) curr_frame=0;
+};
+
+void worm::dig(exp_type *hole)
+{
+  int x2,y2;
+  x2=fixtoi(fixsin(ftofix(aim/1000.))*2000)*dir;
+  y2=fixtoi(fixcos(ftofix(aim/1000.))*2000);
+  create_exp(x+x2,y-4000+y2,hole);
+  x2=fixtoi(fixsin(ftofix(aim/1000.))*4000)*dir;
+  y2=fixtoi(fixcos(ftofix(aim/1000.))*4000);
+  create_exp(x+x2,y-4000+y2,hole);
+  x2=fixtoi(fixsin(ftofix(aim/1000.))*6000)*dir;
+  y2=fixtoi(fixcos(ftofix(aim/1000.))*6000);
+  create_exp(x+x2,y-4000+y2,hole);
+  flag3=true;
+};
+
+void worm::jump(int jump_force)
+{
+  int g; 
+  
+  if (getpixel(map->material,x/1000,(y+yspd-4500)/1000)==3)
+  {
+    yspd+=47;
+  }else
+  {
+    g=getpixel(map->material,x/1000,(y+yspd)/1000+1);
+    if (!map->mat[g+1].worm_pass)
+    {
+        yspd-= jump_force;//*WORM_JUMP_FORCE;
+        //allegro_message("%d",player[i]->yspd);
+    };
+  };
+};
+
+void worm::shoot()
+{
+  if (weap[curr_weap].shoot_time==0)//>weaps->num[weap[curr_weap].weap]->shoot_times)
+  if (weap[curr_weap].ammo>0 || weaps->num[weap[curr_weap].weap]->ammo==0)
+  if ((!fireing && weaps->num[weap[curr_weap].weap]->autofire!=1) || weaps->num[weap[curr_weap].weap]->autofire==1)
+  {
+    if (!fireing)
+    {
+      weap[curr_weap].start_delay=weaps->num[weap[curr_weap].weap]->start_delay;
+      if(weaps->num[weap[curr_weap].weap]->start_sound!=NULL)play_sample(weaps->num[weap[curr_weap].weap]->start_sound->snd, *game->VOLUME, 127, 1000, 0);
+    };
+    if (weap[curr_weap].start_delay>0)weap[curr_weap].start_delay--;
+    fireing=true;        
+    if (weap[curr_weap].start_delay==0)
+    {
+      if(srv) shooteventsend();
+      weap[curr_weap].ammo--;
+      if (weaps->num[weap[curr_weap].weap]->shoot_num!=0)
+      {
+        int dist,spd_rnd,xof,yof;
+        
+        for (int i=0;i<weaps->num[weap[curr_weap].weap]->shoot_num;i++)
+        {
+          dist=((rand()%1000)*weaps->num[weap[curr_weap].weap]->distribution)-weaps->num[weap[curr_weap].weap]->distribution/2*1000;
+          if (weaps->num[weap[curr_weap].weap]->shoot_spd_rnd!=0)
+            spd_rnd=(rand()%weaps->num[weap[curr_weap].weap]->shoot_spd_rnd)-weaps->num[weap[curr_weap].weap]->shoot_spd_rnd/2;
+          else spd_rnd=0;
+          xof=fixtoi(fixsin(ftofix((aim-dist)/1000.))*(weaps->num[weap[curr_weap].weap]->shoot_obj->detect_range+1000))*dir;
+          yof=fixtoi(fixcos(ftofix((aim-dist)/1000.))*(weaps->num[weap[curr_weap].weap]->shoot_obj->detect_range+1000));
+          partlist.shoot_part(aim-dist,weaps->num[weap[curr_weap].weap]->shoot_spd-spd_rnd,dir,x+xof,y-4000+yof,(xspd*weaps->num[weap[curr_weap].weap]->affected_motion)/1000,(yspd*weaps->num[weap[curr_weap].weap]->affected_motion)/1000,this->local_slot,weaps->num[weap[curr_weap].weap]->shoot_obj);
+        };
+        if (weaps->num[weap[curr_weap].weap]->aim_recoil!=0)
+          aim_recoil_speed+=(100*weaps->num[weap[curr_weap].weap]->aim_recoil);/*-weaps->num[weap[curr_weap].weap]->aim_recoil/2*1000;*/
+        if (weaps->num[weap[curr_weap].weap]->recoil!=0)
+        {
+          xspd = xspd + -fixtoi(fixsin(ftofix(aim/1000.))*weaps->num[weap[curr_weap].weap]->recoil)*dir;
+          yspd = yspd + -fixtoi(fixcos(ftofix(aim/1000.))*weaps->num[weap[curr_weap].weap]->recoil);
+        };
+      };
+      weap[curr_weap].shoot_time=weaps->num[weap[curr_weap].weap]->shoot_times+1;
+      firecone_time=weaps->num[weap[curr_weap].weap]->firecone_timeout;
+      curr_firecone=weaps->num[weap[curr_weap].weap]->firecone;
+      if (weaps->num[weap[curr_weap].weap]->shoot_sound!=NULL)
+      {
+        //if (weap->loop_sound!=1)
+        play_sample(weaps->num[weap[curr_weap].weap]->shoot_sound->snd, *game->VOLUME, 127, 1000, 0);
+        /*else if (!sound_loop)
+        {
+        play_sample(weap->shoot_sound->snd, 255, 127, 1000, 1);
+        sound_loop=true;
+        };*/
+      };
+    };
+  };
+  if (weap[curr_weap].ammo==0 && !fireing)
+  {
+    fireing=true;
+    if(weaps->num[weap[curr_weap].weap]->noammo_sound!=NULL)
+      play_sample(weaps->num[weap[curr_weap].weap]->noammo_sound->snd, *game->VOLUME, 127, 1000, 0);
+    /*if (weap[curr_weap].shoot_time>weaps->num[weap[curr_weap].weap]->shoot_times)
+    {
+      weap[curr_weap].shoot_time=0;
+    };*/
+      
+  };
 };
 
 void worm::render(BITMAP* where, int frame, int _x, int _y)
@@ -478,8 +605,8 @@ void worm::shootrope()
 {
 	ropex=x;
 	ropey=y-4000; 
-	ropexspd=fixtof(fixsin(ftofix(aim/1000.)))*3500*dir;
-	ropeyspd=fixtof(fixcos(ftofix(aim/1000.)))*3500;
+	ropexspd=fixtoi(fixsin(ftofix(aim/1000.))*3500)*dir;
+	ropeyspd=fixtoi(fixcos(ftofix(aim/1000.))*3500);
 	rope_length=*game->ROPE_LENGHT;
 	ropestate=1;
 };

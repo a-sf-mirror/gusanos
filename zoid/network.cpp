@@ -1,4 +1,9 @@
 #include "network.h"
+#include "engine.h"
+#include "player.h"
+#include "level.h"
+#include "console.h"
+#include <string>
 
 Client *cli;
 Server *srv;
@@ -47,6 +52,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
       //players where requested
       // spawn new playerobject
       player[player_count] = new worm;
+      player[player_count]->init_node(true);
       sprintf(tmpstr, "NEW PLAYER CREATED AS INDEX %d", player_count);
       con->log.create_msg(tmpstr);
       player[player_count]->id = _id;
@@ -58,6 +64,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
       {
         //Client is playing splitscreen so we create another player for him :)
         player[player_count] = new worm;
+        player[player_count]->init_node(true);
         sprintf(tmpstr, "NEW PLAYER CREATED AS INDEX %d", player_count);
         con->log.create_msg(tmpstr);
         player[player_count]->id = _id;
@@ -70,10 +77,6 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
   };
 };
 
-// update the four random moving objects
-/*void Server::update()
-{
-}*/
 
 // called on incoming connections
 bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
@@ -264,8 +267,9 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
       con->log.create_msg(tmpstr);
       if (player[player_count]) delete player[player_count];
       player[player_count] = new worm;
+      player[player_count]->init_node(false);
       player[player_count]->islocal=true;
-      player[player_count]->local_slot=local_players;
+      player[player_count]->local_slot=player_count;
       if (local_players<2)local_player[local_players]=player_count;
       change_nick(local_players);
       player_count++;
@@ -276,6 +280,8 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
       con->log.create_msg(tmpstr);
       if (player[player_count]) delete player[player_count];
       player[player_count]=new worm;
+      player[player_count]->init_node(false);
+      player[player_count]->local_slot=player_count;
       player_count++;
     };
 	};

@@ -1,5 +1,6 @@
 #include "sprites.h"
 #include "level.h"
+#include <string>
 
 class spritelist *sprites;
 

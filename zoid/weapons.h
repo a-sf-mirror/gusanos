@@ -1,19 +1,11 @@
 #ifndef WEAPONS_H
 #define WEAPONS_H
 
-#include <ctype.h>
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include <time.h>
-#include "engine.h"
-
-#include <iostream>
 #include <fstream>
-#include <string>
 
-using std::ifstream;
+class sprite;
+class sound;
 
 //forward
 class sound;
@@ -43,6 +35,14 @@ class weap_list
 	weap_list();
   ~weap_list();
 	void destroy();
+};
+
+class s_playerweap
+{
+  public:
+  int weap;
+  int ammo,shoot_time,reload_time,start_delay;
+  bool reloading;
 };
 
 extern class weap_list *weaps;

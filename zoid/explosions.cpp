@@ -1,4 +1,20 @@
 #include "explosions.h"
+#include "level.h"
+#include "particles.h"
+#include "sounds.h"
+#include "player.h"
+#include "water.h"
+#include "render.h"
+#include "engine.h"
+#include "sprites.h"
+#include "lights.h"
+#ifdef AAFBLEND
+  #include <fblend.h>
+#endif
+
+
+#include <fstream>
+using std::ifstream;
 
 class exp_type_list *exp_types;
 class exp_list *exps;
@@ -286,9 +302,9 @@ void create_exp(int x,int y,class exp_type *type)
               if (exps->end->type->blow_away!=0)
               {
                 tmp->yspd+=((((exps->end->type->blow_away*dy)/m)*tmp->type->affected_by_explosions)/tmp->type->laser_type)/1000;
-                tmp->yspd*=exps->end->type->spd_multiply/1000.;
+                tmp->yspd=(tmp->yspd*exps->end->type->spd_multiply)/1000;
                 tmp->xspd+=((((exps->end->type->blow_away*dx)/m)*tmp->type->affected_by_explosions)/tmp->type->laser_type)/1000;
-                tmp->xspd*=exps->end->type->spd_multiply/1000.;
+                tmp->xspd=(tmp->xspd*exps->end->type->spd_multiply)/1000;
               };
             };
           };
@@ -322,7 +338,7 @@ void create_exp(int x,int y,class exp_type *type)
       if (getpixel(map->material,exps->end->x/1000,exps->end->y/1000)!=-1)
       {
         int c;
-        c=512/(exps->end->type->light_fadeness/100.)+1;
+        c=51200/exps->end->type->light_fadeness+1;
         exps->end->light=create_bitmap(c,c);
         clear_to_color(exps->end->light,0);
         if(exps->end->type->light_effect==1)
@@ -391,7 +407,7 @@ void dig_hole(BITMAP* image,int x,int y)
           putpixel(map->material,x+x2,y+y2,1);
           if(map->has_water) check_hole_sides(x+x2,y+y2);
           putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
-          partlist.create_part((x+x2)*1000+500,(y+y2)*1000+500,0, 0, NULL,map->mat[m].chreact);
+          partlist.create_part((x+x2)*1000+500,(y+y2)*1000+500,0, 0, -1,map->mat[m].chreact);
           //check_sunlight(x+x2,y+y2);
         };
         if (map->mat[m].destroyable)

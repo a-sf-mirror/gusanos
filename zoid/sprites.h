@@ -1,13 +1,7 @@
 #ifndef SPRITES_H
 #define SPRITES_H
+
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-//#include "engine.h"
-#include <iostream>
-#include <fstream>
-#include <string>
 
 class sprite
 {

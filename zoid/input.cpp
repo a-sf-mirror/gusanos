@@ -1,5 +1,11 @@
 #include "input.h"
-
+#include "player.h"
+#include "weapons.h"
+#include "engine.h"
+#include "sounds.h"
+#include "console.h"
+#include "network.h"
+#include "particles.h"
 
 void randomize_weap(struct worm *player,int o)
 {
@@ -122,45 +128,25 @@ void engine::input()
   else
   for (i=0;i<player_count;i++)
   if (player[i]->active) {
+    
     //if(player[i]->islocal)
     if (player[i]->keys->right && !player[i]->keys->left && !player[i]->keys->change)
     {
       player[i]->flagright=true;
-      player[i]->dir=1;
-      if (player[i]->xspd<*MAX_SPEED)
-      {
-        player[i]->xspd+=+*ACELERATION;
-      };
-      player[i]->curr_frame+=120;
+      player[i]->walk(1,*ACELERATION,*MAX_SPEED);
     };
     //if(player[i]->islocal);
     if (player[i]->keys->left && !player[i]->keys->right && !player[i]->keys->change)
     {
       player[i]->flagleft=true;
-      player[i]->dir=-1;
-      if (player[i]->xspd>-*MAX_SPEED)
-      {
-        player[i]->xspd-=*ACELERATION;
-      };
-      player[i]->curr_frame+=120;
+      player[i]->walk(-1,*ACELERATION,*MAX_SPEED);
     };
-    if (player[i]->curr_frame>=3000) player[i]->curr_frame=0;
     
     if(!cli)
     if (player[i]->keys->left && player[i]->keys->right && !player[i]->keys->change && !player[i]->flag3)
     {
-      int x2,y2;
-      x2=fixtof(fixsin(ftofix(player[i]->aim/1000.)))*2000*player[i]->dir;
-      y2=fixtof(fixcos(ftofix(player[i]->aim/1000.)))*2000;
-      create_exp(player[i]->x+x2,player[i]->y-4000+y2,worm_hole);
-      x2=fixtof(fixsin(ftofix(player[i]->aim/1000.)))*4000*player[i]->dir;
-      y2=fixtof(fixcos(ftofix(player[i]->aim/1000.)))*4000;
-      create_exp(player[i]->x+x2,player[i]->y-4000+y2,worm_hole);
-      x2=fixtof(fixsin(ftofix(player[i]->aim/1000.)))*6000*player[i]->dir;
-      y2=fixtof(fixcos(ftofix(player[i]->aim/1000.)))*6000;
-      create_exp(player[i]->x+x2,player[i]->y-4000+y2,worm_hole);
+      player[i]->dig(worm_hole);
       if (srv) player[i]->send_dig();
-      player[i]->flag3=true;
     };
     
     if (!player[i]->keys->left && !player[i]->keys->right)
@@ -196,97 +182,22 @@ void engine::input()
     if(!cli)
     if (player[i]->keys->jump && !player[i]->keys->change)
     {
-      int g; 
-      
-      if (getpixel(map->material,player[i]->x/1000,(player[i]->y+player[i]->yspd-4500)/1000)==3)
-      {
-        player[i]->yspd+=47;
-      }else
-      {
-        g=getpixel(map->material,player[i]->x/1000,(player[i]->y+player[i]->yspd)/1000+1);
-        if (!map->mat[g+1].worm_pass)
-        {
-          player[i]->yspd-= *WORM_JUMP_FORCE;
-          //allegro_message("%d",player[i]->yspd);
-        };
-      };
+      player[i]->jump(*WORM_JUMP_FORCE);
       if (!player[i]->ropeflag)
       player[i]->ropestate=0;
     };
     if(!cli)
     if (player[i]->keys->fire && !player[i]->keys->change)
     {
-      if (player[i]->weap[player[i]->curr_weap].shoot_time==0)//>weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_times)
-      if (player[i]->weap[player[i]->curr_weap].ammo>0 || weaps->num[player[i]->weap[player[i]->curr_weap].weap]->ammo==0)
-      if ((!player[i]->fireing && weaps->num[player[i]->weap[player[i]->curr_weap].weap]->autofire!=1) || weaps->num[player[i]->weap[player[i]->curr_weap].weap]->autofire==1)
-      {
-        if (!player[i]->fireing)
-        {
-          player[i]->weap[player[i]->curr_weap].start_delay=weaps->num[player[i]->weap[player[i]->curr_weap].weap]->start_delay;
-          if(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->start_sound!=NULL)play_sample(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->start_sound->snd, *VOLUME, 127, 1000, 0);
-        };
-        if (player[i]->weap[player[i]->curr_weap].start_delay>0)player[i]->weap[player[i]->curr_weap].start_delay--;
-        player[i]->fireing=true;        
-        if (player[i]->weap[player[i]->curr_weap].start_delay==0)
-        {
-          if(srv) player[i]->shooteventsend();
-          player[i]->weap[player[i]->curr_weap].ammo--;
-          if (weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_num!=0)
-          {
-            int dist,spd_rnd,xof,yof;
-            
-            for (h=0;h<weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_num;h++)
-            {
-              dist=((rand()%1000)*weaps->num[player[i]->weap[player[i]->curr_weap].weap]->distribution)-weaps->num[player[i]->weap[player[i]->curr_weap].weap]->distribution/2*1000;
-              if (weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_spd_rnd!=0)
-                spd_rnd=(rand()%weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_spd_rnd)-weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_spd_rnd/2;
-              else spd_rnd=0;
-              xof=fixtof(fixsin(ftofix((player[i]->aim-dist)/1000.)))*(int)(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_obj->detect_range+1000)*player[i]->dir;
-              yof=fixtof(fixcos(ftofix((player[i]->aim-dist)/1000.)))*(int)(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_obj->detect_range+1000);
-              partlist.shoot_part(player[i]->aim-dist,weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_spd-spd_rnd,player[i]->dir,player[i]->x+xof,player[i]->y-4000+yof,player[i]->xspd*(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->affected_motion/1000.),player[i]->yspd*(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->affected_motion/1000.),i,weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_obj);
-            };
-            if (weaps->num[player[i]->weap[player[i]->curr_weap].weap]->aim_recoil!=0)
-              player[i]->aim_recoil_speed+=(100*weaps->num[player[i]->weap[player[i]->curr_weap].weap]->aim_recoil);/*-weaps->num[player[i]->weap[player[i]->curr_weap].weap]->aim_recoil/2*1000;*/
-            if (weaps->num[player[i]->weap[player[i]->curr_weap].weap]->recoil!=0)
-            {
-              player[i]->xspd = player[i]->xspd + -fixtof(fixsin(ftofix(player[i]->aim/1000.)))*weaps->num[player[i]->weap[player[i]->curr_weap].weap]->recoil*player[i]->dir;
-              player[i]->yspd = player[i]->yspd + -fixtof(fixcos(ftofix(player[i]->aim/1000.)))*weaps->num[player[i]->weap[player[i]->curr_weap].weap]->recoil;
-            };
-          };
-          player[i]->weap[player[i]->curr_weap].shoot_time=weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_times+1;
-          player[i]->firecone_time=weaps->num[player[i]->weap[player[i]->curr_weap].weap]->firecone_timeout;
-          player[i]->curr_firecone=weaps->num[player[i]->weap[player[i]->curr_weap].weap]->firecone;
-          if (weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_sound!=NULL)
-          {
-            //if (player[i]->weap->loop_sound!=1)
-            play_sample(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_sound->snd, *VOLUME, 127, 1000, 0);
-            /*else if (!player[i]->sound_loop)
-            {
-            play_sample(player[i]->weap->shoot_sound->snd, 255, 127, 1000, 1);
-            player[i]->sound_loop=true;
-            };*/
-          };
-        };
-      };
-      if (player[i]->weap[player[i]->curr_weap].ammo==0 && !player[i]->fireing)
-      {
-        player[i]->fireing=true;
-        if(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->noammo_sound!=NULL)
-          play_sample(weaps->num[player[i]->weap[player[i]->curr_weap].weap]->noammo_sound->snd, *VOLUME, 127, 1000, 0);
-        /*if (player[i]->weap[player[i]->curr_weap].shoot_time>weaps->num[player[i]->weap[player[i]->curr_weap].weap]->shoot_times)
-        {
-          player[i]->weap[player[i]->curr_weap].shoot_time=0;
-        };*/
-          
-      };
+      player[i]->shoot();
     }else
     {
       if(player[i]->fireing && weaps->num[player[i]->weap[player[i]->curr_weap].weap]->create_on_release!=NULL && player[i]->weap[player[i]->curr_weap].start_delay==0)
-        partlist.create_part(player[i]->x,player[i]->y-4000,0,0,NULL,weaps->num[player[i]->weap[player[i]->curr_weap].weap]->create_on_release);
+        partlist.create_part(player[i]->x,player[i]->y-4000,0,0,-1,weaps->num[player[i]->weap[player[i]->curr_weap].weap]->create_on_release);
       player[i]->fireing=false;
     };
-    if (player[i]->aim>128000) player[i]->aim=128000;
-    if (player[i]->aim<24000) player[i]->aim=24000;
+    /*if (player[i]->aim>128000) player[i]->aim=128000;
+    if (player[i]->aim<24000) player[i]->aim=24000;*/
     
     /*if (!key[player[i]->keys->fire] && player[i]->sound_loop)
     {

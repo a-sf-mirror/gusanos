@@ -1,25 +1,12 @@
 #ifndef EXPLOSIONS_H
 #define EXPLOSIONS_H
 
-#include <ctype.h>
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include <time.h>
-#include "particles.h"
-#include "engine.h"
-#include "sounds.h"
 
-#ifdef AAFBLEND
-#include <fblend.h>
-#endif
+class sprite;
+class sound;
 
-#include <iostream>
-#include <fstream>
-#include <string>
 
-using std::ifstream;
 
 class exp_type
 {

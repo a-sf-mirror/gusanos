@@ -2,12 +2,6 @@
 #define LIGHT_H
 
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include "sprites.h"
-#include "engine.h"
-#include "level.h"
 
 struct s_seg_border
 {

@@ -1,4 +1,13 @@
 #include "weapons.h"
+#include "sounds.h"
+#include "sprites.h"
+#include "particles.h"
+#include "engine.h"
+
+#include <fstream>
+#include <string>
+
+using std::ifstream;
 
 class weap_list *weaps;
   

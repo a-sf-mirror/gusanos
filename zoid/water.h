@@ -1,10 +1,8 @@
 #ifndef WATER_H
 #define WATER_H
+
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include "engine.h"
+
 
 struct s_water
 {

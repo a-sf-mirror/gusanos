@@ -1,4 +1,5 @@
 #include "text.h"
+#include <string>
 
 char *ucase(const char *str) 
 {

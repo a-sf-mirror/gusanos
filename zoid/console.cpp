@@ -1,4 +1,13 @@
 #include "console.h"
+#include "player.h"
+#include "engine.h"
+#include "keys.h"
+#include "text.h"
+#include <fstream>
+
+using std::fstream;
+
+using std::ifstream;
 
 struct console* con; 
 

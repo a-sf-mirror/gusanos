@@ -2,10 +2,8 @@
 #define NETWORK_H
 
 #include <zoidcom.h>
-#include <string.h>
-#include <stdlib.h>
 #include <allegro.h>
-#include "console.h"
+
 
 class Server : public ZCom_Control
 {

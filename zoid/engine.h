@@ -1,26 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <ctype.h>
 #include <allegro.h>
-#ifdef WINDOWS
-#include "winalleg.h"
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "console.h"
-#include "water.h"
-#include "sprites.h"
-#include "sounds.h"
-#include "particles.h"
-#include "explosions.h"
-#include "weapons.h"
-#include "level.h"
-#include "player.h"
-#include "network.h"
-#include "render.h"
 #include <zoidcom.h>
 #ifdef AA2XSAI
 extern "C" {
@@ -28,22 +9,18 @@ extern "C" {
 }
 #endif
 
+class worm;
+class exp_type;
+class sound;
+class level;
 
 extern volatile int speed_counter;
 extern volatile int t;
 
 extern ZCom_ClassID  game_classid;
 
-class exp_type;
 
 void recharge_weapons( worm* player);
-
-struct s_playerweap
-{
-  int weap;
-  int ammo,shoot_time,reload_time,start_delay;
-  bool reloading;
-};
 
 /*struct s_water
 {
@@ -118,8 +95,8 @@ struct engine
   //
 	sound *death,*respawn,*throwrope,*bump,*gstart,*menu_move,*menu_select,*breath;
 	bool selecting;
-	 exp_type *exp1;
-	 exp_type *worm_hole;
+	exp_type *exp1;
+	exp_type *worm_hole;
 	int w,sync_mode;
 	char mod[1024],level[1024];
   bool host,client,split_screen;

@@ -1,5 +1,7 @@
 #include "sounds.h"
 #include "level.h"
+#include "engine.h"
+#include <string>
 
 class sound_list *sounds;
 

@@ -1,7 +1,23 @@
 #include "render.h"
+#include "player.h"
+#include "weapons.h"
+#include "text.h"
+#include "particles.h"
+#include "console.h"
 #include "lights.h"
+#include "explosions.h"
+#include "engine.h"
+#include "level.h"
+#include "sprites.h"
 
-
+#ifdef AAFBLEND
+  #include <fblend.h>
+#endif
+#ifdef AA2XSAI
+extern "C" {
+  #include "2xsai.h"
+}
+#endif
 
 int video_filter=0;
 BITMAP* screen_buffer;
@@ -21,8 +37,8 @@ bool CanBeSeen(int x, int y, int w, int h)
 void render_lasersight(worm *player)
 {
   int xadd,yadd,x,y,i,i2,g;
-	xadd=fixtof(fixsin(ftofix(player->aim/1000.))) * 1000 * player->dir;
-	yadd=fixtof(fixcos(ftofix(player->aim/1000.))) * 1000;
+	xadd=fixtoi(fixsin(ftofix(player->aim/1000.))* 1000)  * player->dir;
+	yadd=fixtoi(fixcos(ftofix(player->aim/1000.))* 1000) ;
   x=player->x;
   y=(player->y/1000);
   y=y*1000-3500;
@@ -103,7 +119,7 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
     if (*pl_options[_player].HEALTH_DRAW_MODE==0)
     {
       int c;
-      c=((p->health*1.)/ *game->MAX_HEALTH)*255;
+      c=((p->health*255)/ *game->MAX_HEALTH);
       draw_bar(where,30,2, viewport.x+11, viewport.y+5, *game->MAX_HEALTH, p->health, makecol(255-c,c,0));
     }else 
     {
@@ -113,12 +129,12 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
     draw_sprite(where,game->ammo->img[0],viewport.x+46,viewport.y+4);
     if (p->weap[p->curr_weap].reloading)
     {
-      b=((p->weap[p->curr_weap].reload_time*1.)/ weaps->num[p->weap[p->curr_weap].weap]->reload_time)*255;
+      b=((p->weap[p->curr_weap].reload_time*255)/ weaps->num[p->weap[p->curr_weap].weap]->reload_time);
       draw_bar(where,30,2, viewport.x+53, viewport.y+5, weaps->num[p->weap[p->curr_weap].weap]->reload_time, weaps->num[p->weap[p->curr_weap].weap]->reload_time-p->weap[p->curr_weap].reload_time, makecol(b,255-b,0));
       game->fonty->draw_string(where,"RELOADING",viewport.x+47,viewport.y+9,false);
     }else
     {
-      b=((p->weap[p->curr_weap].ammo*1.)/ weaps->num[p->weap[p->curr_weap].weap]->ammo)*255;
+      b=((p->weap[p->curr_weap].ammo*255)/ weaps->num[p->weap[p->curr_weap].weap]->ammo);
       draw_bar(where,30,2, viewport.x+53, viewport.y+5, weaps->num[p->weap[p->curr_weap].weap]->ammo, p->weap[p->curr_weap].ammo, makecol(255-b,b,0));
     };
     sprintf(ints, "%d",p->deaths);
@@ -128,8 +144,8 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
     if (p->active && p->air<*game->AIR_CAPACITY-*game->AIR_CAPACITY/6) draw_bar(where,16,1, viewport.x+(p->x/1000-p->xview)-8, viewport.y+p->y/1000-p->yview+2, *game->AIR_CAPACITY-*game->AIR_CAPACITY/6, p->air, makecol(255,255,255));
 
     if (p->active){
-      p->crosshx=(p->x/1000)+fixtof(fixsin(ftofix(p->aim/1000.)))*p->crossr*p->dir-p->xview;
-      p->crosshy=(p->y/1000)-4+fixtof(fixcos(ftofix(p->aim/1000.)))*p->crossr-p->yview;
+      p->crosshx=(p->x/1000)+fixtoi(fixsin(ftofix(p->aim/1000.))*p->crossr)*p->dir-p->xview;
+      p->crosshy=(p->y/1000)-4+fixtoi(fixcos(ftofix(p->aim/1000.))*p->crossr)-p->yview;
       masked_blit(p->crosshair->img[0],where,0,0,viewport.x+p->crosshx-p->crosshair->img[0]->w/2,viewport.y+p->crosshy-p->crosshair->img[0]->h/2,p->crosshair->img[0]->w,p->crosshair->img[0]->h);
     };
 
@@ -238,14 +254,14 @@ void engine::render()
 				//draw_sprite_h_flip(map->buffer,player[i]->skin->img[(((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7],player[i]->x / 1000 - 9,(player[i]->y / 1000)-8);
         player[i]->render_flip(map->buffer, (((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7, player[i]->x / 1000 - 9, (player[i]->y / 1000)-8);
         if(player[i]->curr_firecone!=NULL && player[i]->firecone_time>0)
-        draw_sprite_h_flip(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtof(fixsin(ftofix(player[i]->aim/1000.)))*-5 - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtof(fixcos(ftofix(player[i]->aim/1000.)))*5 -4 - player[i]->curr_firecone->img[0]->h/2);
+        draw_sprite_h_flip(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtoi(fixsin(ftofix(player[i]->aim/1000.))*-5) - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtoi(fixcos(ftofix(player[i]->aim/1000.))*5) -4 - player[i]->curr_firecone->img[0]->h/2);
 			}
 			else
 			{
 				//draw_sprite(map->buffer,player[i]->skin->img[(((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7],player[i]->x / 1000 - 6,(player[i]->y / 1000)-8);
         player[i]->render(map->buffer, (((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7, player[i]->x / 1000 - 6, (player[i]->y / 1000)-8);
         if(player[i]->curr_firecone!=NULL && player[i]->firecone_time>0)
-        draw_sprite(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtof(fixsin(ftofix(player[i]->aim/1000.)))*5 - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtof(fixcos(ftofix(player[i]->aim/1000.)))*5 -4 - player[i]->curr_firecone->img[0]->h/2);
+        draw_sprite(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtoi(fixsin(ftofix(player[i]->aim/1000.))*5) - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtoi(fixcos(ftofix(player[i]->aim/1000.))*5) -4 - player[i]->curr_firecone->img[0]->h/2);
 			};
 		};
 	};
@@ -270,7 +286,7 @@ void engine::render()
     p=player[local_player[i]];
     if (*MAP_SHOW_MODE!=1 || !smallmap)
     {
-      set_clip(buffer,viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h);
+      set_clip_rect(buffer,viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h);
       if (p->flash<=25500)
       {
         if(map->paralax!=NULL)
@@ -321,7 +337,7 @@ void engine::render()
     if (!game->selecting)
     draw_hud(buffer,i,viewport[i]);
   };
-	set_clip(buffer,0,0,320,240);
+	set_clip_rect(buffer,0,0,320,240);
 	/******HUD*******/
   if (game->selecting)
     render_weapon_selection_menu(buffer);
@@ -411,8 +427,8 @@ void engine::minimap()
       if (player[i]->active)
       {
         //Calculate position
-        int x = ((float)MINIWIDTH / (float)mapwidth) * ((float) player[i]->x / 1000);
-        int y = ((float)MINIHEIGHT / (float)mapheight) * ((float) player[i]->y / 1000);
+        int x = (MINIWIDTH * player[i]->x) / (mapwidth * 1000);
+        int y = (MINIHEIGHT*player[i]->y) / (mapheight * 1000);
         putpixel(buffer, x + MINIX, y + MINIY, player[i]->color);
         putpixel(buffer, x + MINIX + 1, y + MINIY + 1, player[i]->color);
         putpixel(buffer, x + MINIX + 1, y + MINIY, player[i]->color);

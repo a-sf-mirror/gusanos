@@ -1,4 +1,14 @@
 #include "level.h"
+#include "particles.h"
+#include "engine.h"
+#include "text.h"
+#include "lights.h"
+#include "console.h"
+#include "network.h"
+#include "player.h"
+#include "explosions.h"
+#include "water.h"
+#include <string>
 
 class level* map;
 
@@ -366,7 +376,7 @@ void load_map_config()
           for(j=x;(val[j]!=',') && (j < strlen(val));j++);
           Y=atoi(strmid(val,x,j-x));
           x=j+1;
-          partlist.create_part(X*1000,Y*1000,0,0,NULL,tmppart);
+          partlist.create_part(X*1000,Y*1000,0,0,-1,tmppart);
         }
         else if (strcmp("spawnpoint",var)==0)
         {
@@ -420,6 +430,7 @@ void change_level()
         game->teamplay=true;
       else game->teamplay=false;
       player[0]=new worm;
+      player[0]->init_node(true);
       player[0]->islocal=true;
       player[0]->local_slot=local_players;
       local_player[local_players]=player_count;
@@ -429,6 +440,7 @@ void change_level()
       if(*game->SPLIT_SCREEN==1)
       {
         player[1]=new worm;
+        player[1]->init_node(true);
         player[1]->islocal=true;
         player[1]->local_slot=local_players;
         local_player[local_players]=player_count;

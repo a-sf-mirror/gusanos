@@ -4,6 +4,8 @@
 // which is used to store the stagnated water.
 
 #include "water.h"
+#include "engine.h"
+#include "level.h"
 
 struct s_water *water;
 struct s_water_spawn water_spawn[1000];

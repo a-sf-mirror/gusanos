@@ -1,4 +1,6 @@
 #include "lights.h"
+#include "level.h"
+#include "engine.h"
 
 bool obstacle;
 BITMAP *lightbuff=NULL;
@@ -119,7 +121,7 @@ void obs_light(BITMAP *where, int x, int y, int d)
 
     dx= abs(x_origin-x);
     dy= abs(y_origin-y);
-    i=fixtoi(fixhypot(itofix(dx),itofix(dy)))*(fadeness/100.);
+    i=(fixtoi(fixhypot(itofix(dx),itofix(dy)))*fadeness)/100;
     if (randomness!=0)i+=rand()%randomness;
     col=255-i;
     drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
@@ -158,7 +160,7 @@ void render_light( int x, int y, int r, int g, int b, int fade, int noise,BITMAP
   x_origin=x;
   y_origin=y;
   
-  c=255/(fade/100.);
+  c=25500/fade;
   bx1=x-c;
   bx2=x+c;
   by1=y-c;
@@ -229,10 +231,10 @@ void render_flashlight( int x, int y, int angle, int dir, BITMAP *where, BITMAP 
   flashlight_color=makecol(20,20,20);
   
   
-  x1=fixtof(fixcos(ftofix(angle/1000+8)))*200*dir;
-  y1=fixtof(fixsin(ftofix(angle/1000+8)))*200;
-  x2=fixtof(fixcos(ftofix(angle/1000-8)))*200*dir;
-  y2=fixtof(fixsin(ftofix(angle/1000-8)))*200;
+  x1=fixtoi(fixcos(ftofix(angle/1000+8))*200)*dir;
+  y1=fixtoi(fixsin(ftofix(angle/1000+8))*200);
+  x2=fixtoi(fixcos(ftofix(angle/1000-8))*200)*dir;
+  y2=fixtoi(fixsin(ftofix(angle/1000-8))*200);
   
   do_line(material,x+x1,y-y1,x+x2,y-y2,0,flahslight_ray);
 };
@@ -293,6 +295,7 @@ void render_sunlight( BITMAP *where, BITMAP *material)
 
 };
 
+/*
 void obs_dinsunlight(BITMAP *where, int x, int y, int d)
 {
   int dx,dy,i,col;
@@ -326,6 +329,7 @@ void check_sunlight( int x, int y)
 
 
 };
+*/
 
 void obs_exp_light(BITMAP *where, int x, int y, int d)
 {
@@ -344,7 +348,7 @@ void obs_exp_light(BITMAP *where, int x, int y, int d)
     {
       dx= abs(_x);
       dy= abs(_y);
-      i=fixtoi(fixhypot(itofix(dx),itofix(dy)))*(fadeness/100.);
+      i=(fixtoi(fixhypot(itofix(dx),itofix(dy)))*fadeness)/100;
       if (randomness)i+=rand()%randomness;
       col=255-i;
       drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
@@ -460,34 +464,34 @@ void render_lens(int x, int y, int radius, BITMAP* where, BITMAP* buf)
         y2=-_x;
         x1=(x2-_x)*prop;
         y1=(y2-_y)*prop;
-        putpixel(buf,radius+_x,radius+_y,getpixel(where,x+x2-x1,y+y2-y1));
+        putpixel(buf, (int)(radius + _x) , (int)(radius + _y) ,getpixel(where,(int)(x+x2-x1),(int)(y+y2-y1)));
         x2=-_y;
         y2=-_x;
         x1=(x2-_x)*prop;
         y1=(y2+_y)*prop;
-        putpixel(buf,radius+_x,radius-_y,getpixel(where,x+x2-x1,y+y2-y1));
+        putpixel(buf,(int)(radius+_x),(int)(radius-_y),getpixel(where,(int)(x+x2-x1),(int)(y+y2-y1)));
         x2=-_y;
         y2=_x;
         x1=(x2+_x)*prop;
         y1=(y2+_y)*prop;
-        putpixel(buf,radius-_x,radius-_y,getpixel(where,x+x2-x1,y+y2-y1));
+        putpixel(buf,(int)(radius-_x),(int)(radius-_y),getpixel(where,(int)(x+x2-x1),(int)(y+y2-y1)));
         x2=_y;
         y2=_x;
         x1=(x2+_x)*prop;
         y1=(y2-_y)*prop;
-        putpixel(buf,radius-_x,radius+_y,getpixel(where,x+x2-x1,y+y2-y1));
+        putpixel(buf,(int)(radius-_x),(int)(radius+_y),getpixel(where,(int)(x+x2-x1),(int)(y+y2-y1)));
       } else
       {
         x2=_x;
         y2=_y;
-        putpixel(buf,radius+_x,radius+_y,getpixel(where,x+x2,y+y2));
+        putpixel(buf,(int)(radius+_x),(int)(radius+_y),getpixel(where,(int)(x+x2),(int)(y+y2)));
       };
     } else
     {
-      putpixel(buf,radius+_x,radius+_y,getpixel(where,x+_x,y+_y));
-      putpixel(buf,radius+_x,radius-_y,getpixel(where,x+_x,y-_y));
-      putpixel(buf,radius-_x,radius-_y,getpixel(where,x-_x,y-_y));
-      putpixel(buf,radius-_x,radius+_y,getpixel(where,x-_x,y+_y));
+      putpixel(buf, (int)(radius+_x) , (int)(radius+_y),getpixel(where,(int)(x+_x),(int)(y+_y)));
+      putpixel(buf, (int)(radius+_x) , (int)(radius-_y),getpixel(where,(int)(x+_x),(int)(y-_y)));
+      putpixel(buf, (int)(radius-_x) , (int)(radius-_y),getpixel(where,(int)(x-_x),(int)(y-_y)));
+      putpixel(buf, (int)(radius-_x) , (int)(radius+_y),getpixel(where,(int)(x-_x),(int)(y+_y)));
     };
   };
   blit(buf,where,0,0,x-radius,y-radius,buf->w,buf->h);
@@ -505,6 +509,7 @@ void c_segments::create_segment(float x1,float x2,float y)
   segcount++;
 };
 
+/*
 void c_segments::remove_segment(int index)
 {
   segcount--;
@@ -520,7 +525,8 @@ void c_segments::move_segmentsup()
     seg[i].b1.x+=seg[i].b1.xinc;
   };
 };
-
+*/
+/*
 void render_seglight( int x, int y, int angle, int dir, BITMAP *where, BITMAP *material)
 {
   int x1,y1,x2,y2,i,_y;
@@ -595,6 +601,6 @@ void render_seglight( int x, int y, int angle, int dir, BITMAP *where, BITMAP *m
   
   //do_line(material,x+x1,y-y1,x+x2,y-y2,0,flahslight_ray);
 };
-
+*/
 
 

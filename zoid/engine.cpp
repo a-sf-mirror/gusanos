@@ -1,5 +1,17 @@
-#include "engine.h"
 
+#include "engine.h"
+#include "console.h"
+#include "network.h"
+#include "player.h"
+#include "weapons.h"
+#include "level.h"
+#include "sounds.h"
+#include "particles.h"
+#include "water.h"
+#include "render.h"
+#include "explosions.h"
+#include "sprites.h"
+#include "text.h"
 
 struct engine* game;
 ZCom_ClassID  game_classid;
@@ -67,7 +79,7 @@ void quit()
 	exit(0);
 };
 
-void recharge_weapons(struct worm* player)
+void recharge_weapons(worm* player)
 {
   int o;
   for(o=0;o<5;o++)
@@ -190,6 +202,9 @@ void engine::calcphysics()
             c--;
           };
         };
+      };
+      for(c=0;c<player_count;c++)
+      {
         if (player[c] && player[c]->active)
         {
           /****************AIR FRICTION********************/
@@ -297,7 +312,7 @@ void engine::calcphysics()
               {
                 if (player[c]->health>0)
                 play_sample(bump->snd, *VOLUME, 127, 1000, 0);
-                player[c]->xspd*=-1* (*WORM_BOUNCINESS/1000.);
+                player[c]->xspd=( player[c]->xspd * *WORM_BOUNCINESS ) / -1000;
               }
               else player[c]->xspd=0;
             };
