@@ -1,0 +1,12 @@
+#include "console.h"
+
+/////////////////////////////BindTable//////////////////////////////////
+
+BindTable::BindTable()
+{	
+}
+
+BindTable::~BindTable()
+{
+}
+
