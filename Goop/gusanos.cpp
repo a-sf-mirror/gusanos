@@ -17,6 +17,8 @@
 #include "sfx.h"
 #include "distortion.h"
 #include "player_ai.h"
+#include "gui.h"
+#include "guilist.h"
 #include "network.h"
 
 #include <string>
@@ -27,6 +29,7 @@
 using namespace std;
 
 bool quit = false;
+bool menu = true;
 int showFps;
 int showDebug;
 
@@ -40,11 +43,40 @@ string Exit(const list<string> &args)
 	return "";
 }
 
+void startGame(const std::string&)
+{
+    menu = false;
+}
+
 int main(int argc, char **argv)
 {
 	game.init();
+        gui::init();
 
 	//Font *tempFont = fontList.load("minifont.bmp");
+        BITMAP *gusLogo = gfx.loadBitmap("default/gui/gusanos.bmp");
+        gui::windowDecor = gfx.loadBitmap("default/gui/window.bmp");
+        gui::Container top;
+        gui::Window window;
+        gui::ListContainer glist;
+        gui::ListDragItem gdrag;
+        gui::ListButtonItem gstart;
+        window.setTitle("MAIN MENU");
+        window.setPosition(31, 31);
+        window.setSize(96, 64);
+
+        gstart.setText("NEW GAME");
+        gstart.setEvent(startGame);
+
+        glist.setPosition(31, 31);
+        glist.setSize(96, 64);
+        glist.setBackColor(0);
+        glist.setSelColor(makecol(63, 63, 63));
+        glist.addItem(&gstart);
+        glist.addItem(&gdrag);
+
+        window.addWidget(&glist);
+        top.addWidget(&window);
 	
 	console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
 	console.registerIntVariable("CL_SHOWDEBUG", &showDebug, 1);
@@ -68,6 +100,22 @@ int main(int argc, char **argv)
 	int _fps = 0;
 	int logicLast = 0;
 
+        //menu loop
+        while (menu)
+        {
+            if (key[KEY_ESC])
+            {
+                menu = false;
+                key[KEY_ESC] = 0;
+            }
+            rectfill(gfx.buffer, 0, 0, 319, 239, 0);
+            top.keys((bool*)key);
+            top.render();
+            blit(gusLogo, gfx.buffer, 0, 0, 319 - gusLogo->w, 239 - gusLogo->h, gusLogo->w, gusLogo->h);
+	    gfx.updateScreen();
+        }
+
+        //main game loop
 	while (!quit)
 	{
 
