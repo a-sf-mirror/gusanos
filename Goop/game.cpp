@@ -19,6 +19,7 @@
 
 #include <allegro.h>
 #include <string>
+#include <algorithm>
 #include <list>
 
 using namespace std;
@@ -29,7 +30,9 @@ string mapCmd(const list<string> &args)
 {
 	if (!args.empty())
 	{
-		game.changeLevel( *args.begin() );
+		string tmp = *args.begin();
+		std::transform(tmp.begin(), tmp.end(), tmp.begin(), (int(*)(int)) tolower);
+		game.changeLevel( tmp );
 		return "";
 	}
 	return "MAP <MAPNAME> : LOAD A MAP";
