@@ -36,6 +36,6 @@ string IntVariable::invoke(const std::list<std::string> &args)
 		return "";
 	}else
 	{
-		return m_name + " is \"" + cast<string,int>(*m_src) + '"';
+		return m_name + " IS \"" + cast<string,int>(*m_src) + '"';
 	}
 }

@@ -117,7 +117,7 @@ void Console::parse(list<string> &args, bool parseRelease)
 				addLogMsg(retString);
 			}else
 			{
-				addLogMsg("Unknown command \"" + itemName + "\"" );
+				addLogMsg("UNKNOWN COMMAND \"" + itemName + "\"" );
 			}
 		}
 	}
