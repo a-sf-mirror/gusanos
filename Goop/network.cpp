@@ -45,7 +45,9 @@ void Network::shutDown()
 
 void Network::registerInConsole()
 {
-	console.registerIntVariable("NET_SERVER_PORT", &m_serverPort, 9898);
+	console.registerVariables()
+		("NET_SERVER_PORT", &m_serverPort, 9898);
+	;
 }
 
 void Network::update()

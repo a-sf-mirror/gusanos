@@ -1,5 +1,5 @@
 CC= g++
-CFLAGS= -O3 -I ../loadpng -I ../Console
+CFLAGS= -O3 -I ../loadpng -I ../Console -fno-rtti
 LIBS= -L../Console -lpng -lz `allegro-config --libs` -lzoidcom -lgcon -lfmod
 DEFINES= 
 BIN= ../gusanos.exe
@@ -10,6 +10,7 @@ OBJECTS= gusanos.o keyboard.o gconsole.o keys.o resource_list.o sprite.o \
 	player.o player_input.o base_player.o player_options.o weapon.o weapon_type.o player_ai.o \
 	ninjarope.o gui.o guilist.o server.o client.o network.o \
 	../loadpng/loadpng.o ../loadpng/regpng.o ../loadpng/savepng.o
+	
 
 $(BIN): $(OBJECTS)
 	$(CC) -o $(BIN) $(OBJECTS) $(CFLAGS) $(LIBS)
