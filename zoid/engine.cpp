@@ -84,7 +84,8 @@ void respawn_player(struct worm* player)
 	int g,o,i,spawn_count;
 	player->health=*game->MAX_HEALTH;
 	g=-1;
-  spawn_count=0;
+  spawn_count=map->spawnpoint_count;
+  if (game->teamplay)
   for(i=0;i<map->spawnpoint_count;i++)
   {
     if (map->spawnpoint[g].team==player->team) spawn_count++;
