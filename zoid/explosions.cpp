@@ -486,9 +486,11 @@ void render_exps()
     {
       if(CanBeSeen(tmp->x/1000,tmp->y/1000,tmp->light->w,tmp->light->h))
       if(game->v_depth==32)
+	{
         #ifdef AAFBLEND
         fblend_add(tmp->light,map->buffer,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2,255-(tmp->time*255)/tmp->type->timeout);
         #endif
+	}
       else{
         drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
         set_add_blender(0,0,0,255-(tmp->time*255)/tmp->type->timeout);

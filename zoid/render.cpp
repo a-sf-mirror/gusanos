@@ -302,9 +302,11 @@ void engine::render()
         if (p->flash>0)
         {
           if(v_depth==32)
+	  {
           #ifdef AAFBLEND
           fblend_rect_trans(buffer, viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h, makecol(255,255,255)/*p->flash/100,p->flash/100,p->flash/100)*/, p->flash/100);
           #endif
+	  }
           else
           {
             drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
@@ -340,6 +342,9 @@ void engine::render()
 	line(buffer,0,con->pos-1,319,con->pos-1,makecol(120,120,120));
 	};*/
 	con->render(buffer);
+
+	minimap();
+
   if(v_width==320)
 	blit(buffer,screen,0,0,0,0,320,240);
   else
@@ -374,4 +379,37 @@ void engine::render()
 
 };
 
+void engine::minimap()
+{
+  int MINIWIDTH = 96;
+  int MINIHEIGHT = 48;
+  int MINIX = (320 - MINIWIDTH) / 2 - 1;
+  int MINIY = 240 - MINIHEIGHT - 1;
 
+  drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+  set_trans_blender(0, 0, 0, 96);
+  rectfill(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(0, 0, 0));
+  /* Minimap with small map image.. Not transparent - Add minimap option?
+  stretch_blit(map->mapimg, buffer, 0, 0, map->mapimg->w, map->mapimg->h, MINIX, MINIY, MINIWIDTH, MINIHEIGHT);
+  */
+  rect(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(1000, 100, 100));
+  solid_mode();
+  //
+
+  int mapwidth = map->mapimg->w;
+  int mapheight = map->mapimg->h;
+
+  for (int i = 0; i < player_count; i++)
+    {
+      if (player[i]->active)
+	{
+	  //Calculate position
+	  int x = ((float)MINIWIDTH / (float)mapwidth) * ((float) player[i]->x / 1000);
+	  int y = ((float)MINIHEIGHT / (float)mapheight) * ((float) player[i]->y / 1000);
+	  putpixel(buffer, x + MINIX, y + MINIY, player[i]->color);
+	  putpixel(buffer, x + MINIX + 1, y + MINIY + 1, player[i]->color);
+	  putpixel(buffer, x + MINIX + 1, y + MINIY, player[i]->color);
+	  putpixel(buffer, x + MINIX, y + MINIY + 1, player[i]->color);
+	}
+    }
+}

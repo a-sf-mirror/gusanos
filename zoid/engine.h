@@ -122,6 +122,7 @@ struct engine
   bool host,client,split_screen;
   ZCom_Node *node;
   void init_node(ZCom_Control *_cont, bool is_server);
+  void minimap(); //Draw minimap
 };
 
 extern struct engine* game;
