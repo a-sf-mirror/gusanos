@@ -23,17 +23,16 @@ void wormai::update()
 {
   if (!active)
     return;
-  if (!player[target]->active)
-    return;
-  //See if target is active
-  //if (!player[target]->active && player[target] != this)
+  //Make sure target is active and that target isn't itself
+  if (!player[target]->active || player[target] == this)
   {
-    //Update target
-    //target = rand() % player_count;
+    //Get new target
+    target = rand()%player_count;
+    return;
   }
 
   //Move towards target
-  int d = sqrt((x - player[target]->x)*(x - player[target]->x) + (y - player[target]->y)*(y - player[target]->y));
+  int d = (int)sqrt((float)((x - player[target]->x)*(x - player[target]->x) + (y - player[target]->y)*(y - player[target]->y)));
   if (abs(d/1000) > 50)
   {
     if (x > player[target]->x)
@@ -50,7 +49,7 @@ void wormai::update()
   //Update aiming angle
   int dx = player[target]->x/1000 - x/1000;
   int dy = player[target]->y/1000 - y/1000;
-  float newAngle = atan2(dy, dx);
+  float newAngle = atan2((float)dy, (float)dx);
   while (newAngle > 2*PI)
   {
     newAngle -= 2*PI;
@@ -71,18 +70,20 @@ void wormai::update()
   if (newAim < 0)
     newAim += 256000;
   
-  //Perfect aiming
+  //Difficulty  
   switch (difficulty)
   {
   //Default to easy :>
   default:
   case AI_EASY:
+    //Aiming...
     if (newAim > aim)
       aim_speed += 100;
     else if (newAim < aim)
       aim_speed -= 100;
     break;
   case AI_NORMAL:
+    //Faster aiming
     if (newAim > aim)
       aim_speed += 200;
     else if (newAim < aim)

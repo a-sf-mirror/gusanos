@@ -19,7 +19,7 @@
 #define AI_EASY 0
 #define AI_NORMAL 1
 #define AI_HARD 2
-#define AI_DEFAULT 1
+#define AI_DEFAULT 0
 
 //
 class wormai : public worm
