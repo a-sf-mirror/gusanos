@@ -21,3 +21,7 @@ float BaseObject::getAngle()
 	return 0;
 }
 
+void BaseObject::remove()
+{
+	deleteMe = true;
+}

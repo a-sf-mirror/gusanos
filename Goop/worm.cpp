@@ -9,6 +9,7 @@
 #include "animators.h"
 #include "sprite.h"
 #include "weapon.h"
+#include "ninjarope.h"
 
 #include <math.h>
 
@@ -32,7 +33,7 @@ Worm::Worm()
 	m_weapons.push_back(new Weapon(game.weaponList[0], this));
 	
 	m_owner = NULL;
-	
+	m_ninjaRope = new NinjaRope(game.NRPartType);
 	movingLeft = false;
 	movingRight = false;
 	jumping = false;
@@ -43,10 +44,20 @@ void Worm::assignOwner( BasePlayer* owner)
 	m_owner = owner;
 }
 
+BaseObject* Worm::getNinjaRopeObj()
+{
+	return m_ninjaRope;
+}
+
 void Worm::think()
 {
 	
 	spd.y+=game.options.worm_gravity;
+	
+	if ( m_ninjaRope->attached && (m_ninjaRope->getPos() - pos).length() > game.options.ninja_rope_startDistance)
+	{
+		spd += (m_ninjaRope->getPos() - pos).normal() * game.options.ninja_rope_pullForce;
+	}
 
 	if ( movingRight ) 
 	{
@@ -191,6 +202,7 @@ void Worm::draw(BITMAP* where,int xOff, int yOff)
 		Vec crosshair = angleVec(aimAngle*dir,rnd()*10+30) + pos - Vec(xOff,yOff + game.options.worm_weaponHeight);
 		putpixel(where, crosshair.x,crosshair.y,makecol(255,0,0));
 	}
+	if (m_ninjaRope->active) line(where, pos.x-xOff, y-yOff, m_ninjaRope->getPos().x-xOff, m_ninjaRope->getPos().y-yOff, m_ninjaRope->getColour());
 	skin->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, y-yOff,aimAngle, flipped);
 }
 
@@ -218,11 +230,15 @@ void Worm::actionStart( Actions action)
 		break;
 		
 		case JUMP:
-			if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y) + 1 ).particle_pass )
+			if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y) + 1 ).particle_pass)
 			{
 				spd.y -= game.options.worm_jumpForce;
 			}
 			jumping = true;
+		break;
+			
+		case NINJAROPE:
+			m_ninjaRope->shoot(pos-Vec(0,game.options.worm_weaponHeight+0.5), angleVec(aimAngle*dir,game.options.ninja_rope_shootSpeed));
 		break;
 	}
 }
@@ -245,6 +261,10 @@ void Worm::actionStop( Actions action)
 		
 		case JUMP:
 			jumping = false;
+		break;
+		
+		case NINJAROPE:
+			m_ninjaRope->remove();
 		break;
 	}
 }

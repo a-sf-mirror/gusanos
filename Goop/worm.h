@@ -7,6 +7,7 @@
 
 class BaseAnimator;
 class BasePlayer;
+class NinjaRope;
 
 class Worm : public BaseObject
 {
@@ -21,7 +22,8 @@ class Worm : public BaseObject
 		FIRE,
 		FIRE2,
 		JUMP,
-		DIG
+		DIG,
+		NINJAROPE
 	};
 		
 	Worm();
@@ -39,6 +41,8 @@ class Worm : public BaseObject
 	float getAngle();
 	char getDir();
 	
+	BaseObject* getNinjaRopeObj();
+	
 	private:
 	
 	bool movingLeft;
@@ -55,6 +59,7 @@ class Worm : public BaseObject
 	std::vector<Weapon*> m_weapons;
 	
 	BasePlayer* m_owner;
+	NinjaRope* m_ninjaRope;
 	
 	Sprite *skin;
 	BaseAnimator* m_animator;

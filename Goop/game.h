@@ -14,6 +14,7 @@
 class BasePlayer;
 class PlayerOptions;
 class WeaponType;
+class PartType;
 
 static const int MAX_LOCAL_PLAYERS = 2;
 
@@ -23,6 +24,9 @@ struct Options
 {
 	void registerInConsole();
 	
+	float ninja_rope_shootSpeed;
+	float ninja_rope_pullForce;
+	float ninja_rope_startDistance;
 	float worm_maxSpeed;
 	float worm_acceleration;
 	float worm_friction;
@@ -58,6 +62,8 @@ class Game
 	std::vector<WeaponType*> weaponList;
 	std::list<BaseObject*> objects;
 	Options options;
+	
+	PartType* NRPartType;
 	
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;

@@ -1,8 +1,9 @@
 #include "game.h"
 
+#include "part_type.h"
+#include "weapon_type.h"
 #include "base_object.h"
 #include "player.h"
-#include "weapon_type.h"
 #include "player_input.h"
 #include "player_options.h"
 #include "level.h"
@@ -22,14 +23,18 @@ Game game;
 
 void Options::registerInConsole()
 {
-	console.registerFloatVariable("SV_WORM_MAX_SPEED", &worm_maxSpeed, 1);
-	console.registerFloatVariable("SV_WORM_ACCELERATION", &worm_acceleration, 0.1);
-	console.registerFloatVariable("SV_WORM_FRICTION", &worm_friction, 0.05);
-	console.registerFloatVariable("SV_WORM_AIR_FRICTION", &worm_airFriction, 0.005);
-	console.registerFloatVariable("SV_WORM_GRAVITY", &worm_gravity, 0.04);
+	console.registerFloatVariable("SV_NINJAROPE_SHOOT_SPEED", &ninja_rope_shootSpeed, 2);
+	console.registerFloatVariable("SV_NINJAROPE_PULL_FORCE", &ninja_rope_pullForce, 0.031);
+	console.registerFloatVariable("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 20);
+	
+	console.registerFloatVariable("SV_WORM_MAX_SPEED", &worm_maxSpeed, 0.45);
+	console.registerFloatVariable("SV_WORM_ACCELERATION", &worm_acceleration, 0.03);
+	console.registerFloatVariable("SV_WORM_FRICTION", &worm_friction, 0.005);
+	console.registerFloatVariable("SV_WORM_AIR_FRICTION", &worm_airFriction, 0.000005);
+	console.registerFloatVariable("SV_WORM_GRAVITY", &worm_gravity, 0.009);
 	console.registerFloatVariable("SV_WORM_BOUNCE_QUOTIENT", &worm_bounceQuotient, 0.3);
-	console.registerFloatVariable("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 4);
-	console.registerFloatVariable("SV_WORM_JUMP_FORCE", &worm_jumpForce, 1.2);
+	console.registerFloatVariable("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 2);
+	console.registerFloatVariable("SV_WORM_JUMP_FORCE", &worm_jumpForce, 0.6);
 	console.registerIntVariable("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 4);
 	console.registerIntVariable("SV_WORM_HEIGHT", &worm_height, 7);
 	console.registerIntVariable("SV_WORM_MAX_CLIMB", &worm_maxClimb, 4);
@@ -41,6 +46,7 @@ Game::Game()
 
 Game::~Game()
 {
+	NRPartType = NULL;
 	list<BaseObject*>::iterator iter;
 	for ( iter = objects.begin(); iter != objects.end(); iter++)
 	{
@@ -71,6 +77,7 @@ void Game::init()
 	registerPlayerInput();
 	
 	loadWeapons();
+	NRPartType = partTypeList.load("ninjarope.obj");
 	
 }
 

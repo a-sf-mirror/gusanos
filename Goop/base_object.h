@@ -18,6 +18,7 @@ class BaseObject
 	virtual Vec getSpd();
 	virtual float getAngle();
 	virtual void addAngleSpeed( float speed ) {};
+	virtual void remove();
 	
 	bool deleteMe;
 	

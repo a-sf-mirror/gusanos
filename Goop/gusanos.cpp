@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 	
 	console.registerCommand("QUIT", Exit);
 	
-	console.parseLine("BIND A +P0_LEFT; BIND D +P0_RIGHT; BIND G +P0_JUMP; BIND W +P0_UP; BIND S +P0_DOWN; BIND F +P0_FIRE");
+	console.parseLine("BIND A +P0_LEFT; BIND D +P0_RIGHT; BIND G +P0_JUMP; BIND W +P0_UP; BIND S +P0_DOWN; BIND F +P0_FIRE; BIND H +P0_CHANGE");
 	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN; BIND 1_PAD +P1_FIRE");
 	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	
@@ -91,6 +91,7 @@ int main(int argc, char **argv)
 		player->assignWorm(worm);
 		player->assignViewport(viewport);
 		game.objects.push_back( worm );
+		game.objects.push_back( worm->getNinjaRopeObj() );
 		game.players.push_back( player );
 		game.localPlayers.push_back( player );
 	}
@@ -103,6 +104,7 @@ int main(int argc, char **argv)
 		player->assignWorm(worm);
 		player->assignViewport(viewport);
 		game.objects.push_back( worm );
+		game.objects.push_back( worm->getNinjaRopeObj() );
 		game.players.push_back( player );
 		game.localPlayers.push_back( player );
 	}

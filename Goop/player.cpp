@@ -78,6 +78,7 @@ void Player::actionStart ( Actions action )
 			if ( m_worm )
 			{
 				m_worm -> actionStart(Worm::JUMP);
+				m_worm -> actionStop(Worm::NINJAROPE);
 			}
 		}
 		break;
@@ -96,6 +97,15 @@ void Player::actionStart ( Actions action )
 			if ( m_worm )
 			{
 				aimingDown = true;
+			}
+		}
+		break;
+		
+		case CHANGE:
+		{
+			if ( m_worm )
+			{
+				m_worm -> actionStart(Worm::NINJAROPE);
 			}
 		}
 		break;

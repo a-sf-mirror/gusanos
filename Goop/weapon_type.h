@@ -1,5 +1,5 @@
-#ifndef PART_TYPE_H
-#define PART_TYPE_H
+#ifndef WEAPON_TYPE_H
+#define WEAPON_TYPE_H
 
 #include "events.h"
 
@@ -31,4 +31,4 @@ class WeaponType
 	Event *outOfAmmo;
 };
 
-#endif // _PART_TYPE_H_
+#endif // _WEAPON_TYPE_H_

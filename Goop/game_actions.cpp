@@ -120,7 +120,7 @@ Remove::Remove( const vector< string >& params )
 
 void Remove::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon  )
 {
-	object->deleteMe = true;
+	object->remove();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
