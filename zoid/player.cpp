@@ -52,7 +52,6 @@ void send_msg()
     {
       char msg2[1024];
       sprintf(msg2,"[%s] %s",player[local_player[0]]->name,con->arg);
-      con->log.create_msg(msg2);
       con->echolist.add_echo(msg2);
       play_sample(game->menu_select->snd, *game->VOLUME, 127, 1300, 0);
     };
@@ -96,7 +95,7 @@ void worm::send_dig()
     data->addInt(x,32);
     data->addInt(y,32);
     data->addInt(aim,32);
-    data->addSignedInt((int)dir,8);
+    data->addSignedInt(dir,8);
     node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered,ZCOM_REPRULE_AUTH_2_ALL, data);
   };
 };
@@ -127,7 +126,7 @@ void worm::shooteventsend()
   data->addInt(xspd,32);
   data->addInt(yspd,32);
   data->addInt(aim,32);
-  data->addSignedInt((int)dir,8);
+  data->addSignedInt(dir,8);
   data->addInt(weap[curr_weap].weap,16);
   data->addInt(t,32);
 
@@ -146,7 +145,7 @@ void worm::deatheventsend()
   data->addInt(yspd,32);
   data->addInt(t,32);
   if (killed_by!=-1 && player[killed_by])
-  data->addSignedInt(player[killed_by]->node->getNetworkID(),32);
+    data->addSignedInt(player[killed_by]->node->getNetworkID(),32);
   else data->addSignedInt(-1,32);
 
   node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
@@ -225,7 +224,7 @@ void worm::checkevents()
         deaths++;
         health=0;
         if (*game->RESPAWN_RELOAD==1)
-        recharge_weapons(this);
+          recharge_weapons(this);
 
         char tmpstr[1024];
         sprintf(tmpstr,"* %s DIED",name);
@@ -264,47 +263,47 @@ void worm::checkevents()
         int _dir=data->getSignedInt(8);
         int _weap=data->getInt(16);
         int _t=data->getInt(32);
-            srand(_t);
-            fireing=true;
-            weap[curr_weap].ammo--;
-              if (weaps->num[_weap]->shoot_num!=0)
-              {
-                int dist,spd_rnd,xof,yof,h;
+        srand(_t);
+        fireing=true;
+        weap[curr_weap].ammo--;
+        if (weaps->num[_weap]->shoot_num!=0)
+        {
+          int dist,spd_rnd,xof,yof,h;
                 
-                for (h=0;h<weaps->num[_weap]->shoot_num;h++)
-                {
-                  dist=((rand()%1000)*weaps->num[_weap]->distribution)-weaps->num[_weap]->distribution/2*1000;
-                  if (weaps->num[_weap]->shoot_spd_rnd!=0)
-                    spd_rnd=(rand()%weaps->num[_weap]->shoot_spd_rnd)-weaps->num[_weap]->shoot_spd_rnd/2;
-                  else spd_rnd=0;
-                  xof=fixtoi(fixsin(ftofix((_ang-dist)/1000.))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000))*_dir;
-                  yof=fixtoi(fixcos(ftofix((_ang-dist)/1000.))*(int)(weaps->num[_weap]->shoot_obj->detect_range+1000));
-                  partlist.shoot_part(_ang-dist,weaps->num[_weap]->shoot_spd-spd_rnd,_dir,_x+xof,_y-4000+yof,(_xspd*weaps->num[_weap]->affected_motion)/1000,(_yspd*weaps->num[_weap]->affected_motion)/1000,local_slot,weaps->num[_weap]->shoot_obj);
-                };
-                if (weaps->num[_weap]->aim_recoil!=0)
-                  aim_recoil_speed+=(100*weaps->num[_weap]->aim_recoil);/*-weap[curr_weap].weap->aim_recoil/2*1000;*/
-                if (weaps->num[_weap]->recoil!=0)
-                {
-                  xspd = xspd + -fixtoi(fixsin(ftofix(_ang/1000.))*weaps->num[_weap]->recoil)*_dir;
-                  yspd = yspd + -fixtoi(fixcos(ftofix(_ang/1000.))*weaps->num[_weap]->recoil);
-                };
-              };
-              weap[curr_weap].shoot_time=0;
-              firecone_time=weaps->num[_weap]->firecone_timeout;
-              curr_firecone=weaps->num[_weap]->firecone;
-              if (weaps->num[_weap]->shoot_sound!=NULL)
-              {
-                //if (weap->loop_sound!=1)
-                play_sample(weaps->num[_weap]->shoot_sound->snd, *game->VOLUME, 127, 1000, 0);
-                /*else if (!sound_loop)
-                {
-                play_sample(weap->shoot_sound->snd, 255, 127, 1000, 1);
-                sound_loop=true;
-                };*/
-              };
-            };
+          for (h=0;h<weaps->num[_weap]->shoot_num;h++)
+          {
+            dist=((rand()%1000)*weaps->num[_weap]->distribution)-weaps->num[_weap]->distribution/2*1000;
+            if (weaps->num[_weap]->shoot_spd_rnd!=0)
+              spd_rnd=(rand()%weaps->num[_weap]->shoot_spd_rnd)-weaps->num[_weap]->shoot_spd_rnd/2;
+            else spd_rnd=0;
+            xof=fixtoi(fixsin(ftofix((_ang-dist)/1000.))*(weaps->num[_weap]->shoot_obj->detect_range+1000))*_dir;
+            yof=fixtoi(fixcos(ftofix((_ang-dist)/1000.))*(weaps->num[_weap]->shoot_obj->detect_range+1000));
+            partlist.shoot_part(_ang-dist,weaps->num[_weap]->shoot_spd-spd_rnd,_dir,_x+xof,_y-4000+yof,(_xspd*weaps->num[_weap]->affected_motion)/1000,(_yspd*weaps->num[_weap]->affected_motion)/1000,local_slot,weaps->num[_weap]->shoot_obj);
+          };
+          if (weaps->num[_weap]->aim_recoil!=0)
+            aim_recoil_speed+=(100*weaps->num[_weap]->aim_recoil);/*-weap[curr_weap].weap->aim_recoil/2*1000;*/
+          if (weaps->num[_weap]->recoil!=0)
+          {
+            xspd = xspd + -fixtoi(fixsin(ftofix(_ang/1000.))*weaps->num[_weap]->recoil)*_dir;
+            yspd = yspd + -fixtoi(fixcos(ftofix(_ang/1000.))*weaps->num[_weap]->recoil);
+          };
+        };
+        weap[curr_weap].shoot_time=0;
+        firecone_time=weaps->num[_weap]->firecone_timeout;
+        curr_firecone=weaps->num[_weap]->firecone;
+        if (weaps->num[_weap]->shoot_sound!=NULL)
+        {
+          //if (weap->loop_sound!=1)
+          play_sample(weaps->num[_weap]->shoot_sound->snd, *game->VOLUME, 127, 1000, 0);
+          /*else if (!sound_loop)
+          {
+            play_sample(weap->shoot_sound->snd, 255, 127, 1000, 1);
+            sound_loop=true;
+          };*/
+        };
       };
-    }
+    };
+  }
 };
 
 worm::worm()
@@ -488,7 +487,8 @@ void worm::shoot()
 				if (!fireing)
 				{
 					weap[curr_weap].start_delay=weaps->num[weap[curr_weap].weap]->start_delay;
-					if(weaps->num[weap[curr_weap].weap]->start_sound!=NULL)play_sample(weaps->num[weap[curr_weap].weap]->start_sound->snd, *game->VOLUME, 127, 1000, 0);
+					if(weaps->num[weap[curr_weap].weap]->start_sound!=NULL)
+						play_sample(weaps->num[weap[curr_weap].weap]->start_sound->snd, *game->VOLUME, 127, 1000, 0);
 				};
 				if (weap[curr_weap].start_delay>0)weap[curr_weap].start_delay--;
 				fireing=true;        

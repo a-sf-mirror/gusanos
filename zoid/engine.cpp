@@ -12,6 +12,7 @@
 #include "sprites.h"
 #include "text.h"
 
+
 struct engine* game;
 ZCom_ClassID  game_classid;
 PALETTE pal;
@@ -67,7 +68,11 @@ void save_log()
 void connect()
 {
   cli = new Client( 0, 8989 );
-  adr_srv.setAddress( eZCom_AddressUDP, 0, con->arg );
+	std::string str;
+	str= std::string(con->arg);
+	if (str.find(':') == str.npos)
+		str+= ":9898";
+  adr_srv.setAddress( eZCom_AddressUDP, 0, str.c_str() );
   ZCom_BitStream *req = ZCom_Control::ZCom_createBitStream();
   req->addString( "letmein" ); 
   cli->ZCom_Connect( adr_srv, req );
@@ -75,7 +80,9 @@ void connect()
  
 void quit()
 {
-	exit(0);
+	//quitgame
+	//exit(0);
+	game->quitgame = true;
 };
 
 void recharge_weapons(worm* player)
@@ -160,10 +167,14 @@ void engine::calcphysics()
 {
 	int c,i,o,g;
   
-  if(srv)srv->ZCom_processInput(eZCom_NoBlock);
-  if(cli)cli->ZCom_processInput(eZCom_NoBlock);
-  if (srv) srv->ZCom_processOutput();
-  if (cli) cli->ZCom_processOutput();
+	if (srv) {
+		srv->ZCom_processInput(eZCom_NoBlock);
+		srv->ZCom_processOutput();
+	}
+  if (cli) {
+		cli->ZCom_processInput(eZCom_NoBlock);
+		cli->ZCom_processOutput();
+	}
 
   //if (player_count>2 && player[player_count-1]->node->getRole()==eZCom_RoleOwner)allegro_message("yep its the owner");
   
@@ -173,11 +184,12 @@ void engine::calcphysics()
     {
       game->selecting=false;
       for (i=0;i<local_players;i++)
-      if (player[local_player[i]]->selecting_weaps) game->selecting=true;
+      if (player[local_player[i]]->selecting_weaps)
+				game->selecting=true;
 
       if (!game->selecting)
       {
-        game->selecting=false;
+        //game->selecting=false;
         play_sample(gstart->snd, *VOLUME, 127, 1000, 0);
       };
     };
@@ -327,9 +339,10 @@ void engine::calcphysics()
           };
           
           if (player[c]->weap[player[c]->curr_weap].reloading)
-            player[c]->weap[player[c]->curr_weap].reload_time--;
+						//reload_multiplier
+            player[c]->weap[player[c]->curr_weap].reload_time-=(100*100)/ *RELOAD_MULTIPLIER;
           
-          if (player[c]->weap[player[c]->curr_weap].reloading && player[c]->weap[player[c]->curr_weap].reload_time==0)
+          if (player[c]->weap[player[c]->curr_weap].reloading && player[c]->weap[player[c]->curr_weap].reload_time<=0)
           {
             player[c]->weap[player[c]->curr_weap].reloading=false;
             player[c]->fireing=false;
@@ -417,10 +430,28 @@ void engine::calcphysics()
       calc_water();
     };
   };
-	if (con->flag!=1 && con->pos>0) con->pos-=*con->speed;
-	if (con->flag==1 && con->pos<*con->height) con->pos+=*con->speed;
-	if (con->flag!=1 && con->pos<0) con->pos=0;
-	if (con->flag==1 && con->pos>*con->height) con->pos=*con->height;
+	if (con->flag!=1)
+	{
+		if (con->pos>0)
+			con->pos-=*con->speed;
+		else if (con->pos<0)
+			con->pos=0;
+	}
+	else if (con->flag==1)
+	{
+		if (con->pos<con->height)
+		{
+			con->pos+=*con->speed;
+			if (con->pos>con->height)
+				con->pos= con->height;
+		}
+		else if (con->pos>con->height)
+		{
+			con->pos-=*con->speed;
+			if (con->pos<con->height)
+				con->pos= con->height;
+		}
+	}
   con->echolist.calc();
 	
 };
@@ -478,12 +509,10 @@ void engine::init_game()
     exit(255);
   }
 	
-
   
 	install_keyboard();
 	srand(time(NULL));
   
-
   
   
   if (v_depth==8)
@@ -510,7 +539,6 @@ void engine::init_game()
   //generate_332_palette(pal);
   //set_palette(pal);
   
-
 
 
 	
@@ -562,6 +590,8 @@ void engine::init_game()
   //Minimap option
   MINIMAP=con->create_variable("MINIMAP",1);
 	MINIMAP_TYPE=con->create_variable("MINIMAP_TYPE",0);
+	//reload_multiplier
+	RELOAD_MULTIPLIER=con->create_variable("RELOAD_MULTIPLIER",100);
 
 	SHOW_FPS=con->create_variable("SHOW_FPS",1);
 
@@ -589,6 +619,7 @@ void engine::init_game()
 	con->add_cmd("P0_CHANGE",pl0_change);
 	con->add_cmd("P0_RELOAD",pl0_reload);
   con->add_cmd("CONNECT",connect);
+  con->add_cmd("CHAT", chat);
   con->add_cmd("SAY", send_msg);
   con->add_cmd("P0_COLOR", pl0_color);
   con->add_cmd("P1_COLOR", pl1_color);
@@ -613,9 +644,10 @@ void engine::init_game()
 	
 	
   scanWeapsDir();
+  //Sort weapons
+  weaps->sort();
   
 	gore=load_part("gore.obj");
-  chreact=load_part("chreact.obj");
   //Crate
   weapon_box=load_part("box.obj");	
   health_box=load_part("health_box.obj");
@@ -645,7 +677,6 @@ void engine::init_game()
     int o;
 		player[i] = (struct worm*) malloc(sizeof(struct worm));
     player[i]->weap = (struct s_playerweap*) malloc(sizeof(struct s_playerweap)*5);
-		player[i]->view=create_bitmap(160,240);
 		player[i]->x=80*1000;
 		player[i]->y=40*1000;
 		player[i]->xspd=0;
@@ -701,8 +732,6 @@ void engine::init_game()
 	player[1]->skin=sprites->load_sprite("/skins/default/image",21,game->mod,game->v_depth);
   player[1]->mask=sprites->load_sprite("/skins/default/mask",21,game->mod,game->v_depth);
   player[1]->color=makecol(rand()%255,rand()%255,rand()%255);
-  player[0]->color=makecol(rand()%255,rand()%255,rand()%255);
-
 	player[1]->keys=new struct KEYS;
 	player[1]->keys->up=false;
 	player[1]->keys->down=false;
@@ -722,6 +751,7 @@ void engine::init_game()
   pl_options[0].aim_friction=con->create_variable("P0_AIM_FRICTION",50);
 	player[0]->skin=sprites->load_sprite("/skins/default/image",21,game->mod,game->v_depth);
 	player[0]->mask=sprites->load_sprite("/skins/default/mask",21,game->mod,game->v_depth);
+  player[0]->color=makecol(rand()%255,rand()%255,rand()%255);
 	player[0]->keys=new struct KEYS;
 	player[0]->keys->up=false;
 	player[0]->keys->down=false;
@@ -744,7 +774,4 @@ void engine::init_game()
 	strcpy(con->arg,"autoexec.cfg");
 	execute_config();
   set_color_conversion(COLORCONV_TOTAL);
-  
-  //Sort weapons
-  weaps->sort();
 };

@@ -37,7 +37,6 @@ class worm
   sprite* crosshair;
   sprite* curr_firecone;
   int firecone_time;
-	BITMAP* view;
 	struct s_playerweap *weap;
   int curr_weap;
 	bool active,islocal,deleteme;

@@ -71,9 +71,12 @@ struct console
 {
 	int flag;
 	int pos;
-	int *height,*speed;
+	//extended console
+	int height, *default_height;
+	int scroll_back;
+	int *speed;
   int *echo_delay;
-	bool flag2,flag3;
+	bool flag2,flag3,flag4;
 	char textbuf[255];
 	struct msg_log log;
 	struct msg *tmp_com;
@@ -102,6 +105,7 @@ extern struct console* con;
 void bind();
 void unbind();
 void execute_config();
+void chat();
 
 
 #endif /* CONSOLE_H */

@@ -496,7 +496,14 @@ void calc_particles()
 				if(fixhypot(dx,dy)<tmp->type->detect_range)
 				{
 					if (tmp->type->wormshootobj!=NULL)
-						for(c=0;c<tmp->type->wormshootnum;c++) partlist.shoot_part(((rand()%1000)*256),tmp->type->wormshootspeed-rand()%(tmp->type->wormshootspeedrnd)+tmp->type->wormshootspeedrnd/2,1,player[i]->x,player[i]->y-4000,0,0,tmp->owner,tmp->type->wormshootobj);
+						for(c=0;c<tmp->type->wormshootnum;c++)
+						{
+							int spd_rnd;
+							if (tmp->type->wormshootspeedrnd!=0)
+								spd_rnd=(rand()%tmp->type->wormshootspeedrnd)-tmp->type->wormshootspeedrnd/2;
+							else spd_rnd=0;
+							partlist.shoot_part(((rand()%1000)*256),spd_rnd,1,player[i]->x,player[i]->y-4000,0,0,tmp->owner,tmp->type->wormshootobj);
+						}
 					if (tmp->type->blow_away!=0)
 					{
 						player[i]->yspd+=(int) (tmp->yspd*(tmp->type->blow_away/1000.));
@@ -567,7 +574,14 @@ void calc_particles()
 			{
 				int i;
 				if (tmp->type->shootobjtrail!=NULL)
-					for(i=0;i<tmp->type->shootnumtrail;i++) partlist.shoot_part(((rand()%1000)*256),tmp->type->shootspeedtrail-rand()%(tmp->type->shootspeedrndtrail)+tmp->type->shootspeedrndtrail/2,1,tmp->x,tmp->y,0,0,tmp->owner,tmp->type->shootobjtrail);
+					for(i=0;i<tmp->type->shootnumtrail;i++)
+					{
+						int spd_rnd;
+						if (tmp->type->shootspeedrndtrail!=0)
+							spd_rnd=(rand()%tmp->type->shootspeedrndtrail)-tmp->type->shootspeedrndtrail/2;
+						else spd_rnd=0;
+						partlist.shoot_part(((rand()%1000)*256),tmp->type->shootspeedtrail-spd_rnd,1,tmp->x,tmp->y,0,0,tmp->owner,tmp->type->shootobjtrail);
+					}
 				tmp->obj_trail_time=0;
 			};
 			tmp->obj_trail_time++;

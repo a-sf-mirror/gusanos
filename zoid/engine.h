@@ -73,6 +73,8 @@ struct engine
   int *MINIMAP;
 	int *MINIMAP_TYPE;
 	int *SHOW_FPS;
+	//reload_multiplier
+	int *RELOAD_MULTIPLIER;
 
   bool teamplay;
   struct s_viewport viewport[2];
@@ -94,7 +96,6 @@ struct engine
   class sprite *firecone;
 	struct part_type *tmppart;
 	struct part_type *gore;
-  struct part_type *chreact;
   //Crate
   struct part_type *weapon_box;
   struct part_type *health_box;
@@ -109,6 +110,7 @@ struct engine
   ZCom_Node *node;
   void init_node(ZCom_Control *_cont, bool is_server);
   void minimap(); //Draw minimap
+	bool quitgame; //quitgame
 };
 
 extern struct engine* game;

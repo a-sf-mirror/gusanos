@@ -272,7 +272,14 @@ void create_exp(int x,int y,class exp_type *type)
 					if(m < exps->end->type->detect_range && m != 0)
 					{
 						if (exps->end->type->wormshootobj!=NULL)
-							for(c=0;c<exps->end->type->wormshootnum;c++) partlist.shoot_part(((rand()%1000)*256),exps->end->type->wormshootspeed-rand()%(exps->end->type->wormshootspeedrnd)+exps->end->type->wormshootspeedrnd/2,1,player[i]->x,player[i]->y-4000,0,0,i,exps->end->type->wormshootobj);
+							for(c=0;c<exps->end->type->wormshootnum;c++)
+							{
+								int spd_rnd;
+								if (exps->end->type->wormshootspeedrnd!=0)
+									spd_rnd=(rand()%exps->end->type->wormshootspeedrnd)-exps->end->type->wormshootspeedrnd/2;
+								else spd_rnd=0;
+								partlist.shoot_part(((rand()%1000)*256),exps->end->type->wormshootspeed-spd_rnd,1,player[i]->x,player[i]->y-4000,0,0,i,exps->end->type->wormshootobj);
+							}
 						if (exps->end->type->blow_away!=0)
 						{
 							player[i]->yspd+=(exps->end->type->blow_away*dy)/m;

@@ -62,9 +62,10 @@ int main(int argc, char **argv)
  con->log.create_msg("");
 
  
+ game->quitgame = false; //quitgame
  if (game->sync_mode==0)
  {
-    while (true){
+    while (!game->quitgame){ //quitgame
       while (speed_counter > 0)
       {
         game->input();
@@ -87,7 +88,7 @@ int main(int argc, char **argv)
  }
  else if(game->sync_mode==1)
  {
-  while (true)
+  while (!game->quitgame) //quitgame
   {
    game->input();
    game->calcphysics();
@@ -103,7 +104,7 @@ int main(int argc, char **argv)
   };
  }
  else if(game->sync_mode==2)
-  while (true)
+  while (!game->quitgame) //quitgame
   {
    game->input();
    game->calcphysics();
@@ -120,9 +121,10 @@ int main(int argc, char **argv)
   delete sprites;
   if(srv) delete srv;
   if(cli) delete cli;
+  delete zcom;
+  free(game);
 
-// free(game);
- return(0);
+  return(0);
 }
 END_OF_MAIN();
 

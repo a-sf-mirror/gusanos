@@ -180,10 +180,12 @@ void console::init()
 	cmd_end->next=NULL;
 	cmd_end->prev=NULL;
 	log.init();
-	height=create_variable("CON_HEIGHT",100);
+	//extended console
+	default_height=create_variable("CON_HEIGHT",100);
+	height= *default_height;
+	con->scroll_back=0;
 	speed=create_variable("CON_SPEED",4);
   echo_delay=create_variable("CON_ECHODELAY",200);
-  add_cmd("CHAT", chat);
 	bindtable.init();
   echolist.init();
 };
@@ -252,18 +254,22 @@ void console::render(BITMAP* where)
 {
 	char tmp[255];
 	struct msg *currmsg;
-	int i;
+	int i, chrh;
+	chrh=font->chrh+1; // (+1 because there is space between lines)
 	
 	if (pos>0)
 	{
 		rectfill(where,0,0,319,pos-2,0);
 		sprintf(tmp, "%s%c",textbuf,'&');
-		font->draw_string(where,tmp,3,pos-8,false);
-		i=0;
+		font->draw_string(where,tmp,3,pos-chrh-1,false);
+		//extended console
 		currmsg=log.end;
-		while (currmsg!=log.start && i < pos/7 )
+		for (i=0;(currmsg!=log.start && i<(scroll_back*game->v_height/chrh - 1));i++) // (-1 because the last line, where you write, is not considered)
+			currmsg=currmsg->prev;
+		i=0;
+		while (currmsg!=log.start && i < pos/chrh )
 		{
-			font->draw_string(where,currmsg->text,3,pos-16-(i*7),false);
+			font->draw_string(where,currmsg->text,3,pos-((i+2)*chrh)-2,false);
 			i++;
 			currmsg=currmsg->prev;
 		};
@@ -271,10 +277,10 @@ void console::render(BITMAP* where)
 	};
   echolist.render(where);
   
-  if(flag==2)
+  if(flag==2) //chat window
   {
-    rectfill(where,10,70,where->w-10,77,makecol(0,0,0));
-    rect(where,9,69,where->w-9,78,makecol(100,100,100));
+    rectfill(where,10,70,where->w-10,70+chrh,makecol(0,0,0));
+    rect(where,9,69,where->w-9,71+chrh,makecol(100,100,100));
     font->draw_string(where,textbuf,11,71,false);
   };
 }
@@ -381,12 +387,11 @@ void console::parse(const char* _str)
 				con->tmp_com=con->log.start;
 			};		
 		} else if (tmp_cmd!=NULL)
-		{
-			strcpy(con->arg,"");
+		{			
 			if (!val.empty())
-			{
 				strcpy(con->arg,val.c_str());
-			};
+			else
+				strcpy(con->arg,"");
 			con->log.create_com(str.c_str());
 			con->tmp_com=con->log.start;
 			tmp_cmd->func();
@@ -451,19 +456,22 @@ void check_bindings()
 
 void console::input()
 {
+	//console closed
   if (con->flag==0)
 	{
 		check_bindings();
-  };
-  if (con->flag==2)
+  }
+	//chat window
+	else if (con->flag==2)
   {
     if (keypressed())
 		{
 			char k;
 			k=readkey();
 			k=toupper(k);
-			if (k==8) con->textbuf[strlen(con->textbuf)-1]=0;
-			else if (k==13)
+			if (k==8) //Backspace
+				con->textbuf[strlen(con->textbuf)-1]=0;
+			else if (k==13) //Enter
 			{
 				strcpy(con->arg,con->textbuf);
         send_msg();
@@ -476,8 +484,9 @@ void console::input()
 			}
 			else sprintf(con->textbuf,"%s%c",con->textbuf,k);
 		};
-  };
-  if(con->flag==1)
+  }
+	//console opened
+  else if(con->flag==1)
 	{
 		if (key[KEY_UP] && !con->flag3)
 		{
@@ -498,13 +507,7 @@ void console::input()
 					strcpy(con->textbuf,con->tmp_com->text);
 				};
 			};
-		};
-		
-		if (!key[KEY_UP] && !key[KEY_DOWN] && con->flag3)
-		{
-			con->flag3=false;
-		};
-		
+		};		
 		if (key[KEY_DOWN] && !con->flag3)
 		{
 			con->flag3=true;
@@ -520,18 +523,43 @@ void console::input()
 			{
 				con->tmp_com=con->log.start;
 				strcpy(con->textbuf,"");
-			};
-			
+			};			
 		};
+		if (con->flag3 && !key[KEY_UP] && !key[KEY_DOWN])
+			con->flag3=false;
 		
-		
+		//extended console
+		if (key[KEY_PGDN] && !con->flag4)
+		{
+			con->flag4=true;
+			if (con->height<*con->default_height)
+				con->height= *con->default_height;
+			else if (con->height==*con->default_height)
+				con->height= game->v_height;
+			else if (con->height==game->v_height)
+				con->scroll_back++;
+		};
+		if (key[KEY_PGUP] && !con->flag4)
+		{
+			con->flag4=true;
+			if (scroll_back>0)
+				con->scroll_back--;
+			else if (con->height>*con->default_height)
+				con->height= *con->default_height;
+			else if (con->height==*con->default_height)
+				con->height= 4*con->font->chrh;
+		};
+		if (con->flag4 && !key[KEY_PGDN] && !key[KEY_PGUP])
+			con->flag4=false;		
+
 		if (keypressed())
 		{
 			char k;
 			k=readkey();
 			k=toupper(k);
-			if (k==8) con->textbuf[strlen(con->textbuf)-1]=0;
-			else if (k==13)
+			if (k==8) //Backspace
+				con->textbuf[strlen(con->textbuf)-1]=0;
+			else if (k==13) //Enter
 			{
 				con->parse(con->textbuf);
 				strcpy(con->textbuf,"");

@@ -2,6 +2,7 @@
 #include "sounds.h"
 #include "sprites.h"
 #include "particles.h"
+#include "level.h"
 #include "engine.h"
 #include "player.h"
 
@@ -177,7 +178,8 @@ class weapon* load_weap(const char* weap_name)
           else if ("firecone"==var && "null"!=val) curr->firecone=sprites->load_sprite(val.c_str(),7,game->mod,game->v_depth);
 					else if ("shoot_object"==var && "null"!=val) curr->shoot_obj=load_part(val.c_str());
           else if ("ammo"==var) curr->ammo=atoi(val.c_str());
-          else if ("reload_time"==var) curr->reload_time=atoi(val.c_str());
+					//reload_multiplier
+          else if ("reload_time"==var) curr->reload_time=100*atoi(val.c_str());
           else if ("autofire"==var) curr->autofire=atoi(val.c_str());
           else if ("lsight_intensity"==var) curr->lsight_intensity=atoi(val.c_str());
           else if ("lsight_fade"==var) curr->lsight_fade=atoi(val.c_str());
@@ -215,7 +217,7 @@ void s_playerweap::shoot(int x, int y, int xspd, int yspd, int aim, int dir, int
     play_sample(weaps->num[weap]->shoot_sound->snd, *game->VOLUME, 127, 1000, 0);
   }
   if (weaps->num[weap]->aim_recoil!=0)
-  player[owner]->aim_recoil_speed+=(100*weaps->num[weap]->aim_recoil);
+    player[owner]->aim_recoil_speed+=(100*weaps->num[weap]->aim_recoil);
   if (weaps->num[weap]->recoil!=0)
   {
     player[owner]->xspd += -fixtoi(fixsin(ftofix(aim/1000.))*weaps->num[weap]->recoil)*dir;
@@ -228,16 +230,25 @@ void s_playerweap::shoot(int x, int y, int xspd, int yspd, int aim, int dir, int
 
 void scanWeapsDir()
 {
-  std::string tmp;
-  struct al_ffblk *file=new struct al_ffblk;
+	std::string tmp;
+	struct al_ffblk *file=new struct al_ffblk;
 	
-  tmp=game->mod;
-  tmp+="/weapons/*.wpn";
-	al_findfirst(tmp.c_str(), file, FA_ARCH);
-	do
-	{
-		load_weap(file->name);
-	} while(al_findnext(file)==0);
+	// (weapons load only on init_game so they won't change with map)
+	/*tmp=map->path;
+	tmp+="/weapons/*.wpn";
+	if (al_findfirst(tmp.c_str(), file, FA_ARCH) == 0)
+		do
+			load_weap(file->name);
+		while(al_findnext(file)==0);
+	al_findclose(file);*/
+
+	tmp=game->mod;
+	tmp+="/weapons/*.wpn";
+	if (al_findfirst(tmp.c_str(), file, FA_ARCH) == 0)
+		do
+			load_weap(file->name);
+		while(al_findnext(file)==0);
+	al_findclose(file);
 	
 	delete file;
 };

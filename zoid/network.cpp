@@ -84,14 +84,14 @@ bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request
 	const char * req = _request.getStringStatic();
 
 	// address information
-	const ZCom_Address* addr = ZCom_getPeer( _id );
+	/*const ZCom_Address* addr = ZCom_getPeer( _id );
 	if ( addr )
 	{
 		if ( addr->getType() == eZCom_AddressLocal );
-			//sys_print( "Server: Incoming connection from localport: %d", addr->getPort() );
+			sys_print( "Server: Incoming connection from localport: %d", addr->getPort() );
 		else if ( addr->getType() == eZCom_AddressUDP );
-			//sys_print( "Server: Incoming connection from UDP: %d.%d.%d.%d:%d", addr->getIP( 0 ), addr->getIP( 1 ), addr->getIP( 2 ), addr->getIP( 3 ), addr->getPort() );
-	}
+			sys_print( "Server: Incoming connection from UDP: %d.%d.%d.%d:%d", addr->getIP( 0 ), addr->getIP( 1 ), addr->getIP( 2 ), addr->getIP( 3 ), addr->getPort() );
+	}*/
 
 	// check what the client is requesstig
 	if ( req && strlen( req ) > 0 && strcmp( req, "letmein" ) == 0 )
@@ -262,25 +262,29 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
 	{
     if(_role==eZCom_RoleOwner)
     {
-      sprintf(tmpstr, "LOCAL PLAYER STORED IN INDEX %d", player_count);
+      sprintf(tmpstr, "LOCAL PLAYER STORED IN INDEX %d", local_players);
       con->log.create_msg(tmpstr);
-      if (player[player_count]) delete player[player_count];
-      player[player_count] = new worm;
-      player[player_count]->init_node(false);
-      player[player_count]->islocal=true;
-      player[player_count]->local_slot=player_count;
-      if (local_players<2)local_player[local_players]=player_count;
+      if (player[local_players]) delete player[local_players];
+      player[local_players] = new worm;
+      player[local_players]->init_node(false);
+      player[local_players]->islocal=true;
+      player[local_players]->local_slot=local_players;
+      if (local_players<2)local_player[local_players]=local_players;
       change_nick(local_players);
       player_count++;
       local_players++;
     }else
     {
-      sprintf(tmpstr, "NET PLAYER STORED IN INDEX %d", player_count);
+			int pos = 1;
+			if (*game->SPLIT_SCREEN)
+				pos++;
+			pos= pos + player_count - local_players;
+      sprintf(tmpstr, "NET PLAYER STORED IN INDEX %d", pos);
       con->log.create_msg(tmpstr);
-      if (player[player_count]) delete player[player_count];
-      player[player_count]=new worm;
-      player[player_count]->init_node(false);
-      player[player_count]->local_slot=player_count;
+      if (player[pos]) delete player[pos];
+      player[pos]=new worm;
+      player[pos]->init_node(false);
+      player[pos]->local_slot=pos;
       player_count++;
     };
 	};
