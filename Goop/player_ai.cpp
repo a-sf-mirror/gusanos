@@ -73,16 +73,6 @@ void PlayerAI::think()
 			m_worm->actionStart(Worm::MOVELEFT);
 		else
 			m_worm->actionStop(Worm::MOVELEFT);
-	} else if (dist < 24)
-	{
-		if (x > tmpX)
-			m_worm->actionStart(Worm::MOVERIGHT);
-		else
-			m_worm->actionStop(Worm::MOVERIGHT);
-		if (x < tmpX)
-			m_worm->actionStart(Worm::MOVELEFT);
-		else
-			m_worm->actionStop(Worm::MOVELEFT);
 	} else
 	{
 		m_worm->actionStop(Worm::MOVELEFT);

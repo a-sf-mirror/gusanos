@@ -469,7 +469,7 @@ bool loadLevel(LieroLevel *level, LieroColor palette[], const std::string &lvlFi
 	}
 
 	//check for powerlevel
-	if (size > 176400)
+	if (size > 176400 && !(size < 176410))
 	{
 		char pwrlvl[10];
 		fin.read((char*)pwrlvl, 10);
