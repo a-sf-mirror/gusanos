@@ -47,3 +47,15 @@ void Console::registerIntVariable(int* src, string name, int defaultValue)
 		variables[name]=tempVar;
 	}
 }
+
+void Console::setVariableValue(string name, int value)
+{
+	map<string, Variable>::iterator variable = variables.find(name);
+	if (variable != variables.end())
+		*variable->second.m_value = value;
+}
+
+//============================= PRIVATE ======================================
+
+
+

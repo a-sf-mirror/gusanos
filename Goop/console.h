@@ -45,14 +45,14 @@ class Console
 	void registerCommand(string name, void (*func)(string arg));
 	void parse(string text);
 	void bind(char key, string action);
+	void setVariableValue(string name, int value);
 	
 	private:
 	
 	KeyHandler keyHandler;
 	BindTable bindTable;
 	map<string, Variable> variables;
-	int variableCount;
-	
+	int m_variableCount;
 };
 
 #endif  // _XX_h_

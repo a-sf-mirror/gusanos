@@ -16,11 +16,19 @@ int main(int argc, char **argv)
 	
 	Object object;
 	
+	allegro_init();
+	keys.init();
+	
 	int consoleTest;
+	int pooo;
 	
 	console.registerIntVariable(&consoleTest, "TEST", 100);
-	
-	
+	console.registerIntVariable(&pooo, "POO", 20);
+	allegro_message("%d",consoleTest);
+	console.setVariableValue("TEST", 10);
+	console.setVariableValue("POO", 15);
+	allegro_message("%d",consoleTest);
+	allegro_message("%d",pooo);
 	
 	bool quit = false;
 	bool left = false;
@@ -29,11 +37,6 @@ int main(int argc, char **argv)
 	bool down = false;
 	
 	BITMAP *buffer;
-	
-	allegro_init();
-	keys.init();
-	
-	allegro_message("%d",consoleTest);
 	
 	set_color_depth(16);
 
