@@ -2,7 +2,6 @@
 #include "lights.h"
 
 
-int pepo=0;
 
 int video_filter=0;
 BITMAP* screen_buffer;

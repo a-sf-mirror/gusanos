@@ -72,7 +72,9 @@ int main(int argc, char **argv)
         speed_counter--;
       };
       game->render();
-      //Sleep(0);
+      #ifdef WINDOWS
+      Sleep(0);
+      #endif
       game->frame_count++;
       if (t > 100)
       {
