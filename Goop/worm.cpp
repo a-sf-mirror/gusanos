@@ -3,6 +3,8 @@
 #include "vec.h"
 #include "game.h"
 #include "base_object.h"
+#include "base_player.h"
+#include "player_options.h"
 #include "base_animator.h"
 #include "animators.h"
 #include "sprite.h"
@@ -22,10 +24,19 @@ Worm::Worm()
 	
 	dir = 1;
 	aimAngle = 90;
+	aimSpeed = 0;
+	aimRecoilSpeed = 0;
+	
+	m_owner = NULL;
 	
 	movingLeft = false;
 	movingRight = false;
 	jumping = false;
+}
+
+void Worm::assignOwner( BasePlayer* owner)
+{
+	m_owner = owner;
 }
 
 void Worm::think()
@@ -122,13 +133,26 @@ void Worm::think()
 		pos.x += spd.x;
 	pos.y += spd.y;
 	
-	if( aimAngle < 0 ) aimAngle = 0;
-	if( aimAngle > 180 ) aimAngle = 180;
+	if ( m_owner )
+	{
+		if ( fabs(aimSpeed) < m_owner->getOptions()->aimFriction ) aimSpeed = 0;
+		else if ( aimSpeed > 0 ) aimSpeed -= m_owner->getOptions()->aimFriction;
+		else if ( aimSpeed < 0 ) aimSpeed += m_owner->getOptions()->aimFriction;
+	}
+	aimAngle += aimSpeed;
+
+	if( aimAngle < 0 )
+	{
+		aimAngle = 0;
+		aimSpeed = 0;
+	}
+	if( aimAngle > 180 )
+	{
+		aimAngle = 180;
+		aimSpeed = 0;
+	}
 		
 	if ( movingLeft || movingRight ) m_animator->tick();
-	else frame = 0;
-		
-	if ( frame >= 4 ) frame = 0;
 	
 }
 
@@ -143,6 +167,13 @@ void Worm::draw(BITMAP* where,int xOff, int yOff)
 		putpixel(where, crosshair.x,crosshair.y,makecol(255,0,0));
 	}
 	skin->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, y-yOff,aimAngle, flipped);
+}
+
+void Worm::addAimSpeed( float speed )
+{
+	if ( m_owner )
+	if ( fabs( aimSpeed ) < m_owner->getOptions()->aimMaxSpeed )
+	aimSpeed += speed;
 }
 
 void Worm::actionStart( Actions action)
@@ -183,11 +214,6 @@ void Worm::actionStop( Actions action)
 			jumping = false;
 		break;
 	}
-}
-
-void Worm::addToAim(float angle)
-{
-	aimAngle += angle;
 }
 
 

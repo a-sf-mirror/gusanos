@@ -1,4 +1,5 @@
 #include "player.h"
+#include "player_options.h"
 #include "worm.h"
 #include "viewport.h"
 
@@ -6,26 +7,19 @@
 
 using namespace std;
 
-Player::Player()
+Player::Player(PlayerOptions* options) : BasePlayer()
 {
-	team = 0;
-	deaths = 0;
-	kills = 0;
-	color = 0;
-	name = "unnamed";
+	bool aimingUp = false;
+	bool aimingDown = false;
 	
-	m_worm = NULL;
+	m_options = options;
+
 	m_viewport = NULL;
 }
 
 Player::~Player()
 {
 	if ( m_viewport ) delete m_viewport;
-}
-
-void Player::assignWorm(Worm* worm)
-{
-	m_worm = worm;
 }
 
 void Player::assignViewport(Viewport* viewport)
@@ -35,7 +29,12 @@ void Player::assignViewport(Viewport* viewport)
 
 void Player::think()
 {
-	if ( m_worm && m_viewport ) m_viewport->interpolateTo(m_worm->getPos(),0.1);
+	if ( m_worm )
+	{
+		if ( m_viewport ) m_viewport->interpolateTo(m_worm->getPos(),m_options->viewportFollowFactor);
+		if ( aimingUp ) m_worm->addAimSpeed(-m_options->aimAcceleration);
+		else if ( aimingDown ) m_worm->addAimSpeed(m_options->aimAcceleration);
+	}
 }
 
 void Player::render()
@@ -83,6 +82,23 @@ void Player::actionStart ( Actions action )
 		}
 		break;
 		
+		case UP:
+		{
+			if ( m_worm )
+			{
+				aimingUp = true;
+			}
+		}
+		break;
+		
+		case DOWN:
+		{
+			if ( m_worm )
+			{
+				aimingDown = true;
+			}
+		}
+		break;
 	}
 }
 
@@ -126,6 +142,24 @@ void Player::actionStop ( Actions action )
 		}
 		break;
 		
+		case UP:
+		{
+			if ( m_worm )
+			{
+				aimingUp = false;
+			}
+		}
+		break;
+		
+		case DOWN:
+		{
+			if ( m_worm )
+			{
+				aimingDown = false;
+			}
+		}
+		break;
+
 	}
 }
 

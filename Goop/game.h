@@ -11,6 +11,9 @@
 #include <list>
 #include <map>
 
+class BasePlayer;
+class PlayerOptions;
+
 static const int MAX_LOCAL_PLAYERS = 2;
 
 class Player;
@@ -48,7 +51,8 @@ class Game
 	Level level;
 	
 	std::vector<Player*> localPlayers;
-	std::vector<Player*> players;
+	std::vector<PlayerOptions*> playerOptions;
+	std::vector<BasePlayer*> players;
 	std::list<BaseObject*> objects;
 	Options options;
 	

@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 	if(true)
 	{
 		Worm* worm = new Worm;
-		Player* player = new Player;
+		Player* player = new Player(game.playerOptions[0]);
 		Viewport* viewport = new Viewport;
 		viewport->setDestination(gfx.buffer,0,0,160,240);
 		player->assignWorm(worm);
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 	if(true)
 	{
 		Worm* worm = new Worm;
-		Player* player = new Player;
+		Player* player = new Player(game.playerOptions[1]);
 		Viewport* viewport = new Viewport;
 		viewport->setDestination(gfx.buffer,160,0,160,240);
 		player->assignWorm(worm);
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
 			(*iter)->think();
 		}
 		
-		for ( vector<Player*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+		for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 		{
 			(*iter)->think();
 		}
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 		console.checkInput();
 
 
-		for ( vector<Player*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+		for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 		{
 			(*iter)->render();
 		}

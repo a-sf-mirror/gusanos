@@ -3,9 +3,11 @@
 #include "base_object.h"
 #include "player.h"
 #include "player_input.h"
+#include "player_options.h"
 #include "level.h"
 #include "gconsole.h"
 #include "game_actions.h"
+#include "base_player.h"
 #include "gfx.h"
 #include "sfx.h"
 
@@ -54,6 +56,13 @@ void Game::init()
 	gfx.init();
 	sfx.init();
 	console.init();
+	
+	for ( int i = 0; i< MAX_LOCAL_PLAYERS; ++i)
+	{
+		PlayerOptions *options = new PlayerOptions;
+		options->registerInConsole(i);
+		playerOptions.push_back(options);
+	}
 	
 	options.registerInConsole();
 	gfx.registerInConsole();

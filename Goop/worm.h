@@ -6,6 +6,7 @@
 #include "sprite.h"
 
 class BaseAnimator;
+class BasePlayer;
 
 class Worm : public BaseObject
 {
@@ -25,12 +26,14 @@ class Worm : public BaseObject
 		
 	Worm();
 	~Worm();
+	
+	void assignOwner( BasePlayer* owner);
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
 	void actionStart( Actions action );
 	void actionStop( Actions action );
-	void addToAim(float angle);
+	void addAimSpeed(float speed);
 	
 	private:
 	
@@ -40,7 +43,11 @@ class Worm : public BaseObject
 	
 	int dir;
 	float aimAngle;
-	float frame;
+	float aimSpeed;
+	float aimRecoilSpeed;
+	
+	BasePlayer* m_owner;
+	
 	Sprite *skin;
 	BaseAnimator* m_animator;
 };

@@ -1,13 +1,15 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "base_player.h"
 #include <string>
 
 class Viewport;
 class Worm;
+class PlayerOptions;
 struct BITMAP;
 
-class Player
+class Player : public BasePlayer
 {
 	public:
 	
@@ -22,29 +24,23 @@ class Player
 		CHANGE
 	};
 		
-	Player();
+	Player(PlayerOptions* options);
 	~Player();
 	
 	void think();
 	void render();
 	
 	void assignViewport(Viewport* Viewport);
-	void assignWorm(Worm* worm);
-	
+
 	void actionStart( Actions action );
 	void actionStop( Actions action );
 	
 	private:
 	
-	std::string name;
-	int team;
-	int deaths;
-	int kills;
-	int color;
+	bool aimingUp;
+	bool aimingDown;
 
-	Worm* m_worm;
 	Viewport* m_viewport;
-
 };
 
 #endif  // _WORM_H_
