@@ -27,6 +27,11 @@ Worm *worm;
 
 bool forward = false;
 bool quit = false;
+int showFps = false;
+
+//millisecond timer
+volatile unsigned int _timer = 0;
+void _timerUpdate(void) { _timer++; } END_OF_FUNCTION(_timerUpdate);
 
 string rightStart(const list<string> &args)
 {
@@ -108,6 +113,7 @@ int main(int argc, char **argv)
 	float aimSpeed;
 	
 	console.registerFloatVariable("CL_TEMP_AIM_SPEED", &aimSpeed, 1.8);
+        console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
 	
 	console.registerCommand("+MOVELEFT", leftStart);
 	console.registerCommand("-MOVELEFT", leftStop);
@@ -150,10 +156,28 @@ int main(int argc, char **argv)
 	int x,y;
 	int moo=0;
 	int moox,mooy;
-	
+
+        //install millisecond timer
+        install_timer();
+        LOCK_VARIABLE(_timer);
+        LOCK_FUNCTION(_timerUpdate);
+        install_int_ex(_timerUpdate, BPS_TO_TIMER(100));
+
+	int _fpsLast = 0;
+        int _fpsCount = 0;
+        int _fps = 0;
+        Font *font = fontList.load("minifont.bmp");
+
 	while (!quit)
 	{
-		
+		//Update FPS
+                if (_fpsLast + 100 < _timer)
+                {
+                    _fps = _fpsCount;
+                    _fpsCount = 0;
+                    _fpsLast = _timer;
+                }
+
 		list<BaseObject*>::iterator iter;
 		
 		if ( aimUp ) worm->addToAim(-aimSpeed);
@@ -168,10 +192,21 @@ int main(int argc, char **argv)
 
 		testViewport.interpolateTo(worm->getPos(),0.1);
 		testViewport.render();
-		
+
+                //show fps
+	        if (showFps)
+                {
+                    string fpsStr;
+                    stringstream sout;
+                    sout << _fps;
+                    sout >> fpsStr;
+                    font->draw(gfx.buffer, fpsStr, 5, 5, 0);
+                }
+                _fpsCount++;
+	
 		console.think();
 		console.render(gfx.buffer);
-		
+
 		gfx.updateScreen();
 		
 		float pos[3] = { worm->getPos().x, worm->getPos().y, -20 };
@@ -192,7 +227,6 @@ int main(int argc, char **argv)
 				game.objects.erase(tmp);
 			}else	iter++;
 		}
-		
 
 	}
 	
