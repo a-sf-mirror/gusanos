@@ -82,6 +82,14 @@ void Particle::think()
 			justCreated = false;
 		}
 		
+		if ( m_type->acceleration )
+		{
+			if ( spd.dotProduct(angleVec(m_angle,1)) < m_type->maxSpeed || m_type->maxSpeed < 0)
+			spd+= angleVec(m_angle,m_type->acceleration);
+		}
+		
+		spd*=m_type->damping;
+		
 		if ( abs(m_angleSpeed) < m_type->angularFriction ) m_angleSpeed = 0;
 		else if ( m_angleSpeed < 0 ) m_angleSpeed += m_type->angularFriction;
 		else m_angleSpeed -= m_type->angularFriction;
@@ -102,10 +110,15 @@ float Particle::getAngle()
 	return m_angle;
 }
 
+void Particle::addAngleSpeed( float speed )
+{
+	m_angleSpeed += speed;
+}
+
 void Particle::draw(BITMAP* where,int xOff, int yOff)
 {
 	if (!m_sprite)
-		putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,makecol(255,255,255));
+		putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
 	else
 	{
 		m_sprite->draw(where, m_animator->getFrame(), (int)pos.x-xOff, pos.y-yOff);

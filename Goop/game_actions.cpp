@@ -22,6 +22,7 @@ void registerGameActions()
 	game.actionList["play_sound"] = playSound;
 	game.actionList["play_sound_static"] = playSoundStatic;
 	game.actionList["delay_fire"] = delayFire;
+	game.actionList["add_angle_speed"] = addAngleSpeed;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +226,7 @@ DelayFire::DelayFire( const vector< string >& params )
 	}
 	if( params.size() >= 2 )
 	{
-		delayTime = cast<int>(params[1]);
+		delayTimeVariation = cast<int>(params[1]);
 	}
 }
 
@@ -236,3 +237,35 @@ void DelayFire::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon
 		weapon->delay( delayTime + rnd()*delayTimeVariation );
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* addAngleSpeed( const vector< string >& params )
+{
+	return new AddAngleSpeed(params);
+}
+
+AddAngleSpeed::AddAngleSpeed( const vector< string >& params )
+{
+	speed = 0;
+	speedVariation = 0;
+	if ( params.size() >= 1 )
+	{
+		speed = cast<float>(params[0]);
+	}
+	if( params.size() >= 2 )
+	{
+		speedVariation = cast<float>(params[1]);
+	}
+}
+
+void AddAngleSpeed::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon )
+{
+	if (object)
+	{
+		object->addAngleSpeed( speed + rnd()*speedVariation );
+	}
+}
+

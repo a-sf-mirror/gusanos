@@ -33,7 +33,7 @@ PartType::PartType()
 	gravity = 0;
 	damage = 0;
 	bounceFactor = 1;
-	color = 0;
+	colour = -1;
 	repeat = 1;
 	alpha = 255;
 	timeout = -1;
@@ -43,6 +43,9 @@ PartType::PartType()
 	angularFriction = 0;
 	animDuration = 100;
 	animType = ANIM_LOOPRIGHT;
+	damping = 1;
+	acceleration = 0;
+	maxSpeed = -1;
 	
 	sprite = NULL;
 	distortion = NULL;
@@ -102,6 +105,9 @@ bool PartType::load(const string &filename)
 					if ( var == "gravity" ) gravity = cast<float>(val);
 					else if ( var == "repeat" ) repeat = cast<int>(val);	
 					else if ( var == "bounce_factor" ) bounceFactor = cast<float>(val);
+					else if ( var == "damping" ) damping = cast<float>(val);
+					else if ( var == "acceleration" ) acceleration = cast<float>(val);
+					else if ( var == "max_speed" ) maxSpeed = cast<float>(val);
 					else if ( var == "angular_friction" ) angularFriction = cast<float>(val);
 					else if ( var == "damage" ) damage = cast<float>(val);
 					else if ( var == "worm_detect_range" ) wormDetectRange = cast<float>(val);
@@ -111,6 +117,11 @@ bool PartType::load(const string &filename)
 					{
 						if ( val == "ping_pong" ) animType = ANIM_PINGPONG;
 						else if ( val == "loop_right" ) animType = ANIM_LOOPRIGHT;
+					}
+					else if ( var == "colour" || var == "color" )
+					{
+						if ( tokens.size() >= 5 )
+						colour = makecol( cast<int>(tokens[2]), cast<int>(tokens[3]), cast<int>(tokens[4]) );
 					}
 					else if ( var == "distortion" && !distortion )
 					{

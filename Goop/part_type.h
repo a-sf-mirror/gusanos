@@ -33,7 +33,10 @@ class PartType
 	float gravity;
 	float damage;
 	float bounceFactor;
-	int color;
+	float damping;
+	float acceleration;
+	float maxSpeed;
+	int colour;
 	int repeat;
 	int alpha;
 	int timeout;

@@ -35,6 +35,7 @@ class Particle : public BaseObject
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
 	float getAngle();
+	void addAngleSpeed(float);
 	
 	private:
 	

@@ -21,7 +21,7 @@ void Sfx::init()
 {	
 	FSOUND_Init(44100, 32, 0);
 	FSOUND_3D_SetDistanceFactor(20);
-	FSOUND_3D_SetRolloffFactor(5);
+	FSOUND_3D_SetRolloffFactor(2);
 }
 
 void Sfx::shutDown()

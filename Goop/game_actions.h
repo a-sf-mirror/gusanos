@@ -108,4 +108,21 @@ class DelayFire : public BaseAction
 	int delayTimeVariation;
 };
 
+BaseAction* addAngleSpeed( const std::vector< std::string >& params );
+
+class AddAngleSpeed : public BaseAction
+{
+	public:
+
+	AddAngleSpeed( const std::vector< std::string >& params );
+	~AddAngleSpeed();
+
+	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+
+	private:
+	
+	float speed;
+	float speedVariation;
+};
+
 #endif  // _GAME_ACTIONS_H_
