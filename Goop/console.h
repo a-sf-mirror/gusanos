@@ -22,12 +22,12 @@ class Console
 {
 	public:
 
-   Console(void);
+	Console(void);
 	Console(int logMaxSize, int MaxMsgLength);
-   ~Console(void);
+	~Console(void);
 
-	void registerIntVariable(const std::string &name, int* src, int defaultValue);
-	void registerFloatVariable(const std::string &name, float* src, float defaultValue);
+	void registerIntVariable(const std::string &name, int* src, int defaultValue, void (*func)( int ) = NULL );
+	void registerFloatVariable(const std::string &name, float* src, float defaultValue, void (*func)( float ) = NULL );
 	void registerAlias(const std::string &name, const std::string &action);
 	void registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&));
 	void registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&));

@@ -16,8 +16,12 @@ Gfx gfx;
 
 string fullscreenCmd(const list<string> &args)
 {
-	gfx.toggleState();
 	return "";
+}
+
+void fullscreen( int oldValue )
+{
+	gfx.fullscreenChange();
 }
 
 Gfx::Gfx()
@@ -34,6 +38,7 @@ void Gfx::init()
 	set_color_depth(16);
 	set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0);
 	m_fullscreen = true;
+	m_doubleRes = false;
 	//set_gfx_mode(GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
 	
 	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
@@ -53,22 +58,22 @@ void Gfx::registerInConsole()
 {
 	console.registerCommand("SCREENSHOT", screenShot);
 	console.registerCommand("VID_TOGGLE_FULLSCREEN", fullscreenCmd);
+	console.registerIntVariable("VID_FULLSCREEN", &m_fullscreen, 1, fullscreen);
+	console.registerIntVariable("VID_DOUBLERES", &m_doubleRes, 0);
 	console.registerIntVariable("VID_VSYNC", &m_vsync, 1);
 	console.registerIntVariable("VID_CLEAR_BUFFER", &m_clearBuffer, 1);
 }
 
-void Gfx::toggleState()
+void Gfx::fullscreenChange()
 {
 	set_color_depth(16);
 	
-	if ( !m_fullscreen )
+	if ( m_fullscreen )
 	{
 		set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0);
-		m_fullscreen = true;
 	}else
 	{
 		set_gfx_mode(GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
-		m_fullscreen = false;
 	}
 	
 	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
