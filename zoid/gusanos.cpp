@@ -7,6 +7,9 @@
 #endif
 #include "engine.h"
 #include <zoidcom.h>
+#include <stdio.h>
+#include <string.h>
+
 
 #define vmajor 0
 #define vminor 8

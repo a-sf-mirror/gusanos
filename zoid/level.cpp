@@ -8,6 +8,8 @@
 #include "player.h"
 #include "explosions.h"
 #include "water.h"
+#include "gfx.h"
+#include <iostream>
 #include <string>
 
 class level* map;
@@ -206,7 +208,14 @@ int load_map(char* name)
   strcpy(tmp,tmp2);
 	strcat(tmp,"/material.bmp");
 	set_color_depth(8);
-	tmp_mat = load_bmp(tmp,NULL);
+	tmp_mat = load_image(tmp, NULL);
+	if (tmp_mat == NULL)
+	  {
+	    tmp[strlen(tmp) - 3] = 'p';
+	    tmp[strlen(tmp) - 2] = 'n';
+	    tmp[strlen(tmp) - 1] = 'g';
+	    tmp_mat = load_image(tmp,NULL);
+	  }
 	set_color_depth(game->v_depth);
   if (tmp_mat==NULL)
   {
@@ -215,9 +224,16 @@ int load_map(char* name)
     strcpy(tmp,tmp2);
     strcat(tmp,"/material.bmp");
     set_color_depth(8);
-    tmp_mat = load_bmp(tmp,NULL);
+    tmp_mat = load_image(tmp,NULL);
     set_color_depth(game->v_depth);
   };
+  if (tmp_mat == NULL)
+    {
+      tmp[strlen(tmp) - 3] = 'p';
+      tmp[strlen(tmp) - 2] = 'n';
+      tmp[strlen(tmp) - 1] = 'g';
+      tmp_mat = load_image(tmp,NULL);
+    }
 	if (tmp_mat!=NULL)
 	{
 		delete map;
@@ -227,13 +243,34 @@ int load_map(char* name)
     strcpy(map->name,name);
 		strcpy(tmp, tmp2);
 		strcat(tmp,"/level.bmp");
-		map->mapimg = load_bmp(tmp,NULL);
+		map->mapimg = load_image(tmp,NULL);
+		if (map->mapimg == NULL)
+		  {
+		    tmp[strlen(tmp) - 3] = 'p';
+		    tmp[strlen(tmp) - 2] = 'n';
+		    tmp[strlen(tmp) - 1] = 'g';
+		    map->mapimg = load_image(tmp,NULL);
+		  }
 		strcpy(tmp, tmp2);
 		strcat(tmp,"/layer.bmp");
-		map->layer = load_bmp(tmp,NULL);
+		map->layer = load_image(tmp,NULL);	
+		if (map->layer == NULL)
+		  {
+		    tmp[strlen(tmp) - 3] = 'p';
+		    tmp[strlen(tmp) - 2] = 'n';
+		    tmp[strlen(tmp) - 1] = 'g';
+		    map->layer = load_image(tmp,NULL);	
+		  }
     strcpy(tmp, tmp2);
 		strcat(tmp,"/paralax.bmp");
-		map->paralax = load_bmp(tmp,NULL);
+		map->paralax = load_image(tmp,NULL);
+		if (map->paralax == NULL)
+		  {
+		    tmp[strlen(tmp) - 3] = 'p';
+		    tmp[strlen(tmp) - 2] = 'n';
+		    tmp[strlen(tmp) - 1] = 'g';
+		    map->paralax = load_image(tmp,NULL);
+		  }
     map->material = tmp_mat;
     set_color_depth(8);
     map->water_buffer = create_bitmap(tmp_mat->w,tmp_mat->h);
@@ -241,7 +278,14 @@ int load_map(char* name)
     set_color_depth(game->v_depth);
     strcpy(tmp, tmp2);
 		strcat(tmp,"/background.bmp");
-		map->background = load_bmp(tmp,NULL);
+		map->background = load_image(tmp,NULL);
+		if (map->background == NULL)
+		  {
+		    tmp[strlen(tmp) - 3] = 'p';
+		    tmp[strlen(tmp) - 2] = 'n';
+		    tmp[strlen(tmp) - 1] = 'g';
+		    map->background = load_image(tmp,NULL);
+		  }
     if (map->background==NULL)
     {
       int x,y,col,g;

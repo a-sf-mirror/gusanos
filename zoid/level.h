@@ -2,6 +2,7 @@
 #define LEVEL_H
 
 #include <allegro.h>
+#include "loadpng.h"
 
 class part_type;
 
