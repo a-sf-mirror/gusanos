@@ -40,11 +40,10 @@ elif platform == 'mingw-cross':
 		)
 elif platform == 'basara':
 	env = Environment(
-		CPPPATH = ['.', '/usr/local/include/zoidcom', '#Console', '#GUI'],
+		CPPPATH = ['.', '/usr/local/include/zoidcom', '#loadpng', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', os.path.join('#lib/', platform)],
 		CPPFLAGS = '-O3',
 		#CPPFLAGS = '-O0 -g',
-		CXX='g++-3.4',
 		)
 # add more platforms here
 	
