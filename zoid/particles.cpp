@@ -545,9 +545,6 @@ void calc_particles()
       };
 			if (destroyed) break;
 
-			tmp->x+=tmp->xspd;
-			tmp->y+=tmp->yspd;
-		
 			tmp->yspd+=tmp->type->gravity;
 			tmp->time++;
       
@@ -638,6 +635,8 @@ void calc_particles()
 						tmp->framecount=0;
 				};
 			};
+      tmp->x+=tmp->xspd;
+			tmp->y+=tmp->yspd;
 		};
   };
 };
