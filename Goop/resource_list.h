@@ -11,17 +11,13 @@ template<typename T1>
 class ResourceList
 {
 	public:
-		
-	ResourceList()
-	{
-	};
-	
+
 	ResourceList( const std::string& subFolder)
 	{
 		m_subFolder = subFolder;
 	};
 	
-	~ResourceList()
+	void clear()
 	{
 		typename std::map<std::string, T1*>::iterator item = m_resItems.begin();
 		while (item != m_resItems.end())
@@ -29,6 +25,7 @@ class ResourceList
 			delete item->second;
 			++item;
 		}
+		m_resItems.clear();
 	};
 		
 	T1* load( std::string filename )
@@ -41,7 +38,7 @@ class ResourceList
 		{
 			m_resItems[filename] = new T1;
 			item = m_resItems.find(filename);
-			if ( gameLoad(m_subFolder + filename,*item->second))
+			if ( game.specialLoad(m_subFolder + filename,*item->second))
 			{
 				return item->second;
 			}else

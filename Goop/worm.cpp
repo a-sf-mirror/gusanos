@@ -63,7 +63,10 @@ void Worm::think()
 	{
 		if ( spd.x < game.options.worm_maxSpeed )
 		{
-			spd.x += game.options.worm_acceleration;
+			if (game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y + 1) ).particle_pass)
+				spd.x += game.options.worm_acceleration * game.options.worm_airAccelerationFactor;
+			else
+				spd.x += game.options.worm_acceleration;
 		}
 		dir = 1;
 	}
@@ -72,7 +75,10 @@ void Worm::think()
 	{
 		if ( -spd.x < game.options.worm_maxSpeed )
 		{
-			spd.x -= game.options.worm_acceleration;
+			if (game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y + 1) ).particle_pass)
+				spd.x -= game.options.worm_acceleration * game.options.worm_airAccelerationFactor;
+			else
+				spd.x -= game.options.worm_acceleration;
 		}
 		dir = -1;
 	}

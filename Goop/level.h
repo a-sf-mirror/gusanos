@@ -16,9 +16,12 @@ class Level
 	
 	bool load(const std::string &name);
 	void unload();
+	bool isLoaded();
 	void draw(BITMAP* where, int x, int y);
 	int width();
 	int height();
+	
+	const std::string &getPath();
 	
 	const Material& getMaterial(int x, int y);
 	/*inline const Material& getMaterial(int x, int y);
@@ -27,6 +30,8 @@ class Level
 	}*/
 	
 	private:
+		
+	bool loaded;
 	
 	BITMAP* image;
 	BITMAP* material;

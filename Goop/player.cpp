@@ -20,7 +20,10 @@ Player::Player(PlayerOptions* options) : BasePlayer()
 
 Player::~Player()
 {
-	if ( m_viewport ) delete m_viewport;
+	if ( m_viewport )
+	{
+		delete m_viewport;
+	}
 }
 
 void Player::assignViewport(Viewport* viewport)

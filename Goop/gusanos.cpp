@@ -4,7 +4,6 @@
 #include "resource_list.h"
 #include "sprite.h"
 #include "font.h"
-#include "menu_window.h"
 #include "vec.h"
 #include "level.h"
 #include "game.h"
@@ -44,7 +43,7 @@ int main(int argc, char **argv)
 {
 	game.init();
 
-	Font *tempFont = fontList.load("minifont.bmp");
+	//Font *tempFont = fontList.load("minifont.bmp");
 	
 	console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
 	console.registerIntVariable("CL_SHOWDEBUG", &showDebug, 1);
@@ -55,62 +54,8 @@ int main(int argc, char **argv)
 	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN; BIND 1_PAD +P1_FIRE");
 	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	
-	if ( gameLoad<Level>("bleed",game.level) )
-	{
-		console.addLogMsg("MAP LOADED SUCCESFULLY");
-	}else
-		console.addLogMsg("COULDNT LOAD THE MAP");
+	game.loadMod();
 	
-	
-	PartType* testType = partTypeList.load("test.obj");
-
-	MenuWindow menu;
-	
-	
-	for (int i = 0; i < 1; i++)
-	{
-		Vec pos;
-		while ( !game.level.getMaterial((int) pos.x,(int) pos.y).particle_pass )
-		{
-			pos.x = rnd()*game.level.width();
-			pos.y = rnd()*game.level.height();
-		}
-		BaseObject* tmp = new Particle(testType, pos, angleVec(rnd()*360,rnd()*0.1+1));
-		game.objects.push_back( tmp );
-	}
-	
-	if(true)
-	{
-		Worm* worm = new Worm;
-		Player* player = new Player(game.playerOptions[0]);
-		Viewport* viewport = new Viewport;
-		viewport->setDestination(gfx.buffer,0,0,160,240);
-		player->assignWorm(worm);
-		player->assignViewport(viewport);
-		game.objects.push_back( worm );
-		game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-		game.players.push_back( player );
-		game.localPlayers.push_back( player );
-	}
-	if(true)
-	{
-		Worm* worm = new Worm;
-		Player* player = new Player(game.playerOptions[1]);
-		Viewport* viewport = new Viewport;
-		viewport->setDestination(gfx.buffer,160,0,160,240);
-		player->assignWorm(worm);
-		player->assignViewport(viewport);
-		game.objects.push_back( worm );
-		game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-		game.players.push_back( player );
-		game.localPlayers.push_back( player );
-	}
-
-
-	int x,y;
-	int moo=0;
-	int moox,mooy;
-
 	//install millisecond timer
 	install_timer();
 	LOCK_VARIABLE(_timer);
@@ -121,47 +66,43 @@ int main(int argc, char **argv)
 	int _fpsCount = 0;
 	int _fps = 0;
 	int logicLast = 0;
-	int _objCount = 0; //object count for debug info
-	int _playerCount = 0;//local player count
 
 	while (!quit)
 	{
 
 		while ( logicLast+1 <= _timer )
 		{
-			_objCount = 0;
-			_playerCount = 0;
-
-			for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
+			if ( game.isLoaded() && game.level.isLoaded() )
 			{
-				(*iter)->think();
+				
+				for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
+				{
+					(*iter)->think();
+				}
+				
+				for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+				{
+					(*iter)->think();
+				}
+				
+				for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); )
+				{
+					if ( (*iter)->deleteMe )
+					{
+						list<BaseObject*>::iterator tmp = iter;
+						iter++;
+						delete *tmp;
+						game.objects.erase(tmp);
+					}else	iter++;
+				}
+				
 			}
-			
-			for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
-			{
-				(*iter)->think();
-				_playerCount++;
-			}
-			
 			sfx.think();
 			
 			console.checkInput();
 			console.think();
 			
-			for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); )
-			{
-				if ( (*iter)->deleteMe )
-				{
-					list<BaseObject*>::iterator tmp = iter;
-					iter++;
-					delete *tmp;
-					game.objects.erase(tmp);
-				}else	iter++;
-                                _objCount++;
-			}
-			
 			logicLast+=1;
-
 		}
 
 		//Update FPS
@@ -171,26 +112,28 @@ int main(int argc, char **argv)
 			_fpsCount = 0;
 			_fpsLast = _timer;
 		}
-
-
-		for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+		
+		if ( game.isLoaded() && game.level.isLoaded() )
 		{
-			(*iter)->render();
+			for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+			{
+				(*iter)->render();
+			}
+			
+			//debug info
+			if (showDebug)
+			{
+				//tempFont->draw(gfx.buffer, "OBJECTS: " + cast<string>(game.objects.size()), 5, 10, 0);
+				//tempFont->draw(gfx.buffer, "PLAYERS: " + cast<string>(game.players.size()), 5, 15, 0);
+			}
 		}
-	
+		
 		//show fps
 		if (showFps)
 		{
-			tempFont->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
+			//tempFont->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
 		}
 		_fpsCount++;
-
-                //debug info
-                if (showDebug)
-                {
-			tempFont->draw(gfx.buffer, "OBJECTS: " + cast<string>(_objCount), 5, 10, 0);
-			tempFont->draw(gfx.buffer, "PLAYERS: " + cast<string>(_playerCount), 5, 15, 0);
-                }
 
 		console.render(gfx.buffer);
 		
@@ -199,10 +142,10 @@ int main(int argc, char **argv)
 	}
 	
 	
+	game.unload();
 	console.shutDown();
 	sfx.shutDown();
 	gfx.shutDown();
-	//level.unload();
 	allegro_exit();
 
 	return(0);

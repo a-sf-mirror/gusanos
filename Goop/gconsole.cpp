@@ -82,12 +82,7 @@ void GConsole::init()
 {
 	keyHandler.init();
 
-	m_font = fontList.load("minifont.bmp");
-	
-	m_MaxMsgLength= (320-5) / m_font->width();
 	m_mode = CONSOLE_MODE_BINDINGS;
-	
-	background = spriteList.load("con_background.bmp");
 	
 	registerFloatVariable("CON_SPEED", &speed, 4);
 	registerIntVariable("CON_HEIGHT", &height, 120);
@@ -104,25 +99,37 @@ void GConsole::shutDown()
 	//m_font must be deleted here!!!! hmm not sure now
 }
 
-void GConsole::render(BITMAP* where)
+void GConsole::loadResources()
+{
+	m_font = fontList.load("minifont.bmp");
+	m_MaxMsgLength= (320-5) / m_font->width();
+	
+	background = spriteList.load("con_background.bmp");
+}
+
+void GConsole::render(BITMAP* where, bool fullScreen)
 {
 	int textIndex = 0;
 	list<std::string>::iterator msg = log.end();
-	if ( m_pos > 0 )
+	
+	float pos = m_pos;
+	if ( fullScreen ) pos = where->h-1;
+		
+	if ( pos > 0)
 	{
-		background->draw(where, 0, 0, m_pos, false, ALIGN_LEFT, ALIGN_BOTTOM);
-		while ((msg != log.begin()) && ((int)m_pos - 20 - (textIndex - 1) * (m_font->height() + 1) > 0))
+		if (background) background->draw(where, 0, 0, pos, false, ALIGN_LEFT, ALIGN_BOTTOM);
+		while ((msg != log.begin()) && ((int)pos - 20 - (textIndex - 1) * (m_font->height() + 1) > 0))
 		{
 			msg--;
-			m_font->draw(where, *msg, 5, (int)m_pos - 20 - textIndex * (m_font->height() + 1), 0);
+			m_font->draw(where, *msg, 5, (int)pos - 20 - textIndex * (m_font->height() + 1), 0);
 			textIndex++;
 		}
 		string tempString = (']' + m_inputBuff + '*');
 		if ( tempString.length() < (where->w-5) / m_font->width() )
-			m_font->draw(where, tempString, 5, (int)m_pos - 10 , 0);
+			m_font->draw(where, tempString, 5, (int)pos - 10 , 0);
 		else
 		{
-			m_font->draw(where, tempString.substr(tempString.length() - (where->w-5) / m_font->width()), 5, (int)m_pos - 10 , 0);
+			m_font->draw(where, tempString.substr(tempString.length() - (where->w-5) / m_font->width()), 5, (int)pos - 10 , 0);
 		}
 	}
 }

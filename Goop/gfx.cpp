@@ -21,7 +21,6 @@ Gfx::Gfx()
 
 Gfx::~Gfx()
 {
-	if ( buffer ) destroy_bitmap(buffer);
 }
 
 void Gfx::init()
@@ -49,20 +48,40 @@ void Gfx::registerInConsole()
 	console.registerIntVariable("VID_CLEAR_BUFFER", &m_clearBuffer, 1);
 }
 
-BITMAP* Gfx::loadBitmap( const string &filename, RGB* palette )
+BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette )
 {
 	BITMAP* returnValue = NULL;
 	
-	string extension = filename.substr(filename.length() - 3);
-	transform(extension.begin(), extension.end(), extension.begin(), (int(*)(int)) toupper);
-	
-	if ( extension == "PNG" )
+	if ( exists( filename.c_str() ) )
 	{
-		returnValue = load_png(filename.c_str(), palette);
-	}
-	else
+		string extension = filename.substr(filename.length() - 3);
+		transform(extension.begin(), extension.end(), extension.begin(), (int(*)(int)) toupper);
+		
+		if ( extension == "PNG" )
+		{
+			returnValue = load_png(filename.c_str(), palette);
+		}
+		else
+		{
+			returnValue = load_bitmap(filename.c_str(), palette);
+		}
+	}else
 	{
-		returnValue = load_bitmap(filename.c_str(), palette);
+		string tmp = filename;
+		tmp += ".png";
+		if ( exists( tmp.c_str() ) )
+		{
+			returnValue = load_png( tmp.c_str() , palette );
+		}
+		else
+		{
+			tmp = filename;
+			tmp += ".bmp";
+			if ( exists( tmp.c_str() ))
+			{
+				returnValue = load_bmp( tmp.c_str() , palette );
+			}
+		}
 	}
 	
 	return returnValue;

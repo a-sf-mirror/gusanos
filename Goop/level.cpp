@@ -1,5 +1,6 @@
 #include "level.h"
 
+#include "gfx.h"
 #include "material.h"
 #include <allegro.h>
 #include <string>
@@ -9,6 +10,8 @@ using namespace std;
 
 Level::Level()
 {
+	loaded = false;
+	
 	image = NULL;
 	material = NULL;
 	background = NULL;
@@ -24,21 +27,21 @@ Level::Level()
 
 Level::~Level()
 {
-	unload();
 }
 
 bool Level::load(const string &name)
 {
+	path = name;
 	int vdepth=get_color_depth();
 	set_color_depth(8);
-	material = load_bitmap((name + "/material.bmp").c_str(),0);
+	material = gfx.loadBitmap((name + "/material").c_str(),0);
 	set_color_depth(vdepth);
 	if (material)
 	{
-		image = load_bitmap((name + "/level.bmp").c_str(),0);
+		image = gfx.loadBitmap((name + "/level").c_str(),0);
 		if (image)
 		{
-			background = load_bitmap((name + "/background.bmp").c_str(),0);
+			background = gfx.loadBitmap((name + "/background").c_str(),0);
 			if(!background)
 			{
 				background = create_bitmap(material->w, material->h);
@@ -48,6 +51,7 @@ bool Level::load(const string &name)
 					putpixel(background, x, y, getpixel(image, x, y));
 				}
 			}
+			loaded = true;
 			return true;
 		}
 	}
@@ -57,12 +61,19 @@ bool Level::load(const string &name)
 
 void Level::unload()
 {
+	loaded = false;
+	path = "";
 	if (image) destroy_bitmap(image);
 	if (material) destroy_bitmap(material);
 	if (background) destroy_bitmap(background);
 	image = NULL;
 	material = NULL;
 	background = NULL;
+}
+
+bool Level::isLoaded()
+{
+	return loaded;
 }
 
 void Level::draw(BITMAP* where, int x, int y)
@@ -92,4 +103,9 @@ int Level::height()
 		return material->h;
 	else
 		return 0;
+}
+
+const string& Level::getPath()
+{
+	return path;
 }

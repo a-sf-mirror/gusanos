@@ -21,8 +21,9 @@ class GConsole : public Console
 	
 	void init();
 	void shutDown();
+	void loadResources();
 	void checkInput();
-	void render(BITMAP *where);
+	void render(BITMAP *where, bool fullScreen = false);
 	void think();
 
 	private:

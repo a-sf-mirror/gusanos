@@ -29,6 +29,7 @@ struct Options
 	float ninja_rope_startDistance;
 	float worm_maxSpeed;
 	float worm_acceleration;
+	float worm_airAccelerationFactor;
 	float worm_friction;
 	float worm_airFriction;
 	float worm_gravity;
@@ -49,39 +50,46 @@ class Game
 	
 	void init();
 	
-	const std::vector<std::string>& getPaths();
-	void addPath( const std::string& path);
-	void removePath();
+	void setMod(const std::string& mod);
 	void loadWeapons();
+	void unload();
+	void loadMod();
+	bool isLoaded();
+	void changeLevel(const std::string& level);
 	
 	Level level;
+	std::vector<WeaponType*> weaponList;
+	Options options;
+	std::vector<PlayerOptions*> playerOptions;
 	
 	std::vector<Player*> localPlayers;
-	std::vector<PlayerOptions*> playerOptions;
 	std::vector<BasePlayer*> players;
-	std::vector<WeaponType*> weaponList;
 	std::list<BaseObject*> objects;
-	Options options;
-	
-	PartType* NRPartType;
-	
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
 	
+	PartType* NRPartType;
+	
+	template <typename T1>
+	bool specialLoad(const std::string& name, T1 &resource)
+	{
+		if ( resource.load(level.getPath() + name) ) return true;
+		if ( resource.load(modPath + name) ) return true;
+		if ( resource.load(defaultPath + name) ) return true;
+		
+		return false;
+	}
+	
 	private:
-	std::vector<std::string> m_paths;
+
+	std::string nextMod;
+	std::string modPath;
+	std::string mapPath;
+	std::string defaultPath;
+	bool loaded;
+	
 };
 
 extern Game game;
-
-template <typename T1>
-bool gameLoad(const std::string& name, T1 &resource)
-{
-	for (int i = 0; i < game.getPaths().size(); i++)
-	{
-		if ( resource.load(game.getPaths()[i] + name) ) return true;
-	}
-	return false;
-}
 
 #endif // _GAME_H_
