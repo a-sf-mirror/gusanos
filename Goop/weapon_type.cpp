@@ -129,6 +129,7 @@ bool WeaponType::load(const string &filename)
 		return true;
 	} else
 	{
+		std::cout << "ERROR: Loading " << filename << std::endl;
 		return false;
 	}
 }
