@@ -1,4 +1,4 @@
-#include "ai.h"
+#include "player_ai.h"
 #include "worm.h"
 #include <vector>
 #include <cmath>
@@ -35,8 +35,6 @@ void PlayerAI::getTarget()
 
 void PlayerAI::think()
 {
-    Player::think();
-
     getTarget();
     if (!m_target)
         return;
@@ -54,27 +52,27 @@ void PlayerAI::think()
     if (dist > 48)
     { 
         if (x < tmpX)
-            actionStart(RIGHT);
+            m_worm->actionStart(Worm::MOVERIGHT);
         else
-            actionStop(RIGHT);
+            m_worm->actionStop(Worm::MOVERIGHT);
         if (x > tmpX)
-            actionStart(LEFT);
+            m_worm->actionStart(Worm::MOVELEFT);
         else
-            actionStop(LEFT);
+            m_worm->actionStop(Worm::MOVELEFT);
     } else if (dist < 24)
     {
         if (x > tmpX)
-            actionStart(RIGHT);
+            m_worm->actionStart(Worm::MOVERIGHT);
         else
-            actionStop(RIGHT);
+            m_worm->actionStop(Worm::MOVERIGHT);
         if (x < tmpX)
-            actionStart(LEFT);
+            m_worm->actionStart(Worm::MOVELEFT);
         else
-            actionStop(LEFT);
+            m_worm->actionStop(Worm::MOVELEFT);
     } else
     {
-        actionStop(LEFT);
-        actionStop(RIGHT);
+        m_worm->actionStop(Worm::MOVELEFT);
+        m_worm->actionStop(Worm::MOVERIGHT);
     }
 
 
@@ -100,21 +98,21 @@ void PlayerAI::think()
 
     //aim
     if (curAngle - cAimAccuracy > rad2deg(targetAngle))
-        actionStart(UP);
+        m_worm->actionStart(Worm::AIMUP);
     else
-        actionStop(UP);
+        m_worm->actionStop(Worm::AIMUP);
 
     if (curAngle + cAimAccuracy < rad2deg(targetAngle))
-        actionStart(DOWN);
+        m_worm->actionStart(Worm::AIMDOWN);
     else
-        actionStop(DOWN);
+        m_worm->actionStop(Worm::AIMDOWN);
 
     //shooting
     if (curAngle - cAimAccuracy < rad2deg(targetAngle) && curAngle + cAimAccuracy > rad2deg(targetAngle))
     {
 	    //aimed accuratley
-	    actionStart(FIRE);
+	    m_worm->actionStart(Worm::FIRE);
     } else
-	    actionStop(FIRE);
+	    m_worm->actionStop(Worm::FIRE);
 }
 

@@ -16,7 +16,7 @@
 #include "gfx.h"
 #include "sfx.h"
 #include "distortion.h"
-#include "ai.h"
+#include "player_ai.h"
 
 #include <string>
 #include <vector>
