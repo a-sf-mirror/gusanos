@@ -1,8 +1,8 @@
 #include "liero.h"
 #include "../gfx.h"
 #include "../vec.h"
-#include "zlib.h"
 #include <string>
+#include <vector>
 #include <cstring>
 
 #include <boost/filesystem/path.hpp>
@@ -12,6 +12,7 @@
 namespace fs = boost::filesystem;
 
 LieroLevelLoader LieroLevelLoader::instance;
+LieroFontLoader LieroFontLoader::instance;
 
 bool LieroLevelLoader::canLoad(fs::path const& path, std::string& name)
 {
@@ -106,4 +107,70 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 const char* LieroLevelLoader::getName()
 {
 	return "Liero level loader";
+}
+
+bool LieroFontLoader::canLoad(fs::path const& path, std::string& name)
+{
+	if(fs::extension(path) == ".lft")
+	{
+		name = basename(path);
+		return true;
+	}
+	return false;
+}
+
+
+	
+bool LieroFontLoader::load(Font* font, fs::path const& path)
+{
+	font->free();
+	
+	fs::ifstream f(path);
+	if(!f)
+		return false;
+		
+	long bitmapWidth = 7, bitmapHeight = 250 * 8;
+
+	font->m_bitmap = create_bitmap(bitmapWidth, bitmapHeight);
+	if(!font->m_bitmap)
+		return false;
+		
+	std::vector<char> buffer(16000);
+	
+	f.ignore(8); //First 8 bytes are useless
+	f.read(&buffer[0], 16000);
+	
+	if(f.gcount() < 16000)
+		return false;
+
+	font->m_chars.assign(2, Font::CharInfo(Rect(0, 0, 1, 1), 0)); // Two empty slots
+
+	int y = 0;
+	for(int i = 0; i < 250; ++i)
+	{
+		int width = buffer[i * 8 * 8 + 64];
+		if(width < 2)
+			width = 2;
+
+		font->m_chars.push_back(Font::CharInfo(Rect(0, y, width, y + 8), 0));
+		
+		for(int y2 = 0; y2 < 8; ++y2, ++y)
+		{
+			for(int x = 0; x < 7; ++x)
+			{
+				char v = buffer[y*8 + x + 1];
+				
+				int c = v ? makecol(255, 255, 255) : makecol(255, 0, 255);
+
+				putpixel(font->m_bitmap, x, y, c);
+			}
+		}
+	}
+	
+	return true;
+}
+
+const char* LieroFontLoader::getName()
+{
+	return "Liero font loader";
 }

@@ -5,7 +5,7 @@ namespace OmfgGUI
 
 void List::Node::render(List::node_iter_t self, Renderer* renderer, long& y, List& list)
 {
-	long halfRowHeight = rowHeight/2;
+	//long halfRowHeight = rowHeight/2;
 	
 	if(selected)
 	{
@@ -108,6 +108,8 @@ List::node_iter_t List::Node::findByIdx(node_iter_t i, long aIdx)
 			++i;
 		}
 	}
+	
+	return i->parentList->end(); //TEMP
 }
 
 bool List::render(Renderer* renderer)
@@ -120,11 +122,11 @@ bool List::render(Renderer* renderer)
 		m_formatting.borders[2].color,
 		m_formatting.borders[3].color);
 	
-	long halfRowHeight = rowHeight/2;
+	//long halfRowHeight = rowHeight/2;
 	
-	long y = getRect().y1;
+	//long y = getRect().y1;
 	
-	node_iter_t cur = m_Base;
+	//node_iter_t cur = m_Base;
 	
 	//Node::renderFrom(m_Base, renderer, y, *this);
 	
@@ -138,16 +140,18 @@ bool List::render(Renderer* renderer)
 		y += rowHeight;
 	}
 */
+	return true;
 }
 
 bool List::mouseDown(ulong newX, ulong newY, Context::MouseKey::type mutton)
 {
-	long offset = (newY - getRect().y1) / rowHeight;
+	//TODO
+	/*long offset = static_cast<long>((newY - getRect().y1) / rowHeight);
 	
 	node_iter_t cur = m_Base;
 	
-	//TODO
-	/*
+	
+	
 	for(node_iter_t cur = m_Base; isValid(cur); ++cur)
 	{
 		if(--offset < 0)

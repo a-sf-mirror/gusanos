@@ -4,10 +4,9 @@
 #include "resource_list.h"
 #include <string>
 
-#include <fmod/fmod.h>
-
 class Vec;
 class BaseObject;
+struct FSOUND_SAMPLE;
 
 class Sound
 {

@@ -14,7 +14,7 @@ class Command : public ConsoleItem
 	
 	Command(std::string (*func)(const std::list<std::string>&));
 	Command();
-	~Command();
+	virtual ~Command();
 	
 	std::string invoke(const std::list<std::string> &args);
 	

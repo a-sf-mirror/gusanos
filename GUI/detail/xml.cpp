@@ -73,7 +73,7 @@ struct XMLHandler
 	};
 	
 	XMLHandler(Context& context_, Wnd* dest_, Context::GSSselectorMap& style_)
-	: context(context_), tag(""), style(style_)
+	: tag(""), context(context_), style(style_)
 	{
 		windows.push(WndInfo(dest_));
 	}

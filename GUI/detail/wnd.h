@@ -29,8 +29,8 @@ public:
 	Wnd(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes,
 	  std::string const& text = std::string(""))
-	: m_text(text), m_parent(parent), m_tagLabel(tagLabel), m_className(className)
-	, m_id(id), m_attributes(attributes), m_font(0)
+	: m_text(text), m_parent(parent), m_font(0), m_tagLabel(tagLabel)
+	, m_className(className), m_id(id), m_attributes(attributes)
 	{
 		if(m_parent)
 		{
@@ -159,7 +159,7 @@ protected:
 			
 		}
 		
-		long flags;
+		
 		struct Border
 		{
 			Border()
@@ -179,12 +179,16 @@ protected:
 			
 			RGB color;
 		} background;
-		int         spacing;
-		int         padding;
-	
-		Rect        rect;
+		
 		int         width;
 		int         height;
+		
+		int         spacing;
+		int         padding;
+		long        flags;
+	
+		Rect        rect;
+
 	} m_formatting;
 };
 

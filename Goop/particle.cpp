@@ -126,7 +126,7 @@ void Particle::draw(BITMAP* where,int xOff, int yOff)
 			m_sprite->drawAngled(where, m_animator->getFrame(), static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_angle);
 		}else
 		{
-			m_sprite->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, pos.y-yOff, 360-m_angle , true);
+			m_sprite->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, (int)pos.y-yOff, 360-m_angle , true);
 		}
 	}
 	if (m_type->distortion)

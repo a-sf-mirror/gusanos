@@ -6,6 +6,7 @@
 #include <allegro.h>
 #include <list>
 #include <iostream>
+#include <cctype>
 
 using namespace std;
 
@@ -48,8 +49,8 @@ void KeyHandler::init()
 	for(int i = 0; i < KEY_MAX; ++i)
 	{
 		keyMap[i] = i;
-		altgrCharMap[i] = capsCharMap[i] = charMap[i] = shiftCharMap[i] = scancode_to_ascii(i);
-		
+		altgrCharMap[i] = charMap[i] = scancode_to_ascii(i);
+		capsCharMap[i] = shiftCharMap[i] = toupper(charMap[i]);
 	}
 	
 	keyboard_ucallback = keyMapCallback; // Install key mapping callback

@@ -22,7 +22,7 @@ void Container::addWidget(Widget* w)
 
 void Container::setFocus(Widget* w)
 {
-    for (int i = 0; i < m_widgets.size(); i++)
+    for (size_t i = 0; i < m_widgets.size(); i++)
     {
         if (m_widgets[i] == w)
         {
@@ -60,13 +60,14 @@ void Container::render()
 {
     if (!isVisible())
         return;
-    for (int i = 0; i < m_widgets.size(); i++)
+    for (size_t i = 0; i < m_widgets.size(); i++)
         m_widgets[i]->render();
 }
 
 bool List::addItem(std::string item)
 {
     list.push_back(item);
+	return true;
 }
 
 void List::clear()
@@ -76,7 +77,7 @@ void List::clear()
 
 void List::keys(bool k[256])
 {
-    for (int i = 0; i < m_events.size(); i++)
+    for (size_t i = 0; i < m_events.size(); i++)
     {
         if (k[m_events[i]->key])
         {
@@ -97,8 +98,8 @@ void List::keys(bool k[256])
     }
     if (selected < 0)
         selected = 0;
-    if (selected >= list.size())
-        selected = list.size() - 1;
+    if (selected >= (int)list.size())
+        selected = (int)list.size() - 1;
 }
 
 void List::render()
@@ -112,7 +113,7 @@ void List::render()
     rectfill(gfx.buffer, getX(), getY() + selected * 8, getX() + getW(), getY() + selected * 8 + 8, colSelected);
 
     //Render items
-    for (int i = 0; i < list.size(); i++)
+    for (size_t i = 0; i < list.size(); i++)
     {
         font->draw(gfx.buffer, list[i].c_str(), getX() + 4, getY() + i * 8 + 2, 0);
     }
@@ -121,6 +122,7 @@ void List::render()
 bool ListContainer::addItem(ListItem *item)
 {
     list.push_back(item);
+    return true;
 }
 
 void ListContainer::clear()
@@ -157,8 +159,8 @@ void ListContainer::keys(bool k[256])
 
     if (selected < 0)
         selected = 0;
-    if (selected >= list.size())
-        selected = list.size() - 1;
+    if (selected >= (int)list.size())
+        selected = (int)list.size() - 1;
 }
 
 void ListContainer::render()
@@ -173,7 +175,7 @@ void ListContainer::render()
     rectfill(gfx.buffer, getX(), getY() + 4 + selected * 8, getX() + getW(), getY() + 4 + selected * 8 + 8, colSelected);
 
     //Render items
-    for (int i = 0; i < list.size(); i++)
+    for (size_t i = 0; i < list.size(); i++)
     {
         list[i]->render(getX() + 4, getY() + 4 + i * 8, getW() - 8, 8);
     }

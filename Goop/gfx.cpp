@@ -32,8 +32,8 @@ void doubleRes( int oldValue )
 }
 
 Gfx::Gfx()
-: m_initialized(false), m_fullscreen(true), m_doubleRes(false)
-, m_vwidth(320), m_vheight(240), buffer(NULL)
+: buffer(NULL), m_initialized(false), m_fullscreen(true), m_doubleRes(false)
+, m_vwidth(320), m_vheight(240)
 {
 
 }

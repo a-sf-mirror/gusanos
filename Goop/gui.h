@@ -39,7 +39,7 @@ class Widget
         Widget() : m_visible(true), m_active(true) { }
         virtual ~Widget()
         {
-            for (int i = 0; i < m_events.size(); i++)
+            for (size_t i = 0; i < m_events.size(); i++)
             {
                 delete m_events[i];
             }
@@ -49,7 +49,7 @@ class Widget
         virtual void setPosition(int xx, int yy) { x = xx; y = yy; }
         virtual void setSize(int ww, int hh) { w = ww; h = hh; }
         virtual bool isVisible() { return m_visible; }
-        virtual bool setVisible(bool v) { m_visible = v; }
+        virtual bool setVisible(bool v) { m_visible = v; return true; }
         virtual int getX() { return x; }
         virtual int getY() { return y; }
         virtual int getW() { return w; }
@@ -58,7 +58,7 @@ class Widget
         virtual void addEvent(int k, void (*ev)(const std::string&)) { m_events.push_back(new Event(k, ev)); }
         virtual void keys(bool k[256])
         {
-            for (int i = 0; i < m_events.size(); i++)
+            for (size_t i = 0; i < m_events.size(); i++)
             {
                 if (k[m_events[i]->key])
                 {
@@ -114,7 +114,7 @@ class ListItem
 {
     public:
         ListItem() { }
-        ~ListItem() { }
+        virtual ~ListItem() { }
         virtual void keys(bool[256]) = 0;
         virtual void render(int x, int y, int w, int h) = 0;
 };

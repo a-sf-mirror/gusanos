@@ -119,7 +119,6 @@ bool xmlAttributes(InputT& in, DestT& dest)
 	
 	dest.beginAttributes();
 	
-	int b;
 	std::string label;
 	while(xmlString(in, label))
 	{

@@ -74,7 +74,7 @@ void ListDragItem::keys(bool k[256])
 
 void ListDragItem::render(int x, int y, int w, int h)
 {
-    int dragX = dragValue / ((dragMax - dragMin) / w);
+    int dragX = static_cast<int>(dragValue / ((dragMax - dragMin) / w));
 
     //draw base bar
     rectfill(gfx.buffer, x, y + h / 2, x + w, y + h / 2, makecol(255, 255, 255));

@@ -22,8 +22,8 @@ public:
 	struct Node
 	{
 		Node(std::string const& aText)
-			: text(aText), selected(false), expanded(false), level(0),
-			  parentList(0), hasParent(false)
+			: text(aText), selected(false), expanded(false),
+			  parentList(0), hasParent(false), level(0)
 		{
 		}
 		
@@ -110,6 +110,7 @@ public:
 	
 	bool isValid()
 	{
+		return false;
 	}
 
 	virtual bool render(Renderer* renderer);

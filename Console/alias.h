@@ -16,15 +16,15 @@ class Alias : public ConsoleItem
 	Alias(Console *parent, const std::string &name, const std::string &action);
 	
 	Alias();
-	~Alias();
+	virtual ~Alias();
 	
 	std::string invoke(const std::list<std::string> &args);
 	
 	private:
 	
-	Console *m_parent;
 	std::string m_name;
 	std::string m_action;
+	Console *m_parent;
 };
 
 #endif  // _ALIAS_H_

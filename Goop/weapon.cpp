@@ -37,6 +37,10 @@ void Weapon::actionStart( Actions action)
 			}
 			primaryShooting = true;
 		break;
+		
+		case SECONDARY_TRIGGER:
+			//TODO
+		break;
 	}
 }
 
@@ -50,6 +54,10 @@ void Weapon::actionStop( Actions action )
 				m_type->primaryReleased->run( (BaseObject*)m_owner, NULL, NULL, this);
 			}
 			primaryShooting = false;
+		break;
+		
+		case SECONDARY_TRIGGER:
+			//TODO
 		break;
 	}
 }

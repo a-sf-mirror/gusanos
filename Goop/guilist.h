@@ -16,7 +16,7 @@ class ListButtonItem : public ListItem
 
     public:
         ListButtonItem() : text("") { }
-        ~ListButtonItem() { }
+        virtual ~ListButtonItem() { }
         void keys(bool[256]);
         void render(int x, int y, int w, int h);
         void setText(const std::string &str) { text = str; }
@@ -29,7 +29,7 @@ class ListTextItem : public ListItem
     std::string text;
     public:
         ListTextItem() : prefix(""), text("") { }
-        ~ListTextItem() { }
+        virtual ~ListTextItem() { }
         void keys(bool[256]);
         void render(int x, int y, int w, int h);
         void setPrefix(const std::string &str) { prefix = str; }
@@ -45,14 +45,14 @@ class ListDragItem : public ListItem
 
     public:
         ListDragItem() : dragValue(127.0), dragMin(0.0), dragMax(255.0), dragInc(1.0) { }
-        ~ListDragItem() { }
+        virtual ~ListDragItem() { }
         void keys(bool[256]);
         void render(int x, int y, int w, int h);
         void setMin(float f) { dragMin = f; }
         void setMax(float f) { dragMax = f; }
         void setInc(float f) { dragInc = f; }
         void setValue(float f) { dragValue = f; }
-        int getValue() { return dragValue; }
+        int getValue() { return static_cast<int>(dragValue); }
 };
 
 class ListColorItem : public ListItem
@@ -61,6 +61,7 @@ class ListColorItem : public ListItem
     ListDragItem *green;
     ListDragItem *blue;
     public:
+    	virtual ~ListColorItem() { }
         void keys(bool[256]) { }
         void setRed(ListDragItem *r) { red = r; }
         void setGreen(ListDragItem *g) { green = g; }

@@ -88,7 +88,7 @@ bool Sprite::load(const string &filename)
 
 void Sprite::draw(BITMAP *where, int frame,int x, int y, bool flipped, int xAligment, int yAligment)
 {
-	if ( frame < m_frame[0].size() )
+	if ( frame < static_cast<int>(m_frame[0].size()) )
 	{
 		int _x,_y;
 		
@@ -122,12 +122,12 @@ void Sprite::draw(BITMAP *where, int frame,int x, int y, bool flipped, int xAlig
 
 void Sprite::drawAngled(BITMAP *where, int frame,int x, int y, float angle, bool flipped, int xAligment, int yAligment)
 {
-	if ( frame < m_frame[0].size() )
+	if ( frame < static_cast<int>(m_frame[0].size()) )
 	{
 		int _x,_y;
 		
 		float angleDivisionSize = 180 / m_frame.size();
-		int angleFrame = static_cast<int>( (angle + angleDivisionSize / 2 ) * (m_frame.size()-1) / 180 );
+		size_t angleFrame = static_cast<size_t>( (angle + angleDivisionSize / 2 ) * (m_frame.size()-1) / 180 );
 		
 		if ( angleFrame < m_frame.size() )
 		{

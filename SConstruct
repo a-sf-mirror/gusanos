@@ -22,8 +22,8 @@ if platform == 'posix':
 	env = Environment(
 		CPPPATH = ['.', '#loadpng', '/usr/local/include/zoidcom', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib', os.path.join('#lib/', platform)],
-		CPPFLAGS = '-O3',
-		#CPPFLAGS = '-O0 -g',
+		CPPFLAGS = '-O3 -Wall',
+		#CPPFLAGS = '-O0 -g -Wall',
 		CXX='g++-3.4',
 		)
 elif platform == 'mingw-cross':
@@ -31,7 +31,7 @@ elif platform == 'mingw-cross':
 	env = Environment(
 		CPPPATH = ['.', '#loadpng', os.path.join(mingwPath, 'include', 'boost-1_32'), '#Console', '#GUI'],
 		LIBPATH = [os.path.join('#lib', platform)],
-		CPPFLAGS = '-O3 -DWINDOWS',
+		CPPFLAGS = '-O3 -Wall -DWINDOWS',
 		CXX = os.path.join(mingwPath, 'bin', 'g++'),
 		CC = os.path.join(mingwPath, 'bin', 'gcc'),
 		LD = os.path.join(mingwPath, 'bin', 'ld'),
@@ -42,8 +42,8 @@ elif platform == 'basara':
 	env = Environment(
 		CPPPATH = ['.', '/usr/local/include/zoidcom', '#loadpng', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', os.path.join('#lib/', platform)],
-		CPPFLAGS = '-O3',
-		#CPPFLAGS = '-O0 -g',
+		CPPFLAGS = '-O3 -Wall',
+		#CPPFLAGS = '-O0 -g -Wall',
 		)
 # add more platforms here
 	

@@ -80,7 +80,6 @@ bool Level::loadLiero(const std::string &name)
 	if (!Liero::loadLevel(&lev, pal, name))
 		return false;
 
-	int vdepth=get_color_depth();
 	material = create_bitmap_ex(8, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
 	image = create_bitmap_ex(16, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
 	background = create_bitmap_ex(16, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);

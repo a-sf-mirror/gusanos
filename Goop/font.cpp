@@ -70,26 +70,11 @@ Font::CharInfo* Font::lookupChar(char c)
 	return &m_chars[idx];
 }
 
-void Font::draw( BITMAP* where, string const& text, int x, int y, int spacing)
+void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing)
 {
-	/*
-	if ( !text.empty() )
+	for(; b != e; ++b)
 	{
-		int width = m_char[0]->w;
-		char character;
-		for (int i = 0; i < text.length(); ++i)
-		{
-			character = text[i];
-			draw_sprite(where, m_char[character], x + i * (width + space), y);
-		}
-	}*/
-	
-	if(text.empty())
-		return;
-
-	for(string::const_iterator i = text.begin(); i != text.end(); ++i)
-	{
-		CharInfo *c = lookupChar(*i);
+		CharInfo *c = lookupChar(*b);
 		
 		masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
 		

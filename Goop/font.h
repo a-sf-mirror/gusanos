@@ -37,7 +37,12 @@ public:
 	
 	void free();
 	bool load(std::string const& filename);
-	void draw(BITMAP* where, std::string const& text, int x, int y, int spacing = 0);
+	void draw(BITMAP* where, std::string const& text, int x, int y, int spacing = 0)
+	{
+		draw(where, text.begin(), text.end(), x, y, spacing);
+	}
+	
+	void draw(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0);
 	
 	CharInfo* lookupChar(char c);
 	
@@ -59,11 +64,70 @@ public:
 		
 		return e;
 	}
+	
+	// Dimension calculating version
+	template<class IteratorT>
+	IteratorT fitString(IteratorT b, IteratorT e, int space, std::pair<int, int>& dim, int spacing = 0)
+	{
+		dim.second = 0;
+		
+		int oldSpace = space;
+		
+		for(; b != e; ++b)
+		{
+			CharInfo* c = lookupChar(*b);
+			
+			if(c->width > space)
+			{
+				dim.first = oldSpace - space; // TODO: Remove spacing for last character
+				return b;
+			}
+
+			space -= c->width - c->spacing - spacing;
+
+			if(c->height > dim.second)
+				dim.second = c->height;
+		}
+		
+		dim.first = oldSpace - space; // TODO: Remove spacing for last character
+		return e;
+	}
+	
+	/*
+	template<class IteratorT>
+	IteratorT fitStringRev(IteratorT b, IteratorT e, int space, std::pair<int, int>& dim, int spacing = 0)
+	{
+		dim.second = 0;
+		
+		int oldSpace = space;
+		
+		for(; b != e; ++b)
+		{
+			CharInfo* c = lookupChar(*b);
+			
+			if(c->width > space)
+			{
+				dim.first = oldSpace - space; // TODO: Remove spacing for last character
+				return b;
+			}
+
+			space -= c->width - c->spacing - spacing;
+
+			if(c->height > dim.second)
+				dim.second = c->height;
+		}
+		
+		dim.first = oldSpace - space; // TODO: Remove spacing for last character
+		return e;
+	}
+	
+	*/
 
 	// Returns a (0, 0) pair
 	std::pair<int, int> zeroDimensions();
 	
 	// Adds a character 'ch' to the dimensions 'dim' printed with spacing 'spacing'
+	// UNTESTED
 	void incrementDimensions(std::pair<int, int>& dim, char ch, int spacing);
 	
 	// Remove the spacing of character 'ch' and 'spacing' from 'dim'
@@ -71,10 +135,6 @@ public:
 	// passed incrementally using incrementDimensions)
 	void removeSpacing(std::pair<int, int>& dim, char ch, int spacing);
 
-	
-	
-	
-	//std::vector<BITMAP*> m_char;
 	std::vector<CharInfo> m_chars;
 	BITMAP*               m_bitmap;
 

@@ -25,7 +25,7 @@ class Variable : public ConsoleItem
 	{
 	}
 	
-	~Variable()
+	virtual ~Variable()
 	{
 	}
 
@@ -49,11 +49,11 @@ class TVariable : public Variable
 	}
 	
 	TVariable()
-	: Variable(), m_src(NULL), m_defaultValue(T(0)), m_callback(NULL) //TODO: T(0) isn't always a good idea
+	: Variable(), m_src(NULL), m_defaultValue(T()), m_callback(NULL)
 	{
 	}
 	
-	~TVariable()
+	virtual ~TVariable()
 	{
 	}
 	
@@ -75,9 +75,9 @@ class TVariable : public Variable
 	
 	private:
 
-	void (*m_callback)( T );
 	T* m_src;
 	T m_defaultValue;
+	void (*m_callback)( T );
 };
 
 template<class T, class IT>
@@ -123,6 +123,7 @@ class FloatVariable : public Variable
 
 typedef TVariable<int> IntVariable;
 typedef TVariable<float> FloatVariable;
+typedef TVariable<std::string> StringVariable;
 
 class EnumVariable : public Variable
 {
@@ -133,7 +134,7 @@ class EnumVariable : public Variable
 	
 	EnumVariable(std::string name, int* src, int defaultValue, MapType const& mapping, void (*func)( int ) = NULL);
 	EnumVariable();
-	~EnumVariable();
+	virtual ~EnumVariable();
 	
 	std::string invoke(const std::list<std::string> &args);
 	
@@ -141,9 +142,9 @@ class EnumVariable : public Variable
 	
 	void (*callback)( int );
 	int* m_src;
-	MapType m_mapping;
+	int m_defaultValue;	
 	ReverseMapType m_reverseMapping;
-	int m_defaultValue;
+	MapType m_mapping;
 };
 
 #endif  // _VARIABLES_H_

@@ -37,11 +37,8 @@ string echoCmd(list<string> const& args)
 {
 	if(args.size() > 0)
 	{
-		std::string ret;
-		
-		bool first = true;
 		std::list<string>::const_iterator i = args.begin();
-		ret = *i++;
+		std::string ret = *i++;
 		
 		for(; i != args.end(); ++i)
 		{
@@ -196,6 +193,18 @@ GConsole::GConsole()
 
 //============================= INTERFACE ====================================
 
+void GConsole::varCbFont( std::string oldValue )
+{
+	Font* newFont = fontLocator.load(console.m_fontName);
+	if(!newFont)
+	{
+		console.addLogMsg("FONT \"" + console.m_fontName + "\" NOT FOUND, REVERTING TO OLD FONT");
+		console.m_fontName = oldValue;
+		return;
+	}
+	console.m_font = newFont;
+}
+
 void GConsole::init()
 {
 	//keyHandler.init();
@@ -211,6 +220,7 @@ void GConsole::init()
 	console.registerVariables()
 		("CON_SPEED", &speed, 4)
 		("CON_HEIGHT", &height, 120)
+		("CON_FONT", &m_fontName, "minifont", varCbFont)
 	;
 
 	console.registerCommands()
@@ -238,7 +248,7 @@ void GConsole::shutDown()
 
 void GConsole::loadResources()
 {
-	m_font = fontLocator.load("minifont");
+	m_font = fontLocator.load(m_fontName);
 
 	if(!m_font)
 		cout << "Console font couldn't be loaded" << endl;
@@ -256,37 +266,57 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 	if ( pos > 0)
 	{
 		if (background) background->draw(where, 0, 0, static_cast<int>(pos), false, ALIGN_LEFT, ALIGN_BOTTOM);
-		/*
-		while ((msg != log.begin()) && ((int)pos - 20 - (textIndex - 1) * (m_font->height() + 1) > 0))
-		{
-			msg--;
-			m_font->draw(where, *msg, 5, (int)pos - 20 - textIndex * (m_font->height() + 1), 0);
-			textIndex++;
-		}
-		*/
-		
+
 		int y = static_cast<int>(pos) - 5;
 		
 		string tempString = (']' + m_inputBuff + '*');
-		std::pair<int, int> dim = m_font->getDimensions(tempString);
+
+		std::pair<int, int> dim;
+		string::const_reverse_iterator b = tempString.rbegin(), e = tempString.rend();
+		// When using reverse iterators, fitString tries to fit the spacing of
+		// the last character as well which isn't exactly what is wanted
+		e = m_font->fitString(b, e, 320-5, dim);
 		y -= dim.second;
-		m_font->draw(where, tempString, 5, y);
-		
-		/* TODO!!!
-		if ( tempString.length() < (where->w-5) / m_font->width() )
-			m_font->draw(where, tempString, 5, (int)pos - 10 , 0);
-		else
+		m_font->draw(where, e.base(), b.base(), 5, y);
+				
+		for(list<string>::reverse_iterator msgiter = log.rbegin();
+		    msgiter != log.rend() && y > 0;
+		    ++msgiter)
 		{
-			m_font->draw(where, tempString.substr(tempString.length() - (where->w-5) / m_font->width()), 5, (int)pos - 10 , 0);
-		}*/
-		
-		for(list<std::string>::reverse_iterator msg = log.rbegin();
-		    msg != log.rend() && y > 0;
-		    ++msg)
-		{
-			std::pair<int, int> dim = m_font->getDimensions(*msg);
-			y -= dim.second + 1;
-			m_font->draw(where, *msg, 5, y, 0);
+			string const& msg = *msgiter;
+			
+			string::const_iterator b = msg.begin(), e = msg.end(), n;
+			
+			int totalHeight = 0;
+			do
+			{
+				pair<int, int> dim;
+				n = m_font->fitString(b, e, 320-5, dim);
+				if(n == b)
+					break;
+				b = n;
+				totalHeight += dim.second;
+			}
+			while(b != e);
+			
+			y -= totalHeight + 1;
+			
+			b = msg.begin();
+			
+			int y2 = y;
+			
+			do
+			{
+				pair<int, int> dim;
+				n = m_font->fitString(b, e, 320-5, dim);
+				if(n == b)
+					break;
+				m_font->draw(where, b, n, 5, y2, 0);
+				y2 += dim.second;
+				
+				b = n;
+			}
+			while(b != e);
 		}
 	}
 }
@@ -505,14 +535,6 @@ bool GConsole::eventPrintableChar(char c)
 	return true;
 }
 
-string::const_iterator GConsole::fitString(
-	string::const_iterator b,
-	string::const_iterator e)
-{
-	if(!m_font)
-		return e;
-	return m_font->fitString(b, e, 320-5);
-}
 void GConsole::think()
 {
 	if ( height > 240 ) height=240;

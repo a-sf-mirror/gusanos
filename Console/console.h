@@ -96,13 +96,6 @@ class Console
 	std::string autoComplete(const std::string &text);
 	void listItems(const std::string &text);
 	
-	// Must be overloaded to return an iterator to the first
-	// character in the string (b, e) that doesn't fit in a
-	// console row.
-	virtual std::string::const_iterator fitString(
-		std::string::const_iterator b,
-		std::string::const_iterator e) = 0;
-	
 	protected:
 	
 	BindTable bindTable;

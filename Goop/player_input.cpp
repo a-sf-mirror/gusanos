@@ -33,7 +33,7 @@ void registerPlayerInput()
 
 string leftStart(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStart(Player::LEFT);
 	}
@@ -42,7 +42,7 @@ string leftStart(int index, const list<string> &args)
 
 string leftStop(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStop(Player::LEFT);
 	}
@@ -51,7 +51,7 @@ string leftStop(int index, const list<string> &args)
 
 string rightStart(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStart(Player::RIGHT);
 	}
@@ -60,7 +60,7 @@ string rightStart(int index, const list<string> &args)
 
 string rightStop(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStop(Player::RIGHT);
 	}
@@ -69,7 +69,7 @@ string rightStop(int index, const list<string> &args)
 
 string upStart(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStart(Player::UP);
 	}
@@ -78,7 +78,7 @@ string upStart(int index, const list<string> &args)
 
 string upStop(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStop(Player::UP);
 	}
@@ -87,7 +87,7 @@ string upStop(int index, const list<string> &args)
 
 string downStart(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStart(Player::DOWN);
 	}
@@ -96,7 +96,7 @@ string downStart(int index, const list<string> &args)
 
 string downStop(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStop(Player::DOWN);
 	}
@@ -105,7 +105,7 @@ string downStop(int index, const list<string> &args)
 
 string fireStart(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStart(Player::FIRE);
 	}
@@ -114,7 +114,7 @@ string fireStart(int index, const list<string> &args)
 
 string fireStop(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStop(Player::FIRE);
 	}
@@ -123,7 +123,7 @@ string fireStop(int index, const list<string> &args)
 
 string jumpStart(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStart(Player::JUMP);
 	}
@@ -132,7 +132,7 @@ string jumpStart(int index, const list<string> &args)
 
 string jumpStop(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStop(Player::JUMP);
 	}
@@ -141,7 +141,7 @@ string jumpStop(int index, const list<string> &args)
 
 string changeStart(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStart(Player::CHANGE);
 	}
@@ -150,7 +150,7 @@ string changeStart(int index, const list<string> &args)
 
 string changeStop(int index, const list<string> &args)
 {
-	if ( index < game.localPlayers.size() )
+	if ( index < static_cast<int>(game.localPlayers.size()) )
 	{
 		game.localPlayers[index]->actionStop(Player::CHANGE);
 	}

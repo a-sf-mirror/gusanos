@@ -448,6 +448,8 @@ bool Wnd::doRender(Renderer* renderer, Rect const& clip)
 	{
 		(*i)->doRender(renderer, rect);
 	}
+	
+	return true;
 }
 
 void Wnd::doProcess()

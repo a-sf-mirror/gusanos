@@ -42,7 +42,7 @@ BaseWorm::BaseWorm()
 BaseWorm::~BaseWorm()
 {
 	if (m_animator) delete m_animator;
-	for ( int i = 0; i < m_weapons.size(); i++)
+	for ( size_t i = 0; i < m_weapons.size(); i++)
 	{
 		delete m_weapons[i];
 	}
@@ -126,7 +126,7 @@ void BaseWorm::think()
 	}
 	
 	//Side collisions and climbing
-	int o = 0;
+	//int o = 0;
 	int upper = -1;
 	int lower = -1;
 	for ( int i = 0; i < game.options.worm_height; i++ )
@@ -185,7 +185,7 @@ void BaseWorm::think()
 	if ( movingLeft || movingRight ) m_animator->tick();
 		
 	// Make weapons think
-	for ( int i = 0; i < m_weapons.size(); ++i )
+	for ( size_t i = 0; i < m_weapons.size(); ++i )
 	{
 		m_weapons[i]->think();
 	}
@@ -267,6 +267,7 @@ void BaseWorm::actionStart( Actions action)
 			m_ninjaRope->shoot(pos-Vec(0,game.options.worm_weaponHeight+0.5), angleVec(aimAngle*dir,game.options.ninja_rope_shootSpeed));
 			currentRopeLength = game.options.ninja_rope_startDistance;
 		break;
+		
 	}
 }
 

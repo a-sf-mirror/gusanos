@@ -186,6 +186,8 @@ std::string Console::invoke(string const& name, list<string> const& args, bool p
 		} else
 			return "UNKNOWN COMMAND: " + name;
 	}
+	
+	return "";
 }
 
 /*
@@ -223,32 +225,7 @@ void Console::addLogMsg(const string &msg)
 		if(log.size() >= m_logMaxSize)
 			log.pop_front();
 		
-		string::const_iterator b = msg.begin();
-		string::const_iterator e = msg.end();
-		do
-		{
-			string::const_iterator n = fitString(b, e);
-
-			if(b == n) // No characters fitted, we must give up
-				break;
-
-			log.push_back(string(b, n));
-			
-			b = n; // Begin next string at the first character we didn't add
-		} while(b != e);
-		
-		cout << endl;
-		
-		/*
-		string tmpmsg = msg;
-		
-		while (tmpmsg.length() > m_MaxMsgLength)
-		{
-			log.push_back(tmpmsg.substr(0,m_MaxMsgLength));
-			tmpmsg=tmpmsg.substr(m_MaxMsgLength);
-		}
-		
-		log.push_back(tmpmsg);*/
+		log.push_back(msg);
 	}
 }
 

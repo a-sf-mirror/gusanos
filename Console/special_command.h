@@ -14,7 +14,7 @@ class SpecialCommand : public ConsoleItem
 	
 	SpecialCommand(int index, std::string (*func)(int, const std::list<std::string>&));
 	SpecialCommand();
-	~SpecialCommand();
+	virtual ~SpecialCommand();
 	
 	std::string invoke(const std::list<std::string> &args);
 	

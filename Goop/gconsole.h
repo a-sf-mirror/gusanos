@@ -29,9 +29,7 @@ class GConsole : public Console
 	bool eventKeyDown(int k);
 	bool eventKeyUp(int k);
 	
-	virtual std::string::const_iterator fitString(
-		std::string::const_iterator b,
-		std::string::const_iterator e);
+	static void varCbFont( std::string oldValue );
 
 	private:
 	
@@ -43,9 +41,10 @@ class GConsole : public Console
 	//KeyHandler keyHandler;
 
 	Font *m_font;
-	Sprite *background;
-	std::string m_inputBuff;
+	std::string m_fontName;
 	int m_consoleKey;
+	std::string m_inputBuff;
+	Sprite *background;
 	
 	std::list< std::string > commandsLog;
 	std::list< std::string >::iterator currentCommand;

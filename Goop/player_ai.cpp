@@ -25,22 +25,22 @@ void PlayerAI::getTarget()
 {
 	//iterate through players
 	Vec pos = m_worm->getPos();
-	int x = pos.x;
-	int y = pos.y;
+	int x = static_cast<int>(pos.x);
+	int y = static_cast<int>(pos.y);
 	float tmpDist = 0;
 	BasePlayer* tmpTarget = NULL;
 	for (std::vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 	{
 		//(*iter)->think();
 		Vec tmpPos = (*iter)->getPos(); // WARNING: There can be players without worms! "spectators".
-		int tmpX = tmpPos.x;
-		int tmpY = tmpPos.y;
-		if (abs(distance(x, y, tmpX, tmpY)) < tmpDist || tmpTarget == NULL)
+		int tmpX = static_cast<int>(tmpPos.x);
+		int tmpY = static_cast<int>(tmpPos.y);
+		if (distance(x, y, tmpX, tmpY) < tmpDist || tmpTarget == NULL)
 		{
 			if (*iter != this)
 			{
 				tmpTarget = *iter;
-				tmpDist = abs(distance(x, y, tmpX, tmpY));
+				tmpDist = distance(x, y, tmpX, tmpY);
 			}
 		}
 	}
@@ -55,15 +55,15 @@ void PlayerAI::think()
 	
 	//movement
 	Vec pos = m_worm->getPos();
-	int x = pos.x;
-	int y = pos.y;
+	int x = static_cast<int>(pos.x);
+	int y = static_cast<int>(pos.y);
 	
 	Vec tmpPos = m_target->getPos();
-	int tmpX = tmpPos.x;
-	int tmpY = tmpPos.y;
+	int tmpX = static_cast<int>(tmpPos.x);
+	int tmpY = static_cast<int>(tmpPos.y);
 	
-	int dist = abs(distance(x, y, tmpX, tmpY));
-	if (dist > 48)
+	float dist = distance(x, y, tmpX, tmpY);
+	if (dist > 48.f)
 	{ 
 		if (x < tmpX)
 			m_worm->actionStart(Worm::MOVERIGHT);

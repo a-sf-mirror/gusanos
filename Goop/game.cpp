@@ -152,6 +152,7 @@ void Game::init(int argc, char** argv)
 	
 	fontLocator.registerLoader(&GusanosFontLoader::instance);
 	fontLocator.registerLoader(&LOSPFontLoader::instance);
+	fontLocator.registerLoader(&LieroFontLoader::instance);
 
 	m_defaultPath = "default/";
 	m_modPath = "default/";
@@ -280,9 +281,10 @@ void Game::refreshResources()
 void Game::changeLevel(const std::string& levelName )
 {
 	unload();
-	/*
+	
 	m_modName = nextMod;
 	m_modPath = nextMod + "/";
+	/*
 	if ( !level.load( m_modPath +"maps/"+ levelName ) )
 	{
 		level.load( m_defaultPath +"maps/"+ levelName );

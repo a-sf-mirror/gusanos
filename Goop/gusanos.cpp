@@ -102,10 +102,10 @@ int main(int argc, char **argv)
 	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN; BIND 1_PAD +P1_FIRE");
 	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	
-	/* <GLIP> Stuff for me ;o
+	///* <GLIP> Stuff for me ;o
 	console.parseLine("SETSHIFTCHAR MINUS \"_\" ; SETSHIFTCHAR 2 \"\\\"\" ; SETSHIFTCHAR COMMA \";\" ; SETALTGRCHAR 7 \"\\{\" ; SETALTGRCHAR 0 \"\\}\"");
 	console.parseLine("SETALTGRCHAR PLUS_PAD \"\\\\\" ; SETSHIFTCHAR 3 \"#\" ; SETSHIFTCHAR STOP \":\"");
-	*/
+	//*/
 
 	OmfgGUI::menu.clear();
 	game.loadMod();
@@ -116,12 +116,10 @@ int main(int argc, char **argv)
 	LOCK_FUNCTION(_timerUpdate);
 	install_int_ex(_timerUpdate, BPS_TO_TIMER(100));
 
-	int _fpsLast = 0;
+	unsigned int _fpsLast = 0;
 	int _fpsCount = 0;
 	int _fps = 0;
-	int logicLast = 0;
-
-	bool showMenu = true;
+	unsigned int logicLast = 0;
 	
 	OmfgGUI::AllegroRenderer renderer;
 /*

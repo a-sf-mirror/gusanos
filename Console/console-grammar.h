@@ -223,6 +223,7 @@ struct ConsoleGrammar : public BaseT
 		if(firstIdent())
 		{
 			std::string r = command();
+
 			if(!r.empty())
 				ret += '<' + r + '>';
 		}

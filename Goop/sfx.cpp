@@ -106,8 +106,7 @@ void Sfx::think()
 {
 	FSOUND_Update();
 	
-	int i;
-	for ( i = 0; i < listeners.size(); ++i )
+	for (size_t i = 0; i < listeners.size(); ++i )
 	{
 		FSOUND_3D_Listener_SetCurrent(i,listeners.size());
 		float pos[3] = { listeners[i]->pos.x, listeners[i]->pos.y, -m_listenerDistance };
