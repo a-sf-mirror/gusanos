@@ -60,9 +60,8 @@ int main(int argc, char **argv)
  con->log.create_msg(tmp);
  con->log.create_msg("HTTP://GUSANOS.VZE.COM");
  con->log.create_msg("");
+
  
-
-
  if (game->sync_mode==0)
  {
     while (true){

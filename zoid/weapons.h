@@ -35,6 +35,7 @@ class weap_list
 	weap_list();
   ~weap_list();
 	void destroy();
+	void sort();
 };
 
 class s_playerweap

@@ -69,6 +69,30 @@ weap_list::~weap_list()
   delete curr;
 };
 
+//Sort weapons in alphabetical order using selection sort
+void weap_list::sort()
+{
+  int elements = weap_count;
+
+  int low = 0;
+  int t;
+  for (int o = 0; o < elements; o++)
+    {
+      low = o;
+      for (int i = o; i < elements; i++)
+	{
+	  if (strcmp(num[i]->name, num[low]->name) < 0)
+	    {
+	      low = i;
+	    }
+	}
+      weapon *temp;
+      temp = num[o];
+      num[o] = num[low];
+      num[low] = temp;
+    }
+}
+
 class weapon* load_weap(const char* weap_name)
 {
 	ifstream fbuf;

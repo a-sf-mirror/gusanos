@@ -731,4 +731,6 @@ void engine::init_game()
 	execute_config();
   set_color_conversion(COLORCONV_TOTAL);
   
+  //Sort weapons
+  weaps->sort();
 };
