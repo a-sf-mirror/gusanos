@@ -10,6 +10,25 @@
 namespace Liero
 {
 
+LieroMaterial defaultMaterials[5][32] = 
+{
+	//Dirt
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	//Dirt 2
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	//Rock
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	//Background
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	//Shadow
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
 #if 0
 /*
  * Load weapons from Liero binary
@@ -458,7 +477,7 @@ bool loadLevel(LieroLevel *level, LieroColor palette[], const std::string &lvlFi
 		//powerlevel sizes
 		if (size == 177178 || size == 177338)
 		{
-			if (strncmp(pwrlvl, "POWERLEVEL", 10) == 0 || strncmp(pwrlvl, "POWERLEVL2", 10) == 0)
+			if (strncmp(pwrlvl, "POWERLEVEL", 10) == 0)
 			{
 				std::cout << "Powerlevel";
 				//load pal
@@ -469,6 +488,82 @@ bool loadLevel(LieroLevel *level, LieroColor palette[], const std::string &lvlFi
 					palette[i].r = color[0] << 2;
 					palette[i].g = color[1] << 2;
 					palette[i].b = color[2] << 2;
+				}
+			} else
+			if (strncmp(pwrlvl, "POWERLEVL2", 10) == 0)
+			{
+				std::cout << "Unofficial Powerlevel 2";
+				//load pal
+				for (int i = 0; i < 256; i++)
+				{
+					byte color[3];
+					fin.read((char*)color, 3);
+					palette[i].r = color[0] << 2;
+					palette[i].g = color[1] << 2;
+					palette[i].b = color[2] << 2;
+				}
+
+				//load materials
+				//fin.read((char*)&level->materials[0], 32 * 5);
+			} else
+			if (strncmp(pwrlvl, "PL2 ", 4) == 0)
+			{
+				std::cout << "Powerlevel 2";
+				for (int i = 10; i >= 4; --i)
+					fin.putback(pwrlvl[i]);
+				dword version;
+				fin.read((char*)&version, sizeof(dword));
+
+				if (version > 0x00010000)
+				{
+					dword flags;
+					fin.read((char*)&flags, sizeof(flags));
+
+					if (flags & PL2_PALETTE)
+					{
+						for (int i = 0; i < 256; i++)
+						{
+							byte color[3];
+							fin.read((char*)color, 3);
+							palette[i].r = color[0] << 2;
+							palette[i].g = color[1] << 2;
+							palette[i].b = color[2] << 2;
+						}
+					}
+
+					if (flags & PL2_MATERIALS)
+					{
+						fin.read((char*)level->materials, 32 * 5);
+					} else
+					{
+						for (int i = 0; i < 32 * 5; i++)
+						{
+							level->materials[0][i] = defaultMaterials[0][i];
+						}
+					}
+
+					if (flags & PL2_SETTINGS)
+					{
+						//add level settings
+						fin.seekg(sizeof(LieroRect), std::ios::cur);
+						if (version >= 0x00030000)
+							fin.seekg(sizeof(LieroColorRange) * 4 + 4, std::ios::cur);
+						else
+							fin.seekg(sizeof(LieroColorRange) * 4 + 4, std::ios::cur);
+
+						if (version == 0x00040000)
+							fin.seekg(sizeof(dword) + sizeof(LieroRect) + 1, std::ios::cur);
+						else
+							fin.seekg(sizeof(dword) + sizeof(LieroRect) + 1, std::ios::cur);
+					}
+
+					if (flags & PL2_BACKGROUND)
+					{
+						//add background
+						fin.read((char*) level->background, 16 * 16 * 2);
+					} else
+						for (int i = 0; i < 16 * 16 * 2; i++)
+							level->background[0][0][i] = (rand() % 4) + 160;
 				}
 			}
 		}

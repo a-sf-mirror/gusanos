@@ -16,8 +16,19 @@
 #define SOBJECT_COUNT	13
 #define SOBJECT_OFFSET	115218
 
+#define PL2_PALETTE	0x01
+#define PL2_MATERIALS	0x02
+#define PL2_SETTINGS	0x04
+#define PL2_BACKGROUND	0x08
+
+#define PL_MAT_DIRT     1
+#define PL_MAT_DIRT2    2
+#define PL_MAT_ROCK     3
+#define PL_MAT_BACK     4
+#define PL_MAT_SHADOW   5
 
 typedef unsigned char byte;
+typedef unsigned int dword;
 
 namespace Liero
 {
@@ -136,11 +147,37 @@ struct LieroSObjects
 	char dirtAffect[SOBJECT_COUNT];			//??? LK ???
 };
 
+struct LieroColorRange
+{
+	byte startColor;
+	byte endColor;
+};
+
+struct LieroRect
+{
+	dword left;
+	dword top;
+	dword right;
+	dword bottom;
+};
+
+struct LieroMaterial
+{
+	byte index;
+};
+
 /* Liero level structure */
 struct LieroLevel
 {
+	bool hasPalette;
+	bool hasMaterials;
+	bool hasSettings;
+	bool hasBackground;
+
 	byte level[MAP_HEIGHT][MAP_WIDTH];
 	byte material[MAP_HEIGHT][MAP_WIDTH];
+	byte background[16][16][2];
+	LieroMaterial materials[5][32];
 };
 
 /* typedef SDL_Color LieroColor; */
@@ -151,6 +188,9 @@ struct LieroColor
 	byte b;
 	byte unused;
 };
+
+//Default materials
+extern LieroMaterial defaultMaterials[5][32];
 
 #if 0
 /* Load weapons from liero executable */
