@@ -48,7 +48,7 @@ void render_lasersight(worm *player)
   {
     i=rand()%1000;
     i2-=weaps->num[player->weap[player->curr_weap].weap]->lsight_fade;
-    if(i2>1000)i2=1000;
+    if (i2>1000) i2=1000;
     if (i<i2) putpixel(map->buffer,x/1000,y/1000,makecol(255,0,0));
     x+=xadd;
     y+=yadd;
@@ -111,9 +111,11 @@ void render_weapon_selection_menu(BITMAP *where)
       //
       char *cptr = ucase(game->mod);
       sprintf(str,"MOD NAME: %s",cptr);
-      game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74,false); free(cptr);
+			free(cptr);
+      game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74,false);			
       cptr = ucase(map->name);
-      sprintf(str,"MAP NAME: %s",cptr); free(cptr);
+      sprintf(str,"MAP NAME: %s",cptr);
+			free(cptr);
       game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74+8,false);
       //
       sprintf(str,"NUMBER OF WEAPONS: %d",game->weap_count);
@@ -497,13 +499,13 @@ void engine::scoreboard()
   drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
   set_trans_blender(0, 0, 0, 96);
 
-  rectfill(buffer, SBX, SBY, SBX + SBWIDTH, SBY + SBHEIGHT, makecol(0, 0, 0));
+  rectfill(buffer, SBX+1, SBY+1, SBX + SBWIDTH - 1, SBY + SBHEIGHT - 1, makecol(0, 0, 0));
   rect(buffer, SBX, SBY, SBX + SBWIDTH, SBY + SBHEIGHT, makecol(1000, 100, 100));
 
   //Draw player stats
   //NAME - 16, KILLS - 12, LIVES - 12, DEATHS - 12, PING - 4
   char info[1024] = " NAME            KILLS       LIVES       DEATHS     PING";
-  rectfill(buffer, SBX, SBY + + 4, SBX + SBWIDTH, SBY + 8, makecol(128, 0, 0));
+  rectfill(buffer, SBX+1, SBY + + 4, SBX + SBWIDTH - 1, SBY + 8, makecol(128, 0, 0));
   game->fonty->draw_string(buffer, info, SBX + 4, SBY + 4, true);
 
   solid_mode();
@@ -514,14 +516,15 @@ void engine::scoreboard()
         {
           drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
           set_trans_blender(0, 0, 0, 96);
-          rectfill(buffer, SBX, SBY + 8 * i + 12, SBX + SBWIDTH, SBY + 8 * i + 12 + 4, makecol(32, 32, 32));
+          rectfill(buffer, SBX+1, SBY + (game->fonty->chrh + 2) * i + 12, SBX + SBWIDTH - 1, SBY + (game->fonty->chrh + 2) * i + 12 + 4, makecol(32, 32, 32));
           solid_mode();
         }
       //
-      sprintf(info, " %-16s%-12i%-12i%-12i%-4i", player[i]->name, 0, player[i]->lives, player[i]->deaths, 0);
+      //sprintf(info, " %-16s%-12i%-12i%-12i%-4i", player[i]->name, player[i]->kills, player[i]->lives, player[i]->deaths, 0);
+			sprintf(info, " %-16s%-12c%-12c%-12i%-4c", player[i]->name, '-', '-', player[i]->deaths, '-');
       game->fonty->draw_string(buffer, info, SBX + 4, SBY + 12 + 8 * i, true);
       //Draw players color
-      rectfill(buffer, SBX + 2, SBY + 8 * i + 12, SBX + 6, SBY + 12 + 8 * i + 4, player[i]->color);
+      rectfill(buffer, SBX + 2, SBY + (game->fonty->chrh + 2) * i + 12, SBX + 6, SBY + 12 + (game->fonty->chrh + 2) * i + 4, player[i]->color);
     }
 }
 

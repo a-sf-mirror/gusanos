@@ -56,13 +56,13 @@ void engine::init_node(ZCom_Control *_cont, bool is_server)
 void echo()
 {
   if (strlen(con->arg)!=0)
-  con->echolist.add_echo(con->arg);
+    con->echolist.add_echo(con->arg);
 };
 
 void save_log()
 {
   if (strlen(con->arg)!=0)
-  con->save_log(con->arg);
+    con->save_log(con->arg);
 };
 
 void connect()
@@ -221,6 +221,7 @@ void engine::calcphysics()
           /****************AIR FRICTION********************/
           if(!cli)
           {
+						//in water
             if(getpixel(map->material,player[c]->x/1000,(player[c]->y-4500)/1000)==3)
             {
               if (abs(player[c]->xspd)>20)
@@ -233,10 +234,10 @@ void engine::calcphysics()
                 if (player[c]->yspd<0) player[c]->yspd+=20;
                 if (player[c]->yspd>0) player[c]->yspd+=-20;
               } else player[c]->yspd=0;
-              player[c]->yspd=player[c]->yspd-37;
+              player[c]->yspd-=37;
               player[c]->air--;
               i=0;
-              for(o=0;o<20;o++)
+              for (o=0;o<20;o++)
               {
                 g=getpixel(map->material,player[c]->x/1000,(player[c]->y-4500)/1000 + o);
                 if(!map->mat[g+1].worm_pass)
@@ -249,21 +250,28 @@ void engine::calcphysics()
                   break;
                 };
               };
-              if(i>0)player[c]->yspd=player[c]->yspd+100;
-            }else
+              if(i>0) player[c]->yspd+=100;
+            }else //not in water
             {
               if (abs(player[c]->xspd)>abs(*AIR_FRICTION))
               {
                 if (player[c]->xspd<0) player[c]->xspd+=*AIR_FRICTION;
-                if (player[c]->xspd>0) player[c]->xspd+=-*AIR_FRICTION;
+                if (player[c]->xspd>0) player[c]->xspd-=*AIR_FRICTION;
               } else player[c]->xspd=0;
               if (abs(player[c]->yspd)>abs(*AIR_FRICTION))
               {
                 if (player[c]->yspd<0) player[c]->yspd+=*AIR_FRICTION;
-                if (player[c]->yspd>0) player[c]->yspd+=-*AIR_FRICTION;
+                if (player[c]->yspd>0) player[c]->yspd-=*AIR_FRICTION;
               } else player[c]->yspd=0;
-              if(player[c]->air<=*AIR_CAPACITY/2 && breath->snd!=NULL) play_sample(breath->snd, *VOLUME, 127, 1000, 0);
-              player[c]->air=*AIR_CAPACITY;
+							if(player[c]->air<=*AIR_CAPACITY)
+							{
+								if((player[c]->air<=*AIR_CAPACITY/2) && (player[c]->air+*AIR_CAPACITY/10 > *AIR_CAPACITY/2) && breath->snd!=NULL)
+									play_sample(breath->snd, *VOLUME, 127, 1000, 0);
+								player[c]->air+=*AIR_CAPACITY/10;
+								if (player[c]->air > *AIR_CAPACITY)
+									player[c]->air=*AIR_CAPACITY;
+							}
+              
             };
             player[c]->yspd=player[c]->yspd+*GRAVITY;
             
@@ -281,8 +289,8 @@ void engine::calcphysics()
               else
               {
                 if (player[c]->health>0)
-                play_sample(bump->snd, *VOLUME, 127, 1000, 0);
-                player[c]->yspd= (int) (player[c]->yspd*-1* (*WORM_BOUNCINESS/1000.));
+									play_sample(bump->snd, *VOLUME, 127, 1000, 0);
+                player[c]->yspd= ((player[c]->yspd*-1* *WORM_BOUNCINESS)/1000);
               };
             };
             g=getpixel(map->material,player[c]->x/1000,player[c]->y/1000-8);
@@ -294,8 +302,8 @@ void engine::calcphysics()
               {
                 if (abs(player[c]->yspd) > *DAMAGE_SPEED) player[c]->health-=((abs(player[c]->yspd) - *DAMAGE_SPEED)* *FALL_DAMAGE)/1000;;
                 if (player[c]->health>0)
-                play_sample(bump->snd, *VOLUME, 127, 1000, 0);
-                player[c]->yspd= (int) (player[c]->yspd*-1* (*WORM_BOUNCINESS/1000.));
+									play_sample(bump->snd, *VOLUME, 127, 1000, 0);
+                player[c]->yspd= ((player[c]->yspd*-1* *WORM_BOUNCINESS)/1000);
               };
             };
             
@@ -306,8 +314,8 @@ void engine::calcphysics()
               if (!map->mat[g+1].worm_pass) o=i;
             };
             
-            if (o==0) player[c]->x=player[c]->x+player[c]->xspd;
-            player[c]->y=player[c]->y+player[c]->yspd;
+            if (o==0) player[c]->x+=player[c]->xspd;
+            player[c]->y+=player[c]->yspd;
             
             if (o<=4 && o>0 && !player[c]->xspd==0)
             {
@@ -327,9 +335,10 @@ void engine::calcphysics()
               }
               else player[c]->xspd=0;
             };
-          };
+
+						if(player[c]->weap[player[c]->curr_weap].shoot_time>0)player[c]->weap[player[c]->curr_weap].shoot_time--;
+          };          
           
-          if(!cli && player[c]->weap[player[c]->curr_weap].shoot_time>0)player[c]->weap[player[c]->curr_weap].shoot_time--;
           if (player[c]->firecone_time>0) player[c]->firecone_time--;
           
           if (weaps->num[player[c]->weap[player[c]->curr_weap].weap]->ammo>0 && player[c]->weap[player[c]->curr_weap].ammo<1 && !player[c]->weap[player[c]->curr_weap].reloading)
@@ -348,7 +357,7 @@ void engine::calcphysics()
             player[c]->fireing=false;
             player[c]->weap[player[c]->curr_weap].ammo=weaps->num[player[c]->weap[player[c]->curr_weap].weap]->ammo;
             if (weaps->num[player[c]->weap[player[c]->curr_weap].weap]->reload_sound!=NULL)
-            play_sample(weaps->num[player[c]->weap[player[c]->curr_weap].weap]->reload_sound->snd, *VOLUME, 127, 1000, 0);
+              play_sample(weaps->num[player[c]->weap[player[c]->curr_weap].weap]->reload_sound->snd, *VOLUME, 127, 1000, 0);
           };
           
           if(srv || player[c]->islocal)
@@ -379,10 +388,9 @@ void engine::calcphysics()
           };
           
           if(!cli && player[c]->air<=0)
-          player[c]->health=0;
+            player[c]->health=0;
           
-          if(!cli)
-          if (player[c]->health<=0)
+          if (!cli && player[c]->health<=0)
           {
             char tmpstr[1024];
             if(srv) player[c]->deatheventsend();
@@ -688,6 +696,8 @@ void engine::init_game()
 		player[i]->talking= false;
 		player[i]->health=1000;
 		player[i]->deaths=0;
+		player[i]->kills=0;
+		player[i]->lives=0;
     player[i]->air=2000;
 		player[i]->curr_weap=0;
     player[i]->aim_speed=0;

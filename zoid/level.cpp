@@ -99,6 +99,7 @@ void level::init_materials()
   mat[-1+1].blocks_light=true;
   mat[-1+1].damage=0;
   
+	//rock
   mat[0+1].worm_pass=false;
   mat[0+1].particle_pass=false;
   mat[0+1].flows=false;
@@ -108,6 +109,7 @@ void level::init_materials()
   mat[0+1].blocks_light=true;
   mat[0+1].damage=0;
   
+	//air
   mat[1+1].worm_pass=true;
   mat[1+1].particle_pass=true;
   mat[1+1].flows=false;
@@ -115,6 +117,7 @@ void level::init_materials()
   mat[1+1].destroyable=false;
   mat[1+1].damage=0;
   
+	//dirt
   mat[2+1].worm_pass=false;
   mat[2+1].particle_pass=false;
   mat[2+1].flows=false;
@@ -124,6 +127,7 @@ void level::init_materials()
   mat[2+1].blocks_light=true;
   mat[2+1].damage=0;
   
+	//water
   mat[3+1].worm_pass=true;
   mat[3+1].particle_pass=true;
   mat[3+1].flows=true;
@@ -131,6 +135,7 @@ void level::init_materials()
   mat[3+1].destroyable=false;
   mat[3+1].damage=0;
   
+	//glass
   mat[4+1].worm_pass=false;
   mat[4+1].particle_pass=false;
   mat[4+1].flows=false;
@@ -138,13 +143,15 @@ void level::init_materials()
   mat[4+1].destroyable=true;
   mat[4+1].draw_exps=false;
   mat[4+1].blocks_light=false;
-  mat[4+1].chreact=load_part("chreact.obj");//game->chreact;
+  mat[4+1].chreact=load_part("chreact.obj");
   mat[4+1].damage=0;
   
-  
+	//Water spawner
   mat[5+1].creates_water=true;
+	//Water destroyer
   mat[6+1].destroys_water=true;
   
+	//Special Rock
   mat[7+1].worm_pass=false;
   mat[7+1].particle_pass=true;
   mat[7+1].flows=false;
@@ -153,6 +160,7 @@ void level::init_materials()
   mat[7+1].draw_exps=false;
   mat[7+1].damage=0;
   
+	//Explosive
   mat[8+1].worm_pass=false;
   mat[8+1].particle_pass=false;
   mat[8+1].flows=false;
@@ -160,9 +168,10 @@ void level::init_materials()
   mat[8+1].destroyable=true;
   mat[8+1].draw_exps=false;
   mat[8+1].blocks_light=true;
-  mat[8+1].chreact=load_part("chreact2.obj");//game->chreact;
+  mat[8+1].chreact=load_part("chreact2.obj");
   mat[8+1].damage=0;
   
+	//Special rock 2
   mat[9+1].worm_pass=true;
   mat[9+1].particle_pass=false;
   mat[9+1].flows=false;
@@ -466,6 +475,8 @@ void change_level()
 	{
 		player[i]->active=false;
 		player[i]->deaths=0;
+		player[i]->kills=0;
+		player[i]->lives=0;
 		player[i]->destroyrope();
 		player[i]->firecone_time=0;
 		player[i]->selecting_weaps=true;

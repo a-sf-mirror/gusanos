@@ -543,7 +543,10 @@ void console::input()
 		{
 			con->flag4=true;
 			if (scroll_back>0)
-				con->scroll_back--;
+				if (key[KEY_RSHIFT])
+					con->scroll_back=0;
+				else
+					con->scroll_back--;
 			else if (con->height>*con->default_height)
 				con->height= *con->default_height;
 			else if (con->height==*con->default_height)
