@@ -29,7 +29,7 @@ PlayerOptions *BasePlayer::getOptions()
 
 Vec BasePlayer::getPos()
 {
-	return m_worm->getPos();
+	return m_worm->getPos(); // WARNING: The player could not own a worm if he is a spectator.
 }
 
 

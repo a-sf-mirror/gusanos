@@ -7,11 +7,14 @@
 
 class PlayerAI : public BasePlayer
 {
-    BasePlayer* m_target;
-    public:
-        PlayerAI() { }
-        void getTarget();       //Find target
-        void think();           //AI processing
+	public:
+	PlayerAI();
+	~PlayerAI();
+	void getTarget();       //Find target
+	void think();           //AI processing
+	
+	private:
+	BasePlayer* m_target;
 };
 
 #endif
