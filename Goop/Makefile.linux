@@ -1,6 +1,7 @@
 CC= g++
 CFLAGS= -O3 -I ../loadpng -I ../Console 
-LIBS= -L../Console -lpng -lz `allegro-config --libs` -lzoidcom -lgcon -lfmod
+LIBS= -L../Console -lpng -lz `allegro-config --libs` -lzoidcom -lgcon -lfmod \
+      -lboost_filesystem
 DEFINES= 
 BIN= ../gusanos.exe
 OBJECTS= gusanos.o keyboard.o gconsole.o keys.o resource_list.o sprite.o \
@@ -8,15 +9,20 @@ OBJECTS= gusanos.o keyboard.o gconsole.o keys.o resource_list.o sprite.o \
 	worm.o part_type.o particle.o base_action.o events.o \
 	game_actions.o parser.o sound.o gfx.o sfx.o base_animator.o animators.o distortion.o \
 	player.o player_input.o base_player.o player_options.o weapon.o weapon_type.o player_ai.o \
+	base_worm.o net_worm.o \
 	ninjarope.o gui.o guilist.o server.o client.o network.o liero.o \
+	loaders/gusanos.o loaders/liero.o loaders/lierox.o \
 	../loadpng/loadpng.o ../loadpng/regpng.o ../loadpng/savepng.o
 	
 
-$(BIN): $(OBJECTS)
+$(BIN): makeloader $(OBJECTS)
 	$(CC) -o $(BIN) $(OBJECTS) $(CFLAGS) $(LIBS)
 
 .cpp.o:
 	$(CC) -c $< $(CFLAGS) $(DEFINES)
+
+makeloader:
+	$(MAKE) -C loaders
 
 clean:
 	rm $(OBJECTS)
