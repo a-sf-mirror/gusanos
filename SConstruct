@@ -32,6 +32,14 @@ elif platform == 'mingw-cross':
 		RANLIB = os.path.join(mingwPath, 'bin', 'ranlib'),
 		AR = os.path.join(mingwPath, 'bin', 'ar'),
 		)
+elif platform == 'basara':
+	env = Environment(
+		CPPPATH = ['.', '/usr/local/include/zoidcom', '#Console', '#GUI'],
+		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib', os.path.join('#lib/', platform)],
+		CPPFLAGS = '-O3',
+		#CPPFLAGS = '-O0 -g',
+		CXX='g++-3.4',
+		)
 # add more platforms here
 	
 #Builds all cpp and c files in this directory and returns a list of nodes
