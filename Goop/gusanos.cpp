@@ -36,37 +36,37 @@ void _timerUpdate(void) { _timer++; } END_OF_FUNCTION(_timerUpdate);
 
 string rightStart(const list<string> &args)
 {
-	worm->moveRightStart();
+	worm->actionStart( Worm::MOVERIGHT );
 	return "";
 }
 
 string rightStop(const list<string> &args)
 {
-	worm->moveRightStop();
+	worm->actionStop( Worm::MOVERIGHT );
 	return "";
 }
 
 string leftStart(const list<string> &args)
 {
-	worm->moveLeftStart();
+	worm->actionStart( Worm::MOVELEFT );
 	return "";
 }
 
 string leftStop(const list<string> &args)
 {
-	worm->moveLeftStop();
+	worm->actionStop( Worm::MOVELEFT);
 	return "";
 }
 
 string jumpStart(const list<string> &args)
 {
-	worm->jumpStart();
+	worm->actionStart( Worm::JUMP );
 	return "";
 }
 
 string jumpStop(const list<string> &args)
 {
-	worm->jumpStop();
+	worm->actionStop( Worm::JUMP );
 	return "";
 }
 
@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 	worm = new Worm();
 	game.objects.push_back(worm);
 	
-	for (int i = 0; i < 2 ; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		Vec pos;
 		while ( !game.level.getMaterial((int) pos.x,(int) pos.y).particle_pass )

@@ -3,20 +3,24 @@
 
 #include <string>
 
+class Viewport;
+class Worm;
+struct BITMAP;
+
 class Player
 {
 	public:
 	
 	enum Actions
 	{
-		ACTION_LEFT;
-		ACTION_RIGHT;
-		ACTION_UP;
-		ACTION_DOWN;
-		ACTION_FIRE;
-		ACTION_JUMP;
-		ACTION_CHANGE;
-	}
+		LEFT,
+		RIGHT,
+		UP,
+		DOWN,
+		FIRE,
+		JUMP,
+		CHANGE
+	};
 		
 	Player();
 	~Player();
@@ -28,7 +32,7 @@ class Player
 	void assignWorm(Worm* worm);
 	
 	void actionStart( Actions action );
-	void actionEnd( Actions action );
+	void actionStop( Actions action );
 	
 	private:
 	

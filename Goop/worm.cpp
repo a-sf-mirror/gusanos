@@ -145,39 +145,45 @@ void Worm::draw(BITMAP* where,int xOff, int yOff)
 	skin->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, y-yOff,aimAngle, flipped);
 }
 
-void Worm::moveLeftStart()
+void Worm::actionStart( Actions action)
 {
-	movingLeft = true;
-}
-
-void Worm::moveLeftStop()
-{
-	movingLeft = false;
-}
-
-void Worm::moveRightStart()
-{
-	movingRight = true;
-}
-
-void Worm::moveRightStop()
-{
-	movingRight = false;
-}
-
-void Worm::jumpStart()
-{
-	if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y) + 1 ).particle_pass )
+	switch ( action )
 	{
-		spd.y -= game.options.worm_jumpForce;
+		case MOVELEFT:
+			movingLeft = true;
+		break;
+		
+		case MOVERIGHT:
+			movingRight = true;
+		break;
+		
+		case JUMP:
+			if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y) + 1 ).particle_pass )
+			{
+				spd.y -= game.options.worm_jumpForce;
+			}
+			jumping = true;
+		break;
 	}
-	jumping = true;
 }
 
-void Worm::jumpStop()
+void Worm::actionStop( Actions action)
 {
-	jumping = false;
-};
+	switch ( action )
+	{
+		case MOVELEFT:
+			movingLeft = false;
+		break;
+		
+		case MOVERIGHT:
+			movingRight = false;
+		break;
+		
+		case JUMP:
+			jumping = false;
+		break;
+	}
+}
 
 void Worm::addToAim(float angle)
 {

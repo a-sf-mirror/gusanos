@@ -119,6 +119,10 @@ bool PartType::load(const string &filename)
 							distortion = new Distortion( rippleMap( cast<int>(tokens[3]) ) );
 						else if ( val == "random" && tokens.size() >= 4)
 							distortion = new Distortion( randomMap( cast<int>(tokens[3]) ) );
+						else if ( val == "spin" && tokens.size() >= 4)
+							distortion = new Distortion( spinMap( cast<int>(tokens[3]) ) );
+						else if ( val == "bitmap" && tokens.size() >= 4)
+							distortion = new Distortion( bitmapMap( tokens[3] ) );
 					}
 					else if ( var == "distort_magnitud" ) distortMagnitud = cast<float>(val);
 				}

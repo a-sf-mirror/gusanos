@@ -4,6 +4,8 @@
 #include <vector>
 #include "vec.h"
 
+#include <string>
+
 using namespace std;
 
 DistortionMap* lensMap(int radius)
@@ -62,6 +64,35 @@ DistortionMap* swirlMap(int radius)
 	return swirl;
 }
 
+DistortionMap* spinMap(int radius)
+{
+	DistortionMap* spin = new DistortionMap;
+
+	for ( int y = 0; y < radius*2; ++y )
+	for ( int x = 0; x < radius*2; ++x )
+	{
+		Vec delta = Vec( x - radius, y - radius );
+		
+		float factor;
+		
+		if ( delta.length() <= radius )
+		{
+			if (delta.length() != 0)
+			{
+				factor = 1 - delta.length() / radius;
+				
+				Vec newPos = angleVec( delta.getAngle() + 180 * factor, delta.length());
+				
+				spin->map.push_back( newPos - delta );
+			}else
+				spin->map.push_back( Vec(0,0) );
+		}else
+			spin->map.push_back( Vec (0,0) );
+	}
+	spin->width = radius*2;
+	return spin;
+}
+
 DistortionMap* rippleMap(int radius, int frequency)
 {
 	DistortionMap* ripple = new DistortionMap;
@@ -99,6 +130,50 @@ DistortionMap* randomMap(int radius)
 		lens->map.push_back( angleVec(rnd()*360, rnd() * 2 ) );
 	}
 	lens->width = radius*2;
+	return lens;
+}
+
+DistortionMap* bitmapMap(const string &filename)
+{
+	int currVdepth = get_color_depth();
+	
+	set_color_depth(32);
+	
+	DistortionMap* lens = new DistortionMap;
+	
+	BITMAP* heightMap = load_bitmap(filename.c_str(),0);
+
+	if ( heightMap )
+	{
+		for ( int y = 0; y < heightMap->h; ++y )
+		for ( int x = 0; x < heightMap->w; ++x )
+		{
+			Vec distort;
+			float value;
+			float s,h;
+			int c = getpixel(heightMap,x-1,y);
+			rgb_to_hsv(getr(c), getg(c), getb(c), &h, &s, &value);
+			distort+= Vec(-1,0)*value;
+			c = getpixel(heightMap,x+1,y);
+			rgb_to_hsv(getr(c), getg(c), getb(c), &h, &s, &value);
+			distort+= Vec(1,0)*value;
+			c = getpixel(heightMap,x,y-1);
+			rgb_to_hsv(getr(c), getg(c), getb(c), &h, &s, &value);
+			distort+= Vec(0,-1)*value;
+			c = getpixel(heightMap,x,y+1);
+			rgb_to_hsv(getr(c), getg(c), getb(c), &h, &s, &value);
+			distort+= Vec(0,1)*value;
+			lens->map.push_back( distort*10 );
+		}
+		lens->width = heightMap->w;
+		destroy_bitmap(heightMap);
+	}else
+	{
+		lens->width = 0;
+	}
+	
+	set_color_depth(currVdepth);
+	
 	return lens;
 }
 

@@ -11,18 +11,26 @@ class Worm : public BaseObject
 {
 	public:
 		
+	enum Actions
+	{
+		MOVELEFT,
+		MOVERIGHT,
+		AIMUP,
+		AIMDOWN,
+		FIRE,
+		FIRE2,
+		JUMP,
+		DIG
+	};
+		
 	Worm();
 	~Worm();
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
-	void moveLeftStart();
-	void moveLeftStop();
-	void moveRightStart();
-	void moveRightStop();
+	void actionStart( Actions action );
+	void actionStop( Actions action );
 	void addToAim(float angle);
-	void jumpStart();
-	void jumpStop();
 	
 	private:
 	

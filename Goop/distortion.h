@@ -2,6 +2,7 @@
 #define DISTORTION_H
 
 #include "vec.h"
+#include <string>
 
 struct BITMAP;
 
@@ -31,8 +32,10 @@ class Distortion
 
 DistortionMap* lensMap(int radius);
 DistortionMap* swirlMap(int radius);
+DistortionMap* spinMap(int radius);
 DistortionMap* rippleMap(int radius, int frequency = 3);
 DistortionMap* randomMap(int radius);
+DistortionMap* bitmapMap(const std::string &filename);
 
 #endif // _DISTORTION_H_
 
