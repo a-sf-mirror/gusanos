@@ -17,7 +17,6 @@
 
 // FORWARD REFERENCES
 //
-class ConsoleItem;
 
 class GConsole : public Console
 {
@@ -31,7 +30,17 @@ class GConsole : public Console
 	private:
 	
 	KeyHandler keyHandler;
+	int m_mode;
+	std::string m_inputBuff;
+	
+	enum
+	{
+		CONSOLE_MODE_INPUT,
+		CONSOLE_MODE_BINDINGS
+	};
 };
+
+std::string bindCmd(const std::list<std::string> &args);
 
 extern GConsole console;
 

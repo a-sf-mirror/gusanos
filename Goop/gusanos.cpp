@@ -13,20 +13,24 @@ struct Object
 	float y;
 };
 
-string ugauga(const list<string> &args)
+bool forward = false;
+bool quit = false;
+
+string forwardStart(const list<string> &args)
 {
-	allegro_message((*args.begin()).c_str());
-	return "Guarda boludo! ejecutaste \"uga\"";
+	forward = true;
+	return "";
 }
 
-string bind(const list<string> &args)
+string forwardEnd(const list<string> &args)
 {
-	string key;
-	string action;
-	
-	key = *args.begin();
-	action = *(++args.begin());
-	console.bind(key, action);
+	forward = false;
+	return "";
+}
+
+string Exit(const list<string> &args)
+{
+	quit = true;
 	return "";
 }
 
@@ -42,8 +46,10 @@ int main(int argc, char **argv)
 	
 	console.registerIntVariable("TEST", &consoleTest, 100);
 	console.registerIntVariable("POO", &pooo, 20);
-	console.registerCommand("uga", ugauga);
-	console.registerCommand("BIND", bind);
+	console.registerCommand("+FORWARD", forwardStart);
+	console.registerCommand("-FORWARD", forwardEnd);
+	console.registerCommand("QUIT", Exit);
+	
 	//allegro_message("%d",consoleTest);
 	//console.setVariableValue("TEST", "10");
 	//console.setVariableValue("POO", "15");
@@ -56,12 +62,11 @@ int main(int argc, char **argv)
 	console.parseLine("TEST");
 	console.parseLine("BIND A \"TEST 10\"");
 	console.parseLine("BIND B TEST");
+	console.parseLine("BIND W +FORWARD");
 	
 	//allegro_message("%d",consoleTest);
 	
 	BITMAP *buffer;
-	
-	bool quit=false;
 	
 	set_color_depth(16);
 
@@ -72,9 +77,13 @@ int main(int argc, char **argv)
   
 	buffer = create_bitmap(320,240);
 	
-	while (true)
+	object.x = 10;
+	object.y = 10;
+	
+	while (!quit)
 	{
-			
+		if (forward) object.x+=0.5;
+		
 		console.checkInput();
 		
 		clear_bitmap(buffer);
@@ -83,11 +92,16 @@ int main(int argc, char **argv)
 		
 		console.render(buffer);
 		
+		putpixel(buffer, object.x, object.y, makecol(255,0,0));
+		
 		vsync();
 		
 		blit(buffer,screen,0,0,0,0,320,240);
 
-	};
+	}
+	
+	console.shutDown();
+	allegro_exit();
 
 	return(0);
 }

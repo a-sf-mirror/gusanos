@@ -63,40 +63,45 @@ void Console::registerCommand(const std::string &name, std::string (*func)(const
 		tempItem->second->invoke(value);
 }*/
 
-void Console::parseLine(const string &text)
+void Console::parseLine(const string &text, bool parseRelease)
 {
 	string textToParse;
 	string textInQueue = text;
-	
-	addLogMsg(text);
 	
 	list< list<string> > argTree = text2Tree(text);
 	
 	list< list<string> >::iterator mainIter = argTree.begin();
 	while ( mainIter != argTree.end() )
 	{
-		parse( (*mainIter) );
+		parse( (*mainIter), parseRelease );
 		mainIter++;
 	}
 
 }
 
-void Console::parse(list<string> &args)
+void Console::parse(list<string> &args, bool parseRelease)
 {
 	string itemName;
 	string arguments;
 	string retString;
 	
-	itemName = *args.begin();
-	map<string, ConsoleItem*>::iterator tempItem = items.find(itemName);
-	if (tempItem != items.end())
+	if (!args.empty())
 	{
-		args.pop_front();
-		retString = tempItem->second->invoke(args);
-		addLogMsg(retString);
-	}else
-	{
-		addLogMsg("Unknown command \"" + itemName + "\"" );
+		itemName = *args.begin();
+		if ( !parseRelease || (itemName[0] == '+') )
+		{
+			if (parseRelease) itemName[0]='-';
+			map<string, ConsoleItem*>::iterator tempItem = items.find(itemName);
+			if (tempItem != items.end())
+			{
+				args.pop_front();
+				retString = tempItem->second->invoke(args);
+				addLogMsg(retString);
+			}else
+			{
+				addLogMsg("Unknown command \"" + itemName + "\"" );
+			}
+		}
 	}
 }
 
@@ -115,7 +120,7 @@ void Console::analizeKeyEvent(bool state, char key)
 	if (state == true)
 		parseLine(bindTable.getBindingAction(key));
 	else
-		parseLine("you released " + keyNames[key]);
+		parseLine(bindTable.getBindingAction(key), true);
 }
 
 void Console::bind(const std::string &key, const string &action)
