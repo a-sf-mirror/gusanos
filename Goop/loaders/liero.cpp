@@ -60,7 +60,7 @@ static unsigned char const lieroPalette[] =
 
 bool LieroLevelLoader::load(Level* level, fs::path const& path)
 {
-	fs::ifstream f(path);
+	fs::ifstream f(path, std::ios::binary);
 	if(!f)
 		return false;
 		
@@ -125,7 +125,7 @@ bool LieroFontLoader::load(Font* font, fs::path const& path)
 {
 	font->free();
 	
-	fs::ifstream f(path);
+	fs::ifstream f(path, std::ios::binary);
 	if(!f)
 		return false;
 		

@@ -97,8 +97,8 @@ EnumVariable::~EnumVariable()
 	
 }
 
-EnumVariable::EnumVariable(std::string name, int* src, int defaultValue, MapType const& mapping, void (*func)( int ))
-: Variable(name), m_src(src), m_defaultValue(defaultValue), m_mapping(mapping)
+EnumVariable::EnumVariable(std::string name, int* src, int defaultValue, MapType const& mapping, CallbackT const& func)
+: Variable(name), m_src(src), m_defaultValue(defaultValue), m_mapping(mapping), m_callback(func)
 {
 	*m_src = m_defaultValue;
 
@@ -127,8 +127,11 @@ string EnumVariable::invoke(const std::list<std::string> &args)
 			return help;
 		}
 		
+		int oldValue = *m_src;
 		*m_src = v->second;
-		return "";
+		if ( m_callback ) m_callback(oldValue);
+		
+		return std::string();
 	}else
 	{
 		ReverseMapType::iterator v = m_reverseMapping.find(*m_src);

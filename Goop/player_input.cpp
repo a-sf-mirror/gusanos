@@ -3,6 +3,7 @@
 #include "player.h"
 #include "gconsole.h"
 #include "text.h"
+#include <boost/bind.hpp>
 
 #include <string>
 #include <list>
@@ -14,7 +15,9 @@ void registerPlayerInput()
 {
 	for ( int i = 0; i < MAX_LOCAL_PLAYERS; ++i)
 	{
-		console.registerSpecialCommand("+P" + cast<string>(i) + "_LEFT", i, leftStart);
+		console.registerCommands()
+			("+P" + cast<string>(i) + "_LEFT", boost::bind(leftStart, i, _1));
+		//console.registerSpecialCommand("+P" + cast<string>(i) + "_LEFT", i, leftStart);
 		console.registerSpecialCommand("-P" + cast<string>(i) + "_LEFT", i, leftStop);
 		console.registerSpecialCommand("+P" + cast<string>(i) + "_RIGHT", i, rightStart);
 		console.registerSpecialCommand("-P" + cast<string>(i) + "_RIGHT", i, rightStop);

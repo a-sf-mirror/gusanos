@@ -15,14 +15,15 @@ Command::~Command()
 {
 }
 
-Command::Command(std::string (*func)(const std::list<std::string>&))
+Command::Command(CallbackT const& func)
+: m_func(func)
 {
-	m_func=func;
+
 }
 
 //============================= INTERFACE ================================
 
-string Command::invoke(const std::list<std::string> &args)
+string Command::invoke(std::list<std::string> const& args)
 {
 	return m_func(args);
 }

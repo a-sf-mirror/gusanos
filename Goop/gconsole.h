@@ -29,7 +29,7 @@ class GConsole : public Console
 	bool eventKeyDown(int k);
 	bool eventKeyUp(int k);
 	
-	static void varCbFont( std::string oldValue );
+	void varCbFont( std::string oldValue );
 
 	private:
 	

@@ -36,7 +36,7 @@ public:
 	~Font();
 	
 	void free();
-	bool load(std::string const& filename);
+
 	void draw(BITMAP* where, std::string const& text, int x, int y, int spacing = 0)
 	{
 		draw(where, text.begin(), text.end(), x, y, spacing);
@@ -93,36 +93,6 @@ public:
 		return e;
 	}
 	
-	/*
-	template<class IteratorT>
-	IteratorT fitStringRev(IteratorT b, IteratorT e, int space, std::pair<int, int>& dim, int spacing = 0)
-	{
-		dim.second = 0;
-		
-		int oldSpace = space;
-		
-		for(; b != e; ++b)
-		{
-			CharInfo* c = lookupChar(*b);
-			
-			if(c->width > space)
-			{
-				dim.first = oldSpace - space; // TODO: Remove spacing for last character
-				return b;
-			}
-
-			space -= c->width - c->spacing - spacing;
-
-			if(c->height > dim.second)
-				dim.second = c->height;
-		}
-		
-		dim.first = oldSpace - space; // TODO: Remove spacing for last character
-		return e;
-	}
-	
-	*/
-
 	// Returns a (0, 0) pair
 	std::pair<int, int> zeroDimensions();
 	

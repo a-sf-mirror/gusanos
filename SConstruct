@@ -16,14 +16,15 @@ sconscript = ['./GUI/detail/SConscript',
             './Console/SConscript',
             './loadpng/SConscript',
             './Goop/SConscript',
-            './liero2gus/SConscript']
+            './liero2gus/SConscript',
+            './Panzer/SConscript']
 
 if platform == 'posix':
 	env = Environment(
 		CPPPATH = ['.', '#loadpng', '/usr/local/include/zoidcom', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib', os.path.join('#lib/', platform)],
-		CPPFLAGS = '-O3 -Wall',
-		#CPPFLAGS = '-O0 -g -Wall',
+		#CPPFLAGS = '-O3 -Wall',
+		CPPFLAGS = '-O0 -g -Wall',
 		CXX='g++-3.4',
 		)
 elif platform == 'mingw-cross':

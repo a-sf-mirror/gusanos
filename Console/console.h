@@ -9,6 +9,7 @@
 #include "bindings.h"
 #include "text.h"
 #include "variables.h"
+#include "command.h"
 
 // LOCAL INCLUDES
 //
@@ -33,10 +34,17 @@ class Console
 		{
 		}
 		
-		template<class T, class IT>
-		RegisterVariableProxy const& operator()(std::string name, T* src, IT defaultValue, void (*callback)( T ) = NULL ) const
+		template<class T, class IT, class FT>
+		RegisterVariableProxy const& operator()(std::string const& name, T* src, IT defaultValue, FT callback) const
 		{
 			m_console.registerVariable(new TVariable<T>(name, src, defaultValue, callback));
+			return *this;
+		}
+		
+		template<class T, class IT>
+		RegisterVariableProxy const& operator()(std::string const& name, T* src, IT defaultValue) const
+		{
+			m_console.registerVariable(new TVariable<T>(name, src, defaultValue));
 			return *this;
 		}
 		
@@ -58,9 +66,9 @@ class Console
 		}
 		
 		template<class FT>
-		RegisterCommandProxy const& operator()(std::string name, FT func) const
+		RegisterCommandProxy const& operator()(std::string const& name, FT const& func) const
 		{
-			m_console.registerCommand(name, func);
+			m_console.registerCommand(name, new Command(func));
 			return *this;
 		}
 		
@@ -83,7 +91,7 @@ class Console
 	}
 	
 	void registerAlias(const std::string &name, const std::string &action);
-	void registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&));
+	void registerCommand(std::string const& name, Command* command);
 	void registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&));
 	
 	void parseLine(const std::string &text, bool parseRelease = false);

@@ -195,14 +195,14 @@ GConsole::GConsole()
 
 void GConsole::varCbFont( std::string oldValue )
 {
-	Font* newFont = fontLocator.load(console.m_fontName);
+	Font* newFont = fontLocator.load(m_fontName);
 	if(!newFont)
 	{
-		console.addLogMsg("FONT \"" + console.m_fontName + "\" NOT FOUND, REVERTING TO OLD FONT");
-		console.m_fontName = oldValue;
+		addLogMsg("FONT \"" + m_fontName + "\" NOT FOUND, REVERTING TO OLD FONT");
+		m_fontName = oldValue;
 		return;
 	}
-	console.m_font = newFont;
+	m_font = newFont;
 }
 
 void GConsole::init()
@@ -220,7 +220,7 @@ void GConsole::init()
 	console.registerVariables()
 		("CON_SPEED", &speed, 4)
 		("CON_HEIGHT", &height, 120)
-		("CON_FONT", &m_fontName, "minifont", varCbFont)
+		("CON_FONT", &m_fontName, "minifont", boost::bind(&GConsole::varCbFont, this, _1))
 	;
 
 	console.registerCommands()
@@ -235,7 +235,6 @@ void GConsole::init()
 		("ECHO", echoCmd)
 	;
 	
-	commandsLog.push_back("MOO");
 	currentCommand = commandsLog.end(); //To workaround a crashbug with uninitialized iterator
 }
 

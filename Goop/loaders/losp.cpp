@@ -38,7 +38,7 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 {
 	font->free();
 
-	fs::ifstream f(path);
+	fs::ifstream f(path, std::ios::binary);
 	if(!f)
 		return false;
 		

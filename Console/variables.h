@@ -3,6 +3,7 @@
 
 #include "consoleitem.h"
 #include "text.h"
+#include <boost/function.hpp>
 //#include <boost/lexical_cast.hpp>
 //using boost::lexical_cast;
 
@@ -42,7 +43,9 @@ class TVariable : public Variable
 {
 	public:
 	
-	TVariable(std::string name, T* src, T defaultValue, void (*callback)( T ) = NULL )
+	typedef boost::function<void (T const&)> CallbackT;
+	
+	TVariable(std::string name, T* src, T defaultValue, CallbackT const& callback = CallbackT() )
 	: Variable(name), m_src(src), m_callback(callback)
 	{
 		*src = defaultValue;
@@ -57,7 +60,7 @@ class TVariable : public Variable
 	{
 	}
 	
-	std::string invoke(const std::list<std::string> &args)
+	std::string invoke(std::list<std::string> const& args)
 	{
 		if (!args.empty())
 		{
@@ -65,7 +68,7 @@ class TVariable : public Variable
 			*m_src = cast<T>(*args.begin());
 			if ( m_callback ) m_callback(oldValue);
 	
-			return "";
+			return std::string();
 		}else
 		{
 			//return m_name + " IS \"" + cast<std::string>(*m_src) + '"';
@@ -77,14 +80,15 @@ class TVariable : public Variable
 
 	T* m_src;
 	T m_defaultValue;
-	void (*m_callback)( T );
+	CallbackT m_callback;
 };
 
+/*
 template<class T, class IT>
 inline TVariable<T>* tVariable(std::string name, T* src, IT defaultValue, void (*callback)( T ) = NULL )
 {
 	return new TVariable<T>(name, src, defaultValue, callback);
-}
+}*/
 
 /*
 class IntVariable : public Variable
@@ -132,7 +136,9 @@ class EnumVariable : public Variable
 	typedef std::map<std::string, int, IStrCompare> MapType;
 	typedef std::map<int, std::string> ReverseMapType;
 	
-	EnumVariable(std::string name, int* src, int defaultValue, MapType const& mapping, void (*func)( int ) = NULL);
+	typedef boost::function<void (int)> CallbackT;
+	
+	EnumVariable(std::string name, int* src, int defaultValue, MapType const& mapping, CallbackT const& func = CallbackT());
 	EnumVariable();
 	virtual ~EnumVariable();
 	
@@ -140,11 +146,11 @@ class EnumVariable : public Variable
 	
 	private:
 	
-	void (*callback)( int );
 	int* m_src;
 	int m_defaultValue;	
 	ReverseMapType m_reverseMapping;
 	MapType m_mapping;
+	CallbackT m_callback;
 };
 
 #endif  // _VARIABLES_H_

@@ -63,16 +63,14 @@ void Console::registerVariable(Variable* var)
 	}
 }
 
-void Console::registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&))
+void Console::registerCommand(std::string const& name, Command* command)
 {
-	if (!name.empty())
+	if (!name.empty() && items.find(name) == items.end())
 	{
-		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
-		if (tempItem == items.end())
-		{
-			items[name] = new Command(func);
-		}
+		items[name] = command;
 	}
+	else
+		delete command;
 }
 
 void Console::registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&))

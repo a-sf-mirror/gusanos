@@ -24,7 +24,7 @@ bool LieroXLevelLoader::canLoad(fs::path const& path, std::string& name)
 
 bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 {
-	fs::ifstream f(path);
+	fs::ifstream f(path, std::ios::binary);
 	if(!f)
 		return false;
 		

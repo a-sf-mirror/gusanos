@@ -40,27 +40,6 @@ void Font::free()
 	m_bitmap = 0;
 }
 
-bool Font::load(string const& filename)
-{
-
-	/*
-	BITMAP *tempBitmap = load_bmp(filename.c_str(),0);
-	if (tempBitmap)
-	{
-		int width = tempBitmap->w / 256;
-		for (int i = 0; i < 256; ++i)
-		{
-			BITMAP* character = create_bitmap(width,tempBitmap->h);
-			blit(tempBitmap,character,i * width,0,0,0,width,character->h);
-			m_char.push_back(character);
-		}
-		destroy_bitmap(tempBitmap);
-		return true;
-	}
-	*/
-	return false;
-}
-
 Font::CharInfo* Font::lookupChar(char c)
 {
 	unsigned int idx = (unsigned int)c;

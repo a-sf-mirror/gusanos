@@ -11,7 +11,7 @@
 class SpecialCommand : public ConsoleItem
 {
 	public:
-	
+
 	SpecialCommand(int index, std::string (*func)(int, const std::list<std::string>&));
 	SpecialCommand();
 	virtual ~SpecialCommand();
