@@ -27,7 +27,8 @@
 using namespace std;
 
 bool quit = false;
-int showFps = false;
+int showFps;
+int showDebug;
 
 //millisecond timer
 volatile unsigned int _timer = 0;
@@ -49,6 +50,7 @@ int main(int argc, char **argv)
 	
 	console.registerFloatVariable("CL_TEMP_AIM_SPEED", &aimSpeed, 1.8);
 	console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
+	console.registerIntVariable("CL_SHOWDEBUG", &showDebug, 1);
 	
 	console.registerCommand("QUIT", Exit);
 	
@@ -125,7 +127,8 @@ int main(int argc, char **argv)
 	
 	while (!quit)
 	{
-		
+		int _objCount = 0; //object count for debug info
+
 		while ( logicLast+1 <= _timer )
 		{
 			for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
@@ -152,13 +155,13 @@ int main(int argc, char **argv)
 					delete *tmp;
 					game.objects.erase(tmp);
 				}else	iter++;
+                                _objCount++;
 			}
 			
 			logicLast+=1;
 
 		}
 
-			
 		//Update FPS
 		if (_fpsLast + 100 <= _timer)
 		{
@@ -179,6 +182,12 @@ int main(int argc, char **argv)
 			tempFont->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
 		}
 		_fpsCount++;
+
+                //debug info
+                if (showDebug)
+                {
+			tempFont->draw(gfx.buffer, "OBJECTS: " + cast<string>(_objCount), 5, 10, 0);
+                }
 
 		console.render(gfx.buffer);
 		

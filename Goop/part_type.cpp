@@ -85,6 +85,14 @@ bool PartType::load(const string &filename)
 				string var;
 				string val;
 				
+#ifndef WINDOWS
+				//Check for windows formatting on files
+				if (parseLine[parseLine.length()-1] == '\r')
+				{
+					parseLine.erase(parseLine.length()-1);
+				}
+#endif
+
 				vector<string> tokens;
 				tokens = Parser::tokenize ( parseLine );
 				int lineID = Parser::identifyLine( tokens );
@@ -139,6 +147,11 @@ bool PartType::load(const string &filename)
 							distortion = new Distortion( bitmapMap( tokens[3] ) );
 					}
 					else if ( var == "distort_magnitud" ) distortMagnitud = cast<float>(val);
+					else
+					{
+						std::cout << "Unknown variable on following line:" << std::endl;
+						std::cout << "\t" << parseLine << std::endl;
+					}
 				}
 				
 				if ( lineID == Parser::EVENT_START )
@@ -172,7 +185,15 @@ bool PartType::load(const string &filename)
 						timer.push_back(new TimerEvent(delay, delayVariation));
 						currEvent = timer.back()->event;
 					}
-					else currEvent = NULL;
+					else
+					{
+						std::cout << "Unknown event on following line:" << std::endl;
+						std::cout << "\t" << parseLine << std::endl;
+						std::cout << "Event name given: \"" << eventName << "\"" << std::endl;
+						std::cout << "----------------" << std::endl;
+						currEvent = NULL;
+					}
+
 				}
 				
 				if ( lineID == Parser::ACTION && currEvent != NULL)

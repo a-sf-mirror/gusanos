@@ -51,6 +51,14 @@ bool WeaponType::load(const string &filename)
 			{
 				string var;
 				string val;
+
+#ifndef WINDOWS
+				//Check for windows formatting on files
+				if (parseLine[parseLine.length()-1] == '\r')
+				{
+					parseLine.erase(parseLine.length()-1);
+				}
+#endif
 				
 				vector<string> tokens;
 				tokens = Parser::tokenize ( parseLine );
@@ -74,6 +82,11 @@ bool WeaponType::load(const string &filename)
 					else if ( var == "laser_sight_intensity" ) laserSightIntensity = cast<float>(val);
 					else if ( var == "laser_sight_range" ) laserSightRange = cast<float>(val);
 					else if ( var == "firecone" ) firecone = spriteList.load(val);
+					else
+					{
+						std::cout << "Unknown variable on following line:" << std::endl;
+						std::cout << "\t" << parseLine << std::endl;
+					}
 				}
 				
 				if ( lineID == Parser::EVENT_START )
@@ -95,7 +108,14 @@ bool WeaponType::load(const string &filename)
 						currEvent = new Event;
 						primaryReleased = currEvent;
 					}
-					else currEvent = NULL;
+					else
+					{
+						std::cout << "Unknown event on following line:" << std::endl;
+						std::cout << "\t" << parseLine << std::endl;
+						std::cout << "Event name given: \"" << eventName << "\"" << std::endl;
+						std::cout << "----------------" << std::endl;
+						currEvent = NULL;
+					}
 				}
 				
 				if ( lineID == Parser::ACTION && currEvent != NULL)
