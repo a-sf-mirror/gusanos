@@ -40,6 +40,7 @@ PartType::PartType()
 	timeoutVariation = 0;
 	wormDetectRange = 0;
 	radius = 0;
+	angularFriction = 0;
 	animDuration = 100;
 	animType = ANIM_LOOPRIGHT;
 	
@@ -101,6 +102,7 @@ bool PartType::load(const string &filename)
 					if ( var == "gravity" ) gravity = cast<float>(val);
 					else if ( var == "repeat" ) repeat = cast<int>(val);	
 					else if ( var == "bounce_factor" ) bounceFactor = cast<float>(val);
+					else if ( var == "angular_friction" ) angularFriction = cast<float>(val);
 					else if ( var == "damage" ) damage = cast<float>(val);
 					else if ( var == "worm_detect_range" ) wormDetectRange = cast<float>(val);
 					else if ( var == "sprite" ) sprite = spriteList.load(val);

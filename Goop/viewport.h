@@ -5,6 +5,8 @@
 #include "vec.h"
 #include <allegro.h>
 
+struct Listener;
+
 class Viewport
 {
 	public:
@@ -22,6 +24,7 @@ class Viewport
 	
 	BITMAP* m_dest;
 	Vec m_pos;
+	Listener* m_listener;
 	
 };
 

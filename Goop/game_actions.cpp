@@ -20,7 +20,7 @@ void registerGameActions()
 	game.actionList["shoot_particles"] = shootParticles;
 	game.actionList["remove"] = remove;
 	game.actionList["play_sound"] = playSound;
-	game.actionList["play_sound_static"] = playSound;
+	game.actionList["play_sound_static"] = playSoundStatic;
 	game.actionList["delay_fire"] = delayFire;
 }
 

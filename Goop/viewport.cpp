@@ -1,6 +1,7 @@
 #include "viewport.h"
 
 #include "game.h"
+#include "sfx.h"
 #include <list>
 #include <allegro.h>
 
@@ -14,6 +15,7 @@ Viewport::Viewport()
 Viewport::~Viewport()
 {
 	if ( m_dest ) destroy_bitmap(m_dest);
+	sfx.freeListener(m_listener);
 }
 
 void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height)
@@ -25,7 +27,8 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	if ( x + width > where->w ) x = where->w - x;
 	if ( y + height > where->h ) y = where->h - y;
 	m_dest = create_sub_bitmap(where,x,y,width,height);
-
+	
+	m_listener = sfx.newListener();
 }
 
 void Viewport::render()
@@ -48,6 +51,8 @@ void Viewport::setPos(float x, float y)
 	else if ( m_pos.x < 0 ) m_pos.x = 0;
 	if ( m_pos.y + m_dest->h > game.level.height() ) m_pos.y = game.level.height() - m_dest->h;
 	else if ( m_pos.y < 0 ) m_pos.y = 0;
+		
+	if (m_listener) m_listener->pos = m_pos + Vec(m_dest->w/2,m_dest->h/2);
 	
 }
 
@@ -61,6 +66,8 @@ void Viewport::interpolateTo(float x, float y, float factor)
 	else if ( m_pos.x < 0 ) m_pos.x = 0;
 	if ( m_pos.y + m_dest->h > game.level.height() ) m_pos.y = game.level.height() - m_dest->h;
 	else if ( m_pos.y < 0 ) m_pos.y = 0;
+
+	if (m_listener) m_listener->pos = m_pos + Vec(m_dest->w/2,m_dest->h/2);
 }
 
 void Viewport::interpolateTo(Vec dest, float factor)
@@ -71,4 +78,6 @@ void Viewport::interpolateTo(Vec dest, float factor)
 	else if ( m_pos.x < 0 ) m_pos.x = 0;
 	if ( m_pos.y + m_dest->h > game.level.height() ) m_pos.y = game.level.height() - m_dest->h;
 	else if ( m_pos.y < 0 ) m_pos.y = 0;
+		
+	if (m_listener) m_listener->pos = m_pos + Vec(m_dest->w/2,m_dest->h/2);
 }

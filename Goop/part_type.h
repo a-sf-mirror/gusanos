@@ -40,6 +40,7 @@ class PartType
 	int timeoutVariation;
 	float wormDetectRange;
 	float radius;
+	float angularFriction;
 	
 	Distortion* distortion;
 	float distortMagnitud;

@@ -82,6 +82,15 @@ void Particle::think()
 			justCreated = false;
 		}
 		
+		if ( abs(m_angleSpeed) < m_type->angularFriction ) m_angleSpeed = 0;
+		else if ( m_angleSpeed < 0 ) m_angleSpeed += m_type->angularFriction;
+		else m_angleSpeed -= m_type->angularFriction;
+		
+		m_angle += m_angleSpeed;
+		while ( m_angle > 360 ) m_angle -= 360;
+		while ( m_angle < 0 ) m_angle += 360;
+		
+		
 		if ( !deleteMe ) pos = pos + spd;
 		else break;
 		if ( m_animator ) m_animator->tick();
@@ -90,7 +99,7 @@ void Particle::think()
 
 float Particle::getAngle()
 {
-	return spd.getAngle();
+	return m_angle;
 }
 
 void Particle::draw(BITMAP* where,int xOff, int yOff)

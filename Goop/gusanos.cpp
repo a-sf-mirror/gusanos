@@ -67,11 +67,6 @@ int main(int argc, char **argv)
 
 	MenuWindow menu;
 	
-	/*Viewport* testViewport;
-	Viewport testViewport2;
-
-	testViewport->setDestination(gfx.buffer,0,0,320,240);
-	testViewport2.setDestination(gfx.buffer,110,70,100,100);*/
 	
 	for (int i = 0; i < 1; i++)
 	{
@@ -100,7 +95,7 @@ int main(int argc, char **argv)
 	if(true)
 	{
 		Worm* worm = new Worm;
-		Player* player = new PlayerAI(game.playerOptions[1]);
+		Player* player = new Player(game.playerOptions[1]);
 		Viewport* viewport = new Viewport;
 		viewport->setDestination(gfx.buffer,160,0,160,240);
 		player->assignWorm(worm);
@@ -126,9 +121,44 @@ int main(int argc, char **argv)
 	int _fpsLast = 0;
 	int _fpsCount = 0;
 	int _fps = 0;
+	int logicLast = 0;
 	
 	while (!quit)
 	{
+		
+		while ( logicLast+1 <= _timer )
+		{
+			for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
+			{
+				(*iter)->think();
+			}
+			
+			for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+			{
+				(*iter)->think();
+			}
+			
+			sfx.think();
+			
+			console.checkInput();
+			console.think();
+			
+			for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); )
+			{
+				if ( (*iter)->deleteMe )
+				{
+					list<BaseObject*>::iterator tmp = iter;
+					iter++;
+					delete *tmp;
+					game.objects.erase(tmp);
+				}else	iter++;
+			}
+			
+			logicLast+=1;
+
+		}
+
+			
 		//Update FPS
 		if (_fpsLast + 100 <= _timer)
 		{
@@ -136,18 +166,6 @@ int main(int argc, char **argv)
 			_fpsCount = 0;
 			_fpsLast = _timer;
 		}
-
-		for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
-		{
-			(*iter)->think();
-		}
-		
-		for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
-		{
-			(*iter)->think();
-		}
-		
-		console.checkInput();
 
 
 		for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
@@ -161,31 +179,11 @@ int main(int argc, char **argv)
 			tempFont->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
 		}
 		_fpsCount++;
-	
-		console.think();
-		console.render(gfx.buffer);
 
+		console.render(gfx.buffer);
+		
 		gfx.updateScreen();
 		
-		/*float pos[3] = { worm->getPos().x, worm->getPos().y, -20 };
-		FSOUND_3D_Listener_SetAttributes(pos,NULL,0,0,1,0,1,0);*/
-		FSOUND_Update();
-		
-		sfx.updateChanPositions();
-		
-		sfx.checkForDeletedObjects();
-		
-		for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); )
-		{
-			if ( (*iter)->deleteMe )
-			{
-				list<BaseObject*>::iterator tmp = iter;
-				iter++;
-				delete *tmp;
-				game.objects.erase(tmp);
-			}else	iter++;
-		}
-
 	}
 	
 	

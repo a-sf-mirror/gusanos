@@ -1,9 +1,17 @@
 #ifndef SFX_H
 #define SFX_H
 
+#include "vec.h"
+#include <list>
+#include <vector>
+
 class BaseObject;
 
-#include <list>
+struct Listener
+{
+	Vec pos;
+	Vec spd;
+};
 
 class Sfx
 {
@@ -15,18 +23,19 @@ class Sfx
 	void init();
 	void shutDown();
 	void registerInConsole();
-	void updateChanPositions();
+	void think();
 	void setChanObject( int chan, BaseObject* obj );
+	Listener* newListener();
+	void freeListener(Listener* listener);
 	
 	// *** THIS MUST BE PLACED BEFORE THE OBJECT GETS REALLY DELETED *** // or... CRASH! :>
-	void checkForDeletedObjects();
 	
 	private:
 	
 	std::list< std::pair< int, BaseObject* > > chanObject;
+	std::vector<Listener*> listeners;
 	
-	int m_vsync;
-	int m_clearBuffer;
+	int m_listenerDistance;
 
 };
 
