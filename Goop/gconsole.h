@@ -16,8 +16,6 @@
 class GConsole : public Console
 {
 	public:
-	
-	static const int consoleKey = KEY_F1;
 
 	GConsole();
 	
@@ -40,6 +38,7 @@ class GConsole : public Console
 	Font *m_font;
 	Sprite *background;
 	std::string m_inputBuff;
+	int m_consoleKey;
 	
 	std::list< std::string > commandsLog;
 	std::list< std::string >::iterator currentCommand;

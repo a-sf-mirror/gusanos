@@ -11,7 +11,7 @@ using namespace std;
 Sfx sfx;
 
 Sfx::Sfx()
-: m_outputMode(-1)
+: m_initialized(false), m_outputMode(-1)
 {
 }
 
@@ -49,6 +49,8 @@ void Sfx::init()
 	FSOUND_3D_SetRolloffFactor(2);
 	
 	console.addLogMsg(string("* FMOD LIB INITIALIZED, USING DRIVER ") + FSOUND_GetDriverName(FSOUND_GetDriver()));
+	
+	m_initialized = true;
 }
 
 void Sfx::shutDown()
@@ -58,7 +60,7 @@ void Sfx::shutDown()
 
 void Sfx::registerInConsole()
 {
-	{
+	{ // TODO: Only add modes relevant to the platform
 		map<string, int> outputModes;
 		outputModes["NOSFX"] = FSOUND_OUTPUT_NOSOUND;
 		outputModes["WINMM"] = FSOUND_OUTPUT_WINMM;
@@ -75,6 +77,8 @@ void Sfx::registerInConsole()
 		outputModes["DEFAULT"] = -1;
 		
 		console.registerEnumVariable("SFX_OUTPUT_MODE", &m_outputMode, -1, outputModes);
+		// NOTE: When/if adding a callback to sfx variables, make it do nothing if
+		// sfx.operator bool() returns false.
 	}
 }
 

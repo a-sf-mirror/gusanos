@@ -1,6 +1,8 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#ifndef DISABLE_ZOIDCOM
+
 #include <zoidcom.h>
 
 class Client : public ZCom_Control
@@ -34,5 +36,7 @@ class Client : public ZCom_Control
 	virtual bool ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return false;}
 	virtual void ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply )  {}
 };
+
+#endif
 
 #endif // _CLIENT_H_

@@ -50,7 +50,8 @@ class Game
 	Game();
 	~Game();
 	
-	void init();
+	void init(int argc, char** argv);
+	void parseCommandLine(int argc, char** argv);
 	
 	void setMod(const std::string& mod);
 	void loadWeapons();

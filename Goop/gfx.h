@@ -18,16 +18,22 @@ class Gfx
 	void registerInConsole();
 	void fullscreenChange();
 	void doubleResChange();
+	int  getGraphicsDriver(); // Selects and returns graphics driver
 	
 	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL);
 	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);
 	
 	void updateScreen();
+	
+	operator bool()
+	{ return m_initialized; } // Returns true if it's safe to use this object
 
 	
 	BITMAP* buffer;
 	
 	private:
+	
+	bool m_initialized;
 	
 	int m_fullscreen;
 	int m_doubleRes;
@@ -36,6 +42,7 @@ class Gfx
 	int m_vsync;
 	int m_clearBuffer;
 	int m_filter;
+	int m_driver;
 	
 	BITMAP* m_doubleResBuffer;
 	

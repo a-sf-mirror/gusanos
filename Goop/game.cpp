@@ -23,6 +23,7 @@
 #include <string>
 #include <algorithm>
 #include <list>
+#include <iostream>
 
 using namespace std;
 
@@ -62,7 +63,9 @@ string connectCmd(const list<string> &args)
 {
 	if ( !args.empty() )
 	{
+#ifndef DISABLE_ZOIDCOM
 		network.connect( *args.begin() );
+#endif
 		return "";
 	}
 	return "CONNECT <HOST_ADDRESS> : JOIN A NETWORK SERVER";
@@ -106,21 +109,64 @@ Game::~Game()
 
 }
 
-void Game::init()
+void Game::parseCommandLine(int argc, char** argv)
 {
+	for(int i = 0; i < argc; ++i)
+	{
+		const char* arg = argv[i];
+		if(arg[0] == '-')
+		{
+			switch(arg[1])
+			{
+				case 'c':
+					if(++i >= argc)
+						return;
+						
+					console.parseLine(argv[i]);
+				break;
+			}
+		}
+	}
+}
+
+void Game::init(int argc, char** argv)
+{
+	/*
+	// TODO: Move commandline stuff to a different function?
+	po::options_description desc("Allowed options");
+	desc.add_options()
+	    ("help", "produce help message")
+	    ("command,c", po::value<string>(), "run a console command")
+	;
+	
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
+	
+	if (vm.count("help"))
+	{
+	    cout << desc << endl;
+	    // TODO: We should exit gusanos here
+	}*/
+	
 	allegro_init();
 
 	m_defaultPath = "default/";
 	m_modPath = "default/";
 	nextMod = "default";
 	
+	console.init();
 	sfx.registerInConsole();
+	gfx.registerInConsole();
+	
+	parseCommandLine(argc, argv);
 
 	gfx.init();
 	sfx.init();
+#ifndef DISABLE_ZOIDCOM
 	network.init();
-	console.init();
-	
+#endif
+
 	for ( int i = 0; i< MAX_LOCAL_PLAYERS; ++i)
 	{
 		PlayerOptions *options = new PlayerOptions;
@@ -130,8 +176,9 @@ void Game::init()
 	
 	//TODO: Check and move the rest of registerInConsole() before init()
 	options.registerInConsole(); 
-	gfx.registerInConsole();
+#ifndef DISABLE_ZOIDCOM
 	network.registerInConsole();
+#endif
 	registerGameActions();
 	registerPlayerInput();
 
@@ -227,7 +274,9 @@ void Game::changeLevel(const std::string& levelName )
 	
 	if ( options.host )
 	{
+#ifndef DISABLE_ZOIDCOM
 		network.host();
+#endif
 	}
 	
 	if ( loaded && level.isLoaded() )

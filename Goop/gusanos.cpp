@@ -50,7 +50,7 @@ void startGame(const std::string&)
 
 int main(int argc, char **argv)
 {
-	game.init();
+	game.init(argc, argv);
 	gui::init();
 	
 	//Font *tempFont = fontList.load("minifont.bmp");
@@ -147,7 +147,9 @@ int main(int argc, char **argv)
 				
 			}
 			sfx.think();
+#ifndef DISABLE_ZOIDCOM
 			network.update();
+#endif
 			
 			console.checkInput();
 			console.think();

@@ -88,6 +88,24 @@ string setChar(const list<string> &args)
 	return "SETCHAR <KEY> <CHARACTER> : SETS THE CHARACTER TO BE USED WITH KEY";
 }
 
+string setConsoleKey(const list<string> &args)
+{
+	if (args.size() >= 1)
+	{
+		std::list<string>::const_iterator arguments = args.begin();
+		
+		std::string const& keyName = *arguments++;
+		int key = kName2Int(keyName);
+		TEST_KEY(key, keyName);
+
+		//console.m_consoleKey = key; //TODO
+		return "";
+	}
+	return "SETCONSOLEKEY <KEY> : SETS THE KEY TO SHOWS/HIDES THE CONSOLE";
+}
+
+
+
 string execCmd(const list<string> &args)
 {
 	if (!args.empty())
@@ -130,10 +148,11 @@ string aliasCmd(const list<string> &args)
 
 //============================= LIFECYCLE ====================================
 
-GConsole::GConsole() : Console(256,39)
+GConsole::GConsole()
+: Console(256,39), m_consoleKey(KEY_F1), background(NULL)
 {
-	background = NULL;
-};
+	
+}
 
 //============================= INTERFACE ====================================
 
@@ -151,6 +170,7 @@ void GConsole::init()
 	registerCommand("SWAPKEYS", swapKeysCmd);
 	registerCommand("SETSHIFTCHAR", setShiftChar);
 	registerCommand("SETCHAR", setChar);
+	registerCommand("SETCONSOLEKEY", setConsoleKey);
 	registerCommand("EXEC", execCmd);
 	registerCommand("ALIAS", aliasCmd);
 }
@@ -206,7 +226,7 @@ void GConsole::checkInput()
 	while (event.type != KEY_EVENT_NONE) // While the event is not an end of list event
 	{
 		// Key Tilde is hardcoded to toogle the console (quake does the same so.. NO COMPLAINTS! :P)
-		if ( (event.type == KEY_EVENT_PRESS) && (event.key == consoleKey) )
+		if ( (event.type == KEY_EVENT_PRESS) && (event.key == m_consoleKey) )
 		{
 			if ( m_mode == CONSOLE_MODE_INPUT )	// If the console is in input mode toogle to Binding mode
 				m_mode = CONSOLE_MODE_BINDINGS;

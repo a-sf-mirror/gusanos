@@ -1,6 +1,8 @@
 #include "client.h"
 #include "gconsole.h"
 
+#ifndef DISABLE_ZOIDCOM
+
 #include <zoidcom.h>
 
 Client::Client( int _udpport )
@@ -36,3 +38,4 @@ void Client::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 	console.addLogMsg("* CONNECTION CLOSED BY SERVER");
 }
 
+#endif

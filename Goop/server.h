@@ -1,6 +1,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#ifndef DISABLE_ZOIDCOM
+
 #include <zoidcom.h>
 
 class Server : public ZCom_Control
@@ -29,6 +31,8 @@ class Server : public ZCom_Control
 	void ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply )  {}
 	bool ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return false;}
 };
+
+#endif
 
 #endif // _SERVER_H_
 

@@ -4,6 +4,8 @@
 #include "gconsole.h"
 #include "text.h"
 
+#ifndef DISABLE_ZOIDCOM
+
 #include <string>
 
 using namespace std;
@@ -89,9 +91,7 @@ bool Network::isClient()
 	return m_client;
 }
 
-
-
-
+#endif
 
 
 

@@ -31,7 +31,12 @@ class Sfx
 	
 	// *** THIS MUST BE PLACED BEFORE THE OBJECT GETS REALLY DELETED *** // or... CRASH! :>
 	
+	operator bool()
+	{ return m_initialized; } // Returns true if it's safe to use this object
+	
 	private:
+	
+	bool m_initialized;
 	
 	std::list< std::pair< int, BaseObject* > > chanObject;
 	std::vector<Listener*> listeners;

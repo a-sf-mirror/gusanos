@@ -21,17 +21,19 @@ string fullscreenCmd(const list<string> &args)
 
 void fullscreen( int oldValue )
 {
-	gfx.fullscreenChange();
+	if(gfx) gfx.fullscreenChange();
 }
 
 void doubleRes( int oldValue )
 {
-	gfx.doubleResChange();
+	if(gfx) gfx.doubleResChange();
 }
 
 Gfx::Gfx()
+: m_initialized(false), m_fullscreen(true), m_doubleRes(false)
+, m_vwidth(320), m_vheight(240), buffer(NULL)
 {
-	buffer = NULL;
+
 }
 
 Gfx::~Gfx()
@@ -39,21 +41,15 @@ Gfx::~Gfx()
 }
 
 void Gfx::init()
-{	
-	set_color_depth(16);
-	set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0);
-	m_fullscreen = true;
-	m_doubleRes = false;
-	m_vwidth = 320;
-	m_vheight = 240;
-	//set_gfx_mode(GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
-	
-	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
-		set_display_switch_mode(SWITCH_BACKGROUND);
+{
+	set_color_depth(16); //Ugh
+	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
 
 	loadpng_init();
 
 	buffer = create_bitmap(320,240);
+	
+	m_initialized = true; // Tell console commands it's safe to manipulate gfx
 }
 
 void Gfx::shutDown()
@@ -69,13 +65,31 @@ void Gfx::registerInConsole()
 	console.registerIntVariable("VID_DOUBLERES", &m_doubleRes, 0, doubleRes);
 	console.registerIntVariable("VID_VSYNC", &m_vsync, 1);
 	console.registerIntVariable("VID_CLEAR_BUFFER", &m_clearBuffer, 1);
+	// NOTE: When/if adding a callback to gfx variables, make it do nothing if
+	// gfx.operator bool() returns false.
 	
-	map<string, int> videoFilters;
-	videoFilters["NOFILTER"] = NO_FILTER;
-	videoFilters["SCANLINES"] = SCANLINES;
-	//videoFilters["2XSAI"] = AA2XSAI; // To be included later.
-		
-	console.registerEnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters);
+	{
+		map<string, int> videoFilters;
+		videoFilters["NOFILTER"] = NO_FILTER;
+		videoFilters["SCANLINES"] = SCANLINES;
+		//videoFilters["2XSAI"] = AA2XSAI; // To be included later.
+			
+		console.registerEnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters);
+	}
+	
+	{ // TODO: Only include drivers relevant to the platform
+		map<string, int> videoDrivers;
+		videoDrivers["AUTO"] = GFX_AUTODETECT;
+#ifdef WINDOWS
+		videoDrivers["DIRECTX"] = GFX_DIRECTX;
+#else //def LINUX   ..or?
+		videoDrivers["XDGA"] = GFX_XDGA;
+		videoDrivers["XDGA2"] = GFX_XDGA2;
+		videoDrivers["XWINDOWS"] = GFX_XWINDOWS;
+#endif
+
+		console.registerEnumVariable("VID_DRIVER", &m_driver, GFX_AUTODETECT, videoDrivers);
+	}
 }
 
 void Gfx::updateScreen()
@@ -107,16 +121,63 @@ void Gfx::updateScreen()
 	if ( m_clearBuffer ) clear_bitmap(buffer);
 }
 
+int Gfx::getGraphicsDriver()
+{
+	int driverSelected = GFX_AUTODETECT;
+	if ( m_fullscreen )
+	{
+		driverSelected = GFX_AUTODETECT_FULLSCREEN;
+		switch ( m_driver )
+		{
+			case GFX_AUTODETECT: driverSelected = GFX_AUTODETECT_FULLSCREEN; break;
+#ifdef WINDOWS
+			case GFX_DIRECTX: driverSelected = GFX_DIRECTX; break;
+#else //def LINUX   ..or?
+			case GFX_XDGA: driverSelected = GFX_XDGA_FULLSCREEN; break;
+			case GFX_XDGA2: driverSelected = GFX_XDGA2; break;
+			case GFX_XWINDOWS: driverSelected = GFX_XWINDOWS_FULLSCREEN; break;
+#endif
+
+		}
+	}
+	else
+	{
+		driverSelected = GFX_AUTODETECT_WINDOWED;
+		switch ( m_driver )
+		{
+			case GFX_AUTODETECT: driverSelected = GFX_AUTODETECT_WINDOWED; break;
+#ifdef WINDOWS
+			case GFX_DIRECTX: driverSelected = GFX_DIRECTX_WIN; break;
+#else //ifdef LINUX   ..or?
+			case GFX_XDGA: driverSelected = GFX_XDGA; break;
+			case GFX_XDGA2: driverSelected = GFX_AUTODETECT_WINDOWED; break; //XDGA2 only works in fullscreen
+			case GFX_XWINDOWS: driverSelected = GFX_XWINDOWS; break;
+#endif
+			// TODO: DirectX overlay support (GFX_DIRECTX_OVL)?
+		}
+	}
+	
+	return driverSelected;
+}
+
 void Gfx::fullscreenChange()
 {
 	set_color_depth(16);
 	
-	if ( m_fullscreen )
+	// TODO: I suppose that changing graphics driver will clear out bitmaps and such
+
+	int result = set_gfx_mode(getGraphicsDriver(), m_vwidth, m_vheight, 0, 0);
+	if(result < 0)
 	{
-		set_gfx_mode(GFX_AUTODETECT, m_vwidth, m_vheight, 0, 0);
-	}else
-	{
-		set_gfx_mode(GFX_AUTODETECT_WINDOWED, m_vwidth, m_vheight, 0, 0);
+		// TODO: Print error to cerr
+		// We hit some error
+		if(m_driver != GFX_AUTODETECT)
+		{
+			// If the driver wasn't at autodetect, revert to it and try again
+			m_driver = GFX_AUTODETECT;
+			result = set_gfx_mode(getGraphicsDriver(), m_vwidth, m_vheight, 0, 0);
+			// TODO: if result returns a negative value, we should close down the shop
+		}
 	}
 	
 	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)

@@ -1,6 +1,9 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+
+#ifndef DISABLE_ZOIDCOM
+
 #include <zoidcom.h>
 #include <string>
 
@@ -35,5 +38,7 @@ class Network
 };
 
 extern Network network;
+
+#endif
 
 #endif // _NETWORK_H_

@@ -2,6 +2,8 @@
 #include "gconsole.h"
 #include "game.h"
 
+#ifndef DISABLE_ZOIDCOM
+
 #include <zoidcom.h>
 
 Server::Server( int _udpport )
@@ -40,3 +42,4 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 	console.addLogMsg("* A CONNECTION WAS CLOSED");
 }
 
+#endif
