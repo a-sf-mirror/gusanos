@@ -1,5 +1,5 @@
-#ifndef text_h
-#define text_h
+#ifndef TEXT_H
+#define TEXT_H
 
 #include <sstream>
 #include <list>
@@ -20,4 +20,4 @@ void separate_str_by(char ch, const std::string &src, std::string &left, std::st
 
 std::list< std::list<std::string> > text2Tree(const std::string &text);
 
-#endif  // _text_h_
+#endif  // _TEXT_H_

@@ -1,5 +1,5 @@
-#ifndef command_h
-#define command_h
+#ifndef COMMAND_H
+#define COMMAND_H
 
 #include "consoleitem.h"
 
@@ -23,4 +23,4 @@ class Command : public ConsoleItem
 	std::string (*m_func)(const std::list<std::string>&);
 };
 
-#endif  // _command_h_
+#endif  // _COMMAND_H_

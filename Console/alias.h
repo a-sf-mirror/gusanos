@@ -1,5 +1,5 @@
-#ifndef alias_h
-#define alias_h
+#ifndef ALIAS_H
+#define ALIAS_H
 
 #include "console.h"
 #include "consoleitem.h"
@@ -27,4 +27,4 @@ class Alias : public ConsoleItem
 	std::string m_action;
 };
 
-#endif  // _alias_h_
+#endif  // _ALIAS_H_

@@ -3,7 +3,7 @@
 #include "command.h"
 #include "alias.h"
 #include "text.h"
-#include "consoleItem.h"
+#include "consoleitem.h"
 
 #include <algorithm>
 #include <fstream>

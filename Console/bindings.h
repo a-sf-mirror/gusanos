@@ -1,5 +1,5 @@
-#ifndef bindings_h
-#define bindings_h
+#ifndef BINDINGS_H
+#define BINDINGS_H
 
 #include <string>
 
@@ -25,4 +25,4 @@ class BindTable
 	Binding binding[256];
 };
 
-#endif  // _bindings_h_
+#endif  // _BINDINGS_H_

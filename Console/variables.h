@@ -1,7 +1,7 @@
-#ifndef variables_h
-#define variables_h
+#ifndef VARIABLES_H
+#define VARIABLES_H
 
-#include "consoleItem.h"
+#include "consoleitem.h"
 
 #include <string>
 
@@ -42,4 +42,4 @@ class FloatVariable : public ConsoleItem
 	float m_defaultValue;
 };
 
-#endif  // _variables_h_
+#endif  // _VARIABLES_H_

@@ -1,5 +1,5 @@
-#ifndef console_h
-#define console_h
+#ifndef CONSOLE_H
+#define CONSOLE_H
 
 // SYSTEM INCLUDES
 //
@@ -50,4 +50,4 @@ class Console
 	int m_mode;
 };
 
-#endif  // _console_h_
+#endif  // _CONSOLE_H_
