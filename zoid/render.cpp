@@ -288,6 +288,7 @@ void engine::render()
           };*/
           blit(map->buffer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
         };
+        render_paralax_lights(buffer,i,viewport[i]);
         if (map->light_layer!=NULL && *RENDER_LAYERS==1)
         {
           BITMAP* light_layer_buffer=create_sub_bitmap(map->light_layer, p->xview,p->yview, viewport[i].w,viewport[i].h);

@@ -35,7 +35,7 @@ void check_obstacles(BITMAP *where, int x, int y, int d);
 
 void render_light( int x, int y, int r, int g, int b, int fade, int noise,BITMAP *where, BITMAP *material);
 
-void render_exp_light( int x, int y, int color, int fade, int noise,BITMAP *where, BITMAP *material);
+void render_exp_light(int x, int y, int _color, int fade, int noise,int mask,BITMAP *where, BITMAP *material);
 
 void render_sunlight( BITMAP *where, BITMAP *material);
 

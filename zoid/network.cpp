@@ -50,6 +50,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
       sprintf(tmpstr, "NEW PLAYER CREATED AS INDEX %d", player_count);
       con->log.create_msg(tmpstr);
       player[player_count]->id = _id;
+      player[player_count]->local_slot=local_players;
       // make connection owner of object so connection may change x and y of object (see NObject::init())
       player[player_count]->node->setOwner(_id, true);
       player_count++;
@@ -60,6 +61,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
         sprintf(tmpstr, "NEW PLAYER CREATED AS INDEX %d", player_count);
         con->log.create_msg(tmpstr);
         player[player_count]->id = _id;
+        player[player_count]->local_slot=local_players;
         // make connection owner of object so connection may change x and y of object (see NObject::init())
         player[player_count]->node->setOwner(_id, true);
         player_count++;

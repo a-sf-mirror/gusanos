@@ -253,7 +253,7 @@ void create_exp(int x,int y,class exp_type *type)
 				if (abs(dy) < exps->end->type->detect_range)
 				{
 					m=fixtoi(fixhypot(itofix(dx),itofix(dy)));;
-					if(m < exps->end->type->detect_range)
+					if(m < exps->end->type->detect_range && m != 0)
 					{
 						if (exps->end->type->wormshootobj!=NULL)
 							for(c=0;c<exps->end->type->wormshootnum;c++) partlist.shoot_part(((rand()%1000)*256),exps->end->type->wormshootspeed-rand()%(exps->end->type->wormshootspeedrnd)+exps->end->type->wormshootspeedrnd/2,1,player[i]->x,player[i]->y-4000,0,0,i,exps->end->type->wormshootobj);
@@ -276,12 +276,12 @@ void create_exp(int x,int y,class exp_type *type)
         if (tmp->type->affected_by_explosions!=0)
         {
           dx=tmp->x-exps->end->x;
-          dy=(tmp->y)-exps->end->y;
+          dy=tmp->y-exps->end->y;
           if (abs(dx) < exps->end->type->detect_range)
           if (abs(dy) < exps->end->type->detect_range)
           {
             m=fixtoi(fixhypot(itofix(dx),itofix(dy)));;
-            if(m < exps->end->type->detect_range)
+            if(m < exps->end->type->detect_range && m!=0)
             {
               if (exps->end->type->blow_away!=0)
               {
@@ -316,7 +316,7 @@ void create_exp(int x,int y,class exp_type *type)
         };
       };
     };
-    if (exps->end->type->light_effect==1)
+    if (exps->end->type->light_effect!=0)
     {
       exps->end->light=NULL;
       if (getpixel(map->material,exps->end->x/1000,exps->end->y/1000)!=-1)
@@ -325,7 +325,10 @@ void create_exp(int x,int y,class exp_type *type)
         c=512/(exps->end->type->light_fadeness/100.)+1;
         exps->end->light=create_bitmap(c,c);
         clear_to_color(exps->end->light,0);
-        render_exp_light(exps->end->x/1000,exps->end->y/1000,exps->end->type->light_color,exps->end->type->light_fadeness,5,exps->end->light ,map->material);  
+        if(exps->end->type->light_effect==1)
+          render_exp_light(exps->end->x/1000,exps->end->y/1000,exps->end->type->light_color,exps->end->type->light_fadeness,5,bitmap_mask_color(map->buffer),exps->end->light ,map->material);  
+        else
+          render_exp_light(exps->end->x/1000,exps->end->y/1000,exps->end->type->light_color,exps->end->type->light_fadeness,5,-1,exps->end->light ,map->material);  
       };
     };
 	};
@@ -490,6 +493,28 @@ void render_exps()
         drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
         set_add_blender(0,0,0,255-(tmp->time*255)/tmp->type->timeout);
         draw_trans_sprite(map->buffer,tmp->light,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2);
+        solid_mode();
+      };
+    };
+	};
+};
+
+void render_paralax_lights(BITMAP* where, int _player, struct s_viewport viewport)
+{
+	class explosion* tmp;
+	tmp=exps->start;
+  worm *p=player[local_player[_player]];
+	while (tmp->next!=NULL)
+	{
+    tmp=tmp->next;
+    if (tmp->type->light_effect==2 && tmp->light)
+    {
+      if(CanBeSeen(tmp->x/1000,tmp->y/1000,tmp->light->w,tmp->light->h))
+      {
+        //fblend_add(tmp->light,where,viewport.x+(tmp->x/1000-p->xview)-tmp->light->w/2,viewport.y+tmp->y/1000-p->yview-tmp->light->h/2,255-(tmp->time*255)/tmp->type->timeout);
+        drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+        set_add_blender(0,0,0,255-(tmp->time*255)/tmp->type->timeout);
+        draw_trans_sprite(where,tmp->light,viewport.x+(tmp->x/1000-p->xview)-tmp->light->w/2,viewport.y+tmp->y/1000-p->yview-tmp->light->h/2);
         solid_mode();
       };
     };

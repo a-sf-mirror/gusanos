@@ -10,6 +10,7 @@ int randomness;
 int flashlight_color;
 BITMAP *_where;
 BITMAP *_material;
+int _mask;
 
 
 void do_collision(BITMAP *bmp, int x1, int y1, int x2, int y2, int d, void (*proc)(BITMAP *, int, int, int))
@@ -333,8 +334,7 @@ void obs_exp_light(BITMAP *where, int x, int y, int d)
   int g=_material->line[y][x];
   if(map->mat[g+1].blocks_light) obstacle=true;
     
-  if (map->paralax && getpixel(map->mapimg,x,y)==makecol(255,0,255));
-  else
+  if (map->paralax==NULL || getpixel(map->mapimg,x,y)!=_mask)
   {
     wx=_where->w/2;
     wy=_where->h/2;
@@ -357,12 +357,13 @@ void obs_exp_light(BITMAP *where, int x, int y, int d)
   };
 };
 
-void render_exp_light( int x, int y, int _color, int fade, int noise,BITMAP *where, BITMAP *material)
+void render_exp_light( int x, int y, int _color, int fade, int noise,int mask,BITMAP *where, BITMAP *material)
 {
   int _x,_y,bx1,bx2,by1,by2,c,u;
 
   //clear_to_color(lightbuff,0);
   
+  _mask=mask;
   _where=where;
   _material=material;
   

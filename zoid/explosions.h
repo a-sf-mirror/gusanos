@@ -80,5 +80,6 @@ void render_exps();
 void draw_explosion(BITMAP* image,int x, int y);
 void dest_exp(class explosion* tmp);
 void create_exp(int x,int y,class exp_type *type);
+void render_paralax_lights(BITMAP* where, int _player, struct s_viewport viewport);
 
 #endif /* EXPLOSIONS_H */
