@@ -14,6 +14,7 @@ platform = ARGUMENTS.get('platform', 'posix')
 
 sconscript = ['./GUI/detail/SConscript',
             './Console/SConscript',
+            './loadpng/SConscript',
             './Goop/SConscript',
             './liero2gus/SConscript']
 
@@ -25,7 +26,6 @@ if platform == 'posix':
 		#CPPFLAGS = '-O0 -g',
 		CXX='g++-3.4',
 		)
-	sconscript.append('./loadpng/SConscript')
 elif platform == 'mingw-cross':
 	mingwPath = ARGUMENTS.get('mingw-path', '/usr/local/mingw/')
 	env = Environment(
@@ -38,7 +38,6 @@ elif platform == 'mingw-cross':
 		RANLIB = os.path.join(mingwPath, 'bin', 'ranlib'),
 		AR = os.path.join(mingwPath, 'bin', 'ar'),
 		)
-	sconscript.append('./loadpng/SConscript')
 elif platform == 'basara':
 	env = Environment(
 		CPPPATH = ['.', '/usr/local/include/zoidcom', '#Console', '#GUI'],
