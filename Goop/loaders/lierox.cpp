@@ -49,9 +49,8 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 	size_t have;
 	z_stream strm;
 	unsigned char in[ChunkSize];
-	//unsigned char out[ChunkSize];
-	
-	/* allocate inflate state */
+
+	// allocate inflate state
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;

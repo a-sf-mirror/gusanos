@@ -1,4 +1,4 @@
-OBJS=gusanos.o liero.o lierox.o
+OBJS=gusanos.o liero.o lierox.o losp.o
 CFLAGS=-I../../Console
 DEFINES=
 

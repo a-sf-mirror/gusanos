@@ -68,8 +68,8 @@ class TVariable : public Variable
 			return "";
 		}else
 		{
-			//return m_name + " IS \"" + lexical_cast<std::string>(*m_src) + '"';
-			return m_name + " IS \"" + cast<std::string>(*m_src) + '"';
+			//return m_name + " IS \"" + cast<std::string>(*m_src) + '"';
+			return cast<std::string>(*m_src);
 		}
 	}
 	

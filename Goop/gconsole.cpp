@@ -4,6 +4,7 @@
 #include "font.h"
 
 #include <allegro.h>
+#include <boost/bind.hpp>
 
 using namespace std;
 
@@ -30,6 +31,27 @@ string bindCmd(const list<string> &args)
 	}
 	
 	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
+}
+
+string echoCmd(list<string> const& args)
+{
+	if(args.size() > 0)
+	{
+		std::string ret;
+		
+		bool first = true;
+		std::list<string>::const_iterator i = args.begin();
+		ret = *i++;
+		
+		for(; i != args.end(); ++i)
+		{
+			ret += ' ' + *i;
+		}
+		
+		return ret;
+	}
+	
+	return "ECHO <ARGS> ... : PRINTS OUT ARGS TO THE CONSOLE";
 }
 
 // Key map swapping command
@@ -86,6 +108,24 @@ string setChar(const list<string> &args)
 		return "";
 	}
 	return "SETCHAR <KEY> <CHARACTER> : SETS THE CHARACTER TO BE USED WITH KEY";
+}
+
+string setAltGrChar(const list<string> &args)
+{
+	if (args.size() >= 2)
+	{
+		std::list<string>::const_iterator arguments = args.begin();
+		
+		std::string const& keyName = *arguments++;
+		int key = kName2Int(keyName);
+		TEST_KEY(key, keyName);
+		
+		int altgrCharacter = (*arguments)[0];
+		
+		KeyHandler::setAltGrCharacter(key, altgrCharacter);
+		return "";
+	}
+	return "SETALTGRCHAR <KEY> <CHARACTER> : SETS THE CHARACTER TO BE USED WITH ALTGR+KEY";
 }
 
 string setConsoleKey(const list<string> &args)
@@ -149,7 +189,7 @@ string aliasCmd(const list<string> &args)
 //============================= LIFECYCLE ====================================
 
 GConsole::GConsole()
-: Console(256,39), m_consoleKey(KEY_F1), background(NULL)
+: Console(256), m_consoleKey(KEY_TILDE), background(NULL)
 {
 	
 }
@@ -158,10 +198,15 @@ GConsole::GConsole()
 
 void GConsole::init()
 {
-	keyHandler.init();
+	//keyHandler.init();
+	
+	//Connect the handlers as group 0 so they are called first
+	keyHandler.printableChar.connect(0, boost::bind(&GConsole::eventPrintableChar, this, _1));
+	keyHandler.keyDown.connect(0, boost::bind(&GConsole::eventKeyDown, this, _1));
+	keyHandler.keyUp.connect(0, boost::bind(&GConsole::eventKeyUp, this, _1));
 
-	//m_mode = CONSOLE_MODE_BINDINGS;
-	m_mode = CONSOLE_MODE_INPUT;
+	m_mode = CONSOLE_MODE_BINDINGS;
+	//m_mode = CONSOLE_MODE_INPUT;
 
 	console.registerVariables()
 		("CON_SPEED", &speed, 4)
@@ -172,11 +217,16 @@ void GConsole::init()
 		("BIND", bindCmd)
 		("SWAPKEYS", swapKeysCmd)
 		("SETSHIFTCHAR", setShiftChar)
+		("SETALTGRCHAR", setAltGrChar)
 		("SETCHAR", setChar)
 		("SETCONSOLEKEY", setConsoleKey)
 		("EXEC", execCmd)
 		("ALIAS", aliasCmd)
+		("ECHO", echoCmd)
 	;
+	
+	commandsLog.push_back("MOO");
+	currentCommand = commandsLog.end(); //To workaround a crashbug with uninitialized iterator
 }
 
 void GConsole::shutDown()
@@ -188,35 +238,55 @@ void GConsole::shutDown()
 
 void GConsole::loadResources()
 {
-	m_font = fontList.load("minifont.bmp");
-	m_MaxMsgLength= (320-5) / m_font->width();	
+	m_font = fontLocator.load("minifont");
+
+	if(!m_font)
+		cout << "Console font couldn't be loaded" << endl;
 	
 	background = spriteList.load("con_background.bmp");
 }
 
 void GConsole::render(BITMAP* where, bool fullScreen)
 {
-	int textIndex = 0;
-	list<std::string>::iterator msg = log.end();
-	
+	//int textIndex = 0;
+
 	float pos = m_pos;
 	if ( fullScreen ) pos = where->h-1;
 		
 	if ( pos > 0)
 	{
 		if (background) background->draw(where, 0, 0, static_cast<int>(pos), false, ALIGN_LEFT, ALIGN_BOTTOM);
+		/*
 		while ((msg != log.begin()) && ((int)pos - 20 - (textIndex - 1) * (m_font->height() + 1) > 0))
 		{
 			msg--;
 			m_font->draw(where, *msg, 5, (int)pos - 20 - textIndex * (m_font->height() + 1), 0);
 			textIndex++;
 		}
+		*/
+		
+		int y = static_cast<int>(pos) - 5;
+		
 		string tempString = (']' + m_inputBuff + '*');
+		std::pair<int, int> dim = m_font->getDimensions(tempString);
+		y -= dim.second;
+		m_font->draw(where, tempString, 5, y);
+		
+		/* TODO!!!
 		if ( tempString.length() < (where->w-5) / m_font->width() )
 			m_font->draw(where, tempString, 5, (int)pos - 10 , 0);
 		else
 		{
 			m_font->draw(where, tempString.substr(tempString.length() - (where->w-5) / m_font->width()), 5, (int)pos - 10 , 0);
+		}*/
+		
+		for(list<std::string>::reverse_iterator msg = log.rbegin();
+		    msg != log.rend() && y > 0;
+		    ++msg)
+		{
+			std::pair<int, int> dim = m_font->getDimensions(*msg);
+			y -= dim.second + 1;
+			m_font->draw(where, *msg, 5, y, 0);
 		}
 	}
 }
@@ -225,10 +295,12 @@ void GConsole::checkInput()
 {
 	keyHandler.pollKeyboard();
 	
+	/*
 	KeyEvent event = keyHandler.getEvent();
 
 	while (event.type != KEY_EVENT_NONE) // While the event is not an end of list event
 	{
+		
 		// Key Tilde is hardcoded to toogle the console (quake does the same so.. NO COMPLAINTS! :P)
 		if ( (event.type == KEY_EVENT_PRESS) && (event.key == m_consoleKey) )
 		{
@@ -282,6 +354,7 @@ void GConsole::checkInput()
 				}
 			}
 		}
+
 		event = keyHandler.getEvent();	// Get next key event
 	}
 	
@@ -321,9 +394,125 @@ void GConsole::checkInput()
 				m_inputBuff += key;
 			}
 		}
-	}
+	}*/
 }
 
+bool GConsole::eventKeyDown(int k)
+{
+	if(k == m_consoleKey)
+	{
+		if ( m_mode == CONSOLE_MODE_INPUT )	// If the console is in input mode toogle to Binding mode
+		{
+			m_mode = CONSOLE_MODE_BINDINGS;
+			return false;
+		}
+		else											// If not toogle to input
+		{
+			m_mode = CONSOLE_MODE_INPUT;
+			clear_keybuf();						// Clear allegro buffer so that old keys dont bother
+			m_inputBuff.clear();
+			currentCommand = commandsLog.end();
+		}
+	}
+	else if ( m_mode == CONSOLE_MODE_BINDINGS )		// Only if in bindings mode
+	{
+		analizeKeyEvent(true, k);
+	}
+	else if ( m_mode == CONSOLE_MODE_INPUT )
+	{
+		if ( k == KEY_UP )
+		{
+			clear_keybuf();
+			if (currentCommand != commandsLog.begin() )
+				currentCommand--;
+			if ( currentCommand == commandsLog.end() )
+			{
+				m_inputBuff.clear();
+			}else
+			{
+				m_inputBuff = *currentCommand;
+			}
+		}
+		else if ( k == KEY_DOWN )
+		{
+			clear_keybuf();
+			if (currentCommand != commandsLog.end() )
+				currentCommand++;
+			if ( currentCommand == commandsLog.end() )
+			{
+				m_inputBuff.clear();
+			}
+			else
+			{
+				m_inputBuff = *currentCommand;
+			}
+		}
+		
+		return false;
+	}
+	
+	return true;
+}
+
+bool GConsole::eventKeyUp(int k)
+{
+	if ( m_mode == CONSOLE_MODE_BINDINGS )		// Only if in bindings mode
+	{
+		analizeKeyEvent(false, k);
+	}
+	else
+		return false;
+	
+	return true;
+}
+
+bool GConsole::eventPrintableChar(char c)
+{
+
+	if ( m_mode == CONSOLE_MODE_INPUT ) // console is in input read mode so..
+	{
+		if (c == 8)//Backspace
+		{
+			if (!m_inputBuff.empty()) //if the string is not already empty...
+				m_inputBuff.erase(m_inputBuff.length()-1); //delete last char
+		}
+		else if (c == 13) //Enter
+		{
+			addLogMsg(']'+m_inputBuff); //add the text to the console log
+			console.parseLine(m_inputBuff); //parse the text
+			commandsLog.push_back(m_inputBuff); //add the text to the commands log too
+			currentCommand = commandsLog.end(); //reset the command log position
+			m_inputBuff.clear(); // and then clear the buffer
+		}
+		else if (c == '\t') //Tab
+		{
+			string autoCompText = autoComplete( m_inputBuff );
+			if (m_inputBuff == autoCompText)
+			{
+				listItems(m_inputBuff);
+			}else
+			{
+				m_inputBuff = autoCompText;
+			}
+		}
+		else // No special keys where detected so the char gets added to the string
+		{
+			//m_inputBuff += toupper(c);
+			m_inputBuff += c;
+		}
+		return false;
+	}
+	return true;
+}
+
+string::const_iterator GConsole::fitString(
+	string::const_iterator b,
+	string::const_iterator e)
+{
+	if(!m_font)
+		return e;
+	return m_font->fitString(b, e, 320-5);
+}
 void GConsole::think()
 {
 	if ( height > 240 ) height=240;

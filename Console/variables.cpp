@@ -136,6 +136,7 @@ string EnumVariable::invoke(const std::list<std::string> &args)
 		if(v == m_reverseMapping.end())
 			return m_name + " HAS ILLEGAL NUMERIC VALUE " + cast<string>(*m_src);
 		
-		return m_name + " IS \"" + v->second + '"';
+		//return m_name + " IS \"" + v->second + '"';
+		return v->second;
 	}
 }

@@ -1,32 +1,49 @@
 #include "font.h"
 
-#include "resource_list.h"
+//#include "resource_list.h"
+#include "resource_locator.h"
 
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <utility>
 
 using namespace std;
 
-ResourceList<Font> fontList("fonts/");
+//ResourceList<Font> fontList("fonts/");
+ResourceLocator<Font> fontLocator;
 
 Font::Font()
+: m_bitmap(0)
 {
 	
 }
 
 Font::~Font()
 {
+	/*
 	vector<BITMAP*>::iterator iter = m_char.begin();
 	while (iter != m_char.end())
 	{
 		destroy_bitmap(*iter);
 		++iter;
-	}
+	}*/
+	
+	free();
 }
 
-bool Font::load(const string &filename)
+void Font::free()
 {
+	m_chars.clear();
+	if(m_bitmap)
+		destroy_bitmap(m_bitmap);
+	m_bitmap = 0;
+}
+
+bool Font::load(string const& filename)
+{
+
+	/*
 	BITMAP *tempBitmap = load_bmp(filename.c_str(),0);
 	if (tempBitmap)
 	{
@@ -40,11 +57,22 @@ bool Font::load(const string &filename)
 		destroy_bitmap(tempBitmap);
 		return true;
 	}
+	*/
 	return false;
 }
 
-void Font::draw( BITMAP* where, const string &text, int x, int y, int space)
+Font::CharInfo* Font::lookupChar(char c)
 {
+	unsigned int idx = (unsigned int)c;
+	if(idx >= m_chars.size())
+		return &m_chars[0];
+		
+	return &m_chars[idx];
+}
+
+void Font::draw( BITMAP* where, string const& text, int x, int y, int spacing)
+{
+	/*
 	if ( !text.empty() )
 	{
 		int width = m_char[0]->w;
@@ -54,9 +82,68 @@ void Font::draw( BITMAP* where, const string &text, int x, int y, int space)
 			character = text[i];
 			draw_sprite(where, m_char[character], x + i * (width + space), y);
 		}
+	}*/
+	
+	if(text.empty())
+		return;
+
+	for(string::const_iterator i = text.begin(); i != text.end(); ++i)
+	{
+		CharInfo *c = lookupChar(*i);
+		
+		masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
+		
+		x += c->width + c->spacing + spacing;
 	}
 }
 
+pair<int, int> Font::getDimensions(std::string const& text, int spacing)
+{
+	if(text.empty())
+		return zeroDimensions();
+		
+	string::const_iterator i = text.begin();
+	CharInfo *c = lookupChar(*i);
+	int w = c->width;
+	int h = c->height;
+	
+	++i;
+	
+	for(; i != text.end(); ++i)
+	{
+		w += c->spacing + spacing;
+		c = lookupChar(*i);
+		w += c->width;
+		if(c->height > h)
+			h = c->height;
+	}
+	
+	return make_pair(w, h);
+}
+
+
+
+pair<int, int> Font::zeroDimensions()
+{
+	return make_pair(0, 0);
+}
+
+void Font::incrementDimensions(pair<int, int>& dim, char ch, int spacing)
+{
+	CharInfo *c = lookupChar(ch);
+	dim.first += c->width + c->spacing + spacing;
+
+	if(c->height > dim.second)
+		dim.second = c->height;
+}
+
+void Font::removeSpacing(pair<int, int>& dim, char ch, int spacing)
+{
+	CharInfo *c = lookupChar(ch);
+	dim.first -= c->spacing + spacing;
+}
+
+/*
 int Font::width()
 {
 	return m_char[0]->w;
@@ -67,3 +154,4 @@ int Font::height()
 	return m_char[0]->h;
 }
 
+*/

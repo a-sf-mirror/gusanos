@@ -20,8 +20,9 @@
 #include "gui.h"
 #include "guilist.h"
 #include "network.h"
+#include "keyboard.h"
 
-#if 0
+#if 1
 #include "menu.h"
 #endif
 
@@ -59,10 +60,7 @@ int main(int argc, char **argv)
 {
 	game.init(argc, argv);
 
-#if 0
-	OmfgGUI::defaultMenuFont.font = fontList.load("minifont.bmp");
-#endif
-
+/*
 	gui::init();
 	
 	//Font *tempFont = fontList.load("minifont.bmp");
@@ -89,17 +87,9 @@ int main(int argc, char **argv)
 	
 	window.addWidget(&glist);
 	top.addWidget(&window);
-	
-#if 0
-	{
-	
-		using namespace OmfgGUI;
-		
-		//OmfgGUI::menu.setRoot(new Wnd(0, Rect(10, 10, 100, 100), "moo"));
-		OmfgGUI::menu.testParseXML();
-	
-	}
-#endif
+*/
+
+	//OmfgGUI::menu.testParseXML();
 
 	console.registerVariables()
 		("CL_SHOWFPS", &showFps, 1)
@@ -107,11 +97,17 @@ int main(int argc, char **argv)
 	;
 	
 	console.registerCommand("QUIT", Exit);
-	
+
 	console.parseLine("BIND A +P0_LEFT; BIND D +P0_RIGHT; BIND G +P0_JUMP; BIND W +P0_UP; BIND S +P0_DOWN; BIND F +P0_FIRE; BIND H +P0_CHANGE");
 	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN; BIND 1_PAD +P1_FIRE");
 	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	
+	/* <GLIP> Stuff for me ;o
+	console.parseLine("SETSHIFTCHAR MINUS \"_\" ; SETSHIFTCHAR 2 \"\\\"\" ; SETSHIFTCHAR COMMA \";\" ; SETALTGRCHAR 7 \"\\{\" ; SETALTGRCHAR 0 \"\\}\"");
+	console.parseLine("SETALTGRCHAR PLUS_PAD \"\\\\\" ; SETSHIFTCHAR 3 \"#\" ; SETSHIFTCHAR STOP \":\"");
+	*/
+
+	OmfgGUI::menu.clear();
 	game.loadMod();
 	
 	//install millisecond timer
@@ -127,27 +123,8 @@ int main(int argc, char **argv)
 
 	bool showMenu = true;
 	
-#if 0
 	OmfgGUI::AllegroRenderer renderer;
-	//menu loop
-	while (showMenu)
-	{
-	    //if (KeyHandler::getKey(KEY_ESC))
-	    if(key[KEY_ESC])
-	    {
-	        showMenu = false;
-	        key[KEY_ESC] = 0;
-	    }
-	    
-	    rectfill(gfx.buffer, 0, 0, 319, 239, 0);
-	    OmfgGUI::menu.render(&renderer);
-	    /*
-	    top.keys((bool*)key);
-	    top.render();
-	    blit(gusLogo, gfx.buffer, 0, 0, 319 - gusLogo->w, 239 - gusLogo->h, gusLogo->w, gusLogo->h);*/
-		gfx.updateScreen();
-	}
-#elif 0
+/*
 	while (menu)
 	{
 	    if (key[KEY_ESC])
@@ -161,7 +138,7 @@ int main(int argc, char **argv)
 	    blit(gusLogo, gfx.buffer, 0, 0, 319 - gusLogo->w, 239 - gusLogo->h, gusLogo->w, gusLogo->h);
 		gfx.updateScreen();
 	}
-#endif
+*/
 
 	//main game loop
 	while (!quit)
@@ -239,6 +216,7 @@ int main(int argc, char **argv)
 		}
 		_fpsCount++;
 
+		OmfgGUI::menu.render(&renderer);
 		console.render(gfx.buffer);
 		
 		gfx.updateScreen();

@@ -1,0 +1,23 @@
+Import('env getObjects platform getBinName getLibName')
+
+if platform == 'posix':
+	env = env.Copy(LIBS = Split("""
+	        omfggui omfgconsole omfgloaders
+	        png12 z fmod
+	        alleg-4.1.15 m
+	        pthread Xxf86dga
+	        Xxf86vm Xpm
+	        Xext X11 dl
+	        loadpng zoidcom boost_filesystem-gcc boost_signals-gcc""")
+		)
+elif platform == 'mingw-cross':
+	env = env.Copy(LIBS = Split("""
+	        omfggui omfgconsole omfgloaders
+	        loadpng png13 z fmod
+	        alleg zoidcom_mw boost_filesystem-mgw boost_signals-mgw""")
+		)
+# add more platforms here
+
+SConscript(['./loaders/SConscript'], exports = ['env', 'getObjects', 'getLibName', 'platform'])
+
+env.Program(getBinName('gusanos'), getObjects(env))

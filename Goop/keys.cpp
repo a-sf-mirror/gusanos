@@ -60,7 +60,7 @@ string keyNames[] =
 	"PAUSE",
 	"ABNT_C1",
 	"YEN",
-	"KANA",
+	"KANA", //96
 	"CONVERT",
 	"NOCONVERT",
 	"AT",

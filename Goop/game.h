@@ -58,6 +58,7 @@ class Game
 	void unload();
 	void loadMod();
 	bool isLoaded();
+	void refreshResources();
 	void changeLevel(const std::string& level);
 	void addBot();
 	

@@ -11,6 +11,7 @@
 #include "player_input.h"
 #include "player_options.h"
 #include "level.h"
+#include "font.h"
 #include "gconsole.h"
 #include "game_actions.h"
 #include "base_player.h"
@@ -19,9 +20,13 @@
 #include "player_ai.h"
 #include "net_worm.h"
 #include "network.h"
+#include "menu.h"
+#include "keyboard.h"
 
 #include "loaders/gusanos.h"
 #include "loaders/lierox.h"
+#include "loaders/liero.h"
+#include "loaders/losp.h"
 
 #include <allegro.h>
 #include <string>
@@ -143,13 +148,19 @@ void Game::init(int argc, char** argv)
 
 	levelLocator.registerLoader(&GusanosLevelLoader::instance);
 	levelLocator.registerLoader(&LieroXLevelLoader::instance);
+	levelLocator.registerLoader(&LieroLevelLoader::instance);
 	
+	fontLocator.registerLoader(&GusanosFontLoader::instance);
+	fontLocator.registerLoader(&LOSPFontLoader::instance);
+
 	m_defaultPath = "default/";
 	m_modPath = "default/";
-	//nextMod = "default";
 	setMod("default");
+	refreshResources(); // 
 
+	keyHandler.init();
 	console.init();
+	OmfgGUI::menu.init();
 	
 	sfx.registerInConsole();
 	gfx.registerInConsole();
@@ -206,7 +217,7 @@ void Game::loadMod()
 	console.loadResources();
 	loadWeapons();
 	NRPartType = partTypeList.load("ninjarope.obj");
-	infoFont = fontList.load("minifont.bmp");
+	infoFont = fontLocator.load("minifont");
 	if (weaponList.size() > 0 )
 		loaded = true;
 	else
@@ -219,6 +230,8 @@ void Game::loadMod()
 void Game::unload()
 {
 	loaded = false;
+	
+	OmfgGUI::menu.clear();
 	
 	sfx.clear();
 	// Delete all objects
@@ -247,12 +260,21 @@ void Game::unload()
 	partTypeList.clear();
 	soundList.clear();
 	spriteList.clear();
-	fontList.clear();
+	//fontList.clear();
+	
+	fontLocator.clear();
 }
 
 bool Game::isLoaded()
 {
 	return loaded;
+}
+
+void Game::refreshResources()
+{
+	fontLocator.addPath(fs::path("default/fonts"));
+	fontLocator.addPath(fs::path(nextMod) / "fonts");
+	fontLocator.refresh();
 }
 
 void Game::changeLevel(const std::string& levelName )
@@ -267,6 +289,7 @@ void Game::changeLevel(const std::string& levelName )
 	}
 	level.setName(levelName);
 	*/
+	refreshResources();
 	levelLocator.load(&level, levelName);
 	loadMod();
 	
@@ -349,10 +372,12 @@ void Game::setMod( const string& modname )
 	}
 	else nextMod = m_modName;
 	
-	levelLocator.clearPaths();
+	levelLocator.clear();
 	levelLocator.addPath(fs::path("default/maps"));
 	levelLocator.addPath(fs::path(nextMod) / "maps");
 	levelLocator.refresh();
+	
+	
 }
 
 const string& Game::getMod()

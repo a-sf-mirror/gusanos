@@ -6,11 +6,15 @@
 #include "text.h"
 #include "consoleitem.h"
 
+#include "console-grammar.h"
+
 #include <algorithm>
 #include <fstream>
 #include <string>
 #include <cctype>
 
+#include <sstream>
+#include <iostream>
 
 using namespace std;
 
@@ -19,15 +23,17 @@ using namespace std;
 //============================= LIFECYCLE ====================================
 
 Console::Console()
+: m_logMaxSize(256)
 {
-	m_logMaxSize=256;
-	m_MaxMsgLength=40;
+	
+	//m_MaxMsgLength=40;
 }
 
-Console::Console(int logMaxSize, int MaxMsgLength)
+Console::Console(int logMaxSize)
+: m_logMaxSize(logMaxSize)
 {
-	m_logMaxSize=logMaxSize;
-	m_MaxMsgLength=MaxMsgLength;
+	
+	//m_MaxMsgLength=MaxMsgLength;
 }
 
 Console::~Console()
@@ -44,44 +50,6 @@ Console::~Console()
 
 //============================= INTERFACE ====================================
 
-/*
-void Console::registerIntVariable(const string &name, int* src, int defaultValue, void (*func)( int ))
-{
-	if (!name.empty())
-	{
-		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
-		if (tempItem == items.end())
-		{
-			items[name] = new IntVariable(src, name, defaultValue, func);
-		}
-	}
-}
-
-void Console::registerFloatVariable(const string &name, float* src, float defaultValue, void (*func)( float ))
-{
-	if (!name.empty())
-	{
-		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
-		if (tempItem == items.end())
-		{
-			items[name] = new FloatVariable(src, name, defaultValue, func);
-		}
-	}
-}
-
-void Console::registerEnumVariable(const string &name, int* src, int defaultValue, EnumVariable::MapType const& mapping, void (*func)( int ))
-{
-	if (!name.empty())
-	{
-		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
-		if (tempItem == items.end())
-		{
-			items[name] = new EnumVariable(src, name, defaultValue, mapping, func);
-		}
-	}
-}
-*/
-
 void Console::registerVariable(Variable* var)
 {
 	string const& name = var->getName();
@@ -94,7 +62,6 @@ void Console::registerVariable(Variable* var)
 		delete var; // Already got a var with that name or it's an empty name
 	}
 }
-
 
 void Console::registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&))
 {
@@ -135,8 +102,40 @@ void Console::registerAlias(const std::string &name, const std::string &action)
 	}
 }
 
+struct TestHandler
+{
+	TestHandler(std::istream& str_, Console& console_, bool parseRelease_ = false)
+	: str(str_), console(console_), parseRelease(parseRelease_)
+	{
+		next();
+	}
+	
+	int cur()
+	{
+		return c;
+	}
+	
+	void next()
+	{
+		c = str.get();
+		if(c == std::istream::traits_type::eof())
+			c = -1;
+	}
+	
+	std::string invoke(std::string const& name, std::list<std::string> const& args)
+	{
+		return console.invoke(name, args, parseRelease);
+	}
+	
+	int c;
+	std::istream& str;
+	Console& console;
+	bool parseRelease;
+};
+
 void Console::parseLine(const string &text, bool parseRelease)
 {
+/*
 	string textToParse;
 	string textInQueue = text;
 	
@@ -148,9 +147,48 @@ void Console::parseLine(const string &text, bool parseRelease)
 		parse( (*mainIter), parseRelease );
 		mainIter++;
 	}
+*/
+	std::istringstream ss(text);
+	ConsoleGrammar<TestHandler> handler((TestHandler(ss, *this, parseRelease)));
 
+	try
+	{
+		addLogMsg(handler.block());
+	}
+	catch(SyntaxError error)
+	{
+		addLogMsg(text);
+		std::streamoff pos = handler.str.tellg();
+		if(pos > 0)
+		{
+			addLogMsg(std::string(pos - 1, '-') + '^');
+			addLogMsg(error.what());
+		}
+		else
+		{
+			addLogMsg(error.what() + string(" at end of input"));
+		}
+	}
 }
 
+std::string Console::invoke(string const& name, list<string> const& args, bool parseRelease)
+{
+	if(!parseRelease || name[0] == '+')
+	{
+		std::string nameCopy(name);
+		if(parseRelease)
+			nameCopy[0] = '-';
+
+		map<string, ConsoleItem*>::iterator tempItem = items.find(nameCopy);
+		if (tempItem != items.end())
+		{
+			return tempItem->second->invoke(args);
+		} else
+			return "UNKNOWN COMMAND: " + name;
+	}
+}
+
+/*
 void Console::parse(list<string> &args, bool parseRelease)
 {
 	string itemName;
@@ -176,6 +214,7 @@ void Console::parse(list<string> &args, bool parseRelease)
 		}
 	}
 }
+*/
 
 void Console::addLogMsg(const string &msg)
 {
@@ -184,6 +223,23 @@ void Console::addLogMsg(const string &msg)
 		if(log.size() >= m_logMaxSize)
 			log.pop_front();
 		
+		string::const_iterator b = msg.begin();
+		string::const_iterator e = msg.end();
+		do
+		{
+			string::const_iterator n = fitString(b, e);
+
+			if(b == n) // No characters fitted, we must give up
+				break;
+
+			log.push_back(string(b, n));
+			
+			b = n; // Begin next string at the first character we didn't add
+		} while(b != e);
+		
+		cout << endl;
+		
+		/*
 		string tmpmsg = msg;
 		
 		while (tmpmsg.length() > m_MaxMsgLength)
@@ -192,7 +248,7 @@ void Console::addLogMsg(const string &msg)
 			tmpmsg=tmpmsg.substr(m_MaxMsgLength);
 		}
 		
-		log.push_back(tmpmsg);
+		log.push_back(tmpmsg);*/
 	}
 }
 

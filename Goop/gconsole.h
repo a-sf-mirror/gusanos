@@ -1,7 +1,6 @@
 #ifndef gconsole_h
 #define gconsole_h
 
-#include "keyboard.h"
 #include <console.h>
 #include "font.h"
 #include "sprite.h"
@@ -25,6 +24,14 @@ class GConsole : public Console
 	void checkInput();
 	void render(BITMAP *where, bool fullScreen = false);
 	void think();
+	
+	bool eventPrintableChar(char c);
+	bool eventKeyDown(int k);
+	bool eventKeyUp(int k);
+	
+	virtual std::string::const_iterator fitString(
+		std::string::const_iterator b,
+		std::string::const_iterator e);
 
 	private:
 	
@@ -33,7 +40,7 @@ class GConsole : public Console
 	int height;
 	int m_mode;
 	
-	KeyHandler keyHandler;
+	//KeyHandler keyHandler;
 
 	Font *m_font;
 	Sprite *background;

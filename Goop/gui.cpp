@@ -10,7 +10,7 @@ Font *font;
 
 void init()
 {
-    font = fontList.load("minifont.bmp");
+    font = fontLocator.load("minifont");
 }
 
 void Container::addWidget(Widget* w)

@@ -4,6 +4,7 @@
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/convenience.hpp>
 namespace fs = boost::filesystem;
 
 GusanosLevelLoader GusanosLevelLoader::instance;
@@ -64,4 +65,64 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 const char* GusanosLevelLoader::getName()
 {
 	return "Gusanos 0.9 level loader";
+}
+
+GusanosFontLoader GusanosFontLoader::instance;
+
+bool GusanosFontLoader::canLoad(fs::path const& path, std::string& name)
+{
+	if(fs::extension(path) == ".bmp")
+	{
+		name = basename(path);
+		return true;
+	}
+	return false;
+}
+	
+bool GusanosFontLoader::load(Font* font, fs::path const& path)
+{
+	font->free();
+
+	font->m_bitmap = load_bmp(path.native_file_string().c_str(), 0);
+	if(!font->m_bitmap)
+		return false;
+		
+	int monoWidth = font->m_bitmap->w / 256;
+	int monoHeight = font->m_bitmap->h;
+	
+	if(monoWidth <= 0 || monoHeight <= 0)
+		return false;
+
+	int x = 0;
+	for (int i = 0; i < 256; ++i)
+	{
+		/*BITMAP* character = create_bitmap(width,tempBitmap->h);
+		blit(tempBitmap,character,i * width,0,0,0,width,character->h);*/
+		font->m_chars.push_back(Font::CharInfo(Rect(x, 0, x + monoWidth, monoHeight), 0));
+		
+		x += monoWidth;
+	}
+	
+	return true;
+	/*
+	BITMAP *tempBitmap = load_bmp(path.native_file_string().c_str(),0);
+	if (tempBitmap)
+	{
+		int width = tempBitmap->w / 256;
+		for (int i = 0; i < 256; ++i)
+		{
+			BITMAP* character = create_bitmap(width,tempBitmap->h);
+			blit(tempBitmap,character,i * width,0,0,0,width,character->h);
+			font->m_char.push_back(character);
+		}
+		destroy_bitmap(tempBitmap);
+		return true;
+	}
+
+	return false;*/
+}
+
+const char* GusanosFontLoader::getName()
+{
+	return "Gusanos 0.9 font loader";
 }

@@ -1,0 +1,3 @@
+Import('env getObjects getLibName platform')
+
+env.StaticLibrary(getLibName('omfggui'), getObjects(env))

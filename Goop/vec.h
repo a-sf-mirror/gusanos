@@ -5,6 +5,7 @@
 
 #include <boost/random.hpp>
 
+extern boost::mt19937 rndgen;
 extern boost::variate_generator<boost::mt19937, boost::uniform_real<> > rnd;
 extern boost::variate_generator<boost::mt19937, boost::uniform_real<> > midrnd;
 
