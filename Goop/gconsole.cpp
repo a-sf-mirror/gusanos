@@ -1,5 +1,6 @@
 #include "gconsole.h"
 #include "keyboard.h"
+#include "keys.h"
 
 #include <allegro.h>
 
@@ -8,18 +9,70 @@ using namespace std;
 // Bind console command
 string bindCmd(const list<string> &args)
 {
-	string key;
+	char key;
 	string action;
 	
-	key = *args.begin();
-	action = *(++args.begin());
-	console.bind(key, action);
-	return "";
+	if (!args.empty())
+	{
+		list<string>::const_iterator argument;
+		argument=args.begin();
+		
+		key = kName2Int(*argument);
+		
+		argument++;
+		if ( argument != args.end() )
+			console.bind(key, *argument);
+
+		return "";
+	}
+	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
+}
+
+string execCmd(const list<string> &args)
+{
+	if (!args.empty())
+	{
+		if ( console.executeConfig(*args.begin()) )
+		{
+			return "DONE";
+		}
+		return ( "COULDN'T EXEC " + *args.begin() );
+	}
+	return "BIND <FILENAME> : EXECUTE A SCRIPT FILE";
+}
+
+string aliasCmd(const list<string> &args)
+{
+	string name;
+	string action;
+	
+	if (!args.empty())
+	{
+		list<string>::const_iterator argument;
+		argument=args.begin();
+		
+		name = *argument;
+		
+		argument++;
+		
+		if ( argument != args.end() )
+		{
+			action = *argument;
+			console.registerAlias(name,action);
+		}
+
+		return "";
+	}
+	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
 }
 
 /////////////////////////////// Console //////////////////////////////////////
 
 //============================= LIFECYCLE ====================================
+
+GConsole::GConsole() : Console(256,39)
+{
+};
 
 //============================= INTERFACE ====================================
 
@@ -30,6 +83,8 @@ void GConsole::init()
 	m_mode = CONSOLE_MODE_BINDINGS;
 	
 	registerCommand("BIND", bindCmd);
+	registerCommand("EXEC", execCmd);
+	registerCommand("ALIAS", aliasCmd);
 }
 
 void GConsole::shutDown()
@@ -109,6 +164,17 @@ void GConsole::checkInput()
 				addLogMsg(']'+m_inputBuff); //add the text to the console log
 				console.parseLine(m_inputBuff); //parse the text
 				m_inputBuff.clear(); // and then clear the buffer
+			}
+			else if (key == '\t') //Tab
+			{
+				string autoCompText = autoComplete( m_inputBuff );
+				if (m_inputBuff == autoCompText)
+				{
+					listItems(m_inputBuff);
+				}else
+				{
+					m_inputBuff = autoCompText;
+				}
 			}
 			else // No special keys where detected so the char gets added to the string
 			{

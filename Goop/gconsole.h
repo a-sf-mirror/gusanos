@@ -22,6 +22,8 @@ class GConsole : public Console
 {
 	public:
 
+	GConsole();
+	
 	void init();
 	void shutDown();
 	void checkInput();

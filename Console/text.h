@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <list>
-//#include <string>
+#include <string>
 
 template<typename T1, typename T2> 
 T1 cast(const T2 &t2)

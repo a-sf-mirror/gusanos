@@ -1,11 +1,14 @@
 #include "console.h"
-
-#include <allegro.h>
-
 #include "variables.h"
 #include "command.h"
+#include "alias.h"
 #include "text.h"
-#include "keys.h"
+
+#include <algorithm>
+#include <fstream>
+#include <string>
+#include <cctype>
+
 
 using namespace std;
 
@@ -16,6 +19,13 @@ using namespace std;
 Console::Console()
 {
 	m_logMaxSize=256;
+	m_MaxMsgLength=40;
+}
+
+Console::Console(int logMaxSize, int MaxMsgLength)
+{
+	m_logMaxSize=logMaxSize;
+	m_MaxMsgLength=MaxMsgLength;
 }
 
 Console::~Console()
@@ -56,12 +66,20 @@ void Console::registerCommand(const std::string &name, std::string (*func)(const
 	}
 }
 
-/*void Console::setVariableValue(const string &name, const string &value)
+void Console::registerAlias(const std::string &name, const std::string &action)
 {
-	map<string, ConsoleItem*>::iterator tempItem = items.find(name);
-	if (tempItem != items.end())
-		tempItem->second->invoke(value);
-}*/
+	if (!name.empty())
+	{
+		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+		if (tempItem == items.end())
+		{
+			items[name] = new Alias(this,name,action);
+		}else if (!tempItem->second->isLocked())
+		{
+			items[name] = new Alias(this,name,action);
+		}
+	}
+}
 
 void Console::parseLine(const string &text, bool parseRelease)
 {
@@ -111,7 +129,16 @@ void Console::addLogMsg(const string &msg)
 	{
 		if(log.size() >= m_logMaxSize)
 			log.pop_front();
-		log.push_back(msg);
+		
+		string tmpmsg = msg;
+		
+		while (tmpmsg.length() > m_MaxMsgLength)
+		{
+			log.push_back(tmpmsg.substr(0,m_MaxMsgLength));
+			tmpmsg=tmpmsg.substr(m_MaxMsgLength);
+		}
+		
+		log.push_back(tmpmsg);
 	}
 }
 
@@ -123,10 +150,111 @@ void Console::analizeKeyEvent(bool state, char key)
 		parseLine(bindTable.getBindingAction(key), true);
 }
 
-void Console::bind(const std::string &key, const string &action)
+void Console::bind(char key, const string &action)
 {
-	bindTable.bind(kName2Int(key), action);
+	bindTable.bind(key , action);
 };
+
+int Console::executeConfig(const string &filename)
+{
+	ifstream file;
+
+	file.open(filename.c_str());
+	if (file.is_open() && file.good())
+	{
+		string text2Parse;
+		//...parse the file
+		while (!file.eof())
+		{
+			getline(file,text2Parse);
+			std::transform(text2Parse.begin(), text2Parse.end(), text2Parse.begin(), (int(*)(int)) toupper);
+			parseLine(text2Parse);
+		};
+		file.close();
+		
+		return 1;
+	};
+	file.close();
+	
+	return 0;
+};
+
+string Console::autoComplete(const string &text)
+{
+	string returnText = text;
+	
+	if ( !text.empty() )
+	{
+		map<string, ConsoleItem*>::iterator item = items.lower_bound( text );
+		if( item != items.end() )
+		{
+			if ( text == item->first.substr(0, text.length()) )
+			{	
+				map<string, ConsoleItem*>::iterator firstMatch = item;
+				map<string, ConsoleItem*>::iterator lastMatch;
+				
+				while ( item != items.end() && text == item->first.substr(0, text.length() ) )
+				{
+					lastMatch = item;
+					item++;
+				}
+				
+				if (lastMatch == firstMatch)
+				{
+					returnText = firstMatch->first;
+				}else
+				{
+					lastMatch++;
+					bool differenceFound = false;
+					int i = 0;
+					while(!differenceFound)
+					{
+						i++;
+						for (item = firstMatch; item != lastMatch ; item++)
+						{
+							if (firstMatch->first.substr(0, text.length() + i) != item->first.substr(0, text.length() + i) )
+							{
+								differenceFound = true;
+							}
+						}
+					}
+					returnText = firstMatch->first.substr(0, text.length() + i -1);
+				}
+			}
+		}
+	}
+	return returnText;
+}
+
+void Console::listItems(const string &text)
+{
+	if ( !text.empty() )
+	{
+		// Find the first item that matches that text
+		map<string, ConsoleItem*>::iterator item = items.lower_bound( text ); 
+		if( item != items.end() && text == item->first.substr(0, text.length()) ) // If found
+		{
+			// Temp item to check if there is only 1 item matching the given text
+			map<string, ConsoleItem*>::iterator tempItem = item; 
+			tempItem++;
+			
+			// If the temp item is equal to the first item found it means that there are more than 1 items that match
+			if ( tempItem != items.end() )
+			if ( tempItem->first.substr(0, text.length() ) == item->first.substr(0, text.length()) )
+			{
+				
+				addLogMsg("]");
+				
+				// Add a message with the name of all the matching items
+				while ( item != items.end() && text == item->first.substr(0, text.length() ) )
+				{
+					addLogMsg(item->first);
+					item++;
+				}
+			}
+		}
+	}
+}
 
 //============================= PRIVATE ======================================
 

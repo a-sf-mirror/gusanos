@@ -45,16 +45,15 @@ int main(int argc, char **argv)
 	int pooo;
 	
 	console.registerIntVariable("TEST", &consoleTest, 100);
-	console.registerIntVariable("POO", &pooo, 20);
+	console.registerIntVariable("POO1", &pooo, 20);
+	console.registerIntVariable("POO2", &pooo, 20);
+	console.registerIntVariable("POO3", &pooo, 20);
+	console.registerIntVariable("POO4", &pooo, 20);
+	console.registerIntVariable("POO5", &pooo, 20);
+	console.registerIntVariable("POP1", &pooo, 20);
 	console.registerCommand("+FORWARD", forwardStart);
 	console.registerCommand("-FORWARD", forwardEnd);
 	console.registerCommand("QUIT", Exit);
-	
-	//allegro_message("%d",consoleTest);
-	//console.setVariableValue("TEST", "10");
-	//console.setVariableValue("POO", "15");
-	//allegro_message("%d",consoleTest);
-	//allegro_message("%d",pooo);
 	
 	console.parseLine("moo caco; \"boooyouvoooo vo; asfa\" \" \";mooish  ");
 	console.parseLine("TEST");

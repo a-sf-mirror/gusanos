@@ -23,15 +23,20 @@ class Console
 	public:
 
    Console(void);
+	Console(int logMaxSize, int MaxMsgLength);
    ~Console(void);
 
 	void registerIntVariable(const std::string &name, int* src, int defaultValue);
+	void registerAlias(const std::string &name, const std::string &action);
 	void registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&));
 	void parseLine(const std::string &text, bool parseRelease = false);
 	void parse(std::list<std::string> &args, bool parseRelease);
-	void bind(const std::string &key, const std::string &action);
+	void bind(char key, const std::string &action);
 	void addLogMsg(const std::string &msg);
 	void analizeKeyEvent(bool state, char key);
+	int executeConfig(const std::string &filename);
+	std::string autoComplete(const std::string &text);
+	void listItems(const std::string &text);
 	
 	protected:
 	
@@ -40,6 +45,7 @@ class Console
 	std::list<std::string> log;
 	int m_variableCount;
 	int m_logMaxSize;
+	int m_MaxMsgLength;
 	int m_mode;
 };
 
