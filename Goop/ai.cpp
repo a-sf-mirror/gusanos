@@ -118,5 +118,13 @@ void PlayerAI::think()
         actionStart(DOWN);
     else
         actionStop(DOWN);
+
+    //shooting
+    if (curAngle - cAimAccuracy < todeg(targetAngle) && curAngle + cAimAccuracy > todeg(targetAngle))
+    {
+	    //aimed accuratley
+	    actionStart(FIRE);
+    } else
+	    actionStop(FIRE);
 }
 

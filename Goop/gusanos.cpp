@@ -106,8 +106,6 @@ int main(int argc, char **argv)
 		game.players.push_back( player );
 		game.localPlayers.push_back( player );
 	}
-	
-	
 
 
 	int x,y;
@@ -124,13 +122,17 @@ int main(int argc, char **argv)
 	int _fpsCount = 0;
 	int _fps = 0;
 	int logicLast = 0;
-	
+	int _objCount = 0; //object count for debug info
+	int _playerCount = 0;//local player count
+
 	while (!quit)
 	{
-		int _objCount = 0; //object count for debug info
 
 		while ( logicLast+1 <= _timer )
 		{
+			_objCount = 0;
+			_playerCount = 0;
+
 			for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
 			{
 				(*iter)->think();
@@ -139,6 +141,7 @@ int main(int argc, char **argv)
 			for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 			{
 				(*iter)->think();
+				_playerCount++;
 			}
 			
 			sfx.think();
@@ -187,6 +190,7 @@ int main(int argc, char **argv)
                 if (showDebug)
                 {
 			tempFont->draw(gfx.buffer, "OBJECTS: " + cast<string>(_objCount), 5, 10, 0);
+			tempFont->draw(gfx.buffer, "PLAYERS: " + cast<string>(_playerCount), 5, 15, 0);
                 }
 
 		console.render(gfx.buffer);
