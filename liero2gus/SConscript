@@ -5,5 +5,7 @@ if platform == 'posix':
 	env = env.Copy(LIBS = 'boost_filesystem-gcc')
 elif platform == 'mingw-cross':
 	env = env.Copy(LIBS = 'boost_filesystem-mgw')
+elif platform == 'basara':
+	env = env.Copy(LIBS = 'boost_filesystem-gcc')
 	
 env.Program(getBinName('liero2gus'), getObjects(env))

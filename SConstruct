@@ -12,6 +12,11 @@ def getBinName(bin):
 
 platform = ARGUMENTS.get('platform', 'posix')
 
+sconscript = ['./GUI/detail/SConscript',
+            './Console/SConscript',
+            './Goop/SConscript',
+            './liero2gus/SConscript']
+
 if platform == 'posix':
 	env = Environment(
 		CPPPATH = ['.', '#loadpng', '/usr/local/include/zoidcom', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
@@ -20,6 +25,7 @@ if platform == 'posix':
 		#CPPFLAGS = '-O0 -g',
 		CXX='g++-3.4',
 		)
+	sconscript.append('./loadpng/SConscript')
 elif platform == 'mingw-cross':
 	mingwPath = ARGUMENTS.get('mingw-path', '/usr/local/mingw/')
 	env = Environment(
@@ -32,10 +38,11 @@ elif platform == 'mingw-cross':
 		RANLIB = os.path.join(mingwPath, 'bin', 'ranlib'),
 		AR = os.path.join(mingwPath, 'bin', 'ar'),
 		)
+	sconscript.append('./loadpng/SConscript')
 elif platform == 'basara':
 	env = Environment(
 		CPPPATH = ['.', '/usr/local/include/zoidcom', '#Console', '#GUI'],
-		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib', os.path.join('#lib/', platform)],
+		LIBPATH = ['/usr/local/lib', os.path.join('#lib/', platform)],
 		CPPFLAGS = '-O3',
 		#CPPFLAGS = '-O0 -g',
 		CXX='g++-3.4',
@@ -61,11 +68,7 @@ def getObjects(env):
 	return objects
 
 
-SConscript(['./GUI/detail/SConscript',
-            './Console/SConscript',
-            './loadpng/SConscript',
-            './Goop/SConscript',
-            './liero2gus/SConscript'], exports=['env', 'getObjects', 'getLibName', 'getBinName', 'platform'])
+SConscript(sconscript, exports=['env', 'getObjects', 'getLibName', 'getBinName', 'platform'])
             
 if platform == 'mingw-cross':
 	env.Append(BUILDERS = {'Strip' : Builder(action = os.path.join(mingwPath, 'bin', 'strip') + ' $SOURCE')})

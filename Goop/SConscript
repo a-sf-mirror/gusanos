@@ -20,9 +20,9 @@ if platform == 'basara':
 	env = env.Copy(LIBS = Split("""
 	        omfggui omfgconsole omfgloaders
 	        png12 z fmod
-		-lalleg-4.1.18 -lalleg_unsharable
-		env = env.Copy(LIBS = ..., CPPFLAGS = '-Wl,--export-dynamic')
-	        loadpng zoidcom boost_filesystem-gcc boost_signals-gcc""")
+	        alleg-4.1.18 alleg_unsharable
+	        loadpng zoidcom boost_filesystem-gcc boost_signals-gcc"""),
+	        LINKFLAGS = '-Wl,--export-dynamic'
 		)
 # add more platforms here
 
