@@ -16,6 +16,7 @@ class Gfx
 	void init();
 	void shutDown();
 	void registerInConsole();
+	void toggleState();
 	
 	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL);
 	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);
@@ -30,7 +31,8 @@ class Gfx
 	BITMAP* buffer;
 	
 	private:
-		
+	
+	bool m_fullscreen;
 	int m_vsync;
 	int m_clearBuffer;
 
