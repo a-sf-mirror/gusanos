@@ -12,9 +12,12 @@
 #include "part_type.h"
 #include "particle.h"
 #include "worm.h"
-//#include "text.h"
+#include "text.h"
+#include "gfx.h"
+#include "sfx.h"
 
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -59,6 +62,33 @@ string jumpStop(const list<string> &args)
 	return "";
 }
 
+bool aimUp = false;
+
+string aimUpStart(const list<string> &args)
+{
+	aimUp = true;
+	return "";
+}
+
+string aimUpStop(const list<string> &args)
+{
+	aimUp = false;
+	return "";
+}
+
+bool aimDown = false;
+
+string aimDownStart(const list<string> &args)
+{
+	aimDown = true;
+	return "";
+}
+
+string aimDownStop(const list<string> &args)
+{
+	aimDown = false;
+	return "";
+}
 
 string Exit(const list<string> &args)
 {
@@ -73,38 +103,39 @@ int main(int argc, char **argv)
 	Sprite *sprite = spriteList.load("sprite.bmp");
 	Font *tempFont = fontList.load("minifont.bmp");
 	
+	float aimSpeed;
+	
+	console.registerFloatVariable("CL_TEMP_AIM_SPEED", &aimSpeed, 1.8);
 	
 	console.registerCommand("+MOVELEFT", leftStart);
 	console.registerCommand("-MOVELEFT", leftStop);
 	console.registerCommand("+MOVERIGHT", rightStart);
 	console.registerCommand("-MOVERIGHT", rightStop);
+	console.registerCommand("+AIMUP", aimUpStart);
+	console.registerCommand("-AIMUP", aimUpStop);
+	console.registerCommand("+AIMDOWN", aimDownStart);
+	console.registerCommand("-AIMDOWN", aimDownStop);
 	console.registerCommand("+JUMP", jumpStart);
 	console.registerCommand("-JUMP", jumpStop);
 	console.registerCommand("QUIT", Exit);
 	
-	console.parseLine("BIND A +MOVELEFT; BIND D +MOVERIGHT; BIND G +JUMP");
+	console.parseLine("BIND A +MOVELEFT; BIND D +MOVERIGHT; BIND G +JUMP; BIND W +AIMUP; BIND S +AIMDOWN; BIND F12 SCREENSHOT");
 	
 	if ( gameLoad<Level>("bleed",game.level) )
 	{
 		console.addLogMsg("MAP LOADED SUCCESFULLY");
 	}else
 		console.addLogMsg("COULDNT LOAD THE MAP");
-	//allegro_message("%d",consoleTest);
 	
 	PartType* testType = partTypeList.load("test.obj");
-	
-	BITMAP *buffer;
 
 	MenuWindow menu;
-
-  
-	buffer = create_bitmap(320,240);
 	
 	Viewport testViewport;
 	Viewport testViewport2;
 	
-	testViewport.setDestination(buffer,0,0,320,240);
-	testViewport2.setDestination(buffer,100,50,100,100);
+	testViewport.setDestination(gfx.buffer,0,0,320,240);
+	testViewport2.setDestination(gfx.buffer,110,70,100,100);
 	
 	for (int i = 0; i < 1 ; i++)
 	{
@@ -121,6 +152,10 @@ int main(int argc, char **argv)
 	{
 		
 		list<BaseObject*>::iterator iter;
+		
+		if ( aimUp ) worm->addToAim(-aimSpeed);
+		if ( aimDown ) worm->addToAim(aimSpeed);	
+
 		for ( iter = game.objects.begin(); iter != game.objects.end(); )
 		{
 			(*iter)->think();
@@ -135,23 +170,23 @@ int main(int argc, char **argv)
 		
 		console.checkInput();
 		
-		clear_bitmap(buffer);
-		
 		//level.draw(buffer,0,object.pos.x);
+		testViewport.interpolateTo(worm->getPos(),0.1);
 		testViewport.render();
-		testViewport2.interpolateTo(worm->getPos(),0.1);
+		
 		testViewport2.setPos(worm->getPos().x - 50, worm->getPos().y - 50);
-		testViewport2.render();
+		//testViewport2.render();
 		
 		console.think();
-		console.render(buffer);
+		console.render(gfx.buffer);
 		
-		vsync();
-		
-		blit(buffer,screen,0,0,0,0,320,240);
+		gfx.updateScreen();
 	}
 	
+	
 	console.shutDown();
+	sfx.shutDown();
+	gfx.shutDown();
 	//level.unload();
 	allegro_exit();
 

@@ -119,8 +119,8 @@ void Worm::think()
 		pos.x += spd.x;
 	pos.y += spd.y;
 	
-	aimAngle-=0.5;
-	if( aimAngle < 0 ) aimAngle=180;
+	if( aimAngle < 0 ) aimAngle = 0;
+	if( aimAngle > 180 ) aimAngle = 180;
 	
 }
 
@@ -129,13 +129,12 @@ void Worm::draw(BITMAP* where,int xOff, int yOff)
 	int y = (int)pos.y - game.options.worm_weaponHeight; // The weapon is the center of the worm render
 	bool flipped = false;
 	if ( dir < 0 ) flipped = true;
-	skin->draw(where, 1, (int)pos.x-xOff, y-yOff,aimAngle, flipped);
-	
 	for(int i = 0; i< 10; i++)
 	{
-		Vec crosshair = angleVec(aimAngle*dir,rnd()*60+20) + pos - Vec(xOff,yOff + game.options.worm_weaponHeight);
+		Vec crosshair = angleVec(aimAngle*dir,rnd()*10+30) + pos - Vec(xOff,yOff + game.options.worm_weaponHeight);
 		putpixel(where, crosshair.x,crosshair.y,makecol(255,0,0));
 	}
+	skin->draw(where, 1, (int)pos.x-xOff, y-yOff,aimAngle, flipped);
 }
 
 void Worm::moveLeftStart()
@@ -171,5 +170,10 @@ void Worm::jumpStop()
 {
 	jumping = false;
 };
+
+void Worm::addToAim(float angle)
+{
+	aimAngle += angle;
+}
 
 

@@ -4,8 +4,8 @@
 #include "level.h"
 #include "gconsole.h"
 #include "game_actions.h"
-
-#include <fmod/fmod.h>
+#include "gfx.h"
+#include "sfx.h"
 
 #include <allegro.h>
 #include <string>
@@ -46,18 +46,15 @@ Game::~Game()
 void Game::init()
 {
 	allegro_init();
-	
-	FSOUND_Init(44100, 32, 0);
+
 	game.addPath("default/");
-	
-	set_color_depth(16);
-	set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0);
 
-	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
-		set_display_switch_mode(SWITCH_BACKGROUND);
-
+	gfx.init();
+	sfx.init();
 	console.init();
+	
 	options.registerInConsole();
+	gfx.registerInConsole();
 	
 	registerGameActions();
 	

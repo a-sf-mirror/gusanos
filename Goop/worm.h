@@ -18,7 +18,7 @@ class Worm : public BaseObject
 	void moveLeftStop();
 	void moveRightStart();
 	void moveRightStop();
-	void setAim(float angle);
+	void addToAim(float angle);
 	void jumpStart();
 	void jumpStop();
 	
@@ -27,6 +27,7 @@ class Worm : public BaseObject
 	bool movingLeft;
 	bool movingRight;
 	bool jumping;
+	
 	int dir;
 	float aimAngle;
 	Sprite *skin;

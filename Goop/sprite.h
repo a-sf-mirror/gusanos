@@ -29,6 +29,8 @@ class Sprite
 	private:
 	
 	std::vector< std::vector< BITMAP* > > m_frame;
+	std::vector< int > m_pivotY;
+	std::vector< int > m_pivotX;
 	
 };
 
