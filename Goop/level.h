@@ -22,6 +22,8 @@ class Level
 	int height();
 	
 	const std::string &getPath();
+	const std::string &getName();
+	void setName(const std::string &_name);
 	
 	const Material& getMaterial(int x, int y);
 	/*inline const Material& getMaterial(int x, int y);

@@ -17,6 +17,7 @@
 #include "gfx.h"
 #include "sfx.h"
 #include "player_ai.h"
+#include "network.h"
 
 #include <allegro.h>
 #include <string>
@@ -55,6 +56,16 @@ string addbotCmd(const list<string> &args)
 	return "";
 }
 
+string connectCmd(const list<string> &args)
+{
+	if ( !args.empty() )
+	{
+		network.connect( *args.begin() );
+		return "";
+	}
+	return "CONNECT <HOST_ADDRESS> : JOIN A NETWORK SERVER";
+}
+
 void Options::registerInConsole()
 {
 	console.registerFloatVariable("SV_NINJAROPE_SHOOT_SPEED", &ninja_rope_shootSpeed, 2);
@@ -74,9 +85,12 @@ void Options::registerInConsole()
 	console.registerIntVariable("SV_WORM_HEIGHT", &worm_height, 7);
 	console.registerIntVariable("SV_WORM_MAX_CLIMB", &worm_maxClimb, 4);
 	
+	console.registerIntVariable("HOST", &host, 0);
+	
 	console.registerCommand("MAP", mapCmd);
 	console.registerCommand("GAME", gameCmd);
 	console.registerCommand("ADDBOT", addbotCmd);
+	console.registerCommand("CONNECT",connectCmd);
 }
 
 Game::Game()
@@ -94,12 +108,13 @@ void Game::init()
 {
 	allegro_init();
 
-	defaultPath = "default/";
-	modPath = "default/";
+	m_defaultPath = "default/";
+	m_modPath = "default/";
 	nextMod = "default/";
 
 	gfx.init();
 	sfx.init();
+	network.init();
 	console.init();
 	
 	for ( int i = 0; i< MAX_LOCAL_PLAYERS; ++i)
@@ -111,9 +126,10 @@ void Game::init()
 	
 	options.registerInConsole();
 	gfx.registerInConsole();
+	network.registerInConsole();
 	registerGameActions();
 	registerPlayerInput();
-	
+
 }
 
 void Game::loadWeapons()
@@ -121,14 +137,14 @@ void Game::loadWeapons()
 	string path;
 	struct al_ffblk *file=new struct al_ffblk;
 	
-	path = modPath;
+	path = m_modPath;
 	path += "weapons/*.wpn";
 	if ( al_findfirst( path.c_str(), file, FA_ARCH ) == 0 )
 	{
 		do
 		{
 			WeaponType* weapon = new WeaponType;
-			weapon->load(modPath + "weapons/" + file->name);
+			weapon->load(m_modPath + "weapons/" + file->name);
 			weaponList.push_back(weapon);
 		}
 		while(al_findnext(file)==0);
@@ -193,13 +209,20 @@ bool Game::isLoaded()
 
 void Game::changeLevel(const std::string& levelName )
 {
-	game.unload();
-	modPath = nextMod;
-	if ( !level.load( modPath +"maps/"+ levelName ) )
+	unload();
+	m_modName = nextMod;
+	m_modPath = nextMod + "/";
+	if ( !level.load( m_modPath +"maps/"+ levelName ) )
 	{
-		level.load( defaultPath +"maps/"+ levelName );
+		level.load( m_defaultPath +"maps/"+ levelName );
 	}
-	game.loadMod();
+	level.setName(levelName);
+	loadMod();
+	
+	if ( options.host )
+	{
+		network.host();
+	}
 	
 	if ( loaded && level.isLoaded() )
 	{
@@ -216,7 +239,7 @@ void Game::changeLevel(const std::string& levelName )
 			players.push_back( player );
 			localPlayers.push_back( player );
 		}
-		if(false)
+		if(true)
 		{
 			Worm* worm = new Worm;
 			Player* player = new Player(playerOptions[1]);
@@ -230,13 +253,21 @@ void Game::changeLevel(const std::string& levelName )
 			localPlayers.push_back( player );
 		}
 	}
+
 }
 
 void Game::setMod( const string& modname )
 {
 	if ( file_exists( modname.c_str(), FA_DIREC, NULL) )
-		nextMod = modname + "/";
-	else nextMod = defaultPath;
+	{
+		nextMod = modname;
+	}
+	else nextMod = m_modName;
+}
+
+const string& Game::getMod()
+{
+	return m_modName;
 }
 
 void Game::addBot()

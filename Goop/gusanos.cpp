@@ -17,6 +17,7 @@
 #include "sfx.h"
 #include "distortion.h"
 #include "player_ai.h"
+#include "network.h"
 
 #include <string>
 #include <vector>
@@ -98,6 +99,7 @@ int main(int argc, char **argv)
 				
 			}
 			sfx.think();
+			network.update();
 			
 			console.checkInput();
 			console.think();

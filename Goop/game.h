@@ -39,6 +39,7 @@ struct Options
 	int worm_weaponHeight;
 	int worm_height;
 	int worm_maxClimb;
+	int host;
 };
 
 class Game
@@ -71,12 +72,14 @@ class Game
 	
 	PartType* NRPartType;
 	
+	const std::string& getMod();
+	
 	template <typename T1>
 	bool specialLoad(const std::string& name, T1 &resource)
 	{
 		if ( resource.load(level.getPath() + name) ) return true;
-		if ( resource.load(modPath + name) ) return true;
-		if ( resource.load(defaultPath + name) ) return true;
+		if ( resource.load(m_modPath + name) ) return true;
+		if ( resource.load(m_defaultPath + name) ) return true;
 		
 		return false;
 	}
@@ -84,11 +87,11 @@ class Game
 	private:
 
 	std::string nextMod;
-	std::string modPath;
-	std::string mapPath;
-	std::string defaultPath;
+	std::string m_modPath;
+	std::string m_modName;
+	std::string m_defaultPath;
 	bool loaded;
-	
+
 };
 
 extern Game game;

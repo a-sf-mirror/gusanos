@@ -105,7 +105,17 @@ int Level::height()
 		return 0;
 }
 
+void Level::setName(const std::string& _name)
+{
+	name = _name;
+}
+
 const string& Level::getPath()
 {
 	return path;
+}
+
+const string& Level::getName()
+{
+	return name;
 }
