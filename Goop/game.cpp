@@ -164,6 +164,7 @@ void Game::loadMod()
 	console.loadResources();
 	loadWeapons();
 	NRPartType = partTypeList.load("ninjarope.obj");
+	infoFont = fontList.load("minifont.bmp");
 	if (weaponList.size() > 0 )
 		loaded = true;
 	else

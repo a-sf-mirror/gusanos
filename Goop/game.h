@@ -15,6 +15,7 @@ class BasePlayer;
 class PlayerOptions;
 class WeaponType;
 class PartType;
+class Font;
 
 static const int MAX_LOCAL_PLAYERS = 2;
 
@@ -84,8 +85,10 @@ class Game
 		return false;
 	}
 	
+	Font *infoFont;
+	
 	private:
-
+		
 	std::string nextMod;
 	std::string m_modPath;
 	std::string m_modName;
