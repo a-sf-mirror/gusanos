@@ -46,9 +46,6 @@ int main(int argc, char **argv)
 
 	Font *tempFont = fontList.load("minifont.bmp");
 	
-	float aimSpeed;
-	
-	console.registerFloatVariable("CL_TEMP_AIM_SPEED", &aimSpeed, 1.8);
 	console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
 	console.registerIntVariable("CL_SHOWDEBUG", &showDebug, 1);
 	
@@ -91,7 +88,7 @@ int main(int argc, char **argv)
 		player->assignWorm(worm);
 		player->assignViewport(viewport);
 		game.objects.push_back( worm );
-		game.objects.push_back( worm->getNinjaRopeObj() );
+		game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
 		game.players.push_back( player );
 		game.localPlayers.push_back( player );
 	}
@@ -104,7 +101,7 @@ int main(int argc, char **argv)
 		player->assignWorm(worm);
 		player->assignViewport(viewport);
 		game.objects.push_back( worm );
-		game.objects.push_back( worm->getNinjaRopeObj() );
+		game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
 		game.players.push_back( player );
 		game.localPlayers.push_back( player );
 	}

@@ -2,6 +2,7 @@
 #include "player_options.h"
 #include "worm.h"
 #include "viewport.h"
+#include "ninjarope.h"
 
 #include <allegro.h>
 
@@ -32,8 +33,22 @@ void Player::think()
 	if ( m_worm )
 	{
 		if ( m_viewport ) m_viewport->interpolateTo(m_worm->getPos(),m_options->viewportFollowFactor);
-		if ( aimingUp ) m_worm->addAimSpeed(-m_options->aimAcceleration);
-		else if ( aimingDown ) m_worm->addAimSpeed(m_options->aimAcceleration);
+		if ( aimingUp ) 
+		{
+			if ( changing && m_worm->getNinjaRopeObj()->active )
+			{
+				m_worm->addRopeLength(-m_options->ropeAdjustSpeed);
+			}else
+				m_worm->addAimSpeed(-m_options->aimAcceleration);
+		}
+		else if ( aimingDown ) 
+		{
+			if ( changing && m_worm->getNinjaRopeObj()->active )
+			{
+				m_worm->addRopeLength(m_options->ropeAdjustSpeed);
+			}else
+				m_worm->addAimSpeed(m_options->aimAcceleration);
+		}
 	}
 }
 
@@ -107,7 +122,7 @@ void Player::actionStart ( Actions action )
 			}
 		}
 		break;
-		
+
 		case CHANGE:
 		{
 			if ( m_worm )

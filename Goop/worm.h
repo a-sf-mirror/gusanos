@@ -36,12 +36,13 @@ class Worm : public BaseObject
 	void actionStart( Actions action );
 	void actionStop( Actions action );
 	void addAimSpeed(float speed);
+	void addRopeLength(float distance);
 	
 	Vec getPos();
 	float getAngle();
 	char getDir();
 	
-	BaseObject* getNinjaRopeObj();
+	NinjaRope* getNinjaRopeObj();
 	
 	private:
 	
@@ -53,6 +54,7 @@ class Worm : public BaseObject
 	float aimAngle;
 	float aimSpeed;
 	float aimRecoilSpeed;
+	float currentRopeLength;
 	
 	int currentWeapon;
 	

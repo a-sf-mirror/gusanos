@@ -44,7 +44,7 @@ void Worm::assignOwner( BasePlayer* owner)
 	m_owner = owner;
 }
 
-BaseObject* Worm::getNinjaRopeObj()
+NinjaRope* Worm::getNinjaRopeObj()
 {
 	return m_ninjaRope;
 }
@@ -54,7 +54,7 @@ void Worm::think()
 	
 	spd.y+=game.options.worm_gravity;
 	
-	if ( m_ninjaRope->attached && (m_ninjaRope->getPos() - pos).length() > game.options.ninja_rope_startDistance)
+	if ( m_ninjaRope->attached && (m_ninjaRope->getPos() - pos).length() > currentRopeLength)
 	{
 		spd += (m_ninjaRope->getPos() - pos).normal() * game.options.ninja_rope_pullForce;
 	}
@@ -213,6 +213,12 @@ void Worm::addAimSpeed( float speed )
 	aimSpeed += speed;
 }
 
+void Worm::addRopeLength( float distance )
+{
+	currentRopeLength += distance;
+	if ( currentRopeLength < 0 ) currentRopeLength = 0;
+}
+
 void Worm::actionStart( Actions action)
 {
 	switch ( action )
@@ -239,6 +245,7 @@ void Worm::actionStart( Actions action)
 			
 		case NINJAROPE:
 			m_ninjaRope->shoot(pos-Vec(0,game.options.worm_weaponHeight+0.5), angleVec(aimAngle*dir,game.options.ninja_rope_shootSpeed));
+			currentRopeLength = game.options.ninja_rope_startDistance;
 		break;
 	}
 }

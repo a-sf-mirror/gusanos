@@ -12,6 +12,7 @@ struct PlayerOptions
 	float aimFriction;
 	float aimMaxSpeed;
 	float viewportFollowFactor;
+	float ropeAdjustSpeed;
 	int colour;
 	std::string name;
 };
