@@ -56,6 +56,7 @@ class Game
 	void loadMod();
 	bool isLoaded();
 	void changeLevel(const std::string& level);
+	void addBot();
 	
 	Level level;
 	std::vector<WeaponType*> weaponList;

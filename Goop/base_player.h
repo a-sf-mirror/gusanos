@@ -16,7 +16,7 @@ class BasePlayer
 	virtual ~BasePlayer();
 	
 	virtual void think() = 0;
-	virtual void render() = 0;
+	virtual void render() {};
 
 	void assignWorm(Worm* worm);
 	

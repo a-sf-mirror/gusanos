@@ -16,6 +16,7 @@
 #include "base_player.h"
 #include "gfx.h"
 #include "sfx.h"
+#include "player_ai.h"
 
 #include <allegro.h>
 #include <string>
@@ -48,6 +49,12 @@ string gameCmd(const list<string> &args)
 	return "GAME <MODNAME> : SET THE MOD TO LOAD THE NEXT MAP CHANGE";
 }
 
+string addbotCmd(const list<string> &args)
+{
+	game.addBot();
+	return "";
+}
+
 void Options::registerInConsole()
 {
 	console.registerFloatVariable("SV_NINJAROPE_SHOOT_SPEED", &ninja_rope_shootSpeed, 2);
@@ -69,6 +76,7 @@ void Options::registerInConsole()
 	
 	console.registerCommand("MAP", mapCmd);
 	console.registerCommand("GAME", gameCmd);
+	console.registerCommand("ADDBOT", addbotCmd);
 }
 
 Game::Game()
@@ -231,3 +239,15 @@ void Game::setMod( const string& modname )
 	else nextMod = defaultPath;
 }
 
+void Game::addBot()
+{
+	if ( loaded && level.isLoaded() )
+	{
+		Worm* worm = new Worm;
+		PlayerAI* player = new PlayerAI();
+		player->assignWorm(worm);
+		objects.push_back( worm );
+		objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
+		players.push_back( player );
+	}
+}
