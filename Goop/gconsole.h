@@ -16,6 +16,8 @@
 class GConsole : public Console
 {
 	public:
+	
+	static const int consoleKey = KEY_F1;
 
 	GConsole();
 	

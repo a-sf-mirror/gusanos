@@ -22,9 +22,9 @@ class Console
 {
 	public:
 
-   Console(void);
+	Console(void);
 	Console(int logMaxSize, int MaxMsgLength);
-   ~Console(void);
+	~Console(void);
 
 	void registerIntVariable(const std::string &name, int* src, int defaultValue);
 	void registerFloatVariable(const std::string &name, float* src, float defaultValue);

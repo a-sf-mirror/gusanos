@@ -26,8 +26,9 @@ Gfx::~Gfx()
 void Gfx::init()
 {	
 	set_color_depth(16);
-	set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0);
-
+	//set_gfx_mode(GFX_AUTODETECT, 320, 240, 0, 0);
+	set_gfx_mode(GFX_AUTODETECT_WINDOWED, 320, 240, 0, 0);
+	
 	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
 		set_display_switch_mode(SWITCH_BACKGROUND);
 	

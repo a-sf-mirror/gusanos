@@ -27,8 +27,21 @@ class KeyHandler
 	void shutDown();
 	void pollKeyboard();
 	KeyEvent getEvent();
+
+	static int keyMapCallback(int key, int *scancode);
+	static int mapKey(int key);
+	static int getKey(int k);
+	static int reverseMapKey(int key);
+	static void swapKeyMapping(int keyA, int keyB);
+	static void setShiftCharacter(int key, int character);
+	static void setCharacter(int key, int character);
 	
 	private:
+	
+	static int keyMap[KEY_MAX]; // The keymap
+	static int charMap[KEY_MAX]; // The character map
+	static int shiftCharMap[KEY_MAX]; // The shift map
+	static int capsCharMap[KEY_MAX]; // The caps lock map
 	
 	std::list<KeyEvent> events;
 	

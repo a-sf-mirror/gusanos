@@ -128,6 +128,7 @@ void Game::init()
 	
 	options.registerInConsole();
 	gfx.registerInConsole();
+	sfx.registerInConsole();
 	network.registerInConsole();
 	registerGameActions();
 	registerPlayerInput();

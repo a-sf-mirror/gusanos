@@ -79,7 +79,7 @@ bool PartType::load(const string &filename)
 		Event *currEvent = NULL;
 		while ( !fileStream.eof() )
 		{
-			getline( fileStream, parseLine );
+			getline( fileStream, parseLine ); // <GLIP> A getline() working with \n, \r, and \r\n is needed
 			if ( !parseLine.empty() )
 			{
 				string var;

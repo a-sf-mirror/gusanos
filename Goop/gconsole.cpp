@@ -7,26 +7,85 @@
 
 using namespace std;
 
+#define TEST_KEY(k_, keyname_) if(k_ < 0) return "UNKNOWN KEY \"" + keyname_ + '"'
+
 // Bind console command
 string bindCmd(const list<string> &args)
 {
-	char key;
-	string action;
-	
-	if (!args.empty())
-	{
-		list<string>::const_iterator argument;
-		argument=args.begin();
-		
-		key = kName2Int(*argument);
-		
-		argument++;
-		if ( argument != args.end() )
-			console.bind(key, *argument);
+	// <GLIP> Simplified a little, removed unused vars
+	// and made it print out the help text when too
+	// few arguments are passed.
 
+	if (args.size() >= 2) 
+	{
+		std::list<string>::const_iterator arguments = args.begin();
+		
+		std::string const& keyName = *arguments++;
+		int key = kName2Int(keyName);
+		TEST_KEY(key, keyName);
+
+		console.bind(key, *arguments++);
+	
 		return "";
 	}
+	
 	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
+}
+
+// Key map swapping command
+string swapKeysCmd(const list<string> &args)
+{
+	if (args.size() >= 2)
+	{
+		std::list<string>::const_iterator arguments = args.begin();
+		std::string const& keyNameA = *arguments++;
+		int keyA = kName2Int(keyNameA);
+		TEST_KEY(keyA, keyNameA);
+		
+		std::string const& keyNameB = *arguments++;
+		int keyB = kName2Int(keyNameB);
+		TEST_KEY(keyB, keyNameB);
+		
+		KeyHandler::swapKeyMapping(keyA, keyB);
+		return "";
+	}
+	return "SWAPKEYS <KEY A> <KEY B> : SWAPS KEY A AND KEY B WITH EACHOTHER";
+}
+
+string setShiftChar(const list<string> &args)
+{
+	if (args.size() >= 2)
+	{
+		std::list<string>::const_iterator arguments = args.begin();
+		
+		std::string const& keyName = *arguments++;
+		int key = kName2Int(keyName);
+		TEST_KEY(key, keyName);
+		
+		int shiftCharacter = (*arguments)[0];
+		
+		KeyHandler::setShiftCharacter(key, shiftCharacter);
+		return "";
+	}
+	return "SETSHIFTCHAR <KEY> <CHARACTER> : SETS THE CHARACTER TO BE USED WITH SHIFT+KEY";
+}
+
+string setChar(const list<string> &args)
+{
+	if (args.size() >= 2)
+	{
+		std::list<string>::const_iterator arguments = args.begin();
+		
+		std::string const& keyName = *arguments++;
+		int key = kName2Int(keyName);
+		TEST_KEY(key, keyName);
+		
+		int shiftCharacter = (*arguments)[0];
+		
+		KeyHandler::setCharacter(key, shiftCharacter);
+		return "";
+	}
+	return "SETCHAR <KEY> <CHARACTER> : SETS THE CHARACTER TO BE USED WITH KEY";
 }
 
 string execCmd(const list<string> &args)
@@ -39,7 +98,7 @@ string execCmd(const list<string> &args)
 		}
 		return ( "COULDN'T EXEC " + *args.begin() );
 	}
-	return "BIND <FILENAME> : EXECUTE A SCRIPT FILE";
+	return "EXEC <FILENAME> : EXECUTE A SCRIPT FILE";
 }
 
 string aliasCmd(const list<string> &args)
@@ -89,6 +148,9 @@ void GConsole::init()
 	registerIntVariable("CON_HEIGHT", &height, 120);
 	
 	registerCommand("BIND", bindCmd);
+	registerCommand("SWAPKEYS", swapKeysCmd);
+	registerCommand("SETSHIFTCHAR", setShiftChar);
+	registerCommand("SETCHAR", setChar);
 	registerCommand("EXEC", execCmd);
 	registerCommand("ALIAS", aliasCmd);
 }
@@ -144,7 +206,7 @@ void GConsole::checkInput()
 	while (event.type != KEY_EVENT_NONE) // While the event is not an end of list event
 	{
 		// Key Tilde is hardcoded to toogle the console (quake does the same so.. NO COMPLAINTS! :P)
-		if ( (event.type == KEY_EVENT_PRESS) && (event.key == KEY_TILDE) )
+		if ( (event.type == KEY_EVENT_PRESS) && (event.key == consoleKey) )
 		{
 			if ( m_mode == CONSOLE_MODE_INPUT )	// If the console is in input mode toogle to Binding mode
 				m_mode = CONSOLE_MODE_BINDINGS;

@@ -54,6 +54,9 @@ namespace Parser
 		{
 			vector<string>::const_iterator token = tokens.begin();
 			
+			if( (*token)[0] == '#' ) // Is it a comment?
+				return INVALID;
+			
 			if ( *token == "on" ) //First token is 'on'? Then its the start of an event
 			{
 				id = EVENT_START;

@@ -18,11 +18,9 @@ Alias::~Alias()
 }
 
 Alias::Alias(Console *parent, const std::string &name, const std::string &action) :
-ConsoleItem(false)
+ConsoleItem(false), m_name(name), m_action(action), m_parent(parent)
 {
-	m_name = name;
-	m_action = action;
-	m_parent = parent;
+
 }
 
 //============================= INTERFACE ================================

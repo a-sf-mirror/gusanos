@@ -1,6 +1,7 @@
 #include "sfx.h"
-//#include "gconsole.h"
+#include "gconsole.h"
 #include "base_object.h"
+#include "text.h" //For cast<>
 
 #include <vector>
 #include <fmod/fmod.h>
@@ -18,10 +19,35 @@ Sfx::~Sfx()
 }
 
 void Sfx::init()
-{	
+{
+	// Select a driver
+	
+	//FSOUND_SetOutput(FSOUND_OUTPUT_ALSA); //TODO: Selection of this via console/command line
+	FSOUND_SetDriver(0);
+	
+	/* We select default driver for now
+	int numDrivers = FSOUND_GetNumDrivers();
+	// TODO: Desired driver here: string desiredDriver(); 
+	int selectedDriver = 0;
+	
+	for(int i = 0; i < numDrivers; ++i)
+	{
+		const char* driverName = FSOUND_GetDriverName(i);
+		console.addLogMsg(string("* FMOD DRIVER ") + cast<string>(i) + string(": ") + driverName);
+		if(string(driverName).find(desiredDriver) >= 0)
+		{
+			selectedDriver = i;
+			break;
+		}
+	}
+	
+	FSOUND_SetDriver(selectedDriver);*/
+
 	FSOUND_Init(44100, 32, 0);
 	FSOUND_3D_SetDistanceFactor(20);
 	FSOUND_3D_SetRolloffFactor(2);
+	
+	console.addLogMsg(string("* FMOD LIB INITIALIZED, USING DRIVER ") + FSOUND_GetDriverName(FSOUND_GetDriver()));
 }
 
 void Sfx::shutDown()
@@ -75,7 +101,7 @@ void Sfx::setChanObject(int chan, BaseObject* object)
 {
 	chanObject.push_back( pair< int, BaseObject* > ( chan, object ) );
 }
-
+	
 void Sfx::clear()
 {
 	chanObject.clear();

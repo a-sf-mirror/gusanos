@@ -1,6 +1,8 @@
 #ifndef text_h
 #define text_h
 
+// <GLIP> This is a duplicate with less functionality from the Console lib
+
 #include <sstream>
 #include <list>
 #include <string>
