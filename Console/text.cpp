@@ -91,14 +91,13 @@ list< list<string> > text2Tree(const string &text)
 	
 	if (!stringList.empty())
 	{
-		argTree.push_back();
+		argTree.push_back(list<string>());
 		list<string>::iterator tokensIter = stringList.begin();
 		while (tokensIter != stringList.end())
 		{
 			if ( (*tokensIter) == ";" )
 			{
-				list<string> tmplist;
-				argTree.push_back(tmplist);
+				argTree.push_back(list<string>());
 			}else
 			{
 				list< list<string> >::iterator iter = argTree.end();
