@@ -3,8 +3,8 @@
 
 #include "consoleitem.h"
 #include "text.h"
-#include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
+//#include <boost/lexical_cast.hpp>
+//using boost::lexical_cast;
 
 #include <string>
 #include <map>
@@ -68,7 +68,8 @@ class TVariable : public Variable
 			return "";
 		}else
 		{
-			return m_name + " IS \"" + lexical_cast<std::string>(*m_src) + '"';
+			//return m_name + " IS \"" + lexical_cast<std::string>(*m_src) + '"';
+			return m_name + " IS \"" + cast<std::string>(*m_src) + '"';
 		}
 	}
 	

@@ -16,4 +16,4 @@ $(LIBRARY): $(OBJECTS)
 	$(CC) -c $< $(CFLAGS) $(DEFINES)
 
 clean:
-	del $(OBJECTS)
+	rm $(OBJECTS)
