@@ -43,6 +43,11 @@ struct ResourceLocator
 		ResourceInfo(fs::path const& path_, BaseLoader* loader_)
 		: path(path_), loader(loader_), cached(0)
 		{
+
+		}
+		
+		~ResourceInfo()
+		{
 			delete cached;
 		}
 				
