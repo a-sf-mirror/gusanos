@@ -555,9 +555,8 @@ void engine::init_game()
   TEAMPLAY=con->create_variable("TEAMPLAY",0);
   FRIENDLYFIRE=con->create_variable("FRIENDLY_FIRE",1000);
   //Crate
-  WEAPON_CHANCE=con->create_variable("WEAPON_CHANCE",10000);
-  HEALTH_CHANCE=con->create_variable("HEALTH_CHANCE",10000);
-  //
+  WEAPON_CHANCE=con->create_variable("WEAPON_CHANCE",0);
+  HEALTH_CHANCE=con->create_variable("HEALTH_CHANCE",0);
   //Minimap option
   MINIMAP=con->create_variable("MINIMAP",1);
 	MINIMAP_TYPE=con->create_variable("MINIMAP_TYPE",0);

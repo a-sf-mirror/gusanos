@@ -469,22 +469,22 @@ void worm::jump(int jump_force)
 void worm::shoot()
 {
   if (weap[curr_weap].shoot_time==0)
-  if (weap[curr_weap].ammo>0 || weaps->num[weap[curr_weap].weap]->ammo==0)
-  if ((!fireing && weaps->num[weap[curr_weap].weap]->autofire!=1) || weaps->num[weap[curr_weap].weap]->autofire==1)
-  {
-    if (!fireing)
-    {
-      weap[curr_weap].start_delay=weaps->num[weap[curr_weap].weap]->start_delay;
-      if(weaps->num[weap[curr_weap].weap]->start_sound!=NULL)play_sample(weaps->num[weap[curr_weap].weap]->start_sound->snd, *game->VOLUME, 127, 1000, 0);
-    };
-    if (weap[curr_weap].start_delay>0)weap[curr_weap].start_delay--;
-    fireing=true;        
-    if (weap[curr_weap].start_delay==0)
-    {
-      if(srv) shooteventsend();
-      weap[curr_weap].shoot(x,y,xspd,yspd,aim,dir,local_slot);
-    };
-  };
+		if (weap[curr_weap].ammo>0 || weaps->num[weap[curr_weap].weap]->ammo==0)
+			if ((!fireing && weaps->num[weap[curr_weap].weap]->autofire!=1) || weaps->num[weap[curr_weap].weap]->autofire==1)
+			{
+				if (!fireing)
+				{
+					weap[curr_weap].start_delay=weaps->num[weap[curr_weap].weap]->start_delay;
+					if(weaps->num[weap[curr_weap].weap]->start_sound!=NULL)play_sample(weaps->num[weap[curr_weap].weap]->start_sound->snd, *game->VOLUME, 127, 1000, 0);
+				};
+				if (weap[curr_weap].start_delay>0)weap[curr_weap].start_delay--;
+				fireing=true;        
+				if (weap[curr_weap].start_delay==0)
+				{
+					if(srv) shooteventsend();
+					weap[curr_weap].shoot(x,y,xspd,yspd,aim,dir,local_slot);
+				};
+			};
   if (weap[curr_weap].ammo==0 && !fireing)
   {
     fireing=true;

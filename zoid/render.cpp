@@ -65,7 +65,7 @@ void renderrope(worm *player)
 void draw_bar(BITMAP* where,int w,int h, int x, int y, int max_value, int value, int color)
 {
 	if (value > 0)
-	rectfill(where,x,y,(value*w)/max_value+x,y+h,color);
+		rectfill(where,x,y,(value*w)/max_value+x,y+h,color);
 };
 
 void render_weapon_selection_menu(BITMAP *where)
@@ -147,16 +147,20 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
       game->fonty->draw_string(where,ints,viewport.x+10,viewport.y+4,false);
     };
     draw_sprite(where,game->ammo->img[0],viewport.x+46,viewport.y+4);
-    if (p->weap[p->curr_weap].reloading)
-    {
-      b=((p->weap[p->curr_weap].reload_time*255)/ weaps->num[p->weap[p->curr_weap].weap]->reload_time);
-      draw_bar(where,30,2, viewport.x+53, viewport.y+5, weaps->num[p->weap[p->curr_weap].weap]->reload_time, weaps->num[p->weap[p->curr_weap].weap]->reload_time-p->weap[p->curr_weap].reload_time, makecol(b,255-b,0));
-      game->fonty->draw_string(where,"RELOADING",viewport.x+47,viewport.y+9,false);
-    }else
-    {
-      b=((p->weap[p->curr_weap].ammo*255)/ weaps->num[p->weap[p->curr_weap].weap]->ammo);
-      draw_bar(where,30,2, viewport.x+53, viewport.y+5, weaps->num[p->weap[p->curr_weap].weap]->ammo, p->weap[p->curr_weap].ammo, makecol(255-b,b,0));
-    };
+		//mine1 - check that max ammo is not 0
+		if (weaps->num[p->weap[p->curr_weap].weap]->ammo > 0)
+			if (p->weap[p->curr_weap].reloading)
+			{
+	      b=((p->weap[p->curr_weap].reload_time*255)/ weaps->num[p->weap[p->curr_weap].weap]->reload_time);
+				draw_bar(where,30,2, viewport.x+53, viewport.y+5, weaps->num[p->weap[p->curr_weap].weap]->reload_time, weaps->num[p->weap[p->curr_weap].weap]->reload_time-p->weap[p->curr_weap].reload_time, makecol(b,255-b,0));
+				game->fonty->draw_string(where,"RELOADING",viewport.x+47,viewport.y+9,false);
+			}else
+			{
+	      b=((p->weap[p->curr_weap].ammo*255)/ weaps->num[p->weap[p->curr_weap].weap]->ammo);
+				draw_bar(where,30,2, viewport.x+53, viewport.y+5, weaps->num[p->weap[p->curr_weap].weap]->ammo, p->weap[p->curr_weap].ammo, makecol(255-b,b,0));
+			}
+		else
+			game->fonty->draw_string(where,"NO LIMIT",viewport.x+53,viewport.y+4,false);
     sprintf(ints, "%d",p->deaths);
     game->fonty->draw_string(where,ints,viewport.x+10,viewport.y+11,false);
     if (!p->active && p->health>=*game->START_HEALTH)  game->fonty->draw_string(where,"[PRESS JUMP KEY TO RESPAWN]",viewport.x+20,viewport.y+120,true);
