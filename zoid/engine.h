@@ -58,6 +58,7 @@ struct s_viewport
 
 struct engine
 {
+  BITMAP* buffer;
 	int *MAX_SPEED;
 	int *ACELERATION;
 	int *FRICTION;
@@ -101,8 +102,6 @@ struct engine
   class sprite *ammo;
 	class sprite *hook;
   class sprite *firecone;
-	BITMAP* buffer;
-	struct al_ffblk* file;
 	struct part_type *tmppart;
 	struct part_type *gore;
   struct part_type *chreact;

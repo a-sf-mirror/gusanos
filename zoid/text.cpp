@@ -1,6 +1,6 @@
 #include "text.h"
 
-char *ucase(char *str) 
+char *ucase(const char *str) 
 {
 	int i = 0;
 	char *newstr = new char[strlen(str) + 1];
@@ -12,7 +12,7 @@ char *ucase(char *str)
 	return(newstr);
 }
 
-char *lcase(char *str) 
+char *lcase(const char *str) 
 {
 	int i = 0;
 	char *newstr = new char[strlen(str) + 1];
@@ -25,7 +25,7 @@ char *lcase(char *str)
 }
 
 
-char* strmid(char* src, int start, int len)
+char* strmid(const char* src, int start, int len)
 {
 	char *tmp;
 	unsigned int i;
@@ -38,7 +38,7 @@ char* strmid(char* src, int start, int len)
 	return tmp;
 };
 
-void rem_spaces(char* str)
+void rem_spaces(const char* str)
 {
   int i,j;
   j=0;
@@ -46,7 +46,7 @@ void rem_spaces(char* str)
   {
     if (str[i]!=' ')
     {
-      str[j]=str[i];
+      //str[j]=str[i];
       j++;
     };
   };

@@ -156,3 +156,19 @@ class weapon* load_weap(const char* weap_name)
 	};
 	return curr;
 };
+
+void scanWeapsDir()
+{
+  std::string tmp;
+  struct al_ffblk *file=new struct al_ffblk;
+	
+  tmp=game->mod;
+  tmp+="/weapons/*.wpn";
+	al_findfirst(tmp.c_str(), file, FA_ARCH);
+	do
+	{
+		load_weap(file->name);
+	} while(al_findnext(file)==0);
+	
+	delete file;
+};

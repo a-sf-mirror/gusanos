@@ -6,14 +6,19 @@
 #ifdef WINDOWS
 #include "winalleg.h"
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <time.h>
 #include "keys.h"
 #include "text.h"
 
-int knametoint(char *kname);
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cctype>
+#include <algorithm>
+
+using std::fstream;
+
+int knametoint(const char *kname);
 
 struct s_echolist
 {
@@ -21,7 +26,7 @@ struct s_echolist
   int time;
   struct msg *start,*end;
   char text[6][255];
-  void add_echo(char *text);
+  void add_echo(const char *text);
   void remove_echo();
   void init();
   void destroy();
@@ -41,7 +46,7 @@ struct s_bindtable
 	struct s_binding *start,*end;
 	void init();
 	void destroy();
-	int create_binding(int bind, char* cmd_str);
+	int create_binding(int bind, const char* cmd_str);
 	int destroy_binding(int bind);
 };
 
@@ -73,8 +78,8 @@ struct msg_log
 {
 	struct msg *start,*end,*comend;
 	void init();
-	void create_msg(char* text);
-	void create_com(char* text);
+	void create_msg(const char* text);
+	void create_com(const char* text);
 };
 
 struct console
@@ -95,14 +100,14 @@ struct console
 	struct s_cmd *cmd_start;
 	struct s_cmd *cmd_end;
 	void init();
-	int* create_variable(char* name, int value);
-	struct variable* find_variable(char* name);
-	void add_cmd(char* name, void (*func)());
-	struct s_cmd* find_cmd(char* name);
+	int* create_variable(const char* name, int value);
+	struct variable* find_variable(const char* name);
+	void add_cmd(const char* name, void (*func)());
+	struct s_cmd* find_cmd(const char* name);
 	void render(BITMAP* where);
-	void parse(char* str);
-	void parse_silent(char* str);	
-  void save_log(char* logname);	
+	void parse(const char* _str);
+	void parse_silent(const char* str);	
+  void save_log(const char* logname);	
   void input();
 	char arg[512];
 };

@@ -17,11 +17,11 @@ struct fnt
 	void draw_string(BITMAP* bitmap, const char* str,int x,int y,bool outline);
 };
 
-char *ucase(char *str) ;
-char *lcase(char *str);
+char *ucase(const char *str) ;
+char *lcase(const char *str);
 
-char* strmid(char* src, int start, int len);
+char* strmid(const char* src, int start, int len);
 
-void rem_spaces(char* str);
+void rem_spaces(const char* str);
 
 #endif /* TEXT_H */

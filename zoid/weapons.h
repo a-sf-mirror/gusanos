@@ -48,5 +48,6 @@ class weap_list
 extern class weap_list *weaps;
 
 class weapon* load_weap(const char* weap_name);
+void scanWeapsDir();
 
 #endif /* WEAPONS_H */

@@ -30,7 +30,7 @@ void s_echolist::init()
   time=0;
 };
 
-void s_echolist::add_echo(char* text)
+void s_echolist::add_echo(const char* text)
 {
   end->next=new struct msg;
 	end->next->prev=end;
@@ -109,7 +109,7 @@ int s_bindtable::destroy_binding(int bind)
 	return 1;
 };
 
-int s_bindtable::create_binding(int bind, char* cmd_str )
+int s_bindtable::create_binding(int bind, const char* cmd_str )
 {
 	destroy_binding(bind);
 	end->next=new struct s_binding;
@@ -132,7 +132,7 @@ void msg_log::init()
 	comend->nextcom=NULL;
 };
 
-void msg_log::create_com(char* text)
+void msg_log::create_com(const char* text)
 {
 	end->next=new struct msg;
 	end->next->prev=end;
@@ -145,7 +145,7 @@ void msg_log::create_com(char* text)
 	strcpy(end->text,text);
 };
 
-void msg_log::create_msg(char* text)
+void msg_log::create_msg(const char* text)
 {
 	end->next=new struct msg;
 	end->next->prev=end;
@@ -173,7 +173,7 @@ void console::init()
   echolist.init();
 };
 
-int* console::create_variable(char* name,int value)
+int* console::create_variable(const char* name,int value)
 {
   struct variable* v=find_variable(name);
   if(v!=NULL) return v->value;
@@ -187,7 +187,7 @@ int* console::create_variable(char* name,int value)
 	return end->value;
 };
 
-void console::add_cmd(char* name,void (*func)())
+void console::add_cmd(const char* name,void (*func)())
 {
 	cmd_end->next=new struct s_cmd;
 	cmd_end->next->prev=cmd_end;
@@ -197,7 +197,7 @@ void console::add_cmd(char* name,void (*func)())
 	strcpy(cmd_end->name,name);
 };
 
-struct variable* console::find_variable(char* name)
+struct variable* console::find_variable(const char* name)
 {
 	struct variable *curr;
 	
@@ -215,7 +215,7 @@ struct variable* console::find_variable(char* name)
 	return NULL;
 };
 
-struct s_cmd* console::find_cmd(char* name)
+struct s_cmd* console::find_cmd(const char* name)
 {
 	struct s_cmd *curr;
 	
@@ -325,60 +325,64 @@ void unbind()
 	};	
 };
 
-void console::parse(char* str)
+void console::parse(const char* _str)
 {
-	if (strlen(str)!=0)
+  std::string str=_str;
+	if (!str.empty())
 	{
-		unsigned int t;
-		char *var, *val,tmpstr[255];
+		int t;
+		std::string var, val,tmpstr;
 		struct variable* tmpvar;
 		struct s_cmd *tmp_cmd;
 		t=0;
-		while (str[t]!=' ' && t<strlen(str)) t++;
-		var=strmid(str,0,t);		
-		tmpvar=con->find_variable(var);
-		tmp_cmd=con->find_cmd(var);
+		//while (str[t]!=' ' && t<strlen(str)) t++;
+    t=str.find_first_of(' ');
+    //split it
+    var=str.substr(0,t);
+    val=str.substr(t+1);
+		tmpvar=con->find_variable(var.c_str());
+		tmp_cmd=con->find_cmd(var.c_str());
 		if (tmpvar!=NULL)
 		{
-			if (t<strlen(str))
+			if (!val.empty())
 			{
-				val=strmid(str,t+1,strlen(str)-t-1);
-				*tmpvar->value=atoi(val);
-				con->log.create_com(str);
+				*tmpvar->value=atoi(val.c_str());
+				con->log.create_com(str.c_str());
 				con->tmp_com=con->log.start;
 			}
 			else
 			{
-				strcpy(tmpstr,tmpvar->name);
-				strcat(tmpstr," IS ");
-				sprintf(tmpstr,"%s%d",tmpstr,*tmpvar->value);
-				con->log.create_com(str);
-				con->log.create_msg(tmpstr);
+        char itos[64];
+				tmpstr=tmpvar->name;
+				tmpstr+=" IS ";
+				tmpstr+=sprintf(itos,"%d",*tmpvar->value);
+				con->log.create_com(str.c_str());
+				con->log.create_msg(tmpstr.c_str());
 				con->tmp_com=con->log.start;
 			};		
 		} else if (tmp_cmd!=NULL)
 		{
 			strcpy(con->arg,"");
-			if (t<strlen(str))
+			if (!val.empty())
 			{
-				strcpy(con->arg,strmid(str,t+1,strlen(str)-t-1));
+				strcpy(con->arg,val.c_str());
 			};
-			con->log.create_com(str);
+			con->log.create_com(str.c_str());
 			con->tmp_com=con->log.start;
 			tmp_cmd->func();
 		}	
 		else
 		{
-			strcpy(tmpstr,"UNKNOWN COMMAND \"");
-			strcat(tmpstr,var);
-			strcat(tmpstr,"\"");
-			con->log.create_msg(tmpstr);
+			tmpstr="UNKNOWN COMMAND \"";
+			tmpstr+=var;
+			tmpstr+="\"";
+			con->log.create_msg(tmpstr.c_str());
 			con->tmp_com=con->log.start;
 		};
 	};
 };
 
-void console::parse_silent(char* str)
+void console::parse_silent(const char* str)
 {
 	if (strlen(str)!=0)
 	{
@@ -514,37 +518,43 @@ void console::input()
 
 void execute_config()
 {
-	FILE *fbuf;
-	char tmp_str[1024];
-	sprintf(tmp_str,"%s%s%s",game->mod,"/",con->arg);
-	fbuf=fopen(tmp_str,"rt");
-  if (fbuf==NULL)
+	ifstream fbuf;
+	std::string tmp_str;
+  tmp_str=game->mod;
+  tmp_str+="/";
+  tmp_str+=con->arg;
+  if (!exists(tmp_str.c_str()))
 	{
-    sprintf(tmp_str,"%s%s%s","default","/",con->arg);
-    fbuf=fopen(tmp_str,"rt");
+    tmp_str="default/";
+    tmp_str+=con->arg;
   };
-	if (fbuf!=NULL)
+  fbuf.open(tmp_str.c_str());
+	if (fbuf.is_open() && fbuf.good())
 	{
 		//...parse the file
 		//fgets(tmp_str, sizeof(tmp_str), fbuf);
-		while (!feof(fbuf))
+		while (!fbuf.eof())
 		{
-			if (fgets(tmp_str, sizeof(tmp_str), fbuf)==NULL) break;
-			if (tmp_str[strlen(tmp_str)-1]=='\n') tmp_str[strlen(tmp_str)-1]='\0';
-			char *cptr = ucase(tmp_str);
-			con->parse(ucase(tmp_str));
-			free(cptr);
+      getline(fbuf,tmp_str);
+			//if (fgets(tmp_str, sizeof(tmp_str), fbuf)==NULL) break;
+			//if (tmp_str[strlen(tmp_str)-1]=='\n') tmp_str[strlen(tmp_str)-1]='\0';
+			//char *cptr = ucase(tmp_str);
+      std::transform(tmp_str.begin(), tmp_str.end(), tmp_str.begin(), toupper);
+			con->parse(tmp_str.c_str());
+			//free(cptr);
 		};
-		fclose(fbuf);
+		
 	};
+  fbuf.close();
 }; 
 
-void console::save_log(char* logname)
+void console::save_log(const char* logname)
 {
-  FILE *stream;
+  fstream stream;
   struct msg *currmsg;
     
-  if ((stream = fopen(logname, "wb")) == NULL) /* open file TEST.$$$ */
+  stream.open(logname, fstream::out);
+  if (!stream.is_open() || !stream.good())
   {
     fprintf(stderr, "Cannot open output file.\n");
     return;
@@ -554,9 +564,9 @@ void console::save_log(char* logname)
   while (currmsg->next!=NULL )
   {
     currmsg=currmsg->next;
-    fwrite(currmsg->text, strlen(currmsg->text), 1, stream);
-    fwrite("\n", strlen("\n"), 1, stream);
+    stream.write(currmsg->text, strlen(currmsg->text));
+    stream.write("\n", strlen("\n"));
   };
-  fclose(stream); /* close file */
+  stream.close(); /* close file */
   return;
 };

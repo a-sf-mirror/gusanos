@@ -574,18 +574,7 @@ void engine::init_game()
 	buffer=create_bitmap(320,240);
 	
 	
-
-	file=new struct al_ffblk;
-	
-  strcpy(tmp,game->mod);
-  strcat(tmp,"/weapons/*.wpn");
-	al_findfirst(tmp, file, FA_ARCH);
-	do
-	{
-		load_weap(file->name);
-	} while(al_findnext(file)==0);
-	
-	delete file;
+  scanWeapsDir();
   
 	gore=load_part("gore.obj");
   chreact=load_part("chreact.obj");
