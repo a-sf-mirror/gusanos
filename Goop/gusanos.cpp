@@ -25,8 +25,8 @@ int main(int argc, char **argv)
 	console.registerIntVariable(&consoleTest, "TEST", 100);
 	console.registerIntVariable(&pooo, "POO", 20);
 	allegro_message("%d",consoleTest);
-	console.setVariableValue("TEST", 10);
-	console.setVariableValue("POO", 15);
+	console.setVariableValue("TEST", "10");
+	console.setVariableValue("POO", "15");
 	allegro_message("%d",consoleTest);
 	allegro_message("%d",pooo);
 	
