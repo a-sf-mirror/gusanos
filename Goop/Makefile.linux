@@ -4,7 +4,7 @@ LIBS= -L../Console -lpng -lz `allegro-config --libs` -lzoidcom -lgcon -lfmod
 DEFINES= 
 BIN= ../gusanos.exe
 OBJECTS= gusanos.o keyboard.o gconsole.o keys.o resource_list.o sprite.o \
-	menu_window.o font.o vec.o level.o game.o material.o viewport.o base_object.o \
+	font.o vec.o level.o game.o material.o viewport.o base_object.o \
 	worm.o part_type.o particle.o base_action.o events.o \
 	game_actions.o parser.o sound.o gfx.o sfx.o base_animator.o animators.o distortion.o \
 	player.o player_input.o base_player.o player_options.o weapon.o weapon_type.o player_ai.o \
