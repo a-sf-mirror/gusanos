@@ -1,0 +1,9 @@
+
+Import('env getObjects getBinName platform')
+
+if platform == 'posix':
+	env = env.Copy(LIBS = 'boost_filesystem-gcc')
+elif platform == 'mingw-cross':
+	env = env.Copy(LIBS = 'boost_filesystem-mgw')
+	
+env.Program(getBinName('liero2gus'), getObjects(env))
