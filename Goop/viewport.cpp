@@ -38,7 +38,7 @@ void Viewport::render()
 	list<BaseObject*>::iterator iter;
 	for ( iter = game.objects.begin(); iter != game.objects.end(); iter++)
 	{
-		(*iter)->draw(m_dest, m_pos.x, m_pos.y);
+		(*iter)->draw(m_dest, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y) );
 	}
 }
 

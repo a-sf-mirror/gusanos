@@ -118,7 +118,7 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 		
 	if ( pos > 0)
 	{
-		if (background) background->draw(where, 0, 0, pos, false, ALIGN_LEFT, ALIGN_BOTTOM);
+		if (background) background->draw(where, 0, 0, static_cast<int>(pos), false, ALIGN_LEFT, ALIGN_BOTTOM);
 		while ((msg != log.begin()) && ((int)pos - 20 - (textIndex - 1) * (m_font->height() + 1) > 0))
 		{
 			msg--;

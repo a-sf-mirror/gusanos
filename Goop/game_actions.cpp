@@ -234,7 +234,7 @@ void DelayFire::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon
 {
 	if(weapon)
 	{
-		weapon->delay( delayTime + rnd()*delayTimeVariation );
+		weapon->delay( static_cast<int>(delayTime + rnd()*delayTimeVariation) );
 	}
 }
 

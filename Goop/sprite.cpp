@@ -127,7 +127,7 @@ void Sprite::drawAngled(BITMAP *where, int frame,int x, int y, float angle, bool
 		int _x,_y;
 		
 		float angleDivisionSize = 180 / m_frame.size();
-		int angleFrame = (angle + angleDivisionSize / 2 ) * (m_frame.size()-1) / 180;
+		int angleFrame = static_cast<int>( (angle + angleDivisionSize / 2 ) * (m_frame.size()-1) / 180 );
 		
 		if ( angleFrame < m_frame.size() )
 		{

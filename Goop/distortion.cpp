@@ -203,7 +203,7 @@ void Distortion::apply( BITMAP* where, int _x, int _y, float multiply = 1)
 		for ( int x = 0; x < m_map->width; ++x )
 		{
 			offset = m_map->map[x+y*m_map->width] * multiply;
-			putpixel(buffer, x,y, getpixel(where,x+_x+offset.x,y+_y+offset.y));
+			putpixel(buffer, x,y, getpixel(where, static_cast<int>(x+_x+offset.x), static_cast<int>(y+_y+offset.y) ));
 		}
 		++y;
 	}

@@ -123,7 +123,7 @@ void Particle::draw(BITMAP* where,int xOff, int yOff)
 	{
 		if ( m_angle < 180 )
 		{
-			m_sprite->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, pos.y-yOff, m_angle);
+			m_sprite->drawAngled(where, m_animator->getFrame(), static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_angle);
 		}else
 		{
 			m_sprite->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, pos.y-yOff, 360-m_angle , true);
@@ -131,6 +131,6 @@ void Particle::draw(BITMAP* where,int xOff, int yOff)
 	}
 	if (m_type->distortion)
 	{
-		m_type->distortion->apply( where, pos.x-xOff, pos.y-yOff, m_type->distortMagnitud );
+		m_type->distortion->apply( where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_type->distortMagnitud );
 	}
 }

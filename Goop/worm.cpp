@@ -215,9 +215,9 @@ void Worm::draw(BITMAP* where,int xOff, int yOff)
 	for(int i = 0; i< 10; i++)
 	{
 		Vec crosshair = angleVec(aimAngle*dir,rnd()*10+30) + pos - Vec(xOff,yOff + game.options.worm_weaponHeight);
-		putpixel(where, crosshair.x,crosshair.y,makecol(255,0,0));
+		putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 	}
-	if (m_ninjaRope->active) line(where, pos.x-xOff, y-yOff, m_ninjaRope->getPos().x-xOff, m_ninjaRope->getPos().y-yOff, m_ninjaRope->getColour());
+	if (m_ninjaRope->active) line(where, static_cast<int>(pos.x-xOff), static_cast<int>(y-yOff), static_cast<int>(m_ninjaRope->getPos().x-xOff), static_cast<int>(m_ninjaRope->getPos().y-yOff), m_ninjaRope->getColour());
 	skin->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, y-yOff,aimAngle, flipped);
 }
 
