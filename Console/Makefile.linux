@@ -4,7 +4,7 @@ SOURCES= console.cpp bindings.cpp variables.cpp text.cpp consoleitem.cpp \
 INCLUDES= console.h bindings.h variables.h text.h consoleitem.h command.h \
 	alias.h
 OBJECTS= console.o bindings.o variables.o text.o consoleitem.o command.o \
-	alias.o
+	alias.o special_command.o
 
 CFLAGS= -O3
 LIBRARY= libgcon.a
