@@ -138,7 +138,7 @@ struct particle* particles::create_directional_part(int x,int y,int xspd, int ys
 		end->obj_trail_time=0;
 		end->exp_trail_time=0;
 		if (type->timeout_variation!=0)
-		end->timeout=type->exptime-rand()%type->timeout_variation+type->timeout_variation/2;
+			end->timeout=type->exptime-rand()%type->timeout_variation+type->timeout_variation/2;
 		else end->timeout=type->exptime;
 		end->time=0;
 		end->dir=dir;
@@ -170,7 +170,6 @@ void particles::render_particles(BITMAP* where,int layer)
 		{
 			if (tmp->type->sprt==NULL)
 			{
-
 				putpixel(where,tmp->x/1000,tmp->y/1000,tmp->color);
 			}
 			else
@@ -451,8 +450,8 @@ void summon_bonus(struct part_type *item, int chance)
 	      y = (rand() % (map->material->h - 10) + 5);
 	      if (check_position (x,y))
 	      {
-	        partlist.create_part(1000 * x, 1000 * y, 0, 0, 0, item);
-          num=5000;
+	        partlist.create_part(1000 * x, 1000 * y, 0, 0, -1, item);
+          return;
   	    }			
 	    }
       while (num < 5000);
