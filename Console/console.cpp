@@ -44,6 +44,7 @@ Console::~Console()
 
 //============================= INTERFACE ====================================
 
+/*
 void Console::registerIntVariable(const string &name, int* src, int defaultValue, void (*func)( int ))
 {
 	if (!name.empty())
@@ -68,7 +69,7 @@ void Console::registerFloatVariable(const string &name, float* src, float defaul
 	}
 }
 
-void Console::registerEnumVariable(const string &name, int* src, int defaultValue, std::map<std::string, int> const& mapping, void (*func)( int ))
+void Console::registerEnumVariable(const string &name, int* src, int defaultValue, EnumVariable::MapType const& mapping, void (*func)( int ))
 {
 	if (!name.empty())
 	{
@@ -79,7 +80,20 @@ void Console::registerEnumVariable(const string &name, int* src, int defaultValu
 		}
 	}
 }
+*/
 
+void Console::registerVariable(Variable* var)
+{
+	string const& name = var->getName();
+	if (!name.empty() && items.find(name) == items.end())
+	{
+		items[name] = var;
+	}
+	else
+	{
+		delete var; // Already got a var with that name or it's an empty name
+	}
+}
 
 
 void Console::registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&))

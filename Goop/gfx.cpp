@@ -61,17 +61,23 @@ void Gfx::shutDown()
 
 void Gfx::registerInConsole()
 {
-	console.registerCommand("SCREENSHOT", screenShot);
-	console.registerCommand("VID_TOGGLE_FULLSCREEN", fullscreenCmd);
-	console.registerIntVariable("VID_FULLSCREEN", &m_fullscreen, 1, fullscreen);
-	console.registerIntVariable("VID_DOUBLERES", &m_doubleRes, 0, doubleRes);
-	console.registerIntVariable("VID_VSYNC", &m_vsync, 1);
-	console.registerIntVariable("VID_CLEAR_BUFFER", &m_clearBuffer, 1);
+	console.registerCommands()
+		("SCREENSHOT", screenShot)
+		("VID_TOGGLE_FULLSCREEN", fullscreenCmd)
+	;
+	
+	console.registerVariables()
+		("VID_FULLSCREEN", &m_fullscreen, 1, fullscreen)
+		("VID_DOUBLERES", &m_doubleRes, 0, doubleRes)
+		("VID_VSYNC", &m_vsync, 1)
+		("VID_CLEAR_BUFFER", &m_clearBuffer, 1)
+	;
+	
 	// NOTE: When/if adding a callback to gfx variables, make it do nothing if
 	// gfx.operator bool() returns false.
 	
 	{
-		map<string, int> videoFilters;
+		EnumVariable::MapType videoFilters;
 
 		insert(videoFilters) // These neat boost::assign functions actually make it smaller than!
 			("NOFILTER", NO_FILTER)
@@ -79,11 +85,11 @@ void Gfx::registerInConsole()
 			//("2XSAI", AA2XSAI) // To be included later.
 		;
 
-		console.registerEnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters);
+		console.registerVariable(new EnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters));
 	}
 	
 	{ // TODO: Only include drivers relevant to the platform
-		map<string, int> videoDrivers;
+		EnumVariable::MapType videoDrivers;
 		
 		insert(videoDrivers)
 			("AUTO", GFX_AUTODETECT)
@@ -96,7 +102,7 @@ void Gfx::registerInConsole()
 #endif
 		;
 
-		console.registerEnumVariable("VID_DRIVER", &m_driver, GFX_AUTODETECT, videoDrivers);
+		console.registerVariable(new EnumVariable("VID_DRIVER", &m_driver, GFX_AUTODETECT, videoDrivers));
 	}
 }
 
@@ -270,12 +276,13 @@ bool Gfx::saveBitmap( const string &filename,BITMAP* image, RGB* palette )
 string screenShot(const list<string> &args)
 {
 	int nameIndex = 0;
-	string filename = "screenshots/ss" + cast<string>(nameIndex) + ".png";
-	while( exists( filename.c_str() ) )
+	
+	string filename;
+	do
 	{
-		nameIndex += 1;
 		filename = "screenshots/ss" + cast<string>(nameIndex) + ".png";
-	}
+		++nameIndex;
+	} while( exists( filename.c_str() ) );
 	
 	BITMAP * tmpbitmap = create_bitmap(screen->w,screen->h);
 	blit(screen,tmpbitmap,0,0,0,0,screen->w,screen->h);
@@ -283,7 +290,7 @@ string screenShot(const list<string> &args)
 	destroy_bitmap(tmpbitmap);
 	
 	if ( success )
-		return "SCREENSHOT SAVED AS: SS" + cast<string>(nameIndex) + ".png";
+		return "SCREENSHOT SAVED AS: " + filename;
 	else 
 		return "UNABLE TO SAVE SCREENSHOT";
 }

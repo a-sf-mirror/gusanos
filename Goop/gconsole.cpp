@@ -160,18 +160,23 @@ void GConsole::init()
 {
 	keyHandler.init();
 
-	m_mode = CONSOLE_MODE_BINDINGS;
+	//m_mode = CONSOLE_MODE_BINDINGS;
+	m_mode = CONSOLE_MODE_INPUT;
+
+	console.registerVariables()
+		("CON_SPEED", &speed, 4)
+		("CON_HEIGHT", &height, 120)
+	;
 	
-	registerFloatVariable("CON_SPEED", &speed, 4);
-	registerIntVariable("CON_HEIGHT", &height, 120);
-	
-	registerCommand("BIND", bindCmd);
-	registerCommand("SWAPKEYS", swapKeysCmd);
-	registerCommand("SETSHIFTCHAR", setShiftChar);
-	registerCommand("SETCHAR", setChar);
-	registerCommand("SETCONSOLEKEY", setConsoleKey);
-	registerCommand("EXEC", execCmd);
-	registerCommand("ALIAS", aliasCmd);
+	console.registerCommands()
+		("BIND", bindCmd)
+		("SWAPKEYS", swapKeysCmd)
+		("SETSHIFTCHAR", setShiftChar)
+		("SETCHAR", setChar)
+		("SETCONSOLEKEY", setConsoleKey)
+		("EXEC", execCmd)
+		("ALIAS", aliasCmd)
+	;
 }
 
 void GConsole::shutDown()

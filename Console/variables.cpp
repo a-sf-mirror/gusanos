@@ -3,6 +3,8 @@
 
 using namespace std;
 
+
+/*
 ///////////////////////////////IntVariable////////////////////////////////
 
 //============================= LIFECYCLE ================================
@@ -19,7 +21,7 @@ IntVariable::~IntVariable()
 }
 
 IntVariable::IntVariable(int* src, string name, int defaultValue, void (*func)( int ))
-: m_src(src), m_name(name), m_defaultValue(defaultValue), callback(func)
+: Variable(name), m_src(src), m_defaultValue(defaultValue), callback(func)
 {
 	*m_src = m_defaultValue;
 }
@@ -57,7 +59,7 @@ FloatVariable::~FloatVariable()
 }
 
 FloatVariable::FloatVariable(float* src, string name, float defaultValue, void (*func)( float ) )
-: m_src(src), m_name(name), m_defaultValue(defaultValue), callback(func)
+: Variable(name), m_src(src), m_defaultValue(defaultValue), callback(func)
 {
 	*m_src = m_defaultValue;
 }
@@ -78,6 +80,7 @@ string FloatVariable::invoke(const std::list<std::string> &args)
 		return m_name + " IS \"" + cast<string>(*m_src) + '"';
 	}
 }
+*/
 
 ///////////////////////////////EnumVariable////////////////////////////////
 
@@ -94,8 +97,8 @@ EnumVariable::~EnumVariable()
 	
 }
 
-EnumVariable::EnumVariable(int* src, string name, int defaultValue, MapType const& mapping, void (*func)( int ))
-: m_src(src), m_name(name), m_defaultValue(defaultValue), m_mapping(mapping)
+EnumVariable::EnumVariable(std::string name, int* src, int defaultValue, MapType const& mapping, void (*func)( int ))
+: Variable(name), m_src(src), m_defaultValue(defaultValue), m_mapping(mapping)
 {
 	*m_src = m_defaultValue;
 

@@ -22,7 +22,7 @@ class WeaponType
 	float laserSightIntensity;
 	float laserSightRange;
 
-   Sprite *firecone;
+ 	Sprite *firecone;
 	std::string name;
 
 	Event *primaryShoot;

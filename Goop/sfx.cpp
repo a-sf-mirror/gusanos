@@ -68,7 +68,7 @@ void Sfx::shutDown()
 void Sfx::registerInConsole()
 {
 	{
-		map<string, int> outputModes;
+		EnumVariable::MapType outputModes;
 		insert(outputModes)
 			("AUTO", -1)
 			("NOSFX", FSOUND_OUTPUT_NOSOUND)
@@ -90,11 +90,13 @@ void Sfx::registerInConsole()
 			("GC", FSOUND_OUTPUT_GC)
 #endif
 		;
+
+		console.registerVariables()
+			("SFX_VOLUME", &m_volume, 255, volume)
+			("SFX_LISTENER_DISTANCE", &m_listenerDistance, 20)
+			(new EnumVariable("SFX_OUTPUT_MODE", &m_outputMode, -1, outputModes))
+		;
 		
-		console.registerEnumVariable("SFX_OUTPUT_MODE", &m_outputMode, -1, outputModes);
-		
-		console.registerIntVariable("SFX_VOLUME", &m_volume, 255, volume);
-		console.registerIntVariable("SFX_LISTENER_DISTANCE", &m_listenerDistance, 20);
 		// NOTE: When/if adding a callback to sfx variables, make it do nothing if
 		// sfx.operator bool() returns false.
 	}
@@ -116,23 +118,24 @@ void Sfx::think()
 	list< pair< int, BaseObject* > >::iterator obj;
 	for ( obj = chanObject.begin(); obj != chanObject.end(); obj++ )
 	{
-		if ( (*obj).second )
+		if ( obj->second )
 		{
-			float pos[3] = { (*obj).second->getPos().x, (*obj).second->getPos().y, 0 };
-			FSOUND_3D_SetAttributes((*obj).first, pos, NULL);
+			float pos[3] = { obj->second->getPos().x, obj->second->getPos().y, 0 };
+			FSOUND_3D_SetAttributes(obj->first, pos, NULL);
 		}
 	}
 
 	//Check for deleted objects
 	for ( obj = chanObject.begin(); obj != chanObject.end(); )
 	{
-		if ( (*obj).second && ( (*obj).second->deleteMe || !FSOUND_IsPlaying( (*obj).first ) ) )
+		if ( obj->second && ( obj->second->deleteMe || !FSOUND_IsPlaying( obj->first ) ) )
 		{
-			list< pair< int, BaseObject* > >::iterator tmp;
-			tmp = obj;
+			list< pair< int, BaseObject* > >::iterator tmp = obj;
 			obj++;
 			chanObject.erase(tmp);
-		}else obj++;
+		}
+		else
+			obj++;
 	}
 
 }

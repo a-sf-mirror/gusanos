@@ -17,7 +17,7 @@ WeaponType::WeaponType()
 	laserSightIntensity = 0;
 	laserSightRange = 0;
 
-   firecone = NULL;
+	firecone = NULL;
 
 	primaryShoot = NULL;
 	primaryPressed = NULL;
@@ -27,10 +27,11 @@ WeaponType::WeaponType()
 
 WeaponType::~WeaponType()
 {
-	if (primaryShoot) delete primaryShoot;
-	if (primaryPressed) delete primaryPressed;
-	if (primaryReleased) delete primaryReleased;
-	if (outOfAmmo) delete outOfAmmo;
+	// <GLIP> There's no need to test for a zero-pointer before deleting
+	delete primaryShoot;
+	delete primaryPressed;
+	delete primaryReleased;
+	delete outOfAmmo;
 }
 
 bool WeaponType::load(const string &filename)

@@ -51,6 +51,7 @@ void startGame(const std::string&)
 int main(int argc, char **argv)
 {
 	game.init(argc, argv);
+
 	gui::init();
 	
 	//Font *tempFont = fontList.load("minifont.bmp");
@@ -77,9 +78,15 @@ int main(int argc, char **argv)
 	
 	window.addWidget(&glist);
 	top.addWidget(&window);
-	
-	console.registerIntVariable("CL_SHOWFPS", &showFps, 1);
-	console.registerIntVariable("CL_SHOWDEBUG", &showDebug, 1);
+
+/*
+	console.registerVariable(tVariable("CL_SHOWFPS", &showFps, 1));
+	console.registerVariable(tVariable("CL_SHOWDEBUG", &showDebug, 1));
+	*/
+	console.registerVariables()
+		("CL_SHOWFPS", &showFps, 1)
+		("CL_SHOWDEBUG", &showDebug, 1)
+	;
 	
 	console.registerCommand("QUIT", Exit);
 	
@@ -100,22 +107,24 @@ int main(int argc, char **argv)
 	int _fps = 0;
 	int logicLast = 0;
 
-        //menu loop
-        while (menu)
-        {
-            if (key[KEY_ESC])
-            {
-                menu = false;
-                key[KEY_ESC] = 0;
-            }
-            rectfill(gfx.buffer, 0, 0, 319, 239, 0);
-            top.keys((bool*)key);
-            top.render();
-            blit(gusLogo, gfx.buffer, 0, 0, 319 - gusLogo->w, 239 - gusLogo->h, gusLogo->w, gusLogo->h);
-	    gfx.updateScreen();
-        }
+#if 0
+	//menu loop
+	while (menu)
+	{
+	    if (key[KEY_ESC])
+	    {
+	        menu = false;
+	        key[KEY_ESC] = 0;
+	    }
+	    rectfill(gfx.buffer, 0, 0, 319, 239, 0);
+	    top.keys((bool*)key);
+	    top.render();
+	    blit(gusLogo, gfx.buffer, 0, 0, 319 - gusLogo->w, 239 - gusLogo->h, gusLogo->w, gusLogo->h);
+		gfx.updateScreen();
+	}
+#endif
 
-        //main game loop
+	//main game loop
 	while (!quit)
 	{
 
@@ -150,7 +159,7 @@ int main(int argc, char **argv)
 #ifndef DISABLE_ZOIDCOM
 			network.update();
 #endif
-			
+
 			console.checkInput();
 			console.think();
 			
@@ -190,7 +199,6 @@ int main(int argc, char **argv)
 		console.render(gfx.buffer);
 		
 		gfx.updateScreen();
-		
 	}
 	
 	

@@ -2,6 +2,9 @@
 #define VARIABLES_H
 
 #include "consoleitem.h"
+#include "text.h"
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
 
 #include <string>
 #include <map>
@@ -9,7 +12,81 @@
 #define VAR_TYPE_INVALID 0
 #define VAR_TYPE_INT 1
 
-class IntVariable : public ConsoleItem
+class Variable : public ConsoleItem
+{
+	public:
+	
+	Variable(std::string const& name)
+	: m_name(name)
+	{
+	}
+	
+	Variable()
+	{
+	}
+	
+	~Variable()
+	{
+	}
+
+	std::string const& getName()
+	{ return m_name; }
+	
+	protected:
+
+	std::string m_name;
+};
+
+template<class T>
+class TVariable : public Variable
+{
+	public:
+	
+	TVariable(std::string name, T* src, T defaultValue, void (*callback)( T ) = NULL )
+	: Variable(name), m_src(src), m_callback(callback)
+	{
+		*src = defaultValue;
+	}
+	
+	TVariable()
+	: Variable(), m_src(NULL), m_defaultValue(T(0)), m_callback(NULL) //TODO: T(0) isn't always a good idea
+	{
+	}
+	
+	~TVariable()
+	{
+	}
+	
+	std::string invoke(const std::list<std::string> &args)
+	{
+		if (!args.empty())
+		{
+			T oldValue = *m_src;
+			*m_src = cast<T>(*args.begin());
+			if ( m_callback ) m_callback(oldValue);
+	
+			return "";
+		}else
+		{
+			return m_name + " IS \"" + lexical_cast<std::string>(*m_src) + '"';
+		}
+	}
+	
+	private:
+
+	void (*m_callback)( T );
+	T* m_src;
+	T m_defaultValue;
+};
+
+template<class T, class IT>
+inline TVariable<T>* tVariable(std::string name, T* src, IT defaultValue, void (*callback)( T ) = NULL )
+{
+	return new TVariable<T>(name, src, defaultValue, callback);
+}
+
+/*
+class IntVariable : public Variable
 {
 	public:
 	
@@ -22,12 +99,11 @@ class IntVariable : public ConsoleItem
 	private:
 
 	void (*callback)( int );
-	std::string m_name;
 	int* m_src;
 	int m_defaultValue;
 };
 
-class FloatVariable : public ConsoleItem
+class FloatVariable : public Variable
 {
 	public:
 	
@@ -40,19 +116,21 @@ class FloatVariable : public ConsoleItem
 	private:
 	
 	void (*callback)( float );
-	std::string m_name;
 	float* m_src;
 	float m_defaultValue;
-};
+};*/
 
-class EnumVariable : public ConsoleItem
+typedef TVariable<int> IntVariable;
+typedef TVariable<float> FloatVariable;
+
+class EnumVariable : public Variable
 {
 	public:
 	
-	typedef std::map<std::string, int> MapType;
+	typedef std::map<std::string, int, IStrCompare> MapType;
 	typedef std::map<int, std::string> ReverseMapType;
 	
-	EnumVariable(int* src, std::string name, int defaultValue, MapType const& mapping, void (*func)( int ));
+	EnumVariable(std::string name, int* src, int defaultValue, MapType const& mapping, void (*func)( int ) = NULL);
 	EnumVariable();
 	~EnumVariable();
 	
@@ -61,7 +139,6 @@ class EnumVariable : public ConsoleItem
 	private:
 	
 	void (*callback)( int );
-	std::string m_name;
 	int* m_src;
 	MapType m_mapping;
 	ReverseMapType m_reverseMapping;

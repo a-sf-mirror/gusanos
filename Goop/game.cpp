@@ -73,29 +73,33 @@ string connectCmd(const list<string> &args)
 
 void Options::registerInConsole()
 {
-	console.registerFloatVariable("SV_NINJAROPE_SHOOT_SPEED", &ninja_rope_shootSpeed, 2);
-	console.registerFloatVariable("SV_NINJAROPE_PULL_FORCE", &ninja_rope_pullForce, 0.031);
-	console.registerFloatVariable("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 20);
+	console.registerVariables()
+		("SV_NINJAROPE_SHOOT_SPEED", &ninja_rope_shootSpeed, 2)
+		("SV_NINJAROPE_PULL_FORCE", &ninja_rope_pullForce, 0.031)
+		("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 20)
+		
+		("SV_WORM_MAX_SPEED", &worm_maxSpeed, 0.45)
+		("SV_WORM_ACCELERATION", &worm_acceleration, 0.03)
+		("SV_WORM_AIR_ACCELERATION_FACTOR", &worm_airAccelerationFactor, 1)
+		("SV_WORM_FRICTION", &worm_friction, 0.02)
+		("SV_WORM_AIR_FRICTION", &worm_airFriction, 0.000005)
+		("SV_WORM_GRAVITY", &worm_gravity, 0.009)
+		("SV_WORM_BOUNCE_QUOTIENT", &worm_bounceQuotient, 0.3)
+		("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 2)
+		("SV_WORM_JUMP_FORCE", &worm_jumpForce, 0.6)
+		("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 4)
+		("SV_WORM_HEIGHT", &worm_height, 7)
+		("SV_WORM_MAX_CLIMB", &worm_maxClimb, 4)
+		
+		("HOST", &host, 0)
+	;
 	
-	console.registerFloatVariable("SV_WORM_MAX_SPEED", &worm_maxSpeed, 0.45);
-	console.registerFloatVariable("SV_WORM_ACCELERATION", &worm_acceleration, 0.03);
-	console.registerFloatVariable("SV_WORM_AIR_ACCELERATION_FACTOR", &worm_airAccelerationFactor, 1);
-	console.registerFloatVariable("SV_WORM_FRICTION", &worm_friction, 0.02);
-	console.registerFloatVariable("SV_WORM_AIR_FRICTION", &worm_airFriction, 0.000005);
-	console.registerFloatVariable("SV_WORM_GRAVITY", &worm_gravity, 0.009);
-	console.registerFloatVariable("SV_WORM_BOUNCE_QUOTIENT", &worm_bounceQuotient, 0.3);
-	console.registerFloatVariable("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 2);
-	console.registerFloatVariable("SV_WORM_JUMP_FORCE", &worm_jumpForce, 0.6);
-	console.registerIntVariable("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 4);
-	console.registerIntVariable("SV_WORM_HEIGHT", &worm_height, 7);
-	console.registerIntVariable("SV_WORM_MAX_CLIMB", &worm_maxClimb, 4);
-	
-	console.registerIntVariable("HOST", &host, 0);
-	
-	console.registerCommand("MAP", mapCmd);
-	console.registerCommand("GAME", gameCmd);
-	console.registerCommand("ADDBOT", addbotCmd);
-	console.registerCommand("CONNECT",connectCmd);
+	console.registerCommands()
+		("MAP", mapCmd)
+		("GAME", gameCmd)
+		("ADDBOT", addbotCmd)
+		("CONNECT",connectCmd)
+	;
 }
 
 Game::Game()
