@@ -28,7 +28,7 @@ Sound::~Sound()
 
 bool Sound::load(const string &filename)
 {	
-	m_sound = FSOUND_Sample_Load( FSOUND_FREE, filename.c_str(), FSOUND_HW3D, 0, 0 );
+	m_sound = FSOUND_Sample_Load( FSOUND_FREE, filename.c_str(), FSOUND_HW3D | FSOUND_FORCEMONO, 0, 0 );
 	if ( m_sound )
 	{
 		return true;
