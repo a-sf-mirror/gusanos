@@ -17,6 +17,7 @@
 #include "gfx.h"
 #include "sfx.h"
 #include "distortion.h"
+#include "ai.h"
 
 #include <string>
 #include <vector>
@@ -99,7 +100,7 @@ int main(int argc, char **argv)
 	if(true)
 	{
 		Worm* worm = new Worm;
-		Player* player = new Player(game.playerOptions[1]);
+		Player* player = new PlayerAI(game.playerOptions[1]);
 		Viewport* viewport = new Viewport;
 		viewport->setDestination(gfx.buffer,160,0,160,240);
 		player->assignWorm(worm);
@@ -126,8 +127,6 @@ int main(int argc, char **argv)
 	int _fpsCount = 0;
 	int _fps = 0;
 	
-	Font *font = fontList.load("minifont.bmp");
-
 	while (!quit)
 	{
 		//Update FPS
@@ -159,7 +158,7 @@ int main(int argc, char **argv)
 		//show fps
 		if (showFps)
 		{
-			font->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
+			tempFont->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
 		}
 		_fpsCount++;
 	

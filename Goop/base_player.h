@@ -4,6 +4,7 @@
 struct PlayerOptions;
 
 #include <string>
+#include "vec.h"
 
 class Worm;
 
@@ -20,6 +21,7 @@ class BasePlayer
 	void assignWorm(Worm* worm);
 	
 	PlayerOptions* getOptions();
+        Vec& getPos();
 	
 	protected:
 	

@@ -27,4 +27,9 @@ PlayerOptions *BasePlayer::getOptions()
 	return m_options;
 }
 
+Vec& BasePlayer::getPos()
+{
+    return m_worm->getPos();
+}
+
 
