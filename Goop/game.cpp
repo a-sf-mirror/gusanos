@@ -44,7 +44,9 @@ string gameCmd(const list<string> &args)
 {
 	if (!args.empty())
 	{
-		game.setMod( *args.begin() );
+		string tmp = *args.begin();
+		std::transform(tmp.begin(), tmp.end(), tmp.begin(), (int(*)(int)) tolower);
+		game.setMod( tmp );
 		return "THE GAME WILL CHANGE THE NEXT TIME YOU CHANGE MAP";
 	}
 	return "GAME <MODNAME> : SET THE MOD TO LOAD THE NEXT MAP CHANGE";
@@ -110,7 +112,7 @@ void Game::init()
 
 	m_defaultPath = "default/";
 	m_modPath = "default/";
-	nextMod = "default/";
+	nextMod = "default";
 
 	gfx.init();
 	sfx.init();
