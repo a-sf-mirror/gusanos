@@ -10,7 +10,10 @@
 #include "particles.h"
 #include "engine.h"
 #include "sounds.h"
+
+#ifdef AAFBLEND
 #include <fblend.h>
+#endif
 
 #include <iostream>
 #include <fstream>

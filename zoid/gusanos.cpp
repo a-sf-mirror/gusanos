@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         speed_counter--;
       };
       game->render();
-      Sleep(0);
+      //Sleep(0);
       game->frame_count++;
       if (t > 100)
       {

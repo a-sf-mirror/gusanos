@@ -281,7 +281,9 @@ void engine::render()
         BITMAP* light_layer_buffer=create_sub_bitmap(map->light_layer, p->xview,p->yview, viewport[i].w,viewport[i].h);
         //draw_sprite(map->light_layer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
         //draw_trans_sprite(buffer, light_layer_buffer, viewport[i].x, viewport[i].y);
+#ifdef AAFBLEND
         fblend_add(light_layer_buffer,buffer , viewport[i].x, viewport[i].y,255);
+#endif
         destroy_bitmap(light_layer_buffer);
         solid_mode();
       };

@@ -11,7 +11,11 @@
 #include <string.h>
 #include <time.h>
 #include "engine.h"
+
+#ifdef AAFBLEND
 #include <fblend.h>
+#endif
+
 #ifdef AA2XSAI
 extern "C" {
 #include "2xsai.h"
