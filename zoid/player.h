@@ -47,8 +47,6 @@ class worm
 	struct KEYS *keys;
   int color;
   int local_slot;
-	//ping
-	int ping;
   ZCom_Node *node;
   ZCom_ConnID id;
   
@@ -106,9 +104,6 @@ void renderrope(worm *player);
 void calcrope(worm *player);
 void respawn_player(worm* player);
 void calcrope(worm *player);
-
-//ping
-void calcping(worm *player);
 
 void pl1_moveright();
 void pl1_moveleft();

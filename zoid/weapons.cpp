@@ -40,8 +40,6 @@ weapon::weapon()
   create_on_release=0;
   next=NULL;
   prev=NULL;
-	//weapon HUD
-	image=NULL;
 };
 
 weapon::~weapon()
@@ -75,25 +73,25 @@ weap_list::~weap_list()
 //Sort weapons in alphabetical order using selection sort
 void weap_list::sort()
 {
-	int elements = weap_count;
+  int elements = weap_count;
 
-	int low = 0;
-	int t;
-	for (int o = 0; o < elements; o++)
+  int low = 0;
+  int t;
+  for (int o = 0; o < elements; o++)
+    {
+      low = o;
+      for (int i = o; i < elements; i++)
 	{
-		low = o;
-		for (int i = o; i < elements; i++)
-		{
-			if (strcmp(num[i]->name, num[low]->name) < 0)
-			{
-				low = i;
-			}
-		}
-		weapon *temp;
-		temp = num[o];
-		num[o] = num[low];
-		num[low] = temp;
+	  if (strcmp(num[i]->name, num[low]->name) < 0)
+	    {
+	      low = i;
+	    }
 	}
+      weapon *temp;
+      temp = num[o];
+      num[o] = num[low];
+      num[low] = temp;
+    }
 }
 
 class weapon* load_weap(const char* weap_name)
@@ -187,8 +185,6 @@ class weapon* load_weap(const char* weap_name)
           else if ("lsight_fade"==var) curr->lsight_fade=atoi(val.c_str());
           else if ("start_delay"==var) curr->start_delay=atoi(val.c_str());
           else if ("create_on_release"==var) curr->create_on_release=load_part(val.c_str());
-					//weapon HUD
-					else if ("image"==var && "null"!=val) curr->image=sprites->load_sprite(("weapons/"+val).c_str(),1,game->mod,game->v_depth,true,90,60);
 				};
 			};
 		};

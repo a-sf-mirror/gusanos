@@ -6,6 +6,7 @@
 #include "console.h"
 #include "network.h"
 #include "particles.h"
+#include "ai.h"
 
 void randomize_weap(struct worm *player,int o)
 {
@@ -119,8 +120,15 @@ void engine::input()
     player[local_player[i]]->keys->jump=false;
     player[local_player[i]]->keys->fire=false;
     player[local_player[i]]->keys->change=false;
+#ifdef WORMAI
+    //Check if AI player
+    if (i == 1)
+    {
+	((wormai*)player[local_player[i]])->update();
+    }
+#endif
   };
-  
+
   con->input();
   
   if (game->selecting)

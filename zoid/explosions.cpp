@@ -443,17 +443,14 @@ void dig_hole(BITMAP* image,int x,int y, int mat, int hole_strength, sprite *dra
 			{
 				if (map->mat[m].strength<hole_strength /*&& ((map->mat[m].destroyed_into+1 != m)||(mat>-1))*/)
 				{
-					if (!getpixel(map->background,x+x2,y+y2) == makecol(255,0,255))
-					{
-						drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
-						set_trans_blender(0, 0, 0, 64);
-						if (draw_sprite)
-							putpixel(map->mapimg,x+x2,y+y2,getpixel(draw_sprite->img[0],x2,y2));
-						else
-							if (!map->mat[map->mat[m].destroyed_into+1].flows)
-								putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
-						solid_mode();
-					}
+	        drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+					set_trans_blender(0, 0, 0, 64);
+					if (draw_sprite)
+						putpixel(map->mapimg,x+x2,y+y2,getpixel(draw_sprite->img[0],x2,y2));
+					else
+						if (!map->mat[map->mat[m].destroyed_into+1].flows)
+							putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));					
+					solid_mode();
 				};
 			}
     };
