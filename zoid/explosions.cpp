@@ -45,6 +45,7 @@ exp_type::exp_type()
   light_color=makecol(255,255,255);
   light_fadeness=200;
   spd_multiply=1000;
+  flash=0;
 };
 
 exp_type::~exp_type()

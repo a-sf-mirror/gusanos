@@ -288,11 +288,11 @@ void engine::render()
       {
         if (p->flash<=25500)
         {
-          //fblend_rect_trans(buffer, viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h, makecol(255,255,255)/*p->flash/100,p->flash/100,p->flash/100)*/, p->flash/100);
-          drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+          fblend_rect_trans(buffer, viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h, makecol(255,255,255)/*p->flash/100,p->flash/100,p->flash/100)*/, p->flash/100);
+          /*drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
           set_add_blender(0,0,0,p->flash/100);
           rectfill(buffer, viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h, makecol(255,255,255));
-          solid_mode();
+          solid_mode();*/
         }
         else
           rectfill(buffer, viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h, makecol(255,255,255));

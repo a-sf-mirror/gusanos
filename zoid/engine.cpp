@@ -654,7 +654,7 @@ void engine::init_game()
     player[i]->firecone_time=0;
     
     player[i]->node=NULL;
-    player[i]->flash=26000;
+    player[i]->flash=0;
     
     local_player[i]=i;
     strcpy(pl_options[i].name,"PLAYER");
