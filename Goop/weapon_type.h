@@ -1,16 +1,12 @@
 #ifndef PART_TYPE_H
 #define PART_TYPE_H
 
-#include "resource_list.h"
-#include "part_events.h"
-#include "distortion.h"
+#include "events.h"
 
-#include <allegro.h>
 #include <string>
 #include <vector>
 
 class Sprite;
-class WeaponEvent;
 
 class WeaponType
 {
@@ -29,12 +25,10 @@ class WeaponType
    Sprite *firecone;
 	std::string name;
 
-	WeaponEvent *primaryShoot;
-	WeaponEvent *primaryPressed;
-	WeaponEvent *primaryReleased;
-	WeaponEvent *outOfAmmo;
-}
-
-extern ResourceList<PartType> partTypeList;
+	Event *primaryShoot;
+	Event *primaryPressed;
+	Event *primaryReleased;
+	Event *outOfAmmo;
+};
 
 #endif // _PART_TYPE_H_

@@ -21,6 +21,10 @@ class Level
 	int height();
 	
 	const Material& getMaterial(int x, int y);
+	/*inline const Material& getMaterial(int x, int y);
+	{
+		return m_materialList[getpixel(material,x,y)+1];
+	}*/
 	
 	private:
 	

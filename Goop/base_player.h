@@ -21,7 +21,7 @@ class BasePlayer
 	void assignWorm(Worm* worm);
 	
 	PlayerOptions* getOptions();
-        Vec& getPos();
+	Vec getPos();
 	
 	protected:
 	

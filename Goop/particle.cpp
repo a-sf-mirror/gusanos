@@ -45,34 +45,47 @@ Particle::Particle(PartType *type, Vec _pos, Vec _spd)
 
 void Particle::think()
 {
-	spd.y+=m_type->gravity;
-	if ( !game.level.getMaterial( (int)(pos+spd).x, (int)pos.y ).particle_pass)
-		spd.x*=-m_type->bounceFactor;
-	if ( !game.level.getMaterial( (int)pos.x, (int)(pos+spd).y ).particle_pass)
+	for ( int i = 0; i < m_type->repeat; ++i)
 	{
-		spd.y*=-m_type->bounceFactor;
-		if ( m_type->groundCollision != NULL )
-			m_type->groundCollision->run(this);
-	}
-	
-	for ( vector< PartTimer >::iterator t = timer.begin(); t != timer.end(); t++)
-	{
-		(*t).count--;
-		if ( (*t).count < 0 )
+		spd.y+=m_type->gravity;
+		
+		bool collision = false;
+		if ( !game.level.getMaterial( (int)(pos+spd).x, (int)pos.y ).particle_pass)
 		{
-			(*t).m_tEvent->event->run(this);
-			(*t).reset();
+			spd.x*=-m_type->bounceFactor;
+			collision = true;
 		}
+		if ( !game.level.getMaterial( (int)pos.x, (int)(pos+spd).y ).particle_pass)
+		{
+			spd.y*=-m_type->bounceFactor;
+			collision = true;
+		}
+		if( collision )
+		{
+			if ( m_type->groundCollision != NULL )
+					m_type->groundCollision->run(this);
+		}
+		
+		for ( vector< PartTimer >::iterator t = timer.begin(); t != timer.end(); t++)
+		{
+			(*t).count--;
+			if ( (*t).count < 0 )
+			{
+				(*t).m_tEvent->event->run(this);
+				(*t).reset();
+			}
+		}
+		
+		if ( justCreated && m_type->creation )
+		{
+			m_type->creation->run(this);
+			justCreated = false;
+		}
+		
+		if ( !deleteMe ) pos = pos + spd;
+		else break;
+		if ( m_animator ) m_animator->tick();
 	}
-	
-	if ( justCreated && m_type->creation )
-	{
-		m_type->creation->run(this);
-		justCreated = false;
-	}
-	
-	pos = pos + spd;
-	if ( m_animator ) m_animator->tick();
 }
 
 float Particle::getAngle()

@@ -20,7 +20,7 @@ class ShootParticles : public BaseAction
 	ShootParticles( const std::vector< std::string >& params );
 	~ShootParticles();
 
-	void run( BaseObject *object );
+	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
 
 	private:
 
@@ -45,7 +45,7 @@ class Remove : public BaseAction
 	Remove( const std::vector< std::string >& params );
 	~Remove();
 
-	void run( BaseObject *object );
+	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
 
 	private:
 	
@@ -60,7 +60,7 @@ class PlaySound : public BaseAction
 	PlaySound( const std::vector< std::string >& params );
 	~PlaySound();
 
-	void run( BaseObject *object );
+	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
 
 	private:
 		
@@ -80,7 +80,7 @@ class PlaySoundStatic : public BaseAction
 	PlaySoundStatic( const std::vector< std::string >& params );
 	~PlaySoundStatic();
 
-	void run( BaseObject *object );
+	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
 
 	private:
 		
@@ -89,6 +89,23 @@ class PlaySoundStatic : public BaseAction
 	float pitchVariation;
 	float loudness;
 	
+};
+
+BaseAction* delayFire( const std::vector< std::string >& params );
+
+class DelayFire : public BaseAction
+{
+	public:
+
+	DelayFire( const std::vector< std::string >& params );
+	~DelayFire();
+
+	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+
+	private:
+	
+	int delayTime;
+	int delayTimeVariation;
 };
 
 #endif  // _GAME_ACTIONS_H_

@@ -20,7 +20,7 @@ TimerEvent::TimerEvent(int _delay, int _delayVariation)
 {
 	delay=_delay;
 	delayVariation = _delayVariation;
-	event = new PartEvent;
+	event = new Event;
 }
 
 TimerEvent::~TimerEvent()
@@ -72,7 +72,7 @@ bool PartType::load(const string &filename)
 	if ( fileStream.is_open() )
 	{
 		string parseLine;
-		PartEvent *currEvent = NULL;
+		Event *currEvent = NULL;
 		while ( !fileStream.eof() )
 		{
 			getline( fileStream, parseLine );
@@ -99,6 +99,7 @@ bool PartType::load(const string &filename)
 					}
 					
 					if ( var == "gravity" ) gravity = cast<float>(val);
+					else if ( var == "repeat" ) repeat = cast<int>(val);	
 					else if ( var == "bounce_factor" ) bounceFactor = cast<float>(val);
 					else if ( var == "damage" ) damage = cast<float>(val);
 					else if ( var == "worm_detect_range" ) wormDetectRange = cast<float>(val);
@@ -133,12 +134,12 @@ bool PartType::load(const string &filename)
 					string eventName = *iter;
 					if ( eventName == "ground_collision" )
 					{
-						currEvent = new PartEvent;
+						currEvent = new Event;
 						groundCollision = currEvent;
 					}
 					else if ( eventName == "creation" )
 					{
-						currEvent = new PartEvent;
+						currEvent = new Event;
 						creation = currEvent;
 					}
 					else if ( eventName == "timer" )

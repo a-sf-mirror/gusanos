@@ -2,7 +2,7 @@
 #define PART_TYPE_H
 
 #include "resource_list.h"
-#include "part_events.h"
+#include "events.h"
 #include "distortion.h"
 
 #include <allegro.h>
@@ -16,7 +16,7 @@ struct TimerEvent
 {
 	TimerEvent(int _delay, int _delayVariation);
 	~TimerEvent();
-	PartEvent* event;
+	Event* event;
 	int delay;
 	int delayVariation;
 };
@@ -49,8 +49,8 @@ class PartType
 	int animType;
 	
 	std::vector< TimerEvent* > timer;
-	PartEvent *groundCollision;
-	PartEvent *creation;
+	Event *groundCollision;
+	Event *creation;
 	
 	enum
 	{

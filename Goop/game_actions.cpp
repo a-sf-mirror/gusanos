@@ -6,6 +6,8 @@
 #include "sound.h"
 #include "text.h"
 #include "base_object.h"
+#include "weapon.h"
+#include "worm.h"
 
 #include <allegro.h>
 
@@ -19,6 +21,7 @@ void registerGameActions()
 	game.actionList["remove"] = remove;
 	game.actionList["play_sound"] = playSound;
 	game.actionList["play_sound_static"] = playSound;
+	game.actionList["delay_fire"] = delayFire;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +61,7 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	}
 	if( params.size() >= 5 )
 	{
-		motionInheritance = cast<int>(params[4]);
+		motionInheritance = cast<float>(params[4]);
 	}
 	if( params.size() >= 6 )
 	{
@@ -74,16 +77,29 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	}
 }
 
-void ShootParticles::run( BaseObject* object )
+void ShootParticles::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon )
 {
 	if (type != NULL)
 	{
-		Vec spd;
-		for ( int i = 0; i < amount; i++)
+		if(!weapon)
 		{
-			spd = angleVec( object->getAngle() + angleOffset + midrnd()*distribution, speed + midrnd()*speedVariation );
-			spd += object->getSpd() * motionInheritance;
-			game.objects.push_back( new Particle( type, object->getPos(), spd ));
+			Vec spd;
+			for ( int i = 0; i < amount; i++)
+			{
+				spd = angleVec( object->getAngle() + angleOffset + midrnd()*distribution, speed + midrnd()*speedVariation );
+				spd += object->getSpd() * motionInheritance;
+				game.objects.push_back( new Particle( type, object->getPos(), spd ));
+			}
+		}else
+		{
+			Vec spd;
+			char dir = weapon->getOwner()->getDir();
+			for ( int i = 0; i < amount; i++)
+			{
+				spd = angleVec( object->getAngle() + angleOffset * dir + midrnd()*distribution, speed + midrnd()*speedVariation );
+				spd += object->getSpd() * motionInheritance;
+				game.objects.push_back( new Particle( type, object->getPos(), spd ));
+			}
 		}
 	}
 }
@@ -101,7 +117,7 @@ Remove::Remove( const vector< string >& params )
 {
 }
 
-void Remove::run( BaseObject* object )
+void Remove::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon  )
 {
 	object->deleteMe = true;
 }
@@ -140,13 +156,17 @@ PlaySound::PlaySound( const vector< string >& params )
 	}
 }
 
-void PlaySound::run( BaseObject* object )
+void PlaySound::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon  )
 {
 	if (sound != NULL)
 	{
 		sound->play2D(object,loudness,pitch,pitchVariation);
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 BaseAction* playSoundStatic( const vector< string >& params )
 {
@@ -178,10 +198,41 @@ PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
 	}
 }
 
-void PlaySoundStatic::run( BaseObject* object )
+void PlaySoundStatic::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon  )
 {
 	if (sound != NULL)
 	{
 		sound->play2D(object->getPos(),loudness,pitch,pitchVariation);
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* delayFire( const vector< string >& params )
+{
+	return new DelayFire(params);
+}
+
+DelayFire::DelayFire( const vector< string >& params )
+{
+	delayTime = 0;
+	delayTimeVariation = 0;
+	if ( params.size() >= 1 )
+	{
+		delayTime = cast<int>(params[0]);
+	}
+	if( params.size() >= 2 )
+	{
+		delayTime = cast<int>(params[1]);
+	}
+}
+
+void DelayFire::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon )
+{
+	if(weapon)
+	{
+		weapon->delay( delayTime + rnd()*delayTimeVariation );
 	}
 }

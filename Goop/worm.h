@@ -1,7 +1,7 @@
 #ifndef WORM_H
 #define WORM_H
 
-
+#include "vec.h"
 #include "base_object.h"
 #include "sprite.h"
 
@@ -35,6 +35,10 @@ class Worm : public BaseObject
 	void actionStop( Actions action );
 	void addAimSpeed(float speed);
 	
+	Vec getPos();
+	float getAngle();
+	char getDir();
+	
 	private:
 	
 	bool movingLeft;
@@ -45,6 +49,10 @@ class Worm : public BaseObject
 	float aimAngle;
 	float aimSpeed;
 	float aimRecoilSpeed;
+	
+	int currentWeapon;
+	
+	std::vector<Weapon*> m_weapons;
 	
 	BasePlayer* m_owner;
 	

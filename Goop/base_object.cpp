@@ -6,12 +6,12 @@ BaseObject::BaseObject()
 	deleteMe = false;
 }
 
-Vec& BaseObject::getPos()
+Vec BaseObject::getPos()
 {
 	return pos;
 }
 
-Vec& BaseObject::getSpd()
+Vec BaseObject::getSpd()
 {
 	return spd;
 }

@@ -13,6 +13,7 @@
 
 class BasePlayer;
 class PlayerOptions;
+class WeaponType;
 
 static const int MAX_LOCAL_PLAYERS = 2;
 
@@ -47,12 +48,14 @@ class Game
 	const std::vector<std::string>& getPaths();
 	void addPath( const std::string& path);
 	void removePath();
+	void loadWeapons();
 	
 	Level level;
 	
 	std::vector<Player*> localPlayers;
 	std::vector<PlayerOptions*> playerOptions;
 	std::vector<BasePlayer*> players;
+	std::vector<WeaponType*> weaponList;
 	std::list<BaseObject*> objects;
 	Options options;
 	

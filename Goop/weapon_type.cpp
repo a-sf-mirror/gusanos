@@ -1,78 +1,49 @@
-#include "part_type.h"
-
-#include "resource_list.h"
+#include "weapon_type.h"
 
 #include "sprite.h"
-#include "distortion.h"
 #include "text.h"
 #include "parser.h"
 
-#include <allegro.h>
 #include <string>
 #include <vector>
 #include <fstream>
 
 using namespace std;
 
-ResourceList<PartType> partTypeList("objects/");
-
-TimerEvent::TimerEvent(int _delay, int _delayVariation)
+WeaponType::WeaponType()
 {
-	delay=_delay;
-	delayVariation = _delayVariation;
-	event = new PartEvent;
+	ammo = 1;
+	reloadTime = 0;
+	laserSightIntensity = 0;
+	laserSightRange = 0;
+
+   firecone = NULL;
+
+	primaryShoot = NULL;
+	primaryPressed = NULL;
+	primaryReleased = NULL;
+	outOfAmmo = NULL;
 }
 
-TimerEvent::~TimerEvent()
+WeaponType::~WeaponType()
 {
-	delete event;
+	if (primaryShoot) delete primaryShoot;
+	if (primaryPressed) delete primaryPressed;
+	if (primaryReleased) delete primaryReleased;
+	if (outOfAmmo) delete outOfAmmo;
 }
 
-PartType::PartType()
-{
-	gravity = 0;
-	damage = 0;
-	bounceFactor = 1;
-	color = 0;
-	repeat = 1;
-	alpha = 255;
-	timeout = -1;
-	timeoutVariation = 0;
-	wormDetectRange = 0;
-	radius = 0;
-	animDuration = 100;
-	animType = ANIM_LOOPRIGHT;
-	
-	sprite = NULL;
-	distortion = NULL;
-	distortMagnitud = 0.8;
-	
-	groundCollision = NULL;
-	creation = NULL;
-}
-
-PartType::~PartType()
-{
-	if (groundCollision) delete groundCollision;
-	if (creation) delete creation;
-	if (distortion) delete distortion;
-	for ( vector<TimerEvent*>::iterator i = timer.begin(); i != timer.end(); i++)
-	{
-		delete *i;
-	}
-}
-
-bool PartType::load(const string &filename)
+bool WeaponType::load(const string &filename)
 {
 
 	ifstream fileStream;
 	
 	fileStream.open( filename.c_str() );
-
+	
 	if ( fileStream.is_open() )
 	{
 		string parseLine;
-		PartEvent *currEvent = NULL;
+		Event *currEvent = NULL;
 		while ( !fileStream.eof() )
 		{
 			getline( fileStream, parseLine );
@@ -98,65 +69,31 @@ bool PartType::load(const string &filename)
 							val = *iter;
 					}
 					
-					if ( var == "gravity" ) gravity = cast<float>(val);
-					else if ( var == "bounce_factor" ) bounceFactor = cast<float>(val);
-					else if ( var == "damage" ) damage = cast<float>(val);
-					else if ( var == "worm_detect_range" ) wormDetectRange = cast<float>(val);
-					else if ( var == "sprite" ) sprite = spriteList.load(val);
-					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
-					else if ( var == "anim_type" )
-					{
-						if ( val == "ping_pong" ) animType = ANIM_PINGPONG;
-						else if ( val == "loop_right" ) animType = ANIM_LOOPRIGHT;
-					}
-					else if ( var == "distortion" && !distortion )
-					{
-						if ( val == "lens" && tokens.size() >= 4)
-							distortion = new Distortion( lensMap( cast<int>(tokens[3]) ) );
-						else if ( val == "swirl" && tokens.size() >= 4)
-							distortion = new Distortion( swirlMap( cast<int>(tokens[3]) ) );
-						else if ( val == "ripple" && tokens.size() >= 4)
-							distortion = new Distortion( rippleMap( cast<int>(tokens[3]) ) );
-						else if ( val == "random" && tokens.size() >= 4)
-							distortion = new Distortion( randomMap( cast<int>(tokens[3]) ) );
-						else if ( val == "spin" && tokens.size() >= 4)
-							distortion = new Distortion( spinMap( cast<int>(tokens[3]) ) );
-						else if ( val == "bitmap" && tokens.size() >= 4)
-							distortion = new Distortion( bitmapMap( tokens[3] ) );
-					}
-					else if ( var == "distort_magnitud" ) distortMagnitud = cast<float>(val);
+					if ( var == "ammo" ) ammo= cast<int>(val);
+					else if ( var == "reload_time" ) reloadTime = cast<int>(val);
+					else if ( var == "laser_sight_intensity" ) laserSightIntensity = cast<float>(val);
+					else if ( var == "laser_sight_range" ) laserSightRange = cast<float>(val);
+					else if ( var == "firecone" ) firecone = spriteList.load(val);
 				}
 				
 				if ( lineID == Parser::EVENT_START )
 				{
 					iter++;
 					string eventName = *iter;
-					if ( eventName == "ground_collision" )
+					if ( eventName == "primary_shoot" )
 					{
-						currEvent = new PartEvent;
-						groundCollision = currEvent;
+						currEvent = new Event;
+						primaryShoot = currEvent;
 					}
-					else if ( eventName == "creation" )
+					else if ( eventName == "primary_press" )
 					{
-						currEvent = new PartEvent;
-						creation = currEvent;
+						currEvent = new Event;
+						primaryPressed = currEvent;
 					}
-					else if ( eventName == "timer" )
+					else if ( eventName == "primary_release" )
 					{
-						int delay = 100;
-						int delayVariation = 0;
-						iter++;
-						if( iter != tokens.end())
-						{
-							delay = cast<int>(*iter);
-						}
-						iter++;
-						if( iter != tokens.end())
-						{
-							delayVariation = cast<int>(*iter);
-						}
-						timer.push_back(new TimerEvent(delay, delayVariation));
-						currEvent = timer.back()->event;
+						currEvent = new Event;
+						primaryReleased = currEvent;
 					}
 					else currEvent = NULL;
 				}

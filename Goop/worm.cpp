@@ -8,6 +8,7 @@
 #include "base_animator.h"
 #include "animators.h"
 #include "sprite.h"
+#include "weapon.h"
 
 #include <math.h>
 
@@ -26,6 +27,9 @@ Worm::Worm()
 	aimAngle = 90;
 	aimSpeed = 0;
 	aimRecoilSpeed = 0;
+	
+	currentWeapon = 0;
+	m_weapons.push_back(new Weapon(game.weaponList[0], this));
 	
 	m_owner = NULL;
 	
@@ -153,7 +157,28 @@ void Worm::think()
 	}
 		
 	if ( movingLeft || movingRight ) m_animator->tick();
+		
+	// Make weapons think
+	for ( int i = 0; i < m_weapons.size(); ++i )
+	{
+		m_weapons[i]->think();
+	}
 	
+}
+
+Vec Worm::getPos()
+{
+	return pos - Vec(0,game.options.worm_weaponHeight+0.5);
+}
+
+float Worm::getAngle()
+{
+	return aimAngle*dir;
+}
+
+char Worm::getDir()
+{
+	return dir;
 }
 
 void Worm::draw(BITMAP* where,int xOff, int yOff)
@@ -188,6 +213,10 @@ void Worm::actionStart( Actions action)
 			movingRight = true;
 		break;
 		
+		case FIRE:
+			m_weapons[0]->actionStart( Weapon::PRIMARY_TRIGGER );
+		break;
+		
 		case JUMP:
 			if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y) + 1 ).particle_pass )
 			{
@@ -208,6 +237,10 @@ void Worm::actionStop( Actions action)
 		
 		case MOVERIGHT:
 			movingRight = false;
+		break;
+		
+		case FIRE:
+			m_weapons[0]->actionStop( Weapon::PRIMARY_TRIGGER );
 		break;
 		
 		case JUMP:

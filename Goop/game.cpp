@@ -2,6 +2,7 @@
 
 #include "base_object.h"
 #include "player.h"
+#include "weapon_type.h"
 #include "player_input.h"
 #include "player_options.h"
 #include "level.h"
@@ -69,7 +70,31 @@ void Game::init()
 	registerGameActions();
 	registerPlayerInput();
 	
+	loadWeapons();
+	
 }
+
+void Game::loadWeapons()
+{
+	string path;
+	struct al_ffblk *file=new struct al_ffblk;
+	
+	path = m_paths[0];
+	path += "weapons/*.wpn";
+	if ( al_findfirst( (m_paths[0] + "weapons/*.wpn").c_str(), file, FA_ARCH ) == 0 )
+	{
+		do
+		{
+			WeaponType* weapon = new WeaponType;
+			weapon->load(m_paths[0] + "weapons/" + file->name);
+			weaponList.push_back(weapon);
+		}
+		while(al_findnext(file)==0);
+	}
+	al_findclose(file);
+	
+	delete file;
+};
 
 const vector<string> &Game::getPaths()
 {
