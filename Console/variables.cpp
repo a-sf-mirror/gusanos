@@ -11,6 +11,7 @@ IntVariable::IntVariable()
 {
 	m_src=NULL;
 	m_defaultValue=0;
+	callback = false;
 }
 
 IntVariable::~IntVariable()
@@ -18,12 +19,13 @@ IntVariable::~IntVariable()
 	
 }
 
-IntVariable::IntVariable(int* src, string name, int defaultValue)
+IntVariable::IntVariable(int* src, string name, int defaultValue, void (*func)( int ))
 {
 	m_src = src;
 	m_name = name;
 	m_defaultValue = defaultValue;	
 	*m_src = m_defaultValue;
+	callback = func;
 }
 
 //============================= INTERFACE ================================
@@ -32,7 +34,9 @@ string IntVariable::invoke(const std::list<std::string> &args)
 {
 	if (!args.empty())
 	{
+		int oldValue = *m_src;
 		*m_src=cast<int,string>(*args.begin());
+		if ( callback ) callback(oldValue);
 		return "";
 	}else
 	{
@@ -55,12 +59,13 @@ FloatVariable::~FloatVariable()
 	
 }
 
-FloatVariable::FloatVariable(float* src, string name, float defaultValue)
+FloatVariable::FloatVariable(float* src, string name, float defaultValue, void (*func)( float ) )
 {
 	m_src = src;
 	m_name = name;
 	m_defaultValue = defaultValue;	
 	*m_src = m_defaultValue;
+	callback = func;
 }
 
 //============================= INTERFACE ================================
@@ -69,7 +74,9 @@ string FloatVariable::invoke(const std::list<std::string> &args)
 {
 	if (!args.empty())
 	{
+		float oldValue = *m_src;
 		*m_src=cast<float,string>(*args.begin());
+		if ( callback ) callback(oldValue);
 		return "";
 	}else
 	{

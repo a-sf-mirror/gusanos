@@ -44,26 +44,26 @@ Console::~Console()
 
 //============================= INTERFACE ====================================
 
-void Console::registerIntVariable(const string &name, int* src, int defaultValue)
+void Console::registerIntVariable(const string &name, int* src, int defaultValue, void (*func)( int ))
 {
 	if (!name.empty())
 	{
 		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
 		if (tempItem == items.end())
 		{
-			items[name] = new IntVariable(src, name, defaultValue);
+			items[name] = new IntVariable(src, name, defaultValue, func);
 		}
 	}
 }
 
-void Console::registerFloatVariable(const string &name, float* src, float defaultValue)
+void Console::registerFloatVariable(const string &name, float* src, float defaultValue, void (*func)( float ))
 {
 	if (!name.empty())
 	{
 		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
 		if (tempItem == items.end())
 		{
-			items[name] = new FloatVariable(src, name, defaultValue);
+			items[name] = new FloatVariable(src, name, defaultValue, func);
 		}
 	}
 }
