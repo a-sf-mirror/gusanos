@@ -110,6 +110,7 @@ struct engine
   ZCom_Node *node;
   void init_node(ZCom_Control *_cont, bool is_server);
   void minimap(); //Draw minimap
+  void scoreboard(); //Draw scoreboard
 	bool quitgame; //quitgame
 };
 

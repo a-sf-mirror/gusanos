@@ -393,6 +393,7 @@ void engine::render()
 	};
   
   minimap();
+  scoreboard();
   
 	/*  if (con->pos>0)
 	{
@@ -479,3 +480,49 @@ void engine::minimap()
     }
   }
 }
+
+//Scoreboard renderer
+void engine::scoreboard()
+{
+  const int SBWIDTH = 280;
+  const int SBHEIGHT = 200;
+  const int SBX = (320 - SBWIDTH)/2 - 1;
+  const int SBY = (240 - SBHEIGHT)/2 - 1;
+
+  //Only show scoreboard when key pressed
+  if (!key[KEY_F1])
+    return;
+
+  //Draw scoreboard background
+  drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+  set_trans_blender(0, 0, 0, 96);
+
+  rectfill(buffer, SBX, SBY, SBX + SBWIDTH, SBY + SBHEIGHT, makecol(0, 0, 0));
+  rect(buffer, SBX, SBY, SBX + SBWIDTH, SBY + SBHEIGHT, makecol(1000, 100, 100));
+
+  //Draw player stats
+  //NAME - 16, KILLS - 12, LIVES - 12, DEATHS - 12, PING - 4
+  char info[1024] = " NAME            KILLS       LIVES       DEATHS     PING";
+  rectfill(buffer, SBX, SBY + + 4, SBX + SBWIDTH, SBY + 8, makecol(128, 0, 0));
+  game->fonty->draw_string(buffer, info, SBX + 4, SBY + 4, true);
+
+  solid_mode();
+
+  for (int i = 0; i < player_count; i++)
+    {
+      if (i % 2 == 1)
+        {
+          drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+          set_trans_blender(0, 0, 0, 96);
+          rectfill(buffer, SBX, SBY + 8 * i + 12, SBX + SBWIDTH, SBY + 8 * i + 12 + 4, makecol(32, 32, 32));
+          solid_mode();
+        }
+      //
+      sprintf(info, " %-16s%-12i%-12i%-12i%-4i", player[i]->name, 0, player[i]->lives, player[i]->deaths, 0);
+      game->fonty->draw_string(buffer, info, SBX + 4, SBY + 12 + 8 * i, true);
+      //Draw players color
+      rectfill(buffer, SBX + 2, SBY + 8 * i + 12, SBX + 6, SBY + 12 + 8 * i + 4, player[i]->color);
+    }
+}
+
+

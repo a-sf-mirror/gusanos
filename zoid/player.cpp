@@ -321,6 +321,8 @@ worm::worm()
 		crossr=20;
 		health=1000;
 		deaths=0;
+		kills = 0;
+		lives = 0;
 		curr_weap=0;
     aim_speed=0;
     aim_recoil_speed=0;

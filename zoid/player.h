@@ -22,7 +22,7 @@ class worm
 	int ropestate;
 	int xview,yview;
 	int crosshx,crosshy;
-	int health,deaths;
+	int health,deaths,lives,kills;
   int air;
 	int crossr;
 	int aim,aim_speed,aim_recoil_speed;
