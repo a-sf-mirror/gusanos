@@ -70,6 +70,7 @@ class worm
   void jump(int jump_force);
   void dig(exp_type *hole);
   void walk(int direction,int acceleration, int maxspeed);
+	void remove_player(int n);
 };
 
 struct KEYS

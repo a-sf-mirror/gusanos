@@ -128,11 +128,7 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
   {
     if (player[i]->id==_id)
     {
-      con->log.create_msg("PLAYER REMOVED");
-      delete player[i];
-      player[i]=player[player_count-1];
-      player[player_count-1]=NULL;
-      player_count--;
+			player[i]->remove_player(i);
       i--;
     };
   };

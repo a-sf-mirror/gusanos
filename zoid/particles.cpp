@@ -7,6 +7,7 @@
 #include "player.h"
 #include "lights.h"
 #include "engine.h"
+#include <cmath>
 
 #include <fstream>
 using std::ifstream;
@@ -60,6 +61,8 @@ struct particle* particles::create_part(int x,int y,int xspd, int yspd,int owner
 		end->xspd=xspd;
 		end->yspd=yspd;
 		end->owner=owner;
+		//homing
+		end->target=-1;
 		end->framecount=0;
 		end->currframe=0;
 		end->obj_trail_time=0;
@@ -144,6 +147,8 @@ struct particle* particles::create_directional_part(int x,int y,int xspd, int ys
 		end->dir=dir;
 		end->ang=ang;
     end->owner=owner;
+		//homing
+		end->target=-1;
 		return end;
 	}
 	return NULL;
@@ -280,7 +285,14 @@ struct part_type* load_part(const char* type_name)
   curr->layer=3;
   //Crate
   curr->give_weapon=-1;
-  //
+  //homing
+	curr->homing=0;
+	curr->home_on_owner=0;
+	curr->homing_detect_range=60;
+	curr->max_homing_speed=1000;
+	curr->homing_acceleration=20;
+	curr->catch_target_sound=NULL;
+	curr->shoot_keep_angle=0;
 
 	
   //open the configuration file
@@ -365,21 +377,28 @@ struct part_type* load_part(const char* type_name)
 					else if ("affected_by_motion"==var) curr->affected_by_motion=atoi(val.c_str());
 					else if ("affected_by_explosions"==var) curr->affected_by_explosions=atoi(val.c_str());
 					else if ("alpha"==var) curr->alpha=atoi(val.c_str());
-          else if ("autorotate_speed"==var) curr->autorotate_speed=atoi(val.c_str());
+					else if ("autorotate_speed"==var) curr->autorotate_speed=atoi(val.c_str());
 					else if ("lens_radius"==var) curr->lens_radius=atoi(val.c_str());
-          else if ("layer"==var) curr->layer=atoi(val.c_str());
-					 //Crate
-					 else if ("give_weapon"==var) 
-					   {
-					     int j;
-					     if ("random" == val)
-					       curr->give_weapon = -2;
-					     else
-					       for (j=0; j < weaps->weap_count; j++)
-					         if (val == weaps->num[j]->name)
-					           curr->give_weapon=j;
-					   };
-					//
+					else if ("layer"==var) curr->layer=atoi(val.c_str());
+					//Crate
+					else if ("give_weapon"==var) 
+					  {
+					    int j;
+					    if ("random" == val)
+					      curr->give_weapon = -2;
+					    else
+					      for (j=0; j < weaps->weap_count; j++)
+					        if (val == weaps->num[j]->name)
+					          curr->give_weapon=j;
+					  }
+					//homing
+					else if ("homing"==var) curr->homing=atoi(val.c_str());
+					else if ("homing_detect_range"==var) curr->homing_detect_range=atoi(val.c_str());
+					else if ("home_on_owner"==var) curr->home_on_owner=atoi(val.c_str());
+					else if ("max_homing_speed"==var) curr->max_homing_speed=atoi(val.c_str());
+					else if ("catch_target_sound"==var && "null"!=val) curr->catch_target_sound=sounds->load(val.c_str());
+					else if ("homing_acceleration"==var) curr->homing_acceleration=atoi(val.c_str());
+					else if ("shoot_keep_angle"==var) curr->shoot_keep_angle=atoi(val.c_str());
 				};
 			};
 		};
@@ -402,7 +421,7 @@ void dest_part(struct particle* tmp)
 		//check if this particle type shoots other particles when destroyed and act
 		if (tmp->type->shootobj!=NULL)
 		for(i=0;i<tmp->type->shootnum;i++)
-			partlist.shoot_part(((rand()%1000)*256),tmp->type->shootspeed-rand()%(tmp->type->shootspeedrnd)+tmp->type->shootspeedrnd/2,1,tmp->x,tmp->y,(tmp->xspd*tmp->type->affected_by_motion)/1000,(tmp->yspd*tmp->type->affected_by_motion)/1000,tmp->owner,tmp->type->shootobj);
+			partlist.shoot_part((!tmp->type->shoot_keep_angle)*((rand()%1000)*256)+(tmp->type->shoot_keep_angle)*(tmp->ang),tmp->type->shootspeed-rand()%(tmp->type->shootspeedrnd)+tmp->type->shootspeedrnd/2,1,tmp->x,tmp->y,(tmp->xspd*tmp->type->affected_by_motion)/1000,(tmp->yspd*tmp->type->affected_by_motion)/1000,tmp->owner,tmp->type->shootobj);
 		if (tmp->type->expsnd!=NULL)
 			play_sample(tmp->type->expsnd->snd, *game->VOLUME, 127, 1000, 0);
 		if (tmp->type->destroy_exp!=NULL)
@@ -551,6 +570,85 @@ void calc_particles()
       };
 			if (destroyed) break;
 
+			//homing
+			if (tmp->type->homing)
+			{
+				if (tmp->type->homing==1 || (tmp->type->homing==2 && tmp->target==-1))
+				//look for a target
+				{
+					int score=-1, lastscore=-1;
+					int i, r;
+					int dx, dy;
+					bool detectable;
+					for (i=0;i<player_count;i++)
+					{
+						score=-1;
+						if (player[i]->active && (tmp->type->home_on_owner || i != tmp->owner)){
+							dx=(player[i]->x-tmp->x)/1000;
+							dy=((player[i]->y-4000)-tmp->y)/1000;
+							if (abs(dx) < tmp->type->homing_detect_range)
+							if (abs(dy) < tmp->type->homing_detect_range)
+							{
+		            r=fixtoi(fixhypot(itofix(dx),itofix(dy)));
+								if (r<tmp->type->homing_detect_range)
+								{
+									score=r/*+rand()%3*/;
+									if(!obs_line (map->material, tmp->x/1000 , tmp->y/1000 , player[i]->x/1000 , player[i]->y/1000 -4))
+										score= score/3;
+								};
+							};
+						};
+						if (score!=-1 && (score<lastscore || lastscore==-1))
+						{
+							tmp->target=i;
+							if (tmp->type->homing==2 && tmp->type->catch_target_sound!=NULL)
+								play_sample(tmp->type->catch_target_sound->snd, *game->VOLUME, 127, 1000, 0);
+						}
+						lastscore=score;
+					};
+				}
+				
+				if (tmp->target!= -1)
+				//move towards target
+				{
+					long long dx = player[tmp->target]->x - tmp->x, dy = player[tmp->target]->y-4000 - tmp->y;
+					long long len = (long long) sqrt((double)(dx*dx + dy*dy));
+					if((tmp->type->max_homing_speed == -1) || (tmp->xspd * dx + tmp->yspd * dy < tmp->type->max_homing_speed * len))
+					{
+						tmp->xspd += (dx * tmp->type->homing_acceleration) / len;
+						tmp->yspd += (dy * tmp->type->homing_acceleration) / len;
+					}
+				}
+				/*
+				{
+					int dx=(player[tmp->target]->x-tmp->x);
+					int dy=((player[tmp->target]->y-4000)-tmp->y);
+					if (abs(dx)>abs(dy))
+					{
+						if (dx>0)
+							tmp->xspd+=tmp->type->homing_acceleration;
+						else
+							tmp->xspd-=tmp->type->homing_acceleration;
+						if (tmp->yspd>0)
+							tmp->yspd-=tmp->type->homing_acceleration;
+						else
+							tmp->yspd+=tmp->type->homing_acceleration;
+					}
+					else
+					{
+						if (dy>0)
+							tmp->yspd+=tmp->type->homing_acceleration;
+						else
+							tmp->yspd-=tmp->type->homing_acceleration;
+						if (tmp->xspd>0)
+							tmp->xspd-=tmp->type->homing_acceleration;
+						else
+							tmp->xspd+=tmp->type->homing_acceleration;
+					}
+				}
+				*/
+			};
+
 			tmp->yspd+=tmp->type->gravity;
 			tmp->time++;
       
@@ -564,8 +662,7 @@ void calc_particles()
 				};
 			};
       
-      if (tmp->dir==1) tmp->ang+=tmp->type->autorotate_speed;
-      else tmp->ang-=tmp->type->autorotate_speed;
+      tmp->ang+= tmp->dir * tmp->type->autorotate_speed;
       
 			tmp->framecount++;
 		
@@ -666,4 +763,27 @@ void particles::r_lens(BITMAP* where)
       render_lens(tmp->x / 1000 , tmp->y / 1000,tmp->type->lens_radius,where,tmp->type->effect_buf);
 		};
 	};
+};
+
+void particles::player_removed(int n, bool remove_target_only)
+{
+	struct particle *tmp;
+	
+	tmp=partlist.start;
+	if (remove_target_only)
+		while (tmp->next!=NULL)
+		{
+			tmp=tmp->next;
+			if (tmp->target==n)
+				tmp->target= -1;
+		}
+	else
+		while (tmp->next!=NULL)
+		{
+			tmp=tmp->next;
+			if (tmp->owner==n)
+				tmp->owner= -1;
+			if (tmp->target==n)
+				tmp->target= -1;
+		}
 };

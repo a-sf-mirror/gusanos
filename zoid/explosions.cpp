@@ -409,19 +409,13 @@ void dig_hole(BITMAP* image,int x,int y)
       if (g==makecol(255,255,255))
       {
         m=getpixel(map->material,x+x2,y+y2)+1;
-        if (map->mat[m].chreact!=NULL)
+				// (map->mat[m].chreact!=NULL) needed? chreact materials are normally destroyable anyway
+        if ((map->mat[m].destroyable)||(map->mat[m].chreact!=NULL))
         {
           putpixel(map->material,x+x2,y+y2,1);
           if(map->has_water) check_hole_sides(x+x2,y+y2);
           putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
-          partlist.create_part((x+x2)*1000+500,(y+y2)*1000+500,0, 0, -1,map->mat[m].chreact);
-          //check_sunlight(x+x2,y+y2);
-        };
-        if (map->mat[m].destroyable)
-        {
-          putpixel(map->material,x+x2,y+y2,1);
-          if(map->has_water) check_hole_sides(x+x2,y+y2);
-          putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
+          if (map->mat[m].chreact!=NULL) partlist.create_part((x+x2)*1000+500,(y+y2)*1000+500,0, 0, -1,map->mat[m].chreact);
           //check_sunlight(x+x2,y+y2);
         };
       };

@@ -164,7 +164,6 @@ void worm::checkevents()
     ZCom_BitStream *data = node->getNextEvent(&type, &remote_role, &conn_id);
     if (type == ZCom_Node::eEvent_AuthorityRemoved)
 		{
-			con->log.create_msg("PLAYER REMOVED");
 			deleteme = true;
 		} else
     if (type == ZCom_Node::eEvent_User)
@@ -221,6 +220,8 @@ void worm::checkevents()
         for (o=0;o<14;o++)
           partlist.shoot_part(rand()%1000*255,(rand()%200)+600,1,_x,_y-4000,_xspd/2,_yspd/2,local_slot,game->gore);
         play_sample(game->death->snd, *game->VOLUME, 127, 1000, 0);
+				//homing
+				partlist.player_removed(local_slot,true);
         deaths++;
         health=0;
         if (*game->RESPAWN_RELOAD==1)
@@ -623,6 +624,16 @@ void worm::applyropeforce()
     xspd+=(dx* *game->ROPE_STRENTH)/m;
 		yspd+=(dy* *game->ROPE_STRENTH)/m;
   };*/
+};
+
+void worm::remove_player (int n)
+{
+	con->log.create_msg("PLAYER REMOVED");
+	delete player[n];
+	partlist.player_removed(n);
+	player[n]=player[player_count-1];
+	player[player_count-1]=NULL;
+	player_count--;
 };
 
 void calcrope(struct worm *player)

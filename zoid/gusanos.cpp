@@ -120,8 +120,8 @@ int main(int argc, char **argv)
 
 	delete_players();
 	delete sprites;
-	if(srv) delete srv;
-	if(cli) delete cli;
+	delete srv;
+	delete cli;
 	delete zcom;
 	free(game);
 

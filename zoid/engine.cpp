@@ -206,10 +206,7 @@ void engine::calcphysics()
           player[c]->checkevents();
           if (player[c]->deleteme)
           {
-            delete player[c];
-            player[c]=player[player_count-1];
-            player[player_count-1]=NULL;
-            player_count--;
+						player[c]->remove_player(c);
             c--;
           };
         };
@@ -398,6 +395,8 @@ void engine::calcphysics()
             partlist.shoot_part(rand()%1000*255,(rand()%200)+600,1,player[c]->x,player[c]->y-4000,player[c]->xspd/2,player[c]->yspd/2,c,gore);
             play_sample(death->snd, *VOLUME, 127, 1000, 0);
             player[c]->active=false;
+						//homing
+						partlist.player_removed(c,true);
             player[c]->ropestate=0;
             player[c]->deaths++;
             player[c]->health=0;
