@@ -1,5 +1,5 @@
 CC= g++
-CFLAGS= -O3 -I ../loadpng
+CFLAGS= -O3 -I ../loadpng -I ../Console
 LIBS= -L../Console -lpng -lz `allegro-config --libs` -lzoidcom -lgcon -lfmod
 DEFINES= 
 BIN= ../gusanos.exe
