@@ -241,7 +241,7 @@ void render_flashlight( int x, int y, int angle, int dir, BITMAP *where, BITMAP 
 
 void obs_sunlight(BITMAP *where, int x, int y, int d)
 {
-  int dx,dy,i,col;
+  int col;
   int g=getpixel(where,x,y);
   //int g=where->line[y][x]; 
   if(map->mat[g+1].blocks_light) obstacle=true;
@@ -261,7 +261,7 @@ void obs_sunlight(BITMAP *where, int x, int y, int d)
 
 void render_sunlight( BITMAP *where, BITMAP *material)
 {
-  int _x,_y,x,y;
+  int _x,_y;
   set_color_depth(8);
   lightbuff=create_bitmap(material->w,material->h);
   set_color_depth(game->v_depth);
@@ -363,7 +363,7 @@ void obs_exp_light(BITMAP *where, int x, int y, int d)
 
 void render_exp_light( int x, int y, int _color, int fade, int noise,int mask,BITMAP *where, BITMAP *material)
 {
-  int _x,_y,bx1,bx2,by1,by2,c,u;
+  int _x,_y,bx1,bx2,by1,by2,c;
 
   //clear_to_color(lightbuff,0);
   
@@ -450,7 +450,7 @@ void render_exp_light( int x, int y, int _color, int fade, int noise,int mask,BI
 
 void render_lens(int x, int y, int radius, BITMAP* where, BITMAP* buf)
 {
-  float _x,_y,x1,y1,hyp,shyp,x2,y2,prop;
+  float _x,_y,x1,y1,hyp,x2,y2,prop;
   for (_x=0;_x<=radius;_x++)
   for (_y=0;_y<=radius;_y++)
   {

@@ -85,7 +85,7 @@ class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* f
   set_color_conversion(COLORCONV_TOTAL);
 	if (tmp_bmp!=NULL)
 	{
-		int i,x2,y2;
+		int i;
 		for(i=0;i<end->framenum;i++)
 		{
 			end->img[i]=create_bitmap(tmp_bmp->w/frames,tmp_bmp->h);

@@ -160,7 +160,6 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_Bit
 // client entered a zoidlevel or failed
 void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
 {
-  char tmpstr[255];
 	// failed
 	if (_result != eZCom_ZoidEnabled)
 	{

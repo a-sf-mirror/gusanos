@@ -18,7 +18,7 @@
 
 int main(int argc, char **argv)
 {
- int i,r=0;
+ int i;
  char tmp[20];
  //gentlemen, start your engines :-)
  game=(struct engine*) malloc(sizeof(struct engine));

@@ -2,17 +2,17 @@ CC= g++
 SOURCES= gusanos.cpp sprites.cpp water.cpp engine.cpp console.cpp \
 	text.cpp keys.cpp render.cpp input.cpp sounds.cpp particles.cpp \
 	explosions.cpp weapons.cpp level.cpp player.cpp network.cpp \
-	lights.cpp
+	lights.cpp gfx.cpp
 INCLUDES= engine.h sprites.h water.h console.h text.h keys.h render.h \
 	input.h sounds.h particles.h explosions.h weapons.h level.h \
-	player.h network.h lights.h
-CFLAGS= -O2 -mwindows # -Wall
-LIBS=  -l2xsai -lalleg -lzoidcom_mw -lfblend -lpng
+	player.h network.h lights.h gfx.h
+CFLAGS= -O3 -mwindows
+LIBS= -lfblend -l2xsai -lldpng -lpng -lz -lalleg -lzoidcom_mw
 DEFINES= -DAA2XSAI -DWINDOWS -DAAFBLEND
 BIN= ../gusanos.exe
 OBJECTS= gusanos.o sprites.o water.o engine.o console.o text.o keys.o \
 	render.o input.o sounds.o particles.o explosions.o weapons.o \
-	level.o player.o network.o lights.o
+	level.o player.o network.o lights.o gfx.o
 
 
 $(BIN): $(OBJECTS)
@@ -69,3 +69,6 @@ network.o: network.cpp network.h
 
 lights.o: lights.cpp lights.h 
 	$(CC) -c lights.cpp $(CFLAGS) $(DEFINES)
+  
+gfx.o: gfx.cpp gfx.h 
+	$(CC) -c gfx.cpp $(CFLAGS) $(DEFINES)

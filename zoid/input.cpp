@@ -91,7 +91,7 @@ void weap_selection_input()
 
 void engine::input()
 {
-	int h,i;
+	int i;
 	
 	if (key[KEY_TILDE] && !con->flag2 && con->flag==1)
 	{

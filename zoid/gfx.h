@@ -5,4 +5,6 @@
 
 BITMAP* load_image(const char *, RGB*);
 
+BITMAP* load_image_with_no_ext(const char *, RGB*);
+
 #endif

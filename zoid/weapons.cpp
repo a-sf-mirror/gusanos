@@ -3,6 +3,7 @@
 #include "sprites.h"
 #include "particles.h"
 #include "engine.h"
+#include "player.h"
 
 #include <fstream>
 #include <string>
@@ -164,6 +165,41 @@ class weapon* load_weap(const char* weap_name)
 		fbuf.close();
 	};
 	return curr;
+};
+
+void s_playerweap::shoot(int x, int y, int xspd, int yspd, int aim, int dir, int owner)
+{
+  shoot_time=weaps->num[weap]->shoot_times+1;
+  ammo--;
+  if (weaps->num[weap]->shoot_num!=0)
+  {
+    int dist,spd_rnd,xof,yof;
+    
+    for (int i=0;i<weaps->num[weap]->shoot_num;i++)
+    {
+      dist=((rand()%1000)*weaps->num[weap]->distribution)-weaps->num[weap]->distribution/2*1000;
+      if (weaps->num[weap]->shoot_spd_rnd!=0)
+        spd_rnd=(rand()%weaps->num[weap]->shoot_spd_rnd)-weaps->num[weap]->shoot_spd_rnd/2;
+      else spd_rnd=0;
+      xof=fixtoi(fixsin(ftofix((aim-dist)/1000.))*(weaps->num[weap]->shoot_obj->detect_range+1000))*dir;
+      yof=fixtoi(fixcos(ftofix((aim-dist)/1000.))*(weaps->num[weap]->shoot_obj->detect_range+1000));
+      partlist.shoot_part(aim-dist,weaps->num[weap]->shoot_spd-spd_rnd,dir,x+xof,y-4000+yof,(xspd*weaps->num[weap]->affected_motion)/1000,(yspd*weaps->num[weap]->affected_motion)/1000,player[owner]->local_slot,weaps->num[weap]->shoot_obj);
+    }
+  }
+  if (weaps->num[weap]->shoot_sound!=NULL)
+  {
+    play_sample(weaps->num[weap]->shoot_sound->snd, *game->VOLUME, 127, 1000, 0);
+  }
+  if (weaps->num[weap]->aim_recoil!=0)
+  player[owner]->aim_recoil_speed+=(100*weaps->num[weap]->aim_recoil);
+  if (weaps->num[weap]->recoil!=0)
+  {
+    player[owner]->xspd += -fixtoi(fixsin(ftofix(aim/1000.))*weaps->num[weap]->recoil)*dir;
+    player[owner]->yspd += -fixtoi(fixcos(ftofix(aim/1000.))*weaps->num[weap]->recoil);
+  }
+  player[owner]->curr_firecone=weaps->num[weap]->firecone;
+  player[owner]->firecone_time=weaps->num[weap]->firecone_timeout;
+
 };
 
 void scanWeapsDir()

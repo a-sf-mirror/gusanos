@@ -206,34 +206,20 @@ int load_map(char* name)
 	strcat(tmp2, "/maps/");
 	strcat(tmp2, name);
   strcpy(tmp,tmp2);
-	strcat(tmp,"/material.bmp");
+	strcat(tmp,"/material");
 	set_color_depth(8);
-	tmp_mat = load_image(tmp, NULL);
-	if (tmp_mat == NULL)
-	  {
-	    tmp[strlen(tmp) - 3] = 'p';
-	    tmp[strlen(tmp) - 2] = 'n';
-	    tmp[strlen(tmp) - 1] = 'g';
-	    tmp_mat = load_image(tmp,NULL);
-	  }
+	tmp_mat = load_image_with_no_ext(tmp, NULL);
 	set_color_depth(game->v_depth);
   if (tmp_mat==NULL)
   {
     strcpy(tmp2, "default/maps/");
     strcat(tmp2, name);
     strcpy(tmp,tmp2);
-    strcat(tmp,"/material.bmp");
+    strcat(tmp,"/material");
     set_color_depth(8);
-    tmp_mat = load_image(tmp,NULL);
+    tmp_mat = load_image_with_no_ext(tmp,NULL);
     set_color_depth(game->v_depth);
   };
-  if (tmp_mat == NULL)
-    {
-      tmp[strlen(tmp) - 3] = 'p';
-      tmp[strlen(tmp) - 2] = 'n';
-      tmp[strlen(tmp) - 1] = 'g';
-      tmp_mat = load_image(tmp,NULL);
-    }
 	if (tmp_mat!=NULL)
 	{
 		delete map;
@@ -242,50 +228,22 @@ int load_map(char* name)
     strcpy(map->path,tmp2);
     strcpy(map->name,name);
 		strcpy(tmp, tmp2);
-		strcat(tmp,"/level.bmp");
-		map->mapimg = load_image(tmp,NULL);
-		if (map->mapimg == NULL)
-		  {
-		    tmp[strlen(tmp) - 3] = 'p';
-		    tmp[strlen(tmp) - 2] = 'n';
-		    tmp[strlen(tmp) - 1] = 'g';
-		    map->mapimg = load_image(tmp,NULL);
-		  }
+		strcat(tmp,"/level");
+		map->mapimg = load_image_with_no_ext(tmp,NULL);
 		strcpy(tmp, tmp2);
-		strcat(tmp,"/layer.bmp");
-		map->layer = load_image(tmp,NULL);	
-		if (map->layer == NULL)
-		  {
-		    tmp[strlen(tmp) - 3] = 'p';
-		    tmp[strlen(tmp) - 2] = 'n';
-		    tmp[strlen(tmp) - 1] = 'g';
-		    map->layer = load_image(tmp,NULL);	
-		  }
+		strcat(tmp,"/layer");
+		map->layer = load_image_with_no_ext(tmp,NULL);	
     strcpy(tmp, tmp2);
-		strcat(tmp,"/paralax.bmp");
-		map->paralax = load_image(tmp,NULL);
-		if (map->paralax == NULL)
-		  {
-		    tmp[strlen(tmp) - 3] = 'p';
-		    tmp[strlen(tmp) - 2] = 'n';
-		    tmp[strlen(tmp) - 1] = 'g';
-		    map->paralax = load_image(tmp,NULL);
-		  }
+		strcat(tmp,"/paralax");
+		map->paralax = load_image_with_no_ext(tmp,NULL);
     map->material = tmp_mat;
     set_color_depth(8);
     map->water_buffer = create_bitmap(tmp_mat->w,tmp_mat->h);
     rectfill(map->water_buffer,0,0,map->water_buffer->w,map->water_buffer->h,1);
     set_color_depth(game->v_depth);
     strcpy(tmp, tmp2);
-		strcat(tmp,"/background.bmp");
-		map->background = load_image(tmp,NULL);
-		if (map->background == NULL)
-		  {
-		    tmp[strlen(tmp) - 3] = 'p';
-		    tmp[strlen(tmp) - 2] = 'n';
-		    tmp[strlen(tmp) - 1] = 'g';
-		    map->background = load_image(tmp,NULL);
-		  }
+		strcat(tmp,"/background");
+		map->background = load_image_with_no_ext(tmp,NULL);
     if (map->background==NULL)
     {
       int x,y,col,g;
@@ -337,7 +295,7 @@ int load_map(char* name)
 
 void load_map_config()
 {
-  char tmp[1024],*tmp1,tmp2[1024],tmp3[1024];
+  char tmp[1024],*tmp1,tmp2[1024];
   char *var,*val;
   FILE *fbuf;
   int i;

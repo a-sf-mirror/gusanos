@@ -157,7 +157,6 @@ void engine::render()
 	bool smallmap=false;
 	
 	char fpsstr[50];
-	char ints[50];
   worm *p;
 	
 	sprintf(fpsstr, "FPS: %d", fps);
@@ -367,7 +366,6 @@ void engine::render()
 	blit(buffer,screen,0,0,0,0,320,240);
   else
   {
-    int o;
     acquire_screen();
     if (*game->VIDEO_FILTER!=video_filter)
     {

@@ -93,7 +93,7 @@ void recharge_weapons(worm* player)
 
 void respawn_player(struct worm* player)
 {
-	int g,o,i,spawn_count;
+	int g,i,spawn_count;
 	player->health=*game->MAX_HEALTH;
 	g=-1;
   spawn_count=map->spawnpoint_count;
@@ -159,7 +159,7 @@ END_OF_FUNCTION(tick);
 
 void engine::calcphysics()
 {
-	int c,i,o,g,x,y;
+	int c,i,o,g;
   
   if(srv)srv->ZCom_processInput(eZCom_NoBlock);
   if(cli)cli->ZCom_processInput(eZCom_NoBlock);
@@ -432,7 +432,6 @@ void logfunc(const char *_log)
 
 void engine::init_game()
 {
-  char tmp[1024];
 	int i;
 	allegro_init();
 

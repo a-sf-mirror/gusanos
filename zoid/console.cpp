@@ -278,8 +278,8 @@ void bind()
 	char k[15],fn_name[512],tmpstr[512];
 	if (strlen(con->arg)>0)
 	{
-		struct s_cmd *tmp_cmd;
-		int t,o;
+		int o;
+    unsigned int t;
 		t=0;
 		while (con->arg[t]!=' ' && t<strlen(con->arg)) t++;
 		strcpy(k,strmid(con->arg,0,t));
@@ -339,7 +339,7 @@ void console::parse(const char* _str)
   std::string str=_str;
 	if (!str.empty())
 	{
-		int t;
+		unsigned int t;
 		std::string var, val,tmpstr;
 		struct variable* tmpvar;
 		struct s_cmd *tmp_cmd;

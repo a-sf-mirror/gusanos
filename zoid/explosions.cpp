@@ -447,7 +447,6 @@ void draw_explosion(BITMAP* image,int x,int y)
 {
 	int y2,x2,i,o;
   int MASK_COLOR;
-	bool is_on_player_view = false;
   MASK_COLOR=bitmap_mask_color(image);
 
   if (game->v_depth!=8)

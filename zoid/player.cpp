@@ -460,7 +460,7 @@ void worm::jump(int jump_force)
 
 void worm::shoot()
 {
-  if (weap[curr_weap].shoot_time==0)//>weaps->num[weap[curr_weap].weap]->shoot_times)
+  if (weap[curr_weap].shoot_time==0)
   if (weap[curr_weap].ammo>0 || weaps->num[weap[curr_weap].weap]->ammo==0)
   if ((!fireing && weaps->num[weap[curr_weap].weap]->autofire!=1) || weaps->num[weap[curr_weap].weap]->autofire==1)
   {
@@ -474,42 +474,7 @@ void worm::shoot()
     if (weap[curr_weap].start_delay==0)
     {
       if(srv) shooteventsend();
-      weap[curr_weap].ammo--;
-      if (weaps->num[weap[curr_weap].weap]->shoot_num!=0)
-      {
-        int dist,spd_rnd,xof,yof;
-        
-        for (int i=0;i<weaps->num[weap[curr_weap].weap]->shoot_num;i++)
-        {
-          dist=((rand()%1000)*weaps->num[weap[curr_weap].weap]->distribution)-weaps->num[weap[curr_weap].weap]->distribution/2*1000;
-          if (weaps->num[weap[curr_weap].weap]->shoot_spd_rnd!=0)
-            spd_rnd=(rand()%weaps->num[weap[curr_weap].weap]->shoot_spd_rnd)-weaps->num[weap[curr_weap].weap]->shoot_spd_rnd/2;
-          else spd_rnd=0;
-          xof=fixtoi(fixsin(ftofix((aim-dist)/1000.))*(weaps->num[weap[curr_weap].weap]->shoot_obj->detect_range+1000))*dir;
-          yof=fixtoi(fixcos(ftofix((aim-dist)/1000.))*(weaps->num[weap[curr_weap].weap]->shoot_obj->detect_range+1000));
-          partlist.shoot_part(aim-dist,weaps->num[weap[curr_weap].weap]->shoot_spd-spd_rnd,dir,x+xof,y-4000+yof,(xspd*weaps->num[weap[curr_weap].weap]->affected_motion)/1000,(yspd*weaps->num[weap[curr_weap].weap]->affected_motion)/1000,this->local_slot,weaps->num[weap[curr_weap].weap]->shoot_obj);
-        };
-        if (weaps->num[weap[curr_weap].weap]->aim_recoil!=0)
-          aim_recoil_speed+=(100*weaps->num[weap[curr_weap].weap]->aim_recoil);/*-weaps->num[weap[curr_weap].weap]->aim_recoil/2*1000;*/
-        if (weaps->num[weap[curr_weap].weap]->recoil!=0)
-        {
-          xspd = xspd + -fixtoi(fixsin(ftofix(aim/1000.))*weaps->num[weap[curr_weap].weap]->recoil)*dir;
-          yspd = yspd + -fixtoi(fixcos(ftofix(aim/1000.))*weaps->num[weap[curr_weap].weap]->recoil);
-        };
-      };
-      weap[curr_weap].shoot_time=weaps->num[weap[curr_weap].weap]->shoot_times+1;
-      firecone_time=weaps->num[weap[curr_weap].weap]->firecone_timeout;
-      curr_firecone=weaps->num[weap[curr_weap].weap]->firecone;
-      if (weaps->num[weap[curr_weap].weap]->shoot_sound!=NULL)
-      {
-        //if (weap->loop_sound!=1)
-        play_sample(weaps->num[weap[curr_weap].weap]->shoot_sound->snd, *game->VOLUME, 127, 1000, 0);
-        /*else if (!sound_loop)
-        {
-        play_sample(weap->shoot_sound->snd, 255, 127, 1000, 1);
-        sound_loop=true;
-        };*/
-      };
+      weap[curr_weap].shoot(x,y,xspd,yspd,aim,dir,local_slot);
     };
   };
   if (weap[curr_weap].ammo==0 && !fireing)
@@ -517,11 +482,6 @@ void worm::shoot()
     fireing=true;
     if(weaps->num[weap[curr_weap].weap]->noammo_sound!=NULL)
       play_sample(weaps->num[weap[curr_weap].weap]->noammo_sound->snd, *game->VOLUME, 127, 1000, 0);
-    /*if (weap[curr_weap].shoot_time>weaps->num[weap[curr_weap].weap]->shoot_times)
-    {
-      weap[curr_weap].shoot_time=0;
-    };*/
-      
   };
 };
 
@@ -619,7 +579,6 @@ void worm::destroyrope()
 void worm::applyropeforce()
 {
 	int dx,dy,m;
-	double px,py;
 	dx=x-ropex;
 	dy=y-4000-ropey;
 	m=fixhypot(dx,dy);
@@ -645,7 +604,7 @@ void worm::applyropeforce()
 
 void calcrope(struct worm *player)
 {
-	int g,dx,dy,m;
+	int g;
 	
 	if (player->ropestate!=0)
 	{
