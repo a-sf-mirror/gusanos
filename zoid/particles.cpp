@@ -633,7 +633,7 @@ void calc_particles()
 				if (!map->mat[g+1].particle_pass)
 				{
 					tmp->yspd=( tmp->yspd * tmp->type->bounce ) / -1000;
-					tmp->xspd=( tmp->xspd * abs(tmp->type->bounce) ) / -1000;
+					tmp->xspd=( tmp->xspd * abs(tmp->type->bounce) ) / 1000;
 					if (tmp->type->animonground!=1)
 						tmp->framecount=0;
 				};

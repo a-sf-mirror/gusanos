@@ -599,8 +599,8 @@ void engine::init_game()
   con->add_cmd("SAVE_LOG", save_log);
   
   if(v_depth==8)
-    fonty->ld_fnt_8("default/fonts/minifont.bmp");
-  else fonty->ld_fnt("default/fonts/minifont.bmp");
+    fonty->ld_fnt_8("default/fonts/minifont");
+  else fonty->ld_fnt("default/fonts/minifont");
 	
 
   
@@ -624,13 +624,13 @@ void engine::init_game()
   gstart=sounds->load("start.wav");
   menu_move=sounds->load("menu_move.wav");
   menu_select=sounds->load("menu_select.wav");
-	health=sprites->load_sprite("health.bmp",1,game->mod,game->v_depth);
+	health=sprites->load_sprite("health",1,game->mod,game->v_depth);
 	//talking
-	talk=sprites->load_sprite("talk.bmp",1,game->mod,game->v_depth);
-  ammo=sprites->load_sprite("ammo.bmp",1,game->mod,game->v_depth);
-	death_img=sprites->load_sprite("kills.bmp",1,game->mod,game->v_depth);
-	hook=sprites->load_sprite("hook.bmp",1,game->mod,game->v_depth);
-  firecone=sprites->load_sprite("firecone.bmp",7,game->mod,game->v_depth);
+	talk=sprites->load_sprite("talk",1,game->mod,game->v_depth);
+  ammo=sprites->load_sprite("ammo",1,game->mod,game->v_depth);
+	death_img=sprites->load_sprite("kills",1,game->mod,game->v_depth);
+	hook=sprites->load_sprite("hook",1,game->mod,game->v_depth);
+  firecone=sprites->load_sprite("firecone",7,game->mod,game->v_depth);
 	worm_hole=load_exp("worm_hole.obj");
   
   init_players();
@@ -664,7 +664,7 @@ void engine::init_game()
       player[i]->weap[o].reloading=false;
     };
 		player[i]->curr_frame=2700;
-		player[i]->crosshair=sprites->load_sprite("crosshair.bmp",1,game->mod,game->v_depth);
+		player[i]->crosshair=sprites->load_sprite("crosshair",1,game->mod,game->v_depth);
 
 		player[i]->active=true;
 		player[i]->flag=false;
@@ -694,11 +694,11 @@ void engine::init_game()
   pl_options[1].aim_acceleration=con->create_variable("P1_AIM_ACCEL",100);
   pl_options[1].aim_friction=con->create_variable("P1_AIM_FRICTION",50);
   pl_options[1].aim_maxspeed=con->create_variable("P1_AIM_MAX_SPEED",1200);
-	player[1]->skin=sprites->load_sprite("lskinb.bmp",21,game->mod,game->v_depth);
-  player[1]->mask=sprites->load_sprite("lskinmask.bmp",21,game->mod,game->v_depth);
+	player[1]->skin=sprites->load_sprite("lskinb",21,game->mod,game->v_depth);
+  player[1]->mask=sprites->load_sprite("lskinmask",21,game->mod,game->v_depth);
   player[1]->color=makecol(rand()%255,rand()%255,rand()%255);
   player[0]->color=makecol(rand()%255,rand()%255,rand()%255);
-  player[0]->mask=sprites->load_sprite("lskinmask.bmp",21,game->mod,game->v_depth);
+  player[0]->mask=sprites->load_sprite("lskinmask",21,game->mod,game->v_depth);
 
 	player[1]->keys=new struct KEYS;
 	player[1]->keys->up=false;
@@ -717,7 +717,7 @@ void engine::init_game()
 	pl_options[0].aim_maxspeed=con->create_variable("P0_AIM_MAX_SPEED",1200);
   pl_options[0].aim_acceleration=con->create_variable("P0_AIM_ACCEL",100);
   pl_options[0].aim_friction=con->create_variable("P0_AIM_FRICTION",50);
-	player[0]->skin=sprites->load_sprite("lskinb.bmp",21,game->mod,game->v_depth);
+	player[0]->skin=sprites->load_sprite("lskinb",21,game->mod,game->v_depth);
 	player[0]->keys=new struct KEYS;
 	player[0]->keys->up=false;
 	player[0]->keys->down=false;

@@ -208,7 +208,7 @@ int load_map(char* name)
   strcpy(tmp,tmp2);
 	strcat(tmp,"/material");
 	set_color_depth(8);
-	tmp_mat = load_image_with_no_ext(tmp, NULL);
+	tmp_mat = loadImage(tmp, NULL);
 	set_color_depth(game->v_depth);
   if (tmp_mat==NULL)
   {
@@ -217,7 +217,7 @@ int load_map(char* name)
     strcpy(tmp,tmp2);
     strcat(tmp,"/material");
     set_color_depth(8);
-    tmp_mat = load_image_with_no_ext(tmp,NULL);
+    tmp_mat = loadImage(tmp,NULL);
     set_color_depth(game->v_depth);
   };
 	if (tmp_mat!=NULL)
@@ -229,13 +229,13 @@ int load_map(char* name)
     strcpy(map->name,name);
 		strcpy(tmp, tmp2);
 		strcat(tmp,"/level");
-		map->mapimg = load_image_with_no_ext(tmp,NULL);
+		map->mapimg = loadImage(tmp,NULL);
 		strcpy(tmp, tmp2);
 		strcat(tmp,"/layer");
-		map->layer = load_image_with_no_ext(tmp,NULL);	
+		map->layer = loadImage(tmp,NULL);	
     strcpy(tmp, tmp2);
 		strcat(tmp,"/paralax");
-		map->paralax = load_image_with_no_ext(tmp,NULL);
+		map->paralax = loadImage(tmp,NULL);
     map->material = tmp_mat;
     set_color_depth(8);
     map->water_buffer = create_bitmap(tmp_mat->w,tmp_mat->h);
@@ -243,7 +243,7 @@ int load_map(char* name)
     set_color_depth(game->v_depth);
     strcpy(tmp, tmp2);
 		strcat(tmp,"/background");
-		map->background = load_image_with_no_ext(tmp,NULL);
+		map->background = loadImage(tmp,NULL);
     if (map->background==NULL)
     {
       int x,y,col,g;

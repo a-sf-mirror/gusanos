@@ -68,6 +68,20 @@ void draw_bar(BITMAP* where,int w,int h, int x, int y, int max_value, int value,
 		rectfill(where,x,y,(value*w)/max_value+x,y+h,color);
 };
 
+void draw_random_bar(BITMAP* where,int w,int h, int x, int y, int max_value, int value, int color)
+{
+	if (value > 0)
+  {
+    int r;
+    for(int _x=0;_x<=(value*w)/max_value;_x++)
+    for(int _y=0;_y<=h;_y++)
+    {
+      r=rand()%128;
+      putpixel(where,x+_x,y+_y,makecol(128+r-30*_y,40,40));
+    }
+  }
+};
+
 void render_weapon_selection_menu(BITMAP *where)
 {
   int i,j;
@@ -126,13 +140,13 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
 			}
 			else
 			{
-				if (p->health < *game->MAX_HEALTH)
+				if (p->health <= *game->MAX_HEALTH)
 				{
 					//draw green bar
 					rectfill(where,viewport.x+11, viewport.y+5, viewport.x+41, viewport.y+7, makecol(0,255,0));
 					//blue to white bar on-top
 					c=(((p->health-*game->START_HEALTH)*1.)/ (*game->MAX_HEALTH-*game->START_HEALTH))*255;
-					draw_bar(where,30,2, viewport.x+11, viewport.y+5, *game->MAX_HEALTH-*game->START_HEALTH, p->health-*game->START_HEALTH, makecol(c,c,255));
+					draw_random_bar(where,30,2, viewport.x+11, viewport.y+5, *game->MAX_HEALTH-*game->START_HEALTH, p->health-*game->START_HEALTH, makecol(c,c,255));
 				}
 				else
 				{
@@ -272,15 +286,14 @@ void engine::render()
       render_lasersight(player[i]);
       if(*FLASHLIGHT==1)render_flashlight(player[i]->x/1000,player[i]->y/1000-4,player[i]->aim-64000,player[i]->dir,map->buffer,map->material);
       if (!player[i]->islocal) game->fonty->draw_string(map->buffer,player[i]->name,player[i]->x/1000-(strlen(player[i]->name)*2),player[i]->y/1000-16,true);
+      if (player[i]->talking)
+        draw_sprite(map->buffer, talk->img[0], player[i]->x / 1000 - talk->img[0]->w/2, player[i]->y / 1000 - 22);
 			if (player[i]->dir==-1)
 			{
 				//draw_sprite_h_flip(map->buffer,player[i]->skin->img[(((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7],player[i]->x / 1000 - 9,(player[i]->y / 1000)-8);
         player[i]->render_flip(map->buffer, (((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7, player[i]->x / 1000 - 9, (player[i]->y / 1000)-8);
         if(player[i]->curr_firecone!=NULL && player[i]->firecone_time>0)
         draw_sprite_h_flip(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtoi(fixsin(ftofix(player[i]->aim/1000.))*-5) - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtoi(fixcos(ftofix(player[i]->aim/1000.))*5) -4 - player[i]->curr_firecone->img[0]->h/2);
-				//talking
-				if (player[i]->talking)
-					draw_sprite_h_flip(map->buffer, talk->img[0], player[i]->x / 1000 - 8, player[i]->y / 1000 - 14);
 			}
 			else
 			{
@@ -288,9 +301,6 @@ void engine::render()
         player[i]->render(map->buffer, (((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7, player[i]->x / 1000 - 6, (player[i]->y / 1000)-8);
         if(player[i]->curr_firecone!=NULL && player[i]->firecone_time>0)
         draw_sprite(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtoi(fixsin(ftofix(player[i]->aim/1000.))*5) - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtoi(fixcos(ftofix(player[i]->aim/1000.))*5) -4 - player[i]->curr_firecone->img[0]->h/2);
-				//talking
-				if (player[i]->talking)
-					draw_sprite(map->buffer, talk->img[0], player[i]->x / 1000 + 4, player[i]->y / 1000 - 14);
 			};
 		};
 	};

@@ -26,21 +26,26 @@ BITMAP* load_image(const char* tmp, RGB* palette)
   return ret;
 }
 
-BITMAP* load_image_with_no_ext(const char* tmp, RGB* palette)
+BITMAP* loadImage(const char* tmp, RGB* palette)
 {
   std::string filename;
   
   filename = tmp;
-  filename += ".bmp";
   if ( exists( filename.c_str() ) )
   {
-    return load_bmp( filename.c_str() , palette );
+    return load_image( filename.c_str() , palette );
   }
   filename = tmp;
   filename += ".png";
-  if ( exists( filename.c_str() ))
+  if ( exists( filename.c_str() ) )
   {
     return load_png( filename.c_str() , palette );
+  }
+  filename = tmp;
+  filename += ".bmp";
+  if ( exists( filename.c_str() ))
+  {
+    return load_bmp( filename.c_str() , palette );
   }
   return NULL;
 }

@@ -67,19 +67,19 @@ class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* f
   tmp3+="/sprites/";
   tmp3+=curr->sprite_name;
   //set_color_depth(32);
-  tmp_bmp=load_image(tmp3.c_str(),0);
+  tmp_bmp=loadImage(tmp3.c_str(),0);
   if (tmp_bmp==NULL)
   {
     tmp3=folder;
     tmp3+="/sprites/";
     tmp3+=curr->sprite_name;
     //set_color_depth(32);
-    tmp_bmp=load_image(tmp3.c_str(),0);
+    tmp_bmp=loadImage(tmp3.c_str(),0);
     if (tmp_bmp==NULL)
     {
       tmp3="default/sprites/";
       tmp3+=curr->sprite_name;
-      tmp_bmp=load_image(tmp3.c_str(),0);
+      tmp_bmp=loadImage(tmp3.c_str(),0);
     };
   };
   set_color_conversion(COLORCONV_TOTAL);

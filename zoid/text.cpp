@@ -58,7 +58,7 @@ void rem_spaces(const char* str)
 
 void fnt::ld_fnt(const char *filename)
 {
-	img=load_image(filename,0);
+	img=loadImage(filename,0);
 	chrw=img->w/256;
 	chrh=img->h;
 };
@@ -68,7 +68,7 @@ void fnt::ld_fnt_8(const char *filename)
   int x,y;
   BITMAP *tmp_bmp;
   set_color_depth(32);
-  tmp_bmp=load_image(filename,0);
+  tmp_bmp=loadImage(filename,0);
   set_color_depth(8);
   img=create_bitmap(tmp_bmp->w,tmp_bmp->h);
   blit(tmp_bmp,img,0,0,0,0,tmp_bmp->w,tmp_bmp->h);

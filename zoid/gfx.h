@@ -3,8 +3,6 @@
 
 #include <allegro.h>
 
-BITMAP* load_image(const char *, RGB*);
-
-BITMAP* load_image_with_no_ext(const char *, RGB*);
+BITMAP* loadImage(const char *, RGB*);
 
 #endif

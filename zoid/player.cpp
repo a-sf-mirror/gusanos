@@ -62,8 +62,8 @@ void send_msg()
 //skins
 void worm::load_skin(std::string name)
 {
-	skin=sprites->load_sprite((name + ".bmp").c_str(),21,game->mod,game->v_depth);
-	mask=sprites->load_sprite((name + "mask.bmp").c_str(),21,game->mod,game->v_depth);
+	skin=sprites->load_sprite((name).c_str(),21,game->mod,game->v_depth);
+	mask=sprites->load_sprite((name + "mask").c_str(),21,game->mod,game->v_depth);
 }
 
 void worm::change_team(int _team)
@@ -327,7 +327,7 @@ worm::worm()
       weap[o].reloading=false;
     };
 		curr_frame=2700;
-		crosshair=sprites->load_sprite("crosshair.bmp",1,game->mod,game->v_depth);
+		crosshair=sprites->load_sprite("crosshair",1,game->mod,game->v_depth);
 		active=false;
 		flag=false;
     islocal=false;
@@ -341,8 +341,8 @@ worm::worm()
     ropeyspd=1;
     curr_firecone=NULL;
     firecone_time=0;
-    skin=sprites->load_sprite("lskinb.bmp",21,game->mod,game->v_depth);
-    mask=sprites->load_sprite("lskinmask.bmp",21,game->mod,game->v_depth);
+    skin=sprites->load_sprite("lskinb",21,game->mod,game->v_depth);
+    mask=sprites->load_sprite("lskinmask",21,game->mod,game->v_depth);
     keys=new struct KEYS;
     keys->up=false;
     keys->down=false;
@@ -392,6 +392,7 @@ void worm::init_node(bool is_authority)
     node->addReplicationInt((zS32*)&aim,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,99,-1,-1);
     node->addReplicationInt((zS32*)&color,32,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,0,-1,-1 );
     node->addReplicationString(name,32,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY," ",-1,-1 );
+    node->addReplicationBool(&talking,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY,false,-1,-1 );
     
     //Keys structure replication
     node->addReplicationBool(&keys->fire,0,ZCOM_REPRULE_OWNER_2_AUTH,false,-1,-1 );
