@@ -6,6 +6,10 @@ BaseObject::BaseObject()
 	deleteMe = false;
 }
 
+BaseObject::~BaseObject()
+{
+}
+
 Vec BaseObject::getPos()
 {
 	return pos;

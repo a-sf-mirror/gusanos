@@ -76,6 +76,11 @@ void Sfx::setChanObject(int chan, BaseObject* object)
 	chanObject.push_back( pair< int, BaseObject* > ( chan, object ) );
 }
 
+void Sfx::clear()
+{
+	chanObject.clear();
+}
+
 Listener* Sfx::newListener()
 {
 	listeners.push_back( new Listener );

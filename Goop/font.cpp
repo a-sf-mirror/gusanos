@@ -20,7 +20,7 @@ Font::~Font()
 	vector<BITMAP*>::iterator iter = m_char.begin();
 	while (iter != m_char.end())
 	{
-		delete *iter;
+		destroy_bitmap(*iter);
 		++iter;
 	}
 }

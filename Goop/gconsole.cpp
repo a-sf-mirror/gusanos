@@ -82,6 +82,7 @@ void GConsole::init()
 {
 	keyHandler.init();
 
+
 	m_mode = CONSOLE_MODE_BINDINGS;
 	
 	registerFloatVariable("CON_SPEED", &speed, 4);
@@ -102,7 +103,7 @@ void GConsole::shutDown()
 void GConsole::loadResources()
 {
 	m_font = fontList.load("minifont.bmp");
-	m_MaxMsgLength= (320-5) / m_font->width();
+	m_MaxMsgLength= (320-5) / m_font->width();	
 	
 	background = spriteList.load("con_background.bmp");
 }

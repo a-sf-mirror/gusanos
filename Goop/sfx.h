@@ -25,6 +25,7 @@ class Sfx
 	void registerInConsole();
 	void think();
 	void setChanObject( int chan, BaseObject* obj );
+	void clear();
 	Listener* newListener();
 	void freeListener(Listener* listener);
 	

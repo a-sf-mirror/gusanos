@@ -144,6 +144,8 @@ void Game::loadMod()
 void Game::unload()
 {
 	loaded = false;
+	
+	sfx.clear();
 	// Delete all objects
 	for ( list<BaseObject*>::iterator iter = objects.begin(); iter != objects.end(); ++iter)
 	{
@@ -203,7 +205,7 @@ void Game::changeLevel(const std::string& levelName )
 			players.push_back( player );
 			localPlayers.push_back( player );
 		}
-		if(true)
+		if(false)
 		{
 			Worm* worm = new Worm;
 			Player* player = new Player(playerOptions[1]);

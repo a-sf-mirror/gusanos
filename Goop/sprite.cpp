@@ -21,9 +21,9 @@ Sprite::~Sprite()
 	vector< vector<BITMAP*> >::iterator frameY;
 	vector< BITMAP* >::iterator frameX;
 	for (frameY = m_frame.begin(); frameY != m_frame.end(); frameY++)
-	for (frameX = (*frameY).begin(); frameX != (*frameY).end(); frameX++);
+	for (frameX = (*frameY).begin(); frameX != (*frameY).end(); frameX++)
 	{
-		delete *frameX;
+		if (*frameX) destroy_bitmap( *frameX );
 	}
 }
 

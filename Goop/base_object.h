@@ -10,6 +10,7 @@ class BaseObject
 	public:
 		
 	BaseObject();
+	virtual ~BaseObject();
 
 	virtual void draw(BITMAP* where,int xOff, int yOff) = 0;
 	virtual void think() = 0;

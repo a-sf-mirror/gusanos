@@ -39,6 +39,15 @@ Worm::Worm()
 	jumping = false;
 }
 
+Worm::~Worm()
+{
+	if (m_animator) delete m_animator;
+	for ( int i = 0; i < m_weapons.size(); i++)
+	{
+		delete m_weapons[i];
+	}
+}
+
 void Worm::assignOwner( BasePlayer* owner)
 {
 	m_owner = owner;

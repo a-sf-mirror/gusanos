@@ -10,8 +10,10 @@ using namespace std;
 
 Player::Player(PlayerOptions* options) : BasePlayer()
 {
-	bool aimingUp = false;
-	bool aimingDown = false;
+	aimingUp = false;
+	aimingDown = false;
+	changing = false;
+	jumping = false;
 	
 	m_options = options;
 
