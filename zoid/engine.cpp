@@ -391,6 +391,10 @@ void engine::calcphysics()
           };
         }
         else if (player[c]->health<*MAX_HEALTH) player[c]->health+=10;
+        if (player[c]->flash>0) 
+        {
+          player[c]->flash-=100;
+        };
         calcrope(player[c]);
       };
       calc_water();
@@ -650,6 +654,7 @@ void engine::init_game()
     player[i]->firecone_time=0;
     
     player[i]->node=NULL;
+    player[i]->flash=26000;
     
     local_player[i]=i;
     strcpy(pl_options[i].name,"PLAYER");

@@ -296,6 +296,7 @@ worm::worm()
 		curr_weap=0;
     aim_speed=0;
     aim_recoil_speed=0;
+    flash=0;
     killed_by=-1;
     team=0;
     color=makecol(100,100,220);

@@ -37,6 +37,7 @@ class worm
   int team;
 	unsigned int curr_frame;
 	int dir;
+  int flash;
   sprite *skin,*mask;
   sprite* crosshair;
   sprite* curr_firecone;

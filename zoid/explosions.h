@@ -27,7 +27,7 @@ class exp_type
 	char name[255];
 	int damage,bright_variation,blow_away;
 	int color,wormshootnum,wormshootspeed,wormshootspeedrnd,detect_range,framenum,timeout;
-  int light_fadeness, light_color,spd_multiply;
+  int light_fadeness, light_color,spd_multiply,flash;
 	char affect_worm,affect_particles, light_effect;
 	 sprite *sprt,*hole;
 	struct part_type *wormshootobj;

@@ -175,6 +175,7 @@ class exp_type* load_exp(const char* exp_name)
           else if ("light_effect"==var) curr->light_effect=atoi(val.c_str());
           else if ("light_fadeness"==var) curr->light_fadeness=atoi(val.c_str());
           else if ("speed_multiply"==var) curr->spd_multiply=atoi(val.c_str());
+          else if ("flash"==var) curr->flash=atoi(val.c_str());
 				};
 			};
 		};
@@ -291,6 +292,18 @@ void create_exp(int x,int y,class exp_type *type)
         };
       };
 		};
+    if (exps->end->type->flash>0)
+    {
+      for (i=0;i<player_count;i++)
+      {
+        if (player[i]->active){
+          if (!obs_line ( map->material, exps->end->x/1000 , exps->end->y/1000 , player[i]->x/1000 , player[i]->y/1000 -4))
+          {
+            player[i]->flash+=exps->end->type->flash;
+          };
+        };
+      };
+    };
     if (exps->end->type->light_effect==1)
     {
       exps->end->light=NULL;

@@ -47,4 +47,6 @@ void check_sunlight( int x, int y);
 
 void render_lens(int x, int y, int radius, BITMAP* where, BITMAP *buf);
 
+bool obs_line ( BITMAP*where, int x1 , int y1 , int x2 , int y2 );
+
 #endif

@@ -97,6 +97,13 @@ void check_obstacles(BITMAP *where, int x, int y, int d)
   if(map->mat[g+1].blocks_light) obstacle=true;
 };
 
+bool obs_line ( BITMAP*where, int x1 , int y1 , int x2 , int y2 )
+{
+  obstacle=false;
+  do_collision(where, x1, y1, x2, y2, 0, check_obstacles);
+  return obstacle;
+};
+
 void obs_light(BITMAP *where, int x, int y, int d)
 {
   int dx,dy,i,col;
