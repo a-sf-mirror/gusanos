@@ -334,12 +334,17 @@ void console::parse(const char* _str)
 		std::string var, val,tmpstr;
 		struct variable* tmpvar;
 		struct s_cmd *tmp_cmd;
-		t=0;
-		//while (str[t]!=' ' && t<strlen(str)) t++;
+
     t=str.find_first_of(' ');
+    
     //split it
+    var=str;
+    val.clear();
+    if (t!=str.npos)
+    {
     var=str.substr(0,t);
     val=str.substr(t+1);
+    };
 		tmpvar=con->find_variable(var.c_str());
 		tmp_cmd=con->find_cmd(var.c_str());
 		if (tmpvar!=NULL)
@@ -382,32 +387,33 @@ void console::parse(const char* _str)
 	};
 };
 
-void console::parse_silent(const char* str)
+void console::parse_silent(const char* _str)
 {
-	if (strlen(str)!=0)
+  std::string str=_str;
+	if (!str.empty())
 	{
-		unsigned int t;
-		char *var, *val,tmpstr[255];
+		int t;
+		std::string var, val,tmpstr;
 		struct variable* tmpvar;
 		struct s_cmd *tmp_cmd;
-		t=0;
-		while (str[t]!=' ' && t<strlen(str)) t++;
-		var=strmid(str,0,t);		
-		tmpvar=con->find_variable(var);
-		tmp_cmd=con->find_cmd(var);
+    t=str.find_first_of(' ');
+    //split it
+    var=str.substr(0,t);
+    val=str.substr(t+1);
+		tmpvar=con->find_variable(var.c_str());
+		tmp_cmd=con->find_cmd(var.c_str());
 		if (tmpvar!=NULL)
 		{
-			if (t<strlen(str))
+			if (!val.empty())
 			{
-				val=strmid(str,t+1,strlen(str)-t-1);
-				*tmpvar->value=atoi(val);
+				*tmpvar->value=atoi(val.c_str());
 			};
 		} else if (tmp_cmd!=NULL)
 		{
 			strcpy(con->arg,"");
-			if (t<strlen(str))
+			if (!val.empty())
 			{
-				strcpy(con->arg,strmid(str,t+1,strlen(str)-t-1));
+				strcpy(con->arg,val.c_str());
 			};
 			tmp_cmd->func();
 		}	
