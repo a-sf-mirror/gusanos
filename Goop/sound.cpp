@@ -83,7 +83,7 @@ void Sound::play2D(BaseObject* obj, float loudness, float volume,float pitch, fl
 			float pos[3] = { obj->getPos().x, obj->getPos().y, 0 };
 			FSOUND_3D_SetAttributes(chan, pos, NULL);
 			
-			//sfx.setChanObject( chan, obj );
+			sfx.setChanObject( chan, obj );
 			
 			float rndPitch = pitch + rnd()*pitchVariation - pitchVariation / 2;
 			FSOUND_SetFrequency(chan, FSOUND_GetFrequency(chan) * rndPitch );

@@ -20,11 +20,6 @@ Sfx::~Sfx()
 void Sfx::init()
 {	
 	FSOUND_Init(44100, 32, 0);
-	for ( int i = 0; i < FSOUND_GetMaxChannels(); i++ )
-	{
-		chanObject.push_back( (BaseObject*) NULL );
-	}
-	
 }
 
 void Sfx::shutDown()
@@ -38,32 +33,35 @@ void Sfx::registerInConsole()
 
 void Sfx::updateChanPositions()
 {
-	int i;
-	for ( i = 0; i < FSOUND_GetMaxChannels(); i++ )
+	list< pair< int, BaseObject* > >::iterator i;
+	for ( i = chanObject.begin(); i != chanObject.end(); i++ )
 	{
-		if ( chanObject[i] )
+		if ( (*i).second )
 		{
-			float pos[3] = { chanObject[i]->getPos().x, chanObject[i]->getPos().y, 0 };
-			FSOUND_3D_SetAttributes(i, pos, NULL);
+			float pos[3] = { (*i).second->getPos().x, (*i).second->getPos().y, 0 };
+			FSOUND_3D_SetAttributes((*i).first, pos, NULL);
 		}
 	}
 }
 
 void Sfx::checkForDeletedObjects()
 {
-	int i;
-	for ( i = 0; i < FSOUND_GetMaxChannels(); i++ )
+	list< pair< int, BaseObject* > >::iterator i;
+	for ( i = chanObject.begin(); i != chanObject.end(); )
 	{
-		if ( chanObject[i] && chanObject[i]->deleteMe ) // If the object is going to be deleted
+		if ( (*i).second && ( (*i).second->deleteMe || !FSOUND_IsPlaying( (*i).first ) ) )
 		{
-			chanObject[i] = NULL; // Remove it from this list so it doesnt get updated anymore 
-		}
+			list< pair< int, BaseObject* > >::iterator tmp;
+			tmp = i;
+			i++;
+			chanObject.erase(tmp);
+		}else i++;
 	}
 }
 
 void Sfx::setChanObject(int chan, BaseObject* object)
 {
-	chanObject[chan] = object;
+	chanObject.push_back( pair< int, BaseObject* > ( chan, object ) );
 }
 
 

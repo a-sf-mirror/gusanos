@@ -3,7 +3,7 @@
 
 class BaseObject;
 
-#include <vector>
+#include <list>
 
 class Sfx
 {
@@ -19,11 +19,11 @@ class Sfx
 	void setChanObject( int chan, BaseObject* obj );
 	
 	// *** THIS MUST BE PLACED BEFORE THE OBJECT GETS REALLY DELETED *** // or... CRASH! :>
-	void checkForDeletedObjects(); 
+	void checkForDeletedObjects();
 	
 	private:
 	
-	std::vector< BaseObject* > chanObject;
+	std::list< std::pair< int, BaseObject* > > chanObject;
 	
 	int m_vsync;
 	int m_clearBuffer;

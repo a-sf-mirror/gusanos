@@ -178,9 +178,9 @@ int main(int argc, char **argv)
 		FSOUND_3D_Listener_SetAttributes(pos,NULL,0,0,1,0,1,0);
 		FSOUND_Update();
 		
-		//sfx.updateChanPositions();
+		sfx.updateChanPositions();
 		
-		//sfx.checkForDeletedObjects();
+		sfx.checkForDeletedObjects();
 		
 		for ( iter = game.objects.begin(); iter != game.objects.end(); )
 		{
