@@ -72,6 +72,7 @@ struct engine
   //Minimap
   int *MINIMAP;
 	int *MINIMAP_TYPE;
+	int *SHOW_FPS;
 
   bool teamplay;
   struct s_viewport viewport[2];

@@ -33,8 +33,9 @@ sprite::~sprite()
   else sprites->end=prev;
   for(i=0;i<framenum;i++)
   {
-    destroy_bitmap(img[i]);
-  };
+    if (img[i] != NULL)
+			destroy_bitmap(img[i]);
+  }
 };
 
 class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* folder,int v_depth)
@@ -92,6 +93,14 @@ class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* f
 			blit(tmp_bmp,end->img[i],(tmp_bmp->w/frames)*i,0,0,0,tmp_bmp->w/frames,tmp_bmp->h);
 		};
     destroy_bitmap(tmp_bmp);
-	};
+	}
+	else
+	{
+		//can be better ?
+		for(int i=0;i<end->framenum;i++)
+			end->img[i]=NULL;
+		delete end;
+		return NULL;
+	}
 	return end;
 };

@@ -35,7 +35,7 @@ BITMAP* loadImage(const char* tmp, RGB* palette)
   {
     return load_image( filename.c_str() , palette );
   }
-  filename = tmp;
+  //filename = tmp;
   filename += ".png";
   if ( exists( filename.c_str() ) )
   {

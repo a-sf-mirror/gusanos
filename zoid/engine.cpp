@@ -1,4 +1,3 @@
-
 #include "engine.h"
 #include "console.h"
 #include "network.h"
@@ -400,6 +399,9 @@ void engine::calcphysics()
                 {
                   sprintf(tmpstr,"* %s TEAM KILLED %s",player[player[c]->killed_by]->name,player[c]->name);
                 };
+								//talk death message
+								if (player[c]->talking)
+									strcat(tmpstr, " WHILE HE WAS TALKING");
               };
             }
             con->echolist.add_echo(tmpstr);
@@ -561,6 +563,8 @@ void engine::init_game()
   MINIMAP=con->create_variable("MINIMAP",1);
 	MINIMAP_TYPE=con->create_variable("MINIMAP_TYPE",0);
 
+	SHOW_FPS=con->create_variable("SHOW_FPS",1);
+
 	con->add_cmd("EXIT",quit);
 	con->add_cmd("QUIT",quit);
 	con->add_cmd("MAP",change_level); 
@@ -694,11 +698,10 @@ void engine::init_game()
   pl_options[1].aim_acceleration=con->create_variable("P1_AIM_ACCEL",100);
   pl_options[1].aim_friction=con->create_variable("P1_AIM_FRICTION",50);
   pl_options[1].aim_maxspeed=con->create_variable("P1_AIM_MAX_SPEED",1200);
-	player[1]->skin=sprites->load_sprite("lskinb",21,game->mod,game->v_depth);
-  player[1]->mask=sprites->load_sprite("lskinmask",21,game->mod,game->v_depth);
+	player[1]->skin=sprites->load_sprite("/skins/default/image",21,game->mod,game->v_depth);
+  player[1]->mask=sprites->load_sprite("/skins/default/mask",21,game->mod,game->v_depth);
   player[1]->color=makecol(rand()%255,rand()%255,rand()%255);
   player[0]->color=makecol(rand()%255,rand()%255,rand()%255);
-  player[0]->mask=sprites->load_sprite("lskinmask",21,game->mod,game->v_depth);
 
 	player[1]->keys=new struct KEYS;
 	player[1]->keys->up=false;
@@ -717,7 +720,8 @@ void engine::init_game()
 	pl_options[0].aim_maxspeed=con->create_variable("P0_AIM_MAX_SPEED",1200);
   pl_options[0].aim_acceleration=con->create_variable("P0_AIM_ACCEL",100);
   pl_options[0].aim_friction=con->create_variable("P0_AIM_FRICTION",50);
-	player[0]->skin=sprites->load_sprite("lskinb",21,game->mod,game->v_depth);
+	player[0]->skin=sprites->load_sprite("/skins/default/image",21,game->mod,game->v_depth);
+	player[0]->mask=sprites->load_sprite("/skins/default/mask",21,game->mod,game->v_depth);
 	player[0]->keys=new struct KEYS;
 	player[0]->keys->up=false;
 	player[0]->keys->down=false;

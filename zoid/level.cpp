@@ -230,6 +230,9 @@ int load_map(char* name)
 		strcpy(tmp, tmp2);
 		strcat(tmp,"/level");
 		map->mapimg = loadImage(tmp,NULL);
+		//should do more then return 1
+		if (map->mapimg == NULL)
+			return 1;
 		strcpy(tmp, tmp2);
 		strcat(tmp,"/layer");
 		map->layer = loadImage(tmp,NULL);	
@@ -409,65 +412,65 @@ void change_level()
 	char tmp[1024];
 	if (load_map(con->arg)!=0)
 	{
-	        char *cptr = lcase(con->arg);
-		if (load_map(lcase(con->arg))!=0)
+		char *cptr = lcase(con->arg);
+		if (load_map(cptr)!=0)
 		{
-		sprintf(tmp,"%s%s%c","COULD NOT FIND MAP \"",con->arg,'\"');
-		con->log.create_msg(tmp);
-		free(cptr);
+			sprintf(tmp,"%s%s%c","COULD NOT FIND MAP \"",con->arg,'\"');
+			con->log.create_msg(tmp);
+			free(cptr);
 			return;
 		}
 		free(cptr);
 	}
-    if(*game->HOST==1)
+  if(*game->HOST==1)
+  {
+    srv = new Server( 1, 9898 );
+    if(!srv || !srv->is_ok) {
+      allegro_message("Couldnt start the server.\n");
+      exit(-1);
+    }else game->host=true;
+    game->init_node(srv,true);
+    delete_players();
+    if (*game->TEAMPLAY==1)
+      game->teamplay=true;
+    else game->teamplay=false;
+    player[0]=new worm;
+    player[0]->init_node(true);
+    player[0]->islocal=true;
+    player[0]->local_slot=local_players;
+    local_player[local_players]=player_count;
+    change_nick(local_players);
+    player_count++;
+    local_players++;
+    if(*game->SPLIT_SCREEN==1)
     {
-      srv = new Server( 1, 9898 );
-      if(!srv || !srv->is_ok) {
-        allegro_message("Couldnt start the server.\n");
-        exit(-1);
-      }else game->host=true;
-      game->init_node(srv,true);
-      delete_players();
-      if (*game->TEAMPLAY==1)
-        game->teamplay=true;
-      else game->teamplay=false;
-      player[0]=new worm;
-      player[0]->init_node(true);
-      player[0]->islocal=true;
-      player[0]->local_slot=local_players;
+      player[1]=new worm;
+      player[1]->init_node(true);
+      player[1]->islocal=true;
+      player[1]->local_slot=local_players;
       local_player[local_players]=player_count;
       change_nick(local_players);
       player_count++;
       local_players++;
-      if(*game->SPLIT_SCREEN==1)
-      {
-        player[1]=new worm;
-        player[1]->init_node(true);
-        player[1]->islocal=true;
-        player[1]->local_slot=local_players;
-        local_player[local_players]=player_count;
-        change_nick(local_players);
-        player_count++;
-        local_players++;
-      };
     };
-    
-		destroy_particles();
-    delete exps;
-    exps=new exp_list;
-    create_waterlist();
-    load_map_config();
-    //strcpy(game->level,con->arg);
-		int i;
-		for (i=0; i<local_players;i++)
-		{
-			player[i]->active=false;
-			player[i]->deaths=0;
-			player[i]->destroyrope();
-      player[i]->firecone_time=0;
-      player[i]->selecting_weaps=true;
-      player[i]->curr_weap=0;
-		};
-    con->flag=0;
-    game->selecting=true;
+  };
+
+	destroy_particles();
+	delete exps;
+	exps=new exp_list;
+	create_waterlist();
+	load_map_config();
+	//strcpy(game->level,con->arg);
+	int i;
+	for (i=0; i<local_players;i++)
+	{
+		player[i]->active=false;
+		player[i]->deaths=0;
+		player[i]->destroyrope();
+		player[i]->firecone_time=0;
+		player[i]->selecting_weaps=true;
+		player[i]->curr_weap=0;
+	};
+	con->flag=0;
+	game->selecting=true;
 };

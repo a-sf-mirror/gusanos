@@ -62,8 +62,14 @@ void send_msg()
 //skins
 void worm::load_skin(std::string name)
 {
-	skin=sprites->load_sprite((name).c_str(),21,game->mod,game->v_depth);
-	mask=sprites->load_sprite((name + "mask").c_str(),21,game->mod,game->v_depth);
+	skin=sprites->load_sprite(("/skins/" + name + "/image").c_str(),21,game->mod,game->v_depth);
+	mask=sprites->load_sprite(("/skins/" + name + "/mask").c_str(),21,game->mod,game->v_depth);
+	if (skin==NULL || mask == NULL)
+	{
+		con->log.create_msg(("SKIN \"" + name + "\" NOT FOUND").c_str()); 
+		skin=sprites->load_sprite("/skins/default/image",21,game->mod,game->v_depth);
+		mask=sprites->load_sprite("/skins/default/mask",21,game->mod,game->v_depth);
+	}
 }
 
 void worm::change_team(int _team)
@@ -165,11 +171,13 @@ void worm::checkevents()
     if (type == ZCom_Node::eEvent_User)
     {
       event=data->getInt(8);
+			//changed team
       if(event==5)
       {
         int t=data->getInt(8);
         team=t;
         health=0;
+			//dig?
       }else if(event==4)
       {
         int _x=data->getInt(32);
@@ -186,6 +194,7 @@ void worm::checkevents()
         x2=fixtoi(fixsin(ftofix(_ang/1000.))*6000)*_dir;
         y2=fixtoi(fixcos(ftofix(_ang/1000.))*6000);
         create_exp(_x+x2,_y-4000+y2,game->worm_hole);
+			//chat message
       }else if(event==3)
       {
         char msg[1024],msg2[1024];
@@ -199,6 +208,7 @@ void worm::checkevents()
           sendmsg(msg);
         };
         play_sample(game->menu_select->snd, *game->VOLUME, 127, 1300, 0);
+			//died
       }else if(event==2)
       {
         int o,i;
@@ -231,17 +241,19 @@ void worm::checkevents()
               if (player[i]->node->getNetworkID()==_id)
               {
                 if (!game->teamplay || team!=player[i]->team)
-                {
                   sprintf(tmpstr,"* %s KILLED %s",player[i]->name,name);
-                }else
-                {
+                else
                   sprintf(tmpstr,"* %s TEAM KILLED %s",player[i]->name,name);
-                };
+								//talk death message
+								if (talking)
+									strcat(tmpstr, " WHILE HE WAS TALKING");
+								//break; ?
               }              
             };
           };
         };
         con->echolist.add_echo(tmpstr);
+			//shot
       }else if(event==1)
       {
         int _x=data->getInt(32);
@@ -341,8 +353,8 @@ worm::worm()
     ropeyspd=1;
     curr_firecone=NULL;
     firecone_time=0;
-    skin=sprites->load_sprite("lskinb",21,game->mod,game->v_depth);
-    mask=sprites->load_sprite("lskinmask",21,game->mod,game->v_depth);
+    skin=sprites->load_sprite("/skins/default/image",21,game->mod,game->v_depth);
+    mask=sprites->load_sprite("/skins/default/mask",21,game->mod,game->v_depth);
     keys=new struct KEYS;
     keys->up=false;
     keys->down=false;
@@ -807,12 +819,10 @@ void pl1_team()
 //skins
 void pl0_skin()
 {
-	char name[1024];
 	player[local_player[0]]->load_skin(std::string(con->arg));
 }
 
 void pl1_skin()
 {
-	char name[1024];
 	player[local_player[1]]->load_skin(std::string(con->arg));
 }

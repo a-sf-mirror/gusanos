@@ -74,11 +74,11 @@ void draw_random_bar(BITMAP* where,int w,int h, int x, int y, int max_value, int
   {
     int r;
     for(int _x=0;_x<=(value*w)/max_value;_x++)
-    for(int _y=0;_y<=h;_y++)
-    {
-      r=rand()%128;
-      putpixel(where,x+_x,y+_y,makecol(128+r-30*_y,40,40));
-    }
+			for(int _y=0;_y<=h;_y++)
+			{
+	      r=rand()%128;
+				putpixel(where,x+_x,y+_y,makecol(128+r-30*_y,40,40));
+			}
   }
 };
 
@@ -161,7 +161,7 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
       game->fonty->draw_string(where,ints,viewport.x+10,viewport.y+4,false);
     };
     draw_sprite(where,game->ammo->img[0],viewport.x+46,viewport.y+4);
-		//mine1 - check that max ammo is not 0
+		//checks that max ammo is not 0 (unlimited ammo)
 		if (weaps->num[p->weap[p->curr_weap].weap]->ammo > 0)
 			if (p->weap[p->curr_weap].reloading)
 			{
@@ -194,10 +194,7 @@ void engine::render()
 	int i;
 	bool smallmap=false;
 	
-	char fpsstr[50];
   worm *p;
-	
-	sprintf(fpsstr, "FPS: %d", fps);
 
   if(local_players==1)
   {
@@ -380,8 +377,13 @@ void engine::render()
 	/******HUD*******/
   if (game->selecting)
     render_weapon_selection_menu(buffer);
-  
-	fonty->draw_string(buffer,fpsstr,280,4,false);
+
+	if (*SHOW_FPS)
+	{
+		char fpsstr[50];
+		sprintf(fpsstr, "FPS: %d", fps);
+		fonty->draw_string(buffer,fpsstr,280,4,false);
+	}
 
 	//  sprintf(ints, "%d",caca);
 	if (*MAP_SHOW_MODE==0 || !smallmap && local_players==2)
