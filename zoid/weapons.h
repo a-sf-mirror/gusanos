@@ -21,6 +21,8 @@ class weapon
   char autofire;
 	struct part_type *shoot_obj,*create_on_release;
   sprite *firecone;
+	//weapon HUD
+	sprite *image;
 	sound *shoot_sound,*reload_sound,*noammo_sound,*start_sound;
 	char name[512],filename[512];
 	class weapon *next,*prev;

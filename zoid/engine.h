@@ -75,6 +75,8 @@ struct engine
 	int *SHOW_FPS;
 	//reload_multiplier
 	int *RELOAD_MULTIPLIER;
+	//weapon HUD
+	int *WEAPON_HUD;
 
   bool teamplay;
   struct s_viewport viewport[2];
@@ -109,6 +111,7 @@ struct engine
   bool host,client,split_screen;
   ZCom_Node *node;
   void init_node(ZCom_Control *_cont, bool is_server);
+	void weaponHUD(BITMAP* where, int _player, struct s_viewport viewport); //Draw weapon HUD
   void minimap(); //Draw minimap
   void scoreboard(); //Draw scoreboard
 	bool quitgame; //quitgame

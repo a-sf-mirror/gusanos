@@ -38,7 +38,8 @@ sprite::~sprite()
   }
 };
 
-class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* folder,int v_depth)
+//resize load for weapon HUD
+class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* folder,int v_depth, bool resize, int width, int height)
 {
 	class sprite *curr;
 	std::string tmp3;
@@ -89,8 +90,16 @@ class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* f
 		int i;
 		for(i=0;i<end->framenum;i++)
 		{
-			end->img[i]=create_bitmap(tmp_bmp->w/frames,tmp_bmp->h);
-			blit(tmp_bmp,end->img[i],(tmp_bmp->w/frames)*i,0,0,0,tmp_bmp->w/frames,tmp_bmp->h);
+			if (!resize)
+			{
+				end->img[i]=create_bitmap(tmp_bmp->w/frames,tmp_bmp->h);
+				blit(tmp_bmp,end->img[i],(tmp_bmp->w/frames)*i,0,0,0,tmp_bmp->w/frames,tmp_bmp->h);
+			}
+			else
+			{
+				end->img[i]=create_bitmap(width,height);
+				stretch_blit(tmp_bmp,end->img[i],width*i,0,tmp_bmp->w,tmp_bmp->h,0,0,width,height);
+			}
 		};
     destroy_bitmap(tmp_bmp);
 	}

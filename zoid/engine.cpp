@@ -599,6 +599,8 @@ void engine::init_game()
 	MINIMAP_TYPE=con->create_variable("MINIMAP_TYPE",0);
 	//reload_multiplier
 	RELOAD_MULTIPLIER=con->create_variable("RELOAD_MULTIPLIER",100);
+	//weapon HUD
+	WEAPON_HUD=con->create_variable("WEAPON_HUD",1);
 
 	SHOW_FPS=con->create_variable("SHOW_FPS",1);
 

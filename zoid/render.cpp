@@ -179,16 +179,22 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
 			game->fonty->draw_string(where,"NO LIMIT",viewport.x+53,viewport.y+4,false);
     sprintf(ints, "%d",p->deaths);
     game->fonty->draw_string(where,ints,viewport.x+10,viewport.y+11,false);
-    if (!p->active && p->health>=*game->START_HEALTH)  game->fonty->draw_string(where,"[PRESS JUMP KEY TO RESPAWN]",viewport.x+20,viewport.y+120,true);
-    if (p->active && p->flag2)  game->fonty->draw_string(where,weaps->num[p->weap[p->curr_weap].weap]->name,viewport.x+(p->x/1000-p->xview)-(strlen(weaps->num[p->weap[p->curr_weap].weap]->name)*2),viewport.y+p->y/1000-p->yview-16,true);
-    if (p->active && p->air<*game->AIR_CAPACITY-*game->AIR_CAPACITY/6) draw_bar(where,16,1, viewport.x+(p->x/1000-p->xview)-8, viewport.y+p->y/1000-p->yview+2, *game->AIR_CAPACITY-*game->AIR_CAPACITY/6, p->air, makecol(255,255,255));
 
-    if (p->active){
-      p->crosshx=(p->x/1000)+fixtoi(fixsin(ftofix(p->aim/1000.))*p->crossr)*p->dir-p->xview;
-      p->crosshy=(p->y/1000)-4+fixtoi(fixcos(ftofix(p->aim/1000.))*p->crossr)-p->yview;
-      masked_blit(p->crosshair->img[0],where,0,0,viewport.x+p->crosshx-p->crosshair->img[0]->w/2,viewport.y+p->crosshy-p->crosshair->img[0]->h/2,p->crosshair->img[0]->w,p->crosshair->img[0]->h);
-    };
-
+		if (p->active)
+		{
+			if (p->flag2)
+			{
+				game->fonty->draw_string(where,weaps->num[p->weap[p->curr_weap].weap]->name,viewport.x+(p->x/1000-p->xview)-(strlen(weaps->num[p->weap[p->curr_weap].weap]->name)*2),viewport.y+p->y/1000-p->yview-16,true);
+				//weapon HUD
+				game->weaponHUD(where, _player, viewport);
+			}
+			if (p->air<*game->AIR_CAPACITY-*game->AIR_CAPACITY/6) draw_bar(where,16,1, viewport.x+(p->x/1000-p->xview)-8, viewport.y+p->y/1000-p->yview+2, *game->AIR_CAPACITY-*game->AIR_CAPACITY/6, p->air, makecol(255,255,255));	
+			p->crosshx=(p->x/1000)+fixtoi(fixsin(ftofix(p->aim/1000.))*p->crossr)*p->dir-p->xview;
+			p->crosshy=(p->y/1000)-4+fixtoi(fixcos(ftofix(p->aim/1000.))*p->crossr)-p->yview;
+			masked_blit(p->crosshair->img[0],where,0,0,viewport.x+p->crosshx-p->crosshair->img[0]->w/2,viewport.y+p->crosshy-p->crosshair->img[0]->h/2,p->crosshair->img[0]->w,p->crosshair->img[0]->h);
+		}
+		else
+			if (p->health>=*game->START_HEALTH)  game->fonty->draw_string(where,"[PRESS JUMP KEY TO RESPAWN]",viewport.x+20,viewport.y+120,true);
 };
 
 void engine::render()
@@ -262,12 +268,13 @@ void engine::render()
 	
  
 	if (*MAP_SHOW_MODE==1 && smallmap)
-	blit(map->mapimg,map->buffer,0,0,0,0,map->mapimg->w,map->mapimg->h);
+		blit(map->mapimg,map->buffer,0,0,0,0,map->mapimg->w,map->mapimg->h);
 	else
-	for (i=0;i<local_players;i++){
-    p=player[local_player[i]];
-		blit(map->mapimg,map->buffer,p->xview,p->yview,p->xview,p->yview,viewport[i].w,viewport[i].h);
-	};
+		for (i=0;i<local_players;i++)
+		{
+	    p=player[local_player[i]];
+			blit(map->mapimg,map->buffer,p->xview,p->yview,p->xview,p->yview,viewport[i].w,viewport[i].h);
+		};
 	
   partlist.render_particles(map->buffer,0);
   partlist.render_particles(map->buffer,1);
@@ -393,7 +400,7 @@ void engine::render()
 		line(buffer,viewport[0].w,0,viewport[0].w,240,makecol(0,0,0));
 		line(buffer,viewport[0].w+1,0,viewport[0].w+1,240,makecol(0,0,0));
 	};
-  
+  	
   minimap();
   scoreboard();
   
@@ -409,7 +416,7 @@ void engine::render()
 
 
   if(v_width==320)
-	blit(buffer,screen,0,0,0,0,320,240);
+		blit(buffer,screen,0,0,0,0,320,240);
   else
   {
     acquire_screen();
@@ -440,6 +447,23 @@ void engine::render()
   };
 
 };
+
+//weapon HUD
+void engine::weaponHUD(BITMAP* where, int _player, struct s_viewport viewport)
+{
+	int WEAPWIDTH = 90;
+	int WEAPHEIGHT = 60;
+	int WEAPY = viewport.y + 15;
+	int WEAPX = viewport.x + (viewport.w - WEAPWIDTH) - 5;
+	if (*WEAPON_HUD && weaps->num[player[_player]->weap[player[_player]->curr_weap].weap]->image != NULL)
+	{
+		//drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+		//set_trans_blender(0, 0, 0, 96);
+		blit(weaps->num[player[_player]->weap[player[_player]->curr_weap].weap]->image->img[0], where, 0, 0, WEAPX, WEAPY, WEAPWIDTH, WEAPHEIGHT);
+		rect(buffer, WEAPX - 1, WEAPY - 1, WEAPX + WEAPWIDTH, WEAPY + WEAPHEIGHT, makecol(100, 100, 100));
+		//solid_mode();
+	}
+}
 
 void engine::minimap()
 {
