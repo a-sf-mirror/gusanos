@@ -415,8 +415,9 @@ bool loadPalette(LieroColor* palette, const std::string &palFile)
     
 	if (!fin.is_open())
 		return false;
-    
- 	long size;
+		
+	std::streamoff size;
+
 	fin.seekg(0, std::ios::beg);
 	size = fin.tellg();
 	fin.seekg(0, std::ios::end);
@@ -443,7 +444,7 @@ bool loadLevel(LieroLevel *level, LieroColor palette[], const std::string &lvlFi
 	if (!fin.is_open())
 		return false;
 
-	long size;
+	std::streamoff size;
 	fin.seekg(0, std::ios::beg);
 	size = fin.tellg();
 	fin.seekg(0, std::ios::end);

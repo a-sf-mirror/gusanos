@@ -9,6 +9,8 @@
 
 using namespace std;
 
+ResourceLocator<Level> levelLocator;
+
 Level::Level()
 {
 	loaded = false;

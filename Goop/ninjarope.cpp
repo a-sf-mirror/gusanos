@@ -163,7 +163,7 @@ void NinjaRope::draw(BITMAP* where,int xOff, int yOff)
 		}
 		if (m_type->distortion)
 		{
-			m_type->distortion->apply( where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_type->distortMagnitud );
+			m_type->distortion->apply( where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_type->distortMagnitude );
 		}
 	}
 }

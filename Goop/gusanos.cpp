@@ -21,6 +21,10 @@
 #include "guilist.h"
 #include "network.h"
 
+#if 0
+#include "menu.h"
+#endif
+
 #ifdef WINDOWS
 	#include <winalleg.h>
 #endif
@@ -33,7 +37,6 @@
 using namespace std;
 
 bool quit = false;
-bool menu = true;
 int showFps;
 int showDebug;
 
@@ -49,12 +52,16 @@ string Exit(const list<string> &args)
 
 void startGame(const std::string&)
 {
-    menu = false;
+    //menu = false;
 }
 
 int main(int argc, char **argv)
 {
 	game.init(argc, argv);
+
+#if 0
+	OmfgGUI::defaultMenuFont.font = fontList.load("minifont.bmp");
+#endif
 
 	gui::init();
 	
@@ -82,11 +89,18 @@ int main(int argc, char **argv)
 	
 	window.addWidget(&glist);
 	top.addWidget(&window);
+	
+#if 0
+	{
+	
+		using namespace OmfgGUI;
+		
+		//OmfgGUI::menu.setRoot(new Wnd(0, Rect(10, 10, 100, 100), "moo"));
+		OmfgGUI::menu.testParseXML();
+	
+	}
+#endif
 
-/*
-	console.registerVariable(tVariable("CL_SHOWFPS", &showFps, 1));
-	console.registerVariable(tVariable("CL_SHOWDEBUG", &showDebug, 1));
-	*/
 	console.registerVariables()
 		("CL_SHOWFPS", &showFps, 1)
 		("CL_SHOWDEBUG", &showDebug, 1)
@@ -111,8 +125,29 @@ int main(int argc, char **argv)
 	int _fps = 0;
 	int logicLast = 0;
 
+	bool showMenu = true;
+	
 #if 0
+	OmfgGUI::AllegroRenderer renderer;
 	//menu loop
+	while (showMenu)
+	{
+	    //if (KeyHandler::getKey(KEY_ESC))
+	    if(key[KEY_ESC])
+	    {
+	        showMenu = false;
+	        key[KEY_ESC] = 0;
+	    }
+	    
+	    rectfill(gfx.buffer, 0, 0, 319, 239, 0);
+	    OmfgGUI::menu.render(&renderer);
+	    /*
+	    top.keys((bool*)key);
+	    top.render();
+	    blit(gusLogo, gfx.buffer, 0, 0, 319 - gusLogo->w, 239 - gusLogo->h, gusLogo->w, gusLogo->h);*/
+		gfx.updateScreen();
+	}
+#elif 0
 	while (menu)
 	{
 	    if (key[KEY_ESC])

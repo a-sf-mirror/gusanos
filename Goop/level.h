@@ -2,6 +2,7 @@
 #define LEVEL_H
 
 #include "material.h"
+#include "resource_locator.h"
 
 #include <allegro.h>
 #include <string>
@@ -32,7 +33,7 @@ class Level
 		return m_materialList[getpixel(material,x,y)+1];
 	}*/
 	
-	private:
+	//private:
 		
 	bool loaded;
 	
@@ -44,5 +45,7 @@ class Level
 	std::vector<Material> m_materialList;
 	
 };
+
+extern ResourceLocator<Level> levelLocator;
 
 #endif // _LEVEL_H_

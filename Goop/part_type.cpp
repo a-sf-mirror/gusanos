@@ -49,7 +49,7 @@ PartType::PartType()
 	
 	sprite = NULL;
 	distortion = NULL;
-	distortMagnitud = 0.8;
+	distortMagnitude = 0.8;
 	
 	groundCollision = NULL;
 	creation = NULL;
@@ -146,7 +146,7 @@ bool PartType::load(const string &filename)
 						else if ( val == "bitmap" && tokens.size() >= 4)
 							distortion = new Distortion( bitmapMap( tokens[3] ) );
 					}
-					else if ( var == "distort_magnitud" ) distortMagnitud = cast<float>(val);
+					else if ( var == "distort_magnitude" ) distortMagnitude = cast<float>(val); //<GLIP> Fixed a spelling error, magnitud -> magnitude
 					else
 					{
 						std::cout << "Unknown variable on following line:" << std::endl;

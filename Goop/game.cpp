@@ -20,6 +20,9 @@
 #include "net_worm.h"
 #include "network.h"
 
+#include "loaders/gusanos.h"
+#include "loaders/lierox.h"
+
 #include <allegro.h>
 #include <string>
 #include <algorithm>
@@ -138,14 +141,19 @@ void Game::init(int argc, char** argv)
 {
 	allegro_init();
 
+	levelLocator.registerLoader(&GusanosLevelLoader::instance);
+	levelLocator.registerLoader(&LieroXLevelLoader::instance);
+	
 	m_defaultPath = "default/";
 	m_modPath = "default/";
-	nextMod = "default";
-	
+	//nextMod = "default";
+	setMod("default");
+
 	console.init();
+	
 	sfx.registerInConsole();
 	gfx.registerInConsole();
-	
+
 	parseCommandLine(argc, argv);
 
 	gfx.init();
@@ -161,6 +169,7 @@ void Game::init(int argc, char** argv)
 		playerOptions.push_back(options);
 	}
 	
+	
 	//TODO: Check and move the rest of registerInConsole() before init()
 	options.registerInConsole(); 
 #ifndef DISABLE_ZOIDCOM
@@ -168,7 +177,6 @@ void Game::init(int argc, char** argv)
 #endif
 	registerGameActions();
 	registerPlayerInput();
-
 }
 
 void Game::loadWeapons()
@@ -250,6 +258,7 @@ bool Game::isLoaded()
 void Game::changeLevel(const std::string& levelName )
 {
 	unload();
+	/*
 	m_modName = nextMod;
 	m_modPath = nextMod + "/";
 	if ( !level.load( m_modPath +"maps/"+ levelName ) )
@@ -257,6 +266,8 @@ void Game::changeLevel(const std::string& levelName )
 		level.load( m_defaultPath +"maps/"+ levelName );
 	}
 	level.setName(levelName);
+	*/
+	levelLocator.load(&level, levelName);
 	loadMod();
 	
 	if ( options.host )
@@ -332,11 +343,16 @@ void Game::changeLevel(const std::string& levelName )
 
 void Game::setMod( const string& modname )
 {
-	if ( file_exists( modname.c_str(), FA_DIREC, NULL) )
+	if ( file_exists( modname.c_str(), FA_DIREC, NULL) ) //TODO: Change to Boost.Filesystem
 	{
 		nextMod = modname;
 	}
 	else nextMod = m_modName;
+	
+	levelLocator.clearPaths();
+	levelLocator.addPath(fs::path("default/maps"));
+	levelLocator.addPath(fs::path(nextMod) / "maps");
+	levelLocator.refresh();
 }
 
 const string& Game::getMod()

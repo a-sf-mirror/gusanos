@@ -46,7 +46,7 @@ class PartType
 	float angularFriction;
 	
 	Distortion* distortion;
-	float distortMagnitud;
+	float distortMagnitude;
 	
 	Sprite* sprite;
 	int animDuration;

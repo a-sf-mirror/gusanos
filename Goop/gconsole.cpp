@@ -167,7 +167,7 @@ void GConsole::init()
 		("CON_SPEED", &speed, 4)
 		("CON_HEIGHT", &height, 120)
 	;
-	
+
 	console.registerCommands()
 		("BIND", bindCmd)
 		("SWAPKEYS", swapKeysCmd)
