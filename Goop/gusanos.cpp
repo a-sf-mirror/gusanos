@@ -1,6 +1,11 @@
 #include <allegro.h>
 
-#include "console.h"
+#include "gconsole.h"
+//#include "text.h"
+
+#include <string>
+
+using namespace std;
 
 struct Object
 {
@@ -8,38 +13,55 @@ struct Object
 	float y;
 };
 
+string ugauga(const list<string> &args)
+{
+	allegro_message((*args.begin()).c_str());
+	return "Guarda boludo! ejecutaste \"uga\"";
+}
+
+string bind(const list<string> &args)
+{
+	string key;
+	string action;
+	
+	key = *args.begin();
+	action = *(++args.begin());
+	console.bind(key, action);
+	return "";
+}
+
 int main(int argc, char **argv)
 {
-	Console console;
-	KeyHandler keys;
-	KeyEvent event;
-	
 	Object object;
 	
 	allegro_init();
-	keys.init();
+	console.init();
 	
 	int consoleTest;
 	int pooo;
 	
-	console.registerIntVariable(&consoleTest, "TEST", 100);
-	console.registerIntVariable(&pooo, "POO", 20);
-	allegro_message("%d",consoleTest);
-	console.setVariableValue("TEST", "10");
-	console.setVariableValue("POO", "15");
-	allegro_message("%d",consoleTest);
-	allegro_message("%d",pooo);
+	console.registerIntVariable("TEST", &consoleTest, 100);
+	console.registerIntVariable("POO", &pooo, 20);
+	console.registerCommand("uga", ugauga);
+	console.registerCommand("BIND", bind);
+	//allegro_message("%d",consoleTest);
+	//console.setVariableValue("TEST", "10");
+	//console.setVariableValue("POO", "15");
+	//allegro_message("%d",consoleTest);
+	//allegro_message("%d",pooo);
 	
-	console.parseLine("moo caco;mooish;moootoni;TEST 48");
-	allegro_message("%d",consoleTest);
+	console.parseLine("moo caco; \"boooyouvoooo vo; asfa\" \" \";mooish  ");
+	console.parseLine("TEST");
+	console.parseLine("uga 1ish; uga   2ish;TEST 48");
+	console.parseLine("TEST");
+	console.parseLine("BIND A \"TEST 10\"");
+	console.parseLine("BIND B TEST");
 	
-	bool quit = false;
-	bool left = false;
-	bool right = false;
-	bool up = false;
-	bool down = false;
+	//allegro_message("%d",consoleTest);
 	
 	BITMAP *buffer;
+	
+	bool quit=false;
 	
 	set_color_depth(16);
 
@@ -50,57 +72,21 @@ int main(int argc, char **argv)
   
 	buffer = create_bitmap(320,240);
 	
-	while (!quit)
+	while (true)
 	{
-		keys.pollKeyboard();
-		event=keys.getEvent();
-		
-		if (up) object.y -= 1;
-		if (down) object.y += 1;
-		if (left) object.x -= 1;
-		if (right) object.x += 1;
 			
+		console.checkInput();
+		
 		clear_bitmap(buffer);
-		putpixel(buffer,object.x,object.y,makecol(255,255,255));
+		
+		textout_ex(buffer, font, "Console", 10, 10, makecol(255,255,255), -1);
+		
+		console.render(buffer);
 		
 		vsync();
 		
 		blit(buffer,screen,0,0,0,0,320,240);
-			
-		while (event.type != KEY_EVENT_NONE)
-		{
-			if (event.key == KEY_W)
-			{
-				if (event.type == KEY_EVENT_PRESS)
-					up = true;
-				else
-					up = false;
-			}
-			if (event.key == KEY_S)
-			{
-				if (event.type == KEY_EVENT_PRESS)
-					down = true;
-				else
-					down = false;
-			}
-			if (event.key == KEY_D)
-			{
-				if (event.type == KEY_EVENT_PRESS)
-					right = true;
-				else
-					right = false;
-			}
-			if (event.key == KEY_A)
-			{
-				if (event.type == KEY_EVENT_PRESS)
-					left = true;
-				else
-					left = false;
-			}
-			if (event.type == KEY_EVENT_RELEASE && event.key==KEY_Q)
-				quit=true;
-			event=keys.getEvent();
-		};
+
 	};
 
 	return(0);

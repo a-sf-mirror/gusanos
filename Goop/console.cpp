@@ -1,9 +1,11 @@
 #include "console.h"
 
-#include "variables.h"
-#include "text.h"
-
 #include <allegro.h>
+
+#include "variables.h"
+#include "command.h"
+#include "text.h"
+#include "keys.h"
 
 using namespace std;
 
@@ -12,64 +14,114 @@ using namespace std;
 //============================= LIFECYCLE ====================================
 
 Console::Console()
-{	
+{
+	m_logMaxSize=256;
 }
 
 Console::~Console()
 {
 	// Delete the registered variables
-	variables.clear();
-	
+	map<string, ConsoleItem*>::iterator tempvar = items.begin();
+	while (tempvar != items.end())
+	{
+		delete tempvar->second;
+		tempvar++;
+	}
+	items.clear();
 }
 
 //============================= INTERFACE ====================================
 
-void Console::registerIntVariable(int* src, const string &name, int defaultValue)
+void Console::registerIntVariable(const string &name, int* src, int defaultValue)
 {
 	if (!name.empty())
 	{
-		variables[name] = new IntVariable(src, defaultValue);
+		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+		if (tempItem == items.end())
+		{
+			items[name] = new IntVariable(src, name, defaultValue);
+		}
 	}
 }
 
-void Console::setVariableValue(const string &name, const string &value)
+void Console::registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&))
 {
-	map<string, Variable*>::iterator variable = variables.find(name);
-	if (variable != variables.end())
-		variable->second->setValue(value);
+	if (!name.empty())
+	{
+		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+		if (tempItem == items.end())
+		{
+			items[name] = new Command(func);
+		}
+	}
 }
+
+/*void Console::setVariableValue(const string &name, const string &value)
+{
+	map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+	if (tempItem != items.end())
+		tempItem->second->invoke(value);
+}*/
 
 void Console::parseLine(const string &text)
 {
 	string textToParse;
 	string textInQueue = text;
 	
-	if (!text.empty())
+	addLogMsg(text);
+	
+	list< list<string> > argTree = text2Tree(text);
+	
+	list< list<string> >::iterator mainIter = argTree.begin();
+	while ( mainIter != argTree.end() )
 	{
-		separate_str_by(';', textInQueue, textToParse, textInQueue);
-		while (!textInQueue.empty())
-		{
-			parse(textToParse);
-			separate_str_by(';', textInQueue, textToParse, textInQueue);
-		}
-		parse(textToParse);
+		parse( (*mainIter) );
+		mainIter++;
 	}
+
 }
 
-void Console::parse(const string &text)
+void Console::parse(list<string> &args)
 {
 	string itemName;
 	string arguments;
+	string retString;
 	
-	separate_str_by(' ',text,itemName,arguments);
-	
-	setVariableValue(itemName, arguments);
+	itemName = *args.begin();
+	map<string, ConsoleItem*>::iterator tempItem = items.find(itemName);
+	if (tempItem != items.end())
+	{
+		args.pop_front();
+		retString = tempItem->second->invoke(args);
+		addLogMsg(retString);
+	}else
+	{
+		addLogMsg("Unknown command \"" + itemName + "\"" );
+	}
 }
 
+void Console::addLogMsg(const string &msg)
+{
+	if (!msg.empty())
+	{
+		if(log.size() >= m_logMaxSize)
+			log.pop_front();
+		log.push_back(msg);
+	}
+}
+
+void Console::analizeKeyEvent(bool state, char key)
+{
+	if (state == true)
+		parseLine(bindTable.getBindingAction(key));
+	else
+		parseLine("you released " + keyNames[key]);
+}
+
+void Console::bind(const std::string &key, const string &action)
+{
+	bindTable.bind(kName2Int(key), action);
+};
+
 //============================= PRIVATE ======================================
-
-
-
-
-
 

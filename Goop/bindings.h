@@ -2,7 +2,6 @@
 #define bindings_h
 
 #include <string>
-#include <allegro.h>
 
 struct Binding
 {
@@ -16,13 +15,14 @@ class BindTable
 	BindTable(void);
 	~BindTable(void);
 	
-	void bind(char key, std::string action);
+	void bind(char key, const std::string &action);
 	void unBind(char key);
 	void unBindAll();
+	std::string getBindingAction(char key);
 	
 	private:
 	
-	Binding binding[KEY_MAX];
+	Binding binding[256];
 };
 
 #endif  // _bindings_h_

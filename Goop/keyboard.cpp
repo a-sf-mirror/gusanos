@@ -3,6 +3,8 @@
 #include <allegro.h>
 #include <list>
 
+using namespace std;
+
 ////////////////////////////PUBLIC//////////////////////////////
 
 //=========================LIFECYCLE==========================//
@@ -25,6 +27,11 @@ KeyHandler::~KeyHandler()
 void KeyHandler::init()
 {
 	install_keyboard();
+};
+
+void KeyHandler::shutDown()
+{
+	remove_keyboard();
 };
 
 void KeyHandler::pollKeyboard()

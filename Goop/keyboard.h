@@ -1,5 +1,5 @@
 #ifndef KEYBOARD_h
-#define KAYBOARD_h
+#define KEYBOARD_h
 
 #include <allegro.h>
 #include <list>
@@ -9,8 +9,6 @@
 #define KEY_EVENT_RELEASE 2
 
 #define BUFF_SIZE 64
-
-using namespace std;
 
 struct KeyEvent
 {
@@ -26,12 +24,13 @@ class KeyHandler
 	~KeyHandler(void);
 	
 	void init();
+	void shutDown();
 	void pollKeyboard();
 	KeyEvent getEvent();
 	
 	private:
 	
-	list<KeyEvent> events;
+	std::list<KeyEvent> events;
 	
 	bool oldKeys[KEY_MAX]; // KEY_MAX is defined by allegro (usually 119)
 	

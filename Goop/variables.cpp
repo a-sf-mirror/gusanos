@@ -11,7 +11,6 @@ IntVariable::IntVariable()
 {
 	m_src=NULL;
 	m_defaultValue=0;
-	m_type=VAR_TYPE_INVALID;
 }
 
 IntVariable::~IntVariable()
@@ -19,23 +18,24 @@ IntVariable::~IntVariable()
 	
 }
 
-IntVariable::IntVariable(int* src, int defaultValue)
+IntVariable::IntVariable(int* src, string name, int defaultValue)
 {
-	m_src=src;
-	m_defaultValue=defaultValue;
-	m_type=VAR_TYPE_INT;
-	
-	*m_src=m_defaultValue;
+	m_src = src;
+	m_name = name;
+	m_defaultValue = defaultValue;	
+	*m_src = m_defaultValue;
 }
 
 //============================= INTERFACE ================================
 
-void IntVariable::setValue(std::string value)
+string IntVariable::invoke(const std::list<std::string> &args)
 {
-	*m_src=cast<int,string>(value);
-}
-
-string IntVariable::getValue()
-{
-	return cast<string,int>(*m_src);
+	if (!args.empty())
+	{
+		*m_src=cast<int,string>(*args.begin());
+		return "";
+	}else
+	{
+		return m_name + " is \"" + cast<string,int>(*m_src) + '"';
+	}
 }

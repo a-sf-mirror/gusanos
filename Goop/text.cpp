@@ -1,4 +1,6 @@
 #include "text.h"
+#include <list>
+
 
 using namespace std;
 
@@ -36,4 +38,77 @@ void separate_str_by(char ch, const string &src, string &left, string &right)
 		}
 	}
 }
+
+list<string> tokenize(const string &text)
+{
+	int left = 0;
+	int right = 0;
+
+	char lastChar = ' ';
+	
+	list<string> stringList;
+	
+	while (right != string::npos)
+	{
+		left = text.find_first_not_of(lastChar, right);
+		
+		if (left != string::npos)
+		{
+			if ( text[left] == '"' )
+			{
+				left++;
+				right = text.find_first_of('"',left);
+			}else
+				right = text.find_first_of("; ",left);
+			if (right != string::npos)
+			{
+				lastChar = text[right];
+				
+				if (right > left)
+				stringList.push_back( text.substr(left, right - left) );
+				
+				if ( lastChar == ';' )
+					stringList.push_back( ";" );
+			}else
+			stringList.push_back( text.substr(left) );
+		}
+		else
+			right = string::npos;
+	}
+	
+	return stringList;
+}
+
+
+list< list<string> > text2Tree(const string &text)
+{
+	int left = 0;
+	int right = 0;
+	
+	list< list<string> > argTree;
+	
+	list<string> stringList = tokenize(text);
+	
+	if (!stringList.empty())
+	{
+		argTree.push_back();
+		list<string>::iterator tokensIter = stringList.begin();
+		while (tokensIter != stringList.end())
+		{
+			if ( (*tokensIter) == ";" )
+			{
+				argTree.push_back();
+			}else
+			{
+				list< list<string> >::iterator iter = argTree.end();
+				iter--;
+				(*iter).push_back( (*tokensIter) );
+			}
+			tokensIter++;
+		}
+	}
+	return argTree;
+}
+
+
 
