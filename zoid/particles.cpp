@@ -12,8 +12,14 @@ void type_list::init()
 
 void particles::init()
 {
+  int i;
 	start = end = new struct particle;
 	start->prev = start->next = NULL;
+  for (i=0;i<4;i++)
+  {
+    layer_start[i] = layer_end[i] = new struct particle;
+    layer_start[i]->layer_prev = layer_start[i]->layer_next = NULL;
+  }
 };
 
 struct particle* particles::create_part(int x,int y,int xspd, int yspd,int owner,struct part_type *type)
@@ -29,6 +35,11 @@ struct particle* particles::create_part(int x,int y,int xspd, int yspd,int owner
 		tmp->next=NULL;
 		end->next = tmp;
     end = tmp;
+
+    tmp->layer_prev=layer_end[type->layer];
+    tmp->layer_next=NULL;
+    layer_end[type->layer]->layer_next = tmp;
+    layer_end[type->layer] = tmp;
 		
     //initialize properties
 		end->type=type;
@@ -98,6 +109,11 @@ struct particle* particles::create_directional_part(int x,int y,int xspd, int ys
 		tmp->next=NULL;
 		end->next = tmp;
     end=tmp;
+    
+    tmp->layer_prev=layer_end[type->layer];
+    tmp->layer_next=NULL;
+    layer_end[type->layer]->layer_next = tmp;
+    layer_end[type->layer] = tmp;
 		
 		//initialize properties
 		end->type=type;
@@ -131,13 +147,13 @@ void particles::shoot_part(int ang,int spd,int dir,int x,int y,int xspdadd,int y
 	else create_part(x,y,xspd,yspd,owner,type);
 };
 
-void particles::render_particles(BITMAP* where)
+void particles::render_particles(BITMAP* where,int layer)
 {
 	struct particle* tmp;
-	tmp=start;
-	while (tmp->next!=NULL)
+	tmp=layer_start[layer];
+	while (tmp->layer_next!=NULL)
 	{
-		tmp=tmp->next;
+		tmp=tmp->layer_next;
 		if (tmp->type->visible==1)
 		{
 			if (tmp->type->sprt==NULL)
@@ -250,6 +266,7 @@ struct part_type* load_part(const char* type_name)
   curr->remgnd=0;
   curr->autorotate_speed=0;
   curr->lens_radius=0;
+  curr->layer=3;
   //Crate
   curr->give_weapon=-1;
   //
@@ -339,6 +356,7 @@ struct part_type* load_part(const char* type_name)
 					else if ("alpha"==var) curr->alpha=atoi(val.c_str());
           else if ("autorotate_speed"==var) curr->autorotate_speed=atoi(val.c_str());
 					else if ("lens_radius"==var) curr->lens_radius=atoi(val.c_str());
+          else if ("layer"==var) curr->layer=atoi(val.c_str());
 					 //Crate
 					 else if ("give_weapon"==var) 
 					   {
@@ -377,14 +395,9 @@ void dest_part(struct particle* tmp)
 			partlist.shoot_part(((rand()%1000)*256),tmp->type->shootspeed-rand()%(tmp->type->shootspeedrnd)+tmp->type->shootspeedrnd/2,1,tmp->x,tmp->y,tmp->xspd*(tmp->type->affected_by_motion/1000.),tmp->yspd*(tmp->type->affected_by_motion/1000.),tmp->owner,tmp->type->shootobj);
 		if (tmp->type->expsnd!=NULL)
 			play_sample(tmp->type->expsnd->snd, *game->VOLUME, 127, 1000, 0);
-		//fix the gap created in the chain(link list)
-		tmp->prev->next=tmp->next;
-		//check if we are deletting the last particle in the chain
-		if(tmp->next!=NULL) tmp->next->prev=tmp->prev;
-		else partlist.end=tmp->prev;
 		if (tmp->type->destroy_exp!=NULL)
 		create_exp(tmp->x,tmp->y,tmp->type->destroy_exp);
-		free(tmp);
+    rem_part(tmp);
 	};
 };
 
@@ -394,9 +407,12 @@ void rem_part(struct particle* tmp)
 	{
 		//fix the gap created in the chain(link list)
 		tmp->prev->next=tmp->next;
+    tmp->layer_prev->layer_next=tmp->layer_next;
 		//check if we are deletting the last particle in the chain
 		if(tmp->next!=NULL) tmp->next->prev=tmp->prev;
 		else partlist.end=tmp->prev;
+    if(tmp->layer_next!=NULL) tmp->layer_next->layer_prev=tmp->layer_prev;
+		else partlist.layer_end[tmp->type->layer]=tmp->layer_prev;
 		free(tmp);
 	};
 };
@@ -414,7 +430,7 @@ bool check_position (int x1, int y1)
 
 void summon_bonus(struct part_type *item, int chance)
 {
-  if (rand()%chance == 0)
+  if (chance!=0 && rand()%chance == 0)
     {
       int x, y, num = 0;
       do
@@ -488,13 +504,15 @@ void calc_particles()
 					  player[i]->weap[player[i]->curr_weap].reload_time=0;
 					};
 					//
-					if (player[i]->health>0)
+					if (player[i]->health>0 && player[i]->health<=*game->MAX_HEALTH)
           {
             if (ffire && friendly)
             player[i]->health-=(tmp->type->damage * *game->FRIENDLYFIRE)/1000;
             else player[i]->health-=tmp->type->damage;
             if (player[i]->health<=0)
             player[i]->killed_by=tmp->owner;
+            if (player[i]->health>=*game->MAX_HEALTH)
+            player[i]->health=*game->MAX_HEALTH;
           };
 					if (tmp->type->expworm==1)
 					{

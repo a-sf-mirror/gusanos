@@ -35,14 +35,14 @@ struct part_type
   //Crate
   int give_weapon;
   //
-	char expgnd,expworm,drawonmap,animonground,remworm,remgnd,directional,visible;
+	char expgnd,expworm,drawonmap,animonground,remworm,remgnd,directional,visible,layer;
 	sprite* sprt;
 	part_type *shootobj,*wormshootobj,*shootobjtrail;
 	exp_type *destroy_exp,*exp_trail;
 	sound *expsnd;
   BITMAP *effect_buf;
-	part_type *next,*next_lens;
-	part_type *prev,*prev_lens;
+	part_type *next;
+	part_type *prev;
 };
 
 struct type_list
@@ -61,16 +61,20 @@ struct particle
 	part_type* type;
 	particle* next;
 	particle* prev;
+  particle* layer_next;
+	particle* layer_prev;
 };
 
 struct particles
 {
-	 particle* start;
-	 particle* end;
+  particle* start;
+  particle* end;
+  particle  *layer_start[4];
+  particle  *layer_end[4];
 	void init();
-	 particle* create_part(int x,int y,int xspd,int yspd,int owner,struct part_type *type);
-	 particle* create_directional_part(int x,int y,int xspd,int yspd,int dir,int ang,int owner,struct part_type *type);
-	void render_particles(BITMAP* where);
+  particle* create_part(int x,int y,int xspd,int yspd,int owner,struct part_type *type);
+  particle* create_directional_part(int x,int y,int xspd,int yspd,int dir,int ang,int owner,struct part_type *type);
+	void render_particles( BITMAP* where , int layer );
   void r_lens(BITMAP* where);
 	void shoot_part(int ang,int spd,int dir,int x,int y,int xspdadd,int yspdadd,int owner,struct part_type *type);
 };

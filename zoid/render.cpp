@@ -205,7 +205,8 @@ void engine::render()
 		blit(map->mapimg,map->buffer,p->xview,p->yview,p->xview,p->yview,viewport[i].w,viewport[i].h);
 	};
 	
-
+  partlist.render_particles(map->buffer,0);
+  partlist.render_particles(map->buffer,1);
 	
 	for (i=0;i<player_count;i++)
 	{
@@ -213,7 +214,6 @@ void engine::render()
 		renderrope(player[i]);
 	};
 	
-  
 	for (i=0;i<player_count;i++)
 	{
 		if (player[i]->active)
@@ -240,8 +240,9 @@ void engine::render()
   
   //render_seglight(player[0]->x/1000,player[0]->y/1000-4,player[0]->aim-64000,player[0]->dir,map->buffer,map->material);
   
-	partlist.render_particles(map->buffer);
-  
+	
+  partlist.render_particles(map->buffer,3);
+  partlist.render_particles(map->buffer,4);
   render_exps();
   
   partlist.r_lens(map->buffer);
