@@ -28,11 +28,12 @@ class Console
    Console(void);
    ~Console(void);
 
-	void registerIntVariable(int* src, string name, int defaultValue);
-	void registerCommand(string name, void (*func)(string arg));
-	void parse(string text);
-	void bind(char key, string action);
-	void setVariableValue(string name, string value);
+	void registerIntVariable(int* src, const string &name, int defaultValue);
+	void registerCommand(const string &name, void (*func)(const string &arg));
+	void parseLine(const string &text);
+	void parse(const string &text);
+	void bind(char key, const string &action);
+	void setVariableValue(const string &name, const string &value);
 	
 	private:
 	
