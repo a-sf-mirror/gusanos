@@ -41,7 +41,6 @@ struct engine
 	int *FRICTION;
 	int *AIR_FRICTION;
 	int *GRAVITY;
-	int WORM_HEIGHT;
 	int *WORM_BOUNCINESS;
 	int WORM_BOUNCE_LIMIT;
   int *FLASHLIGHT;
@@ -75,6 +74,8 @@ struct engine
 	int *SHOW_FPS;
 	//reload_multiplier
 	int *RELOAD_MULTIPLIER;
+	//weapon HUD
+	int *WEAPON_HUD;
 
   bool teamplay;
   struct s_viewport viewport[2];
@@ -109,6 +110,7 @@ struct engine
   bool host,client,split_screen;
   ZCom_Node *node;
   void init_node(ZCom_Control *_cont, bool is_server);
+	void weaponHUD(BITMAP* where, worm* player, struct s_viewport viewport, int position); //Draw weapon HUD
   void minimap(); //Draw minimap
   void scoreboard(); //Draw scoreboard
 	bool quitgame; //quitgame

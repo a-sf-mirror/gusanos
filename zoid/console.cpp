@@ -112,7 +112,7 @@ int s_bindtable::destroy_binding(int bind)
 		//is this the binding?
 		if (curr->key==bind)
 		{
-			//it is so delet it and return 0
+			//it is so delete it and return 0
 			curr->prev->next=curr->next;
 			if(curr!=end) curr->next->prev=curr->prev;
 			else end=curr->prev;

@@ -400,6 +400,8 @@ void worm::init_node(bool is_authority)
     node->addReplicationInt((zS32*)&health,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
     node->addReplicationBool(&active,ZCOM_REPFLAG_RARELYCHANGED,ZCOM_REPRULE_AUTH_2_ALL,false,-1,-1 );
     node->addReplicationInt((zS32*)&team,8,false,ZCOM_REPFLAG_RARELYCHANGED|ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
+		//ping (maybe ZCOM_REPRULE_AUTH_2_PROXY instead)
+		node->addReplicationInt((zS32*)&ping,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,1000,-1);
     //node->addReplicationInt((zS32*)&weap[0].ammo,32,false,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,0,-1,-1 );
   
     //Owner replication items
@@ -645,31 +647,35 @@ void calcrope(struct worm *player)
 		g=getpixel(map->material,player->ropex/1000,player->ropey/1000);
 		if (!map->mat[g+1].particle_pass)
 		{
-			if(player->ropestate!=2)
-			{
-				player->ropestate=2;
+			//if(player->ropestate!=2)
+			//{
+				//player->ropestate=2;
 				//dx=player->x-player->ropex;
 				//dy=player->y-4000-player->ropey;
 				//m=fixhypot(dx,dy);
 				//player->rope_length=m;
+			//};
+			if(!cli)
+			{
+	      player->applyropeforce();
+				player->ropexspd=player->ropeyspd=0;
 			};
-		} else player->ropestate=1;
-		
-		if (player->ropestate==1)
+		}
+		else
 		{
-			player->ropex=player->ropex+player->ropexspd;
-			player->ropey=player->ropey+player->ropeyspd;
+			//player->ropestate=1;
+			player->ropex+=player->ropexspd;
+			player->ropey+=player->ropeyspd;
       player->ropeyspd+=*game->ROPE_GRAVITY;
-		};
-		
-    if(!cli)
-		if (player->ropestate==2)
-    {
-      player->applyropeforce();
-      player->ropexspd=player->ropeyspd=0;
-    };
+		}
 	};
 };
+
+//ping
+void calcping(worm *player)
+{
+	player->ping=srv->ZCom_getConnectionStats(player->id).avg_ping;
+}
 
 void pl1_moveright()
 {

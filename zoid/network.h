@@ -13,7 +13,6 @@ public:
   Server( int _internalport, int _udpport );
   ~Server();
 
-  void update();
 protected:
   // called on incoming connections
   bool ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply );

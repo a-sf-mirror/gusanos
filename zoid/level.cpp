@@ -94,6 +94,7 @@ level::level()
 //mat weapon
 void level::init_materials()
 {
+	//level boundaries
   mat[-1+1].worm_pass=false;
   mat[-1+1].particle_pass=false;
   mat[-1+1].flows=false;
@@ -101,7 +102,7 @@ void level::init_materials()
   mat[-1+1].blocks_light=true;
   mat[-1+1].damage=0;
 	mat[-1+1].strength=100;
-	mat[-1+1].destroyed_into=1;
+	mat[-1+1].destroyed_into=-1;
   
 	//rock
   mat[0+1].worm_pass=false;

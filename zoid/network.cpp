@@ -265,6 +265,7 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
       player[local_players]->init_node(false);
       player[local_players]->islocal=true;
       player[local_players]->local_slot=local_players;
+			player[local_players]->id=_id;
       if (local_players<2)local_player[local_players]=local_players;
       change_nick(local_players);
       player_count++;
@@ -281,6 +282,7 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
       player[pos]=new worm;
       player[pos]->init_node(false);
       player[pos]->local_slot=pos;
+			player[pos]->id=_id;
       player_count++;
     };
 	};

@@ -22,7 +22,8 @@ class spritelist
     class sprite *start, *end;
     spritelist();
     ~spritelist();
-    class sprite* load_sprite(const char* sprite_name,int frames,char* folder,int v_depth);
+		//resize load for weapon HUD
+		class sprite* load_sprite(const char* sprite_name,int frames,char* folder,int v_depth, bool resize=false, int width=0, int height=0);
     void destroy_sprite(class sprite*);
 };
 extern class spritelist *sprites;

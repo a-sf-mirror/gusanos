@@ -443,14 +443,17 @@ void dig_hole(BITMAP* image,int x,int y, int mat, int hole_strength, sprite *dra
 			{
 				if (map->mat[m].strength<hole_strength /*&& ((map->mat[m].destroyed_into+1 != m)||(mat>-1))*/)
 				{
-	        drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
-					set_trans_blender(0, 0, 0, 64);
-					if (draw_sprite)
-						putpixel(map->mapimg,x+x2,y+y2,getpixel(draw_sprite->img[0],x2,y2));
-					else
-						if (!map->mat[map->mat[m].destroyed_into+1].flows)
-							putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));					
-					solid_mode();
+					if (!getpixel(map->background,x+x2,y+y2) == makecol(255,0,255))
+					{
+						drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+						set_trans_blender(0, 0, 0, 64);
+						if (draw_sprite)
+							putpixel(map->mapimg,x+x2,y+y2,getpixel(draw_sprite->img[0],x2,y2));
+						else
+							if (!map->mat[map->mat[m].destroyed_into+1].flows)
+								putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
+						solid_mode();
+					}
 				};
 			}
     };
@@ -531,12 +534,13 @@ void render_exps()
     {
       if(CanBeSeen(tmp->x/1000,tmp->y/1000,tmp->light->w,tmp->light->h))
       if(game->v_depth==32)
-	{
+      {
         #ifdef AAFBLEND
         fblend_add(tmp->light,map->buffer,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2,255-(tmp->time*255)/tmp->type->timeout);
         #endif
-	}
-      else{
+      }
+      else
+      {
         drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
         set_add_blender(0,0,0,255-(tmp->time*255)/tmp->type->timeout);
         draw_trans_sprite(map->buffer,tmp->light,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2);
