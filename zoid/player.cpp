@@ -59,6 +59,12 @@ void send_msg()
   };
 };
 
+//skins
+void worm::load_skin(std::string name)
+{
+	skin=sprites->load_sprite((name + ".bmp").c_str(),21,game->mod,game->v_depth);
+	mask=sprites->load_sprite((name + "mask.bmp").c_str(),21,game->mod,game->v_depth);
+}
 
 void worm::change_team(int _team)
 {
@@ -310,6 +316,8 @@ worm::worm()
     flash=0;
     killed_by=-1;
     team=0;
+		//talking
+		talking=false;
     color=makecol(100,100,220);
     for(o=0;o<5;o++)
     {
@@ -793,4 +801,17 @@ void pl0_team()
 void pl1_team()
 {
   player[local_player[1]]->change_team(atoi(con->arg));
+}
+
+//skins
+void pl0_skin()
+{
+	char name[1024];
+	player[local_player[0]]->load_skin(std::string(con->arg));
+}
+
+void pl1_skin()
+{
+	char name[1024];
+	player[local_player[1]]->load_skin(std::string(con->arg));
 }

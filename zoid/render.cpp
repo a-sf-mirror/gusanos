@@ -119,9 +119,29 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
     if (*pl_options[_player].HEALTH_DRAW_MODE==0)
     {
       int c;
-      c=((p->health*255)/ *game->MAX_HEALTH);
-      draw_bar(where,30,2, viewport.x+11, viewport.y+5, *game->MAX_HEALTH, p->health, makecol(255-c,c,0));
-    }else 
+			if (p->health <= *game->START_HEALTH)
+			{
+				c=((p->health*1.)/ *game->START_HEALTH)*255;
+				draw_bar(where,30,2, viewport.x+11, viewport.y+5, *game->START_HEALTH, p->health, makecol(255-c,c,0));
+			}
+			else
+			{
+				if (p->health < *game->MAX_HEALTH)
+				{
+					//draw green bar
+					rectfill(where,viewport.x+11, viewport.y+5, viewport.x+41, viewport.y+7, makecol(0,255,0));
+					//blue to white bar on-top
+					c=(((p->health-*game->START_HEALTH)*1.)/ (*game->MAX_HEALTH-*game->START_HEALTH))*255;
+					draw_bar(where,30,2, viewport.x+11, viewport.y+5, *game->MAX_HEALTH-*game->START_HEALTH, p->health-*game->START_HEALTH, makecol(c,c,255));
+				}
+				else
+				{
+					rectfill(where,viewport.x+11, viewport.y+5, viewport.x+41, viewport.y+7, makecol(0,0,255));
+					rectfill(where,viewport.x+11, viewport.y+6, viewport.x+41, viewport.y+6, makecol(255,255,255));
+				}
+			}		
+		}
+    else 
     {
       sprintf(ints, "%d",p->health);
       game->fonty->draw_string(where,ints,viewport.x+10,viewport.y+4,false);
@@ -139,7 +159,7 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
     };
     sprintf(ints, "%d",p->deaths);
     game->fonty->draw_string(where,ints,viewport.x+10,viewport.y+11,false);
-    if (!p->active && p->health>=*game->MAX_HEALTH)  game->fonty->draw_string(where,"[PRESS JUMP KEY TO RESPAWN]",viewport.x+20,viewport.y+120,true);
+    if (!p->active && p->health>=*game->START_HEALTH)  game->fonty->draw_string(where,"[PRESS JUMP KEY TO RESPAWN]",viewport.x+20,viewport.y+120,true);
     if (p->active && p->flag2)  game->fonty->draw_string(where,weaps->num[p->weap[p->curr_weap].weap]->name,viewport.x+(p->x/1000-p->xview)-(strlen(weaps->num[p->weap[p->curr_weap].weap]->name)*2),viewport.y+p->y/1000-p->yview-16,true);
     if (p->active && p->air<*game->AIR_CAPACITY-*game->AIR_CAPACITY/6) draw_bar(where,16,1, viewport.x+(p->x/1000-p->xview)-8, viewport.y+p->y/1000-p->yview+2, *game->AIR_CAPACITY-*game->AIR_CAPACITY/6, p->air, makecol(255,255,255));
 
@@ -254,6 +274,9 @@ void engine::render()
         player[i]->render_flip(map->buffer, (((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7, player[i]->x / 1000 - 9, (player[i]->y / 1000)-8);
         if(player[i]->curr_firecone!=NULL && player[i]->firecone_time>0)
         draw_sprite_h_flip(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtoi(fixsin(ftofix(player[i]->aim/1000.))*-5) - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtoi(fixcos(ftofix(player[i]->aim/1000.))*5) -4 - player[i]->curr_firecone->img[0]->h/2);
+				//talking
+				if (player[i]->talking)
+					draw_sprite_h_flip(map->buffer, talk->img[0], player[i]->x / 1000 - 8, player[i]->y / 1000 - 14);
 			}
 			else
 			{
@@ -261,6 +284,9 @@ void engine::render()
         player[i]->render(map->buffer, (((player[i]->aim/1000)-32+8)/(96/6))+(player[i]->curr_frame/1000)*7, player[i]->x / 1000 - 6, (player[i]->y / 1000)-8);
         if(player[i]->curr_firecone!=NULL && player[i]->firecone_time>0)
         draw_sprite(map->buffer,player[i]->curr_firecone->img[(((player[i]->aim/1000)-32+8)/(96/6))],player[i]->x / 1000 + fixtoi(fixsin(ftofix(player[i]->aim/1000.))*5) - player[i]->curr_firecone->img[0]->w/2,(player[i]->y / 1000)+fixtoi(fixcos(ftofix(player[i]->aim/1000.))*5) -4 - player[i]->curr_firecone->img[0]->h/2);
+				//talking
+				if (player[i]->talking)
+					draw_sprite(map->buffer, talk->img[0], player[i]->x / 1000 + 4, player[i]->y / 1000 - 14);
 			};
 		};
 	};
@@ -342,6 +368,7 @@ void engine::render()
     render_weapon_selection_menu(buffer);
   
 	fonty->draw_string(buffer,fpsstr,280,4,false);
+
 	//  sprintf(ints, "%d",caca);
 	if (*MAP_SHOW_MODE==0 || !smallmap && local_players==2)
 	{
@@ -404,14 +431,15 @@ void engine::minimap()
   if (local_players==1)
     MINIX=(320 - MINIWIDTH) - 1;
 
-  if (*MINIMAP)
+	//TAB hardcoded
+  if ((*MINIMAP==1 && key[KEY_TAB]) || *MINIMAP > 1)
   {
     drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
     set_trans_blender(0, 0, 0, 96);
-    switch(*MINIMAP)
+    switch(*MINIMAP_TYPE)
     {
-      case 1: masked_stretch_blit(map->mapimg, buffer, 0, 0, map->mapimg->w, map->mapimg->h, MINIX, MINIY, MINIWIDTH, MINIHEIGHT); break;
-      case 2: rectfill(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(0, 0, 0)); break;
+      case 0: masked_stretch_blit(map->mapimg, buffer, 0, 0, map->mapimg->w, map->mapimg->h, MINIX, MINIY, MINIWIDTH, MINIHEIGHT); break;
+      case 1: rectfill(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(0, 0, 0)); break;
     }
     rect(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(1000, 100, 100));
     solid_mode();

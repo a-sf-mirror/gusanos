@@ -94,7 +94,7 @@ void recharge_weapons(worm* player)
 void respawn_player(struct worm* player)
 {
 	int g,i,spawn_count;
-	player->health=*game->MAX_HEALTH;
+	player->health=*game->START_HEALTH;
 	g=-1;
   spawn_count=map->spawnpoint_count;
   if (game->teamplay)
@@ -405,7 +405,7 @@ void engine::calcphysics()
             con->echolist.add_echo(tmpstr);
           };
         }
-        else if (player[c]->health<*MAX_HEALTH) player[c]->health+=10;
+        else if (player[c]->health<*START_HEALTH) player[c]->health+=10;
         if (player[c]->flash>0) 
         {
           player[c]->flash-=100;
@@ -531,7 +531,9 @@ void engine::init_game()
 	ACELERATION=con->create_variable("ACCELERATION",100);
 	FRICTION=con->create_variable("FRICTION",50);
 	AIR_FRICTION=con->create_variable("AIR_FRICTION",3);
-	MAX_HEALTH=con->create_variable("MAX_HEALTH",1000);
+	START_HEALTH=con->create_variable("START_HEALTH",1000);
+	//health
+	MAX_HEALTH=con->create_variable("MAX_HEALTH",2000);
 	WORM_HEIGHT=90;
 	WORM_BOUNCINESS=con->create_variable("BOUNCINESS",200);
 	WORM_BOUNCE_LIMIT=1200;
@@ -558,6 +560,7 @@ void engine::init_game()
   //
   //Minimap option
   MINIMAP=con->create_variable("MINIMAP",1);
+	MINIMAP_TYPE=con->create_variable("MINIMAP_TYPE",0);
 
 	con->add_cmd("EXIT",quit);
 	con->add_cmd("QUIT",quit);
@@ -590,6 +593,10 @@ void engine::init_game()
   con->add_cmd("P1_NICK", pl1_nick);
   con->add_cmd("P0_TEAM", pl0_team);
   con->add_cmd("P1_TEAM", pl1_team);
+	//skins
+	con->add_cmd("P0_SKIN", pl0_skin);
+	con->add_cmd("P1_SKIN", pl1_skin);
+
   con->add_cmd("SAVE_LOG", save_log);
   
   if(v_depth==8)
@@ -619,6 +626,8 @@ void engine::init_game()
   menu_move=sounds->load("menu_move.wav");
   menu_select=sounds->load("menu_select.wav");
 	health=sprites->load_sprite("health.bmp",1,game->mod,game->v_depth);
+	//talking
+	talk=sprites->load_sprite("talk.bmp",1,game->mod,game->v_depth);
   ammo=sprites->load_sprite("ammo.bmp",1,game->mod,game->v_depth);
 	death_img=sprites->load_sprite("kills.bmp",1,game->mod,game->v_depth);
 	hook=sprites->load_sprite("hook.bmp",1,game->mod,game->v_depth);
@@ -641,6 +650,8 @@ void engine::init_game()
 		player[i]->aim=64000;
 		player[i]->dir=1;
 		player[i]->crossr=20;
+		//talking
+		player[i]->talking= false;
 		player[i]->health=1000;
 		player[i]->deaths=0;
     player[i]->air=2000;

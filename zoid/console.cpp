@@ -4,6 +4,8 @@
 #include "keys.h"
 #include "text.h"
 #include <fstream>
+#include <string>
+#include <algorithm>
 
 using std::fstream;
 
@@ -24,6 +26,10 @@ int knametoint(char *kname)
 	
 void chat()
 {
+	//talking
+	int i;
+	for (i=0;i<local_players;i++)
+		player[local_player[i]]->talking=true;
   con->flag=2;
   strcpy(con->textbuf,"");
   clear_keybuf();
@@ -463,6 +469,10 @@ void console::input()
         send_msg();
 				strcpy(con->textbuf,"");
         con->flag=0;
+				//talking
+				int i;
+				for (i=0;i<local_players;i++)
+					player[local_player[i]]->talking=false;
 			}
 			else sprintf(con->textbuf,"%s%c",con->textbuf,k);
 		};

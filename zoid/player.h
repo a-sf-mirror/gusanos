@@ -3,6 +3,7 @@
 
 #include <allegro.h>
 #include <zoidcom.h>
+#include <string>
 
 class sprite;
 class exp_type;
@@ -27,6 +28,8 @@ class worm
 	int aim,aim_speed,aim_recoil_speed;
   int killed_by;
   int team;
+	//talking
+	bool talking;
 	int curr_frame;
 	int dir;
   int flash;
@@ -58,6 +61,8 @@ class worm
   void shooteventsend();
   void deatheventsend();
   void change_team(int team);
+	//skins
+	void load_skin(std::string name);
   void render(BITMAP* where, int frame, int x, int y);
   void render_flip(BITMAP* where, int frame, int x, int y);
   void init_node(bool is_authority);
@@ -127,6 +132,10 @@ void pl1_nick();
 
 void pl0_team();
 void pl1_team();
+
+//skins
+void pl0_skin();
+void pl1_skin();
 
 void send_msg();
 

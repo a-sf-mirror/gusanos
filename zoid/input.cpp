@@ -245,7 +245,7 @@ void engine::input()
         player[i]->flagleft=true;
       };
     } else player[i]->flag2=false;
-  } else if (player[i]->keys->jump && player[i]->health>=*MAX_HEALTH)
+  } else if (player[i]->keys->jump && player[i]->health>=*START_HEALTH)
   {
     respawn_player(player[i]);
     player[i]->keys->jump=false;

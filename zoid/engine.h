@@ -46,6 +46,8 @@ struct engine
 	int WORM_BOUNCE_LIMIT;
   int *FLASHLIGHT;
 	int *WORM_JUMP_FORCE;
+	int *START_HEALTH;
+	//health
 	int *MAX_HEALTH;
 	int *MAP_SHOW_MODE;
 	int *RENDER_LAYERS;
@@ -69,6 +71,7 @@ struct engine
   //
   //Minimap
   int *MINIMAP;
+	int *MINIMAP_TYPE;
 
   bool teamplay;
   struct s_viewport viewport[2];
@@ -82,6 +85,8 @@ struct engine
 	void calcphysics();
 	void init_game();
 	class sprite* health;
+	//talking
+	class sprite* talk;
 	class sprite* death_img;
   class sprite *ammo;
 	class sprite *hook;

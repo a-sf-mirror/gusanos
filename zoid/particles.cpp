@@ -373,13 +373,12 @@ struct part_type* load_part(const char* type_name)
 					 else if ("give_weapon"==var) 
 					   {
 					     int j;
-					     // creating val again to get the spaces
 					     if ("random" == val)
-					     curr->give_weapon = -2;
+					       curr->give_weapon = -2;
 					     else
-					     for (j=0; j < weaps->weap_count; j++)
-					     if (val == weaps->num[j]->name)
-					     curr->give_weapon=j;
+					       for (j=0; j < weaps->weap_count; j++)
+					         if (val == weaps->num[j]->name)
+					           curr->give_weapon=j;
 					   };
 					//
 				};
@@ -409,7 +408,7 @@ void dest_part(struct particle* tmp)
 			play_sample(tmp->type->expsnd->snd, *game->VOLUME, 127, 1000, 0);
 		if (tmp->type->destroy_exp!=NULL)
 		create_exp(tmp->x,tmp->y,tmp->type->destroy_exp);
-    rem_part(tmp);
+		rem_part(tmp);
 	};
 };
 
@@ -436,26 +435,26 @@ bool check_position (int x1, int y1)
   for (x2 = x1-2; x2 <= x1+2; x2++)
     for (y2 = y1-2; y2 <= y1+2; y2++)
       if (!(map->mat[map->material->line[y2][x2] + 1].particle_pass))
-	return false;
+	      return false;
   return true;
 }
 
 void summon_bonus(struct part_type *item, int chance)
 {
-  if (chance!=0 && rand()%chance == 0)
+  if (rand()%10000 < chance)
     {
       int x, y, num = 0;
       do
-	{
-	  num++;
-	  x = (rand() % (map->material->w - 10) + 5);
-	  y = (rand() % (map->material->h - 10) + 5);
-	  if (check_position (x,y))
-	    {
-	      partlist.create_part(1000 * x, 1000 * y, 0, 0, 0, item);
-	      num=5000;
-	    }			
-	}
+     	{
+	      num++;
+	      x = (rand() % (map->material->w - 10) + 5);
+	      y = (rand() % (map->material->h - 10) + 5);
+	      if (check_position (x,y))
+	      {
+	        partlist.create_part(1000 * x, 1000 * y, 0, 0, 0, item);
+          num=5000;
+  	    }			
+	    }
       while (num < 5000);
     }
 }
@@ -519,12 +518,13 @@ void calc_particles()
 					if (player[i]->health>0 && player[i]->health<=*game->MAX_HEALTH)
           {
             if (ffire && friendly)
-            player[i]->health-=(tmp->type->damage * *game->FRIENDLYFIRE)/1000;
-            else player[i]->health-=tmp->type->damage;
+              player[i]->health-=(tmp->type->damage * *game->FRIENDLYFIRE)/1000;
+            else
+              player[i]->health-=tmp->type->damage;
             if (player[i]->health<=0)
-            player[i]->killed_by=tmp->owner;
+              player[i]->killed_by=tmp->owner;
             if (player[i]->health>=*game->MAX_HEALTH)
-            player[i]->health=*game->MAX_HEALTH;
+              player[i]->health=*game->MAX_HEALTH;
           };
 					if (tmp->type->expworm==1)
 					{
