@@ -131,24 +131,6 @@ void Game::parseCommandLine(int argc, char** argv)
 
 void Game::init(int argc, char** argv)
 {
-	/*
-	// TODO: Move commandline stuff to a different function?
-	po::options_description desc("Allowed options");
-	desc.add_options()
-	    ("help", "produce help message")
-	    ("command,c", po::value<string>(), "run a console command")
-	;
-	
-	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, desc), vm);
-	po::notify(vm);
-	
-	if (vm.count("help"))
-	{
-	    cout << desc << endl;
-	    // TODO: We should exit gusanos here
-	}*/
-	
 	allegro_init();
 
 	m_defaultPath = "default/";

@@ -160,7 +160,6 @@ void GConsole::init()
 {
 	keyHandler.init();
 
-
 	m_mode = CONSOLE_MODE_BINDINGS;
 	
 	registerFloatVariable("CON_SPEED", &speed, 4);

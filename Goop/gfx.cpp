@@ -1,6 +1,8 @@
 #include "gfx.h"
 #include "text.h"
 #include "gconsole.h"
+#include <boost/assign/list_inserter.hpp>
+using namespace boost::assign;
 
 #include <allegro.h>
 
@@ -70,23 +72,29 @@ void Gfx::registerInConsole()
 	
 	{
 		map<string, int> videoFilters;
-		videoFilters["NOFILTER"] = NO_FILTER;
-		videoFilters["SCANLINES"] = SCANLINES;
-		//videoFilters["2XSAI"] = AA2XSAI; // To be included later.
-			
+
+		insert(videoFilters) // These neat boost::assign functions actually make it smaller than!
+			("NOFILTER", NO_FILTER)
+			("SCANLINES", SCANLINES)
+			//("2XSAI", AA2XSAI) // To be included later.
+		;
+
 		console.registerEnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters);
 	}
 	
 	{ // TODO: Only include drivers relevant to the platform
 		map<string, int> videoDrivers;
-		videoDrivers["AUTO"] = GFX_AUTODETECT;
+		
+		insert(videoDrivers)
+			("AUTO", GFX_AUTODETECT)
 #ifdef WINDOWS
-		videoDrivers["DIRECTX"] = GFX_DIRECTX;
+			("DIRECTX", GFX_DIRECTX)
 #else //def LINUX   ..or?
-		videoDrivers["XDGA"] = GFX_XDGA;
-		videoDrivers["XDGA2"] = GFX_XDGA2;
-		videoDrivers["XWINDOWS"] = GFX_XWINDOWS;
+			("XDGA", GFX_XDGA)
+			("XDGA2", GFX_XDGA2)
+			("XWINDOWS", GFX_XWINDOWS)
 #endif
+		;
 
 		console.registerEnumVariable("VID_DRIVER", &m_driver, GFX_AUTODETECT, videoDrivers);
 	}

@@ -2,6 +2,8 @@
 #include "gconsole.h"
 #include "base_object.h"
 #include "text.h" //For cast<>
+#include <boost/assign/list_inserter.hpp>
+using namespace boost::assign;
 
 #include <vector>
 #include <fmod/fmod.h>
@@ -60,21 +62,29 @@ void Sfx::shutDown()
 
 void Sfx::registerInConsole()
 {
-	{ // TODO: Only add modes relevant to the platform
+	{
 		map<string, int> outputModes;
-		outputModes["NOSFX"] = FSOUND_OUTPUT_NOSOUND;
-		outputModes["WINMM"] = FSOUND_OUTPUT_WINMM;
-		outputModes["DSOUND"] = FSOUND_OUTPUT_DSOUND;
-		outputModes["A3D"] = FSOUND_OUTPUT_A3D;
-		outputModes["OSS"] = FSOUND_OUTPUT_OSS;
-		outputModes["ESD"] = FSOUND_OUTPUT_ESD;
-		outputModes["ALSA"] = FSOUND_OUTPUT_ALSA;
-		outputModes["ASIO"] = FSOUND_OUTPUT_ASIO;
-		outputModes["XBOX"] = FSOUND_OUTPUT_XBOX;
-		outputModes["PS2"] = FSOUND_OUTPUT_PS2;
-		outputModes["MAC"] = FSOUND_OUTPUT_MAC;
-		outputModes["GC"] = FSOUND_OUTPUT_GC;
-		outputModes["DEFAULT"] = -1;
+		insert(outputModes)
+			("AUTO", -1)
+			("NOSFX", FSOUND_OUTPUT_NOSOUND)
+#ifdef WINDOWS
+			("WINMM", FSOUND_OUTPUT_WINMM)
+			("DSOUND", FSOUND_OUTPUT_DSOUND)
+#else //ifdef LINUX
+			("A3D", FSOUND_OUTPUT_A3D) // Is this Linux, Windows or both?
+			("OSS", FSOUND_OUTPUT_OSS)
+			("ESD", FSOUND_OUTPUT_ESD)
+			("ALSA", FSOUND_OUTPUT_ALSA)
+			//("ASIO", FSOUND_OUTPUT_ASIO) //What's this
+#endif
+
+#if 0 //These aren't useful at the moment
+			("XBOX", FSOUND_OUTPUT_XBOX)
+			("PS2", FSOUND_OUTPUT_PS2)
+			("MAC", FSOUND_OUTPUT_MAC)
+			("GC", FSOUND_OUTPUT_GC)
+#endif
+		;
 		
 		console.registerEnumVariable("SFX_OUTPUT_MODE", &m_outputMode, -1, outputModes);
 		// NOTE: When/if adding a callback to sfx variables, make it do nothing if
