@@ -11,6 +11,9 @@
 #include "explosions.h"
 #include "sprites.h"
 #include "text.h"
+#ifdef WORMAI
+#include "ai.h"
+#endif
 
 
 struct engine* game;
@@ -690,7 +693,7 @@ void engine::init_game()
 	for (i=0;i<2;i++)
 	{
     int o;
-#ifdef WORMAI 
+#ifdef WORMAI
     //One AI player 
     player[i] = (i == 0) ? new worm : new wormai; 
 #else 

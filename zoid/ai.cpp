@@ -17,7 +17,7 @@
 
 #include <math.h>
 
-wormai::wormai() : target(0) { }
+wormai::wormai() : target(0), difficulty(AI_DEFAULT) { }
 
 void wormai::update()
 {
@@ -63,10 +63,38 @@ void wormai::update()
   //128 straight up
   //AIMS PERFECT WHEN TARGET WORM IS IN QUADRANT 1 OR 4
   int newAim = (int)(64 - (TODEG(newAngle) * (256.0/360.0)))%256 * 1000;
+  if (player[target]->x < x)
+  {
+    newAim = 128000 + (128000 - newAim);
+  }
+  newAim %= 256000;
+  if (newAim < 0)
+    newAim += 256000;
+  
+  //Perfect aiming
+  switch (difficulty)
+  {
+  //Default to easy :>
+  default:
+  case AI_EASY:
+    if (newAim > aim)
+      aim_speed += 100;
+    else if (newAim < aim)
+      aim_speed -= 100;
+    break;
+  case AI_NORMAL:
+    if (newAim > aim)
+      aim_speed += 200;
+    else if (newAim < aim)
+      aim_speed -= 200;
+    break;
+  case AI_HARD:
+    //Perfect aiming
+    aim = newAim;
+    break;
+  }
 
-  aim = newAim;
-
-  printf("ANGLE: %f, AIM: %i, DX: %i, DY: %i\n", TODEG(newAngle), aim / 1000, dx, dy);
+  //printf("ANGLE: %f, AIM: %i, DX: %i, DY: %i\n", TODEG(newAngle), aim / 1000, dx, dy);
 
   //Fire at target
   shoot();
@@ -84,5 +112,8 @@ void wormai::update()
   {
     aim = 96000;
     shootrope();
+  } else if (rand() % 150 == 0)
+  {
+    destroyrope();
   }
 }
