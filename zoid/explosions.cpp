@@ -63,6 +63,10 @@ exp_type::exp_type()
   spd_multiply=1000;
   flash=0;
   flash_radius=0;
+	//mat weapon
+	hole_mat=-1;
+	hole_strength=70;
+	draw_sprite=NULL;
 };
 
 exp_type::~exp_type()
@@ -195,6 +199,10 @@ class exp_type* load_exp(const char* exp_name)
           else if ("speed_multiply"==var) curr->spd_multiply=atoi(val.c_str());
           else if ("flash"==var) curr->flash=atoi(val.c_str());
           else if ("flash_radius"==var) curr->flash_radius=atoi(val.c_str());
+					//mat weapon
+					else if ("hole_material"==var) curr->hole_mat=atoi(val.c_str());
+					else if ("hole_strength"==var) curr->hole_strength=atoi(val.c_str());					
+					else if ("draw_sprite"==var && "null"!=val) curr->draw_sprite=sprites->load_sprite(val.c_str(),1,game->mod,game->v_depth);					
 				};
 			};
 		};
@@ -258,7 +266,8 @@ void create_exp(int x,int y,class exp_type *type)
 		exps->end->time=0;
 		
 		if (type->hole!=NULL) 
-			dig_hole(type->hole->img[0],exps->end->x/1000-type->hole->img[0]->w/2,exps->end->y/1000-type->hole->img[0]->h/2);
+			//mat weapon
+			dig_hole(type->hole->img[0],exps->end->x/1000-type->hole->img[0]->w/2,exps->end->y/1000-type->hole->img[0]->h/2, exps->end->type->hole_mat,exps->end->type->hole_strength, exps->end->type->draw_sprite);
 		
 		for (i=0;i<player_count;i++)
 		{
@@ -388,7 +397,8 @@ void calc_exps()
 	};
 };
 
-void dig_hole(BITMAP* image,int x,int y)
+//mat weapon
+void dig_hole(BITMAP* image,int x,int y, int mat, int hole_strength, sprite *draw_sprite)
 {
 	int y2,x2,col,g,m;
 	col=makecol(100,100,100);
@@ -398,35 +408,51 @@ void dig_hole(BITMAP* image,int x,int y)
     for (x2=0;x2<image->w;x2++)
     {
       g=getpixel(image,x2,y2);
+			m=getpixel(map->material,x+x2,y+y2)+1;
       if (g==makecol(0,0,0))
-      if (map->mat[getpixel(map->material,x+x2,y+y2)+1].destroyable)
-      {
-        putpixel(map->material,x+x2,y+y2,1);
-        if(map->has_water) check_hole_sides(x+x2,y+y2);
-        putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
-        //check_sunlight(x+x2,y+y2);
-      };
-      if (g==makecol(255,255,255))
-      {
-        m=getpixel(map->material,x+x2,y+y2)+1;
-				// (map->mat[m].chreact!=NULL) needed? chreact materials are normally destroyable anyway
-        if ((map->mat[m].destroyable)||(map->mat[m].chreact!=NULL))
+			{
+				if (map->mat[m].strength<hole_strength /*&& ((map->mat[m].destroyed_into+1 != m)||(mat>-1))*/)
+				{
+					putpixel(map->material,x+x2,y+y2,mat==-1 ? map->mat[m].destroyed_into: mat);
+					if (map->has_water) check_hole_sides(x+x2,y+y2);
+					if (draw_sprite)
+						putpixel(map->mapimg,x+x2,y+y2,getpixel(draw_sprite->img[0],x2,y2));
+					else
+						if (!map->mat[map->mat[m].destroyed_into+1].flows)
+							putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));					
+					//check_sunlight(x+x2,y+y2);
+				}
+			}
+      else if (g==makecol(255,255,255))
+			{
+				// (map->mat[m].chreact!=NULL) needed? chreact materials that are destroyed into themself will loop?
+        if ((map->mat[m].strength<hole_strength) /*&& ((map->mat[m].destroyed_into+1 != m)||(mat>-1)||(map->mat[m].chreact!=NULL))*/)
         {
-          putpixel(map->material,x+x2,y+y2,1);
-          if(map->has_water) check_hole_sides(x+x2,y+y2);
-          putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
+          putpixel(map->material,x+x2,y+y2,mat==-1 ? map->mat[m].destroyed_into: mat);
+          if (map->has_water) check_hole_sides(x+x2,y+y2);
+					if (draw_sprite)
+						putpixel(map->mapimg,x+x2,y+y2,getpixel(draw_sprite->img[0],x2,y2));
+					else
+						if (!map->mat[map->mat[m].destroyed_into+1].flows)
+							putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));					
           if (map->mat[m].chreact!=NULL) partlist.create_part((x+x2)*1000+500,(y+y2)*1000+500,0, 0, -1,map->mat[m].chreact);
           //check_sunlight(x+x2,y+y2);
-        };
-      };
-      if (g==makecol(128,0,0))
-      if (map->mat[getpixel(map->material,x+x2,y+y2)+1].destroyable)
-      {
-        drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
-        set_trans_blender(0, 0, 0, 64);
-        putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));
-        solid_mode();
-      };
+        }
+			}
+      else if (g==makecol(128,0,0))
+			{
+				if (map->mat[m].strength<hole_strength /*&& ((map->mat[m].destroyed_into+1 != m)||(mat>-1))*/)
+				{
+	        drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+					set_trans_blender(0, 0, 0, 64);
+					if (draw_sprite)
+						putpixel(map->mapimg,x+x2,y+y2,getpixel(draw_sprite->img[0],x2,y2));
+					else
+						if (!map->mat[map->mat[m].destroyed_into+1].flows)
+							putpixel(map->mapimg,x+x2,y+y2,getpixel(map->background,x+x2,y+y2));					
+					solid_mode();
+				};
+			}
     };
   } else
   {
@@ -434,12 +460,15 @@ void dig_hole(BITMAP* image,int x,int y)
     for (x2=0;x2<image->w;x2++)
     {
       if (getpixel(image,x2,y2)!=0)
-      if (map->mat[getpixel(map->material,x+x2,y+y2)+1].destroyable)
-      {
-        putpixel(map->material,x+x2,y+y2,1);
-        putpixel(map->mapimg,x+x2,y+y2,col);
-        solid_mode();
-      };
+			{
+				m= getpixel(map->material,x+x2,y+y2)+1;
+				if (map->mat[m].strength<hole_strength/* && ((map->mat[m].destroyed_into+1 != m)||(mat>-1))*/)
+				{
+	        putpixel(map->material,x+x2,y+y2,mat==-1 ? map->mat[m].destroyed_into: mat);
+					putpixel(map->mapimg,x+x2,y+y2,col);
+					solid_mode();
+				};
+			}
     };    
   };
 };

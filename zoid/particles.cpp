@@ -707,9 +707,7 @@ void calc_particles()
 				if (!map->mat[g+1].particle_pass)
 				{
 					if (tmp->type->drawonmap==1)
-					{
 						putpixel(map->mapimg,(tmp->x+tmp->xspd)/1000,(tmp->y+tmp->yspd)/1000,tmp->color);
-					}
 					tmp=tmp->prev;
 					dest_part(tmp->next);
 					break;
@@ -721,9 +719,7 @@ void calc_particles()
 				if (!map->mat[g+1].particle_pass)
 				{
 					if (tmp->type->drawonmap==1)
-					{
 						putpixel(map->mapimg,(tmp->x+tmp->xspd)/1000,(tmp->y+tmp->yspd)/1000,tmp->color);
-					}
 					tmp=tmp->prev;
 					rem_part(tmp->next);
 					break;

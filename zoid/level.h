@@ -12,13 +12,15 @@ struct s_mat
   bool particle_pass;
   bool flows;
   bool can_breath;
-  bool destroyable;
   bool draw_exps;
   bool blocks_light;
   bool destroys_water;
   bool creates_water;
   part_type *chreact;
   int damage;
+	//mat weapon
+	int strength;
+	int destroyed_into;
 };
 
 struct s_spawnpoint

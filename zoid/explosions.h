@@ -16,11 +16,14 @@ class exp_type
 	int color,wormshootnum,wormshootspeed,wormshootspeedrnd,detect_range,framenum,timeout;
   int light_fadeness, light_color,spd_multiply,flash,flash_radius;
 	char affect_worm,affect_particles, light_effect;
-	 sprite *sprt,*hole;
+	sprite *sprt,*hole;
+	//mat weapon
+	int hole_mat, hole_strength;
+	sprite *draw_sprite;
 	struct part_type *wormshootobj;
-	 class sound *snd;
-	 exp_type* next;
-	 exp_type* prev;
+	class sound *snd;
+	exp_type* next;
+	exp_type* prev;
   exp_type();
   ~exp_type();
 };
@@ -61,7 +64,8 @@ extern class exp_list *exps;
 extern class exp_type_list *exp_types;
   
 void calc_exps();
-void dig_hole(BITMAP* image,int x, int y);
+//mat weapon
+void dig_hole(BITMAP* image,int x, int y, int mat, int strength, sprite *draw_sprite);
 class exp_type* load_exp(const char* exp_name);
 void render_exps();
 void draw_explosion(BITMAP* image,int x, int y);
