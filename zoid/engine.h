@@ -90,6 +90,9 @@ struct engine
   int *WEAPON_CHANCE;
   int *HEALTH_CHANCE;
   //
+  //Minimap
+  int *MINIMAP;
+
   bool teamplay;
   struct s_viewport viewport[2];
   int v_width,v_height,v_depth;

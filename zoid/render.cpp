@@ -343,7 +343,8 @@ void engine::render()
 	};*/
 	con->render(buffer);
 
-	minimap();
+	if (*MINIMAP)
+	  minimap();
 
   if(v_width==320)
 	blit(buffer,screen,0,0,0,0,320,240);
@@ -388,10 +389,11 @@ void engine::minimap()
 
   drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
   set_trans_blender(0, 0, 0, 96);
-  rectfill(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(0, 0, 0));
-  /* Minimap with small map image.. Not transparent - Add minimap option?
-  stretch_blit(map->mapimg, buffer, 0, 0, map->mapimg->w, map->mapimg->h, MINIX, MINIY, MINIWIDTH, MINIHEIGHT);
-  */
+  if (*MINIMAP == 1)
+    stretch_blit(map->mapimg, buffer, 0, 0, map->mapimg->w, map->mapimg->h, MINIX, MINIY, MINIWIDTH, MINIHEIGHT);
+  else
+    rectfill(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(0, 0, 0));
+
   rect(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(1000, 100, 100));
   solid_mode();
   //

@@ -542,6 +542,8 @@ void engine::init_game()
   WEAPON_CHANCE=con->create_variable("WEAPON_CHANCE",10000);
   HEALTH_CHANCE=con->create_variable("HEALTH_CHANCE",10000);
   //
+  //Minimap option
+  MINIMAP=con->create_variable("MINIMAP",1);
 
 	con->add_cmd("EXIT",quit);
 	con->add_cmd("QUIT",quit);
