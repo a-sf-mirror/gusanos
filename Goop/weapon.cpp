@@ -1,7 +1,7 @@
 #include "weapon.h"
 #include "weapon_type.h"
 
-Weapon::Weapon(WeaponType* type, Worm* owner)
+Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 {
 	m_type = type;
 	m_owner = owner;
@@ -54,7 +54,7 @@ void Weapon::actionStop( Actions action )
 	}
 }
 
-Worm* Weapon::getOwner()
+BaseWorm* Weapon::getOwner()
 {
 	return m_owner;
 }

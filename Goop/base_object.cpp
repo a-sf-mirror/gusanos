@@ -15,6 +15,11 @@ Vec BaseObject::getPos()
 	return pos;
 }
 
+Vec BaseObject::getRenderPos()
+{
+	return pos;
+}
+
 Vec BaseObject::getSpd()
 {
 	return spd;

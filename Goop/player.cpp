@@ -37,7 +37,7 @@ void Player::think()
 {
 	if ( m_worm )
 	{
-		if ( m_viewport ) m_viewport->interpolateTo(m_worm->getPos(),m_options->viewportFollowFactor);
+		if ( m_viewport ) m_viewport->interpolateTo(m_worm->getRenderPos(),m_options->viewportFollowFactor);
 		if ( aimingUp ) 
 		{
 			if ( changing && m_worm->getNinjaRopeObj()->active )

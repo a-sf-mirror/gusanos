@@ -25,8 +25,12 @@ class Network
 	
 	bool isHost();
 	bool isClient();
+	
+	ZCom_Control* getZControl();
 
 	private:
+
+	void registerClasses();
 		
 	bool m_host;
 	bool m_client;

@@ -23,10 +23,10 @@ class Client : public ZCom_Control
 	void ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason );
 	
 	// zoidlevel transition finished
-	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason) {}
+	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason);
 	
 	// server wants to tell us about new node
-	void ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested_class, eZCom_NodeRole _role, ZCom_NodeID _net_id) {}
+	void ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested_class, eZCom_NodeRole _role, ZCom_NodeID _net_id);
 	
 	virtual bool ZCom_cbConnectionRequest( ZCom_ConnID  _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ){return false;}
 	virtual void ZCom_cbConnectionSpawned( ZCom_ConnID _id ) {}

@@ -3,10 +3,12 @@
 #include "client.h"
 #include "gconsole.h"
 #include "text.h"
+#include "net_worm.h"
 
 #ifndef DISABLE_ZOIDCOM
 
 #include <string>
+#include <zoidcom.h>
 
 using namespace std;
 
@@ -46,7 +48,7 @@ void Network::shutDown()
 void Network::registerInConsole()
 {
 	console.registerVariables()
-		("NET_SERVER_PORT", &m_serverPort, 9898);
+		("NET_SERVER_PORT", &m_serverPort, 9898)
 	;
 }
 
@@ -59,10 +61,16 @@ void Network::update()
 	}
 }
 
+void Network::registerClasses() // Factorization of class registering in client and server
+{
+	NetWorm::classID = m_control->ZCom_registerClass("worm");
+}
+
 void Network::host()
 {
 	disconnect();
 	m_control = new Server(m_serverPort);
+	registerClasses();
 	m_host = true;
 }
 
@@ -70,6 +78,7 @@ void Network::connect( const std::string &_address )
 {
 	disconnect();
 	m_control = new Client( 0 );
+	registerClasses();
 	ZCom_Address address;
 	address.setAddress( eZCom_AddressUDP, 0, ( _address + ":" + cast<string>(m_serverPort) ).c_str() );
 	m_control->ZCom_Connect( address, NULL );
@@ -91,6 +100,11 @@ bool Network::isHost()
 bool Network::isClient()
 {
 	return m_client;
+}
+
+ZCom_Control* Network::getZControl()
+{
+	return m_control;
 }
 
 #endif

@@ -3,68 +3,28 @@
 
 #include "vec.h"
 #include "base_object.h"
+#include "base_worm.h"
 #include "sprite.h"
+
+#include <zoidcom.h>
 
 class BaseAnimator;
 class BasePlayer;
 class NinjaRope;
 
-class Worm : public BaseObject
-{
+class Worm : public BaseWorm
+{	
 	public:
 		
-	enum Actions
-	{
-		MOVELEFT,
-		MOVERIGHT,
-		AIMUP,
-		AIMDOWN,
-		FIRE,
-		FIRE2,
-		JUMP,
-		DIG,
-		NINJAROPE
-	};
+	static ZCom_ClassID  classID;
 		
 	Worm();
 	~Worm();
-	
-	void assignOwner( BasePlayer* owner);
 
-	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
-	void actionStart( Actions action );
-	void actionStop( Actions action );
-	void addAimSpeed(float speed);
-	void addRopeLength(float distance);
-	
-	Vec getPos();
-	float getAngle();
-	char getDir();
-	
-	NinjaRope* getNinjaRopeObj();
 	
 	private:
-	
-	bool movingLeft;
-	bool movingRight;
-	bool jumping;
-	
-	int dir;
-	float aimAngle;
-	float aimSpeed;
-	float aimRecoilSpeed;
-	float currentRopeLength;
-	
-	int currentWeapon;
-	
-	std::vector<Weapon*> m_weapons;
-	
-	BasePlayer* m_owner;
-	NinjaRope* m_ninjaRope;
-	
-	Sprite *skin;
-	BaseAnimator* m_animator;
+
 };
 
 #endif  // _WORM_H_

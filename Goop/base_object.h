@@ -16,6 +16,7 @@ class BaseObject
 	virtual void think() = 0;
 	
 	virtual Vec getPos();
+	virtual Vec getRenderPos();
 	virtual Vec getSpd();
 	virtual float getAngle();
 	virtual void addAngleSpeed( float speed ) {};

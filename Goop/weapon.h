@@ -2,7 +2,7 @@
 #define WEAPON_H
 
 
-class Worm;
+class BaseWorm;
 class WeaponType;
 
 class Weapon
@@ -15,7 +15,7 @@ class Weapon
 		SECONDARY_TRIGGER
 	};
 		
-	Weapon(WeaponType* type, Worm* owner);
+	Weapon(WeaponType* type, BaseWorm* owner);
 	~Weapon();
 	
 	void think();
@@ -24,7 +24,7 @@ class Weapon
 	void actionStop( Actions action );
 	
 	void delay( int time );
-	Worm* getOwner();
+	BaseWorm* getOwner();
 
 	private:
 		
@@ -33,7 +33,7 @@ class Weapon
 	int inactiveTime;
 	
 	WeaponType* m_type;
-	Worm* m_owner;
+	BaseWorm* m_owner;
 };
 
 #endif  // _WEAPON_H_

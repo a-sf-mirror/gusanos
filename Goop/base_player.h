@@ -6,7 +6,7 @@ struct PlayerOptions;
 #include <string>
 #include "vec.h"
 
-class Worm;
+class BaseWorm;
 
 class BasePlayer
 {
@@ -18,7 +18,7 @@ class BasePlayer
 	virtual void think() = 0;
 	virtual void render() {};
 
-	void assignWorm(Worm* worm);
+	void assignWorm(BaseWorm* worm);
 	
 	PlayerOptions* getOptions();
 	Vec getPos();
@@ -28,7 +28,7 @@ class BasePlayer
 	int deaths;
 	int kills;
 
-	Worm* m_worm;
+	BaseWorm* m_worm;
 	PlayerOptions* m_options;
 };
 

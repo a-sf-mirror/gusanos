@@ -21,6 +21,10 @@
 #include "guilist.h"
 #include "network.h"
 
+#ifdef WINDOWS
+	#include <winalleg.h>
+#endif
+
 #include <string>
 #include <vector>
 
@@ -165,6 +169,10 @@ int main(int argc, char **argv)
 			
 			logicLast+=1;
 		}
+		
+#ifdef WINDOWS
+		Sleep(0);
+#endif
 
 		//Update FPS
 		if (_fpsLast + 100 <= _timer)

@@ -63,14 +63,13 @@ void Gfx::registerInConsole()
 {
 	console.registerCommands()
 		("SCREENSHOT", screenShot)
-		("VID_TOGGLE_FULLSCREEN", fullscreenCmd)
 	;
 	
 	console.registerVariables()
-		("VID_FULLSCREEN", &m_fullscreen, 1, fullscreen)
+		("VID_FULLSCREEN", &m_fullscreen, 0, fullscreen)
 		("VID_DOUBLERES", &m_doubleRes, 0, doubleRes)
-		("VID_VSYNC", &m_vsync, 1)
-		("VID_CLEAR_BUFFER", &m_clearBuffer, 1)
+		("VID_VSYNC", &m_vsync, 0)
+		("VID_CLEAR_BUFFER", &m_clearBuffer, 0)
 	;
 	
 	// NOTE: When/if adding a callback to gfx variables, make it do nothing if

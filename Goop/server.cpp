@@ -31,15 +31,25 @@ bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request
 
 void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 {
-	// request 20 packets/second and 200 bytes per packet from client (maximum values of course)
 	console.addLogMsg("* CONNECTION SPAWNED");
 	ZCom_requestDownstreamLimit(_id, 20, 200);
 }
 
-// called when a connection closed
 void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 {
 	console.addLogMsg("* A CONNECTION WAS CLOSED");
 }
 
+bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)
+{
+	if (_requested_level == 1)
+	{
+		console.addLogMsg("* ZOIDMODE REQUEST ACCEPTED");
+		return true;
+	}
+	else
+		return false;
+}
+
 #endif
+

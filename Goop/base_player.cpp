@@ -16,7 +16,7 @@ BasePlayer::~BasePlayer()
 {
 }
 
-void BasePlayer::assignWorm(Worm* worm)
+void BasePlayer::assignWorm(BaseWorm* worm)
 {
 	m_worm = worm;
 	worm->assignOwner( this );

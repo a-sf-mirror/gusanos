@@ -17,6 +17,7 @@
 #include "gfx.h"
 #include "sfx.h"
 #include "player_ai.h"
+#include "net_worm.h"
 #include "network.h"
 
 #include <allegro.h>
@@ -265,33 +266,65 @@ void Game::changeLevel(const std::string& levelName )
 #endif
 	}
 	
-	if ( loaded && level.isLoaded() )
+	// All this is temporal, dont be scared ;D
+	if ( loaded && level.isLoaded() ) 
 	{
-		if(true)
+		if ( network.isHost() )
 		{
-			Worm* worm = new Worm;
-			Player* player = new Player(playerOptions[0]);
-			Viewport* viewport = new Viewport;
-			viewport->setDestination(gfx.buffer,0,0,160,240);
-			player->assignWorm(worm);
-			player->assignViewport(viewport);
-			objects.push_back( worm );
-			objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-			players.push_back( player );
-			localPlayers.push_back( player );
-		}
-		if(true)
+			if(true)
+			{
+				NetWorm* worm = new NetWorm(true);
+				Player* player = new Player(playerOptions[0]);
+				Viewport* viewport = new Viewport;
+				viewport->setDestination(gfx.buffer,0,0,160,240);
+				player->assignWorm(worm);
+				player->assignViewport(viewport);
+				objects.push_back( worm );
+				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
+				players.push_back( player );
+				localPlayers.push_back( player );
+			}
+			if(true)
+			{
+				NetWorm* worm = new NetWorm(true);
+				Player* player = new Player(playerOptions[1]);
+				Viewport* viewport = new Viewport;
+				viewport->setDestination(gfx.buffer,160,0,160,240);
+				player->assignWorm(worm);
+				player->assignViewport(viewport);
+				objects.push_back( worm );
+				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
+				players.push_back( player );
+				localPlayers.push_back( player );
+			}
+		}else
 		{
-			Worm* worm = new Worm;
-			Player* player = new Player(playerOptions[1]);
-			Viewport* viewport = new Viewport;
-			viewport->setDestination(gfx.buffer,160,0,160,240);
-			player->assignWorm(worm);
-			player->assignViewport(viewport);
-			objects.push_back( worm );
-			objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-			players.push_back( player );
-			localPlayers.push_back( player );
+			if(true)
+			{
+				Worm* worm = new Worm;
+				Player* player = new Player(playerOptions[0]);
+				Viewport* viewport = new Viewport;
+				viewport->setDestination(gfx.buffer,0,0,160,240);
+				player->assignWorm(worm);
+				player->assignViewport(viewport);
+				objects.push_back( worm );
+				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
+				players.push_back( player );
+				localPlayers.push_back( player );
+			}
+			if(true)
+			{
+				Worm* worm = new Worm;
+				Player* player = new Player(playerOptions[1]);
+				Viewport* viewport = new Viewport;
+				viewport->setDestination(gfx.buffer,160,0,160,240);
+				player->assignWorm(worm);
+				player->assignViewport(viewport);
+				objects.push_back( worm );
+				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
+				players.push_back( player );
+				localPlayers.push_back( player );
+			}
 		}
 	}
 
