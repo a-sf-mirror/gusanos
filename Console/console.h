@@ -27,6 +27,7 @@ class Console
    ~Console(void);
 
 	void registerIntVariable(const std::string &name, int* src, int defaultValue);
+	void registerFloatVariable(const std::string &name, float* src, float defaultValue);
 	void registerAlias(const std::string &name, const std::string &action);
 	void registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&));
 	void parseLine(const std::string &text, bool parseRelease = false);

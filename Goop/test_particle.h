@@ -3,6 +3,7 @@
 
 
 #include "base_object.h"
+#include "sprite.h"
 
 class TestParticle : public BaseObject
 {
@@ -12,6 +13,10 @@ class TestParticle : public BaseObject
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
+	
+	private:
+	
+	Sprite *sprite;
 };
 
 #endif  // _base_object_h_

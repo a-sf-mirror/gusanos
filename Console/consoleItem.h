@@ -1,5 +1,5 @@
-#ifndef consoleitem_h
-#define consoleitem_h
+#ifndef consoleItem_h
+#define consoleItem_h
 
 #include <string>
 #include <list>
@@ -18,4 +18,4 @@ class ConsoleItem
 	bool m_locked;
 };
 
-#endif  // _consoleitem_h_
+#endif  // _consoleItem_h_

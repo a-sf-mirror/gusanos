@@ -10,34 +10,54 @@
 #include "game.h"
 #include "viewport.h"
 #include "test_particle.h"
+#include "worm.h"
 //#include "text.h"
 
 #include <string>
 
 using namespace std;
 
-struct Object
-{
-	Vec pos;
-	Vec spd;
-	float x;
-	float y;
-};
+Worm *worm;
 
 bool forward = false;
 bool quit = false;
 
-string forwardStart(const list<string> &args)
+string rightStart(const list<string> &args)
 {
-	forward = true;
+	worm->moveRightStart();
 	return "";
 }
 
-string forwardEnd(const list<string> &args)
+string rightStop(const list<string> &args)
 {
-	forward = false;
+	worm->moveRightStop();
 	return "";
 }
+
+string leftStart(const list<string> &args)
+{
+	worm->moveLeftStart();
+	return "";
+}
+
+string leftStop(const list<string> &args)
+{
+	worm->moveLeftStop();
+	return "";
+}
+
+string jumpStart(const list<string> &args)
+{
+	worm->jumpStart();
+	return "";
+}
+
+string jumpStop(const list<string> &args)
+{
+	worm->jumpStop();
+	return "";
+}
+
 
 string Exit(const list<string> &args)
 {
@@ -47,9 +67,6 @@ string Exit(const list<string> &args)
 
 int main(int argc, char **argv)
 {
-	Object object;
-	
-	
 	game.init();
 
 	
@@ -58,18 +75,15 @@ int main(int argc, char **argv)
 	Font *tempFont = fontList.load("minifont.bmp");
 	
 	
-	console.registerCommand("+FORWARD", forwardStart);
-	console.registerCommand("-FORWARD", forwardEnd);
+	console.registerCommand("+MOVELEFT", leftStart);
+	console.registerCommand("-MOVELEFT", leftStop);
+	console.registerCommand("+MOVERIGHT", rightStart);
+	console.registerCommand("-MOVERIGHT", rightStop);
+	console.registerCommand("+JUMP", jumpStart);
+	console.registerCommand("-JUMP", jumpStop);
 	console.registerCommand("QUIT", Exit);
 	
-	console.parseLine("moo caco; \"boooyouvoooo vo; asfa\" \" \";mooish  ");
-	console.parseLine("TEST");
-	console.parseLine("uga 1ish; uga   2ish;TEST 48");
-	console.parseLine("TEST");
-	console.parseLine("BIND A \"TEST 10\"");
-	console.parseLine("BIND B TEST");
-	console.parseLine("BIND W +FORWARD");
-	
+	console.parseLine("BIND A +MOVELEFT; BIND D +MOVERIGHT; BIND G +JUMP");
 	
 	if ( gameLoad<Level>("bleed",game.level) )
 	{
@@ -92,19 +106,20 @@ int main(int argc, char **argv)
 	testViewport.setDestination(buffer,0,0,320,240);
 	testViewport2.setDestination(buffer,100,50,100,100);
 	
-	for (int i = 0; i < 1000 ; i++)
+	for (int i = 0; i < 200 ; i++)
 	{
 		game.objects.push_back( new TestParticle );
 	}
 	
-	object.pos = Vec(0,0);
+	worm = new Worm();
+	game.objects.push_back(worm);
+	
 	
 	int x,y;
 	int moo=0;
 	int moox,mooy;
 	while (!quit)
 	{
-		if (forward) object.pos= object.pos + Vec(0.3,0);
 		
 		list<BaseObject*>::iterator iter;
 		for ( iter = game.objects.begin(); iter != game.objects.end(); iter++)
@@ -116,40 +131,18 @@ int main(int argc, char **argv)
 		
 		clear_bitmap(buffer);
 		
-		textout_ex(buffer, font, "Console", 10, 10, makecol(255,255,255), -1);
-		
-		tempFont->draw(buffer,"abcdefghijklmnopqrst ABCDEFGHIJKLMNOPQRST", 10,20,0);
-		
 		//level.draw(buffer,0,object.pos.x);
 		testViewport.render();
-		if ( moo < 200 )
-		{
-			testViewport2.interpolateTo(moox,mooy,0.02);
-			moo++;
-		}else
-		{
-			moox=rand()%150;
-			mooy=rand()%400;
-			moo=0;
-		}
+		testViewport2.interpolateTo(worm->getPos(),0.1);
+		testViewport2.setPos(worm->getPos().x - 50, worm->getPos().y - 50);
 		testViewport2.render();
-		console.render(buffer);
-		//menu.draw(buffer);
 		
-		putpixel(buffer, object.pos.x, object.pos.y, makecol(255,0,0));
-		sprite->draw(buffer, 1, object.pos.x, object.pos.y);
+		console.think();
+		console.render(buffer);
 		
 		vsync();
 		
-		/*for (int i= 0; i<20; i++)
-		{
-		x = rand()%100;
-		y = rand()%200;
-		if ( level.getMaterial(x,y).worm_pass ) putpixel(buffer,x,y,makecol(255,255,0));
-		}*/
-		
 		blit(buffer,screen,0,0,0,0,320,240);
-
 	}
 	
 	console.shutDown();

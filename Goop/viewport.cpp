@@ -45,7 +45,12 @@ void Viewport::setPos(float x, float y)
 
 void Viewport::interpolateTo(float x, float y, float factor)
 {
-	Vec dest(x,y);
+	Vec dest(x-m_dest->w/2,y-m_dest->h/2);
 
 	m_pos = m_pos + (dest-m_pos)*factor;
+}
+
+void Viewport::interpolateTo(Vec dest, float factor)
+{
+	m_pos = m_pos + (dest-Vec(m_dest->w/2,m_dest->h/2)-m_pos)*factor;
 }

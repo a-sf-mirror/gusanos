@@ -1,23 +1,17 @@
 #ifndef gconsole_h
 #define gconsole_h
 
-// SYSTEM INCLUDES
-//
-
-// PROJECT INCLUDES
-//
 #include "keyboard.h"
 #include "console.h"
 #include "font.h"
+#include "sprite.h"
 
-// LOCAL INCLUDES
-//
+#include <allegro.h>
+
+#include <list>
 #include <string>
 #include <list>
 #include <map>
-
-// FORWARD REFERENCES
-//
 
 class GConsole : public Console
 {
@@ -29,13 +23,23 @@ class GConsole : public Console
 	void shutDown();
 	void checkInput();
 	void render(BITMAP *where);
+	void think();
 
 	private:
 	
-	KeyHandler keyHandler;
+	float m_pos;
+	float speed;
+	int height;
 	int m_mode;
+	
+	KeyHandler keyHandler;
+
 	Font *m_font;
+	Sprite *background;
 	std::string m_inputBuff;
+	
+	std::list< std::string > commandsLog;
+	std::list< std::string >::iterator currentCommand;
 	
 	enum
 	{

@@ -73,6 +73,7 @@ string aliasCmd(const list<string> &args)
 
 GConsole::GConsole() : Console(256,39)
 {
+	background = NULL;
 };
 
 //============================= INTERFACE ====================================
@@ -86,6 +87,11 @@ void GConsole::init()
 	m_MaxMsgLength= (320-5) / m_font->width();
 	m_mode = CONSOLE_MODE_BINDINGS;
 	
+	background = spriteList.load("con_background.bmp");
+	
+	registerFloatVariable("CON_SPEED", &speed, 4);
+	registerIntVariable("CON_HEIGHT", &height, 120);
+	
 	registerCommand("BIND", bindCmd);
 	registerCommand("EXEC", execCmd);
 	registerCommand("ALIAS", aliasCmd);
@@ -95,25 +101,29 @@ void GConsole::shutDown()
 {
 	keyHandler.shutDown();
 	
-	//m_font must be deleted here!!!!
+	//m_font must be deleted here!!!! hmm not sure now
 }
 
 void GConsole::render(BITMAP* where)
 {
 	int textIndex = 0;
 	list<std::string>::iterator msg = log.end();
-	while ((msg != log.begin()) && (textIndex < 20))
+	if ( m_pos > 0 )
 	{
-		msg--;
-		m_font->draw(where, *msg, 5, where->h - 20 - textIndex * (m_font->height() + 1), 0);
-		textIndex++;
-	}
-	string tempString = (']' + m_inputBuff + '*');
-	if ( tempString.length() < (where->w-5) / m_font->width() )
-		m_font->draw(where, tempString, 5, where->h - 10 , 0);
-	else
-	{
-		m_font->draw(where, tempString.substr(tempString.length() - (where->w-5) / m_font->width()), 5, where->h - 10 , 0);
+		background->draw(where, 0, 0, m_pos, false, ALIGN_LEFT, ALIGN_BOTTOM);
+		while ((msg != log.begin()) && ((int)m_pos - 20 - (textIndex - 1) * (m_font->height() + 1) > 0))
+		{
+			msg--;
+			m_font->draw(where, *msg, 5, (int)m_pos - 20 - textIndex * (m_font->height() + 1), 0);
+			textIndex++;
+		}
+		string tempString = (']' + m_inputBuff + '*');
+		if ( tempString.length() < (where->w-5) / m_font->width() )
+			m_font->draw(where, tempString, 5, (int)m_pos - 10 , 0);
+		else
+		{
+			m_font->draw(where, tempString.substr(tempString.length() - (where->w-5) / m_font->width()), 5, (int)m_pos - 10 , 0);
+		}
 	}
 }
 
@@ -135,6 +145,7 @@ void GConsole::checkInput()
 				m_mode = CONSOLE_MODE_INPUT;
 				clear_keybuf();						// Clear allegro buffer so that old keys dont bother
 				m_inputBuff.clear();
+				currentCommand = commandsLog.end();
 			}
 		}else	// If the key was not Tilde continue to analize its bingings
 		{
@@ -146,6 +157,34 @@ void GConsole::checkInput()
 				}else
 				{
 					analizeKeyEvent(false, event.key);
+				}
+			} else if ( m_mode == CONSOLE_MODE_INPUT )
+			{
+				if ( (event.type == KEY_EVENT_PRESS) && (event.key == KEY_UP) )
+				{
+					clear_keybuf();
+					if (currentCommand != commandsLog.begin() )
+						currentCommand--;
+					if ( currentCommand == commandsLog.end() )
+					{
+						m_inputBuff.clear();
+					}else
+					{
+						m_inputBuff = *currentCommand;
+					}
+				}
+				if ( (event.type == KEY_EVENT_PRESS) && (event.key == KEY_DOWN) )
+				{
+					clear_keybuf();
+					if (currentCommand != commandsLog.end() )
+						currentCommand++;
+					if ( currentCommand == commandsLog.end() )
+					{
+						m_inputBuff.clear();
+					}else
+					{
+						m_inputBuff = *currentCommand;
+					}
 				}
 			}
 		}
@@ -168,6 +207,8 @@ void GConsole::checkInput()
 			{
 				addLogMsg(']'+m_inputBuff); //add the text to the console log
 				console.parseLine(m_inputBuff); //parse the text
+				commandsLog.push_back(m_inputBuff); //add the text to the commands log too
+				currentCommand = commandsLog.end(); //reset the command log position
 				m_inputBuff.clear(); // and then clear the buffer
 			}
 			else if (key == '\t') //Tab
@@ -189,7 +230,19 @@ void GConsole::checkInput()
 	}
 }
 
-
+void GConsole::think()
+{
+	if ( height > 240 ) height=240;
+	if ( m_mode == CONSOLE_MODE_INPUT && m_pos < height )
+	{
+		m_pos+=speed;
+	}else if ( m_mode == CONSOLE_MODE_BINDINGS && m_pos > 0 )
+	{
+		m_pos-=speed;
+	}
+	if (m_pos > height) m_pos = height;
+	if (m_pos < 0) m_pos = 0;
+}
 
 
 //============================= PRIVATE ======================================

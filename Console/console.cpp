@@ -3,6 +3,7 @@
 #include "command.h"
 #include "alias.h"
 #include "text.h"
+#include "consoleItem.h"
 
 #include <algorithm>
 #include <fstream>
@@ -50,6 +51,18 @@ void Console::registerIntVariable(const string &name, int* src, int defaultValue
 		if (tempItem == items.end())
 		{
 			items[name] = new IntVariable(src, name, defaultValue);
+		}
+	}
+}
+
+void Console::registerFloatVariable(const string &name, float* src, float defaultValue)
+{
+	if (!name.empty())
+	{
+		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+		if (tempItem == items.end())
+		{
+			items[name] = new FloatVariable(src, name, defaultValue);
 		}
 	}
 }

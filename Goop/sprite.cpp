@@ -51,9 +51,24 @@ bool Sprite::load(const string &filename)
 	return false;
 }
 
-void Sprite::draw( BITMAP* where, int frame, int x, int y)
+void Sprite::draw(BITMAP *where, int frame,int x, int y, bool flipped, int xAligment, int yAligment)
 {
 	if ( frame < m_frame.size() )
-	draw_sprite(where, m_frame[frame], x-m_frame[frame]->w/2, y-m_frame[frame]->h/2);
+	{
+		int _x,_y;
+		if ( xAligment == ALIGN_LEFT ) _x = x;
+		else if ( xAligment == ALIGN_RIGHT ) _x = x - m_frame[frame]->w;
+		else _x = x - m_frame[frame]->w / 2;
+			
+		if ( yAligment == ALIGN_TOP ) _y = y;
+		else if ( yAligment == ALIGN_BOTTOM ) _y = y - m_frame[frame]->h;
+		else _y = y - m_frame[frame]->h / 2;
+		
+		if ( flipped )
+			draw_sprite_h_flip(where, m_frame[frame], _x, _y);
+		else
+			draw_sprite(where, m_frame[frame], _x, _y);
+		
+	}
 }
 

@@ -1,4 +1,4 @@
-#include "consoleitem.h"
+#include "consoleItem.h"
 
 ConsoleItem::ConsoleItem(bool locked)
 {

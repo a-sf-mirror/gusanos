@@ -7,6 +7,15 @@
 #include <string>
 #include <vector>
 
+enum
+{
+	ALIGN_CENTER = 0,
+	ALIGN_TOP,
+	ALIGN_BOTTOM,
+	ALIGN_RIGHT,
+	ALIGN_LEFT
+};
+	
 class Sprite
 {
 	public:
@@ -15,7 +24,7 @@ class Sprite
 	~Sprite();
 	
 	bool load(const std::string &filename);
-	void draw(BITMAP *where, int frame,int x, int y);
+	void draw(BITMAP *where, int frame,int x, int y, bool flipped = false, int xAligment = ALIGN_CENTER, int yAligment = ALIGN_CENTER);
 	
 	private:
 	

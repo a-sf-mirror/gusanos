@@ -9,6 +9,23 @@
 #include <vector>
 #include <list>
 
+struct Options
+{
+	void registerInConsole();
+	
+	float worm_maxSpeed;
+	float worm_acceleration;
+	float worm_friction;
+	float worm_airFriction;
+	float worm_gravity;
+	float worm_bounceQuotient;
+	float worm_bounceLimit;
+	float worm_jumpForce;
+	int worm_weaponHeight;
+	int worm_height;
+	int worm_maxClimb;
+};
+
 class Game
 {
 	public:
@@ -25,6 +42,7 @@ class Game
 	Level level;
 	
 	std::list<BaseObject*> objects;
+	Options options;
 	
 	private:
 	std::vector<std::string> m_paths;

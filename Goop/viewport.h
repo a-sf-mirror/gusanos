@@ -16,6 +16,7 @@ class Viewport
 	void render();
 	void setPos(float x, float y);
 	void interpolateTo(float x, float y, float factor);
+	void interpolateTo(Vec dest, float factor);
 	
 	private:
 	
