@@ -88,10 +88,10 @@ explosion::~explosion()
 
 class exp_type* load_exp(const char* exp_name)
 {
-	FILE *fbuf;
+	ifstream fbuf;
 	class exp_type *curr;
-	char *tmp1,tmp2[1024],tmp3[1024];
-	char *var,*val;
+	std::string tmp1,tmp2,tmp3;
+	std::string var,val;
 	int i;
 	
 	
@@ -118,72 +118,67 @@ class exp_type* load_exp(const char* exp_name)
   strcpy(curr->name,exp_name);
 
   //open the configuration file
-  strcpy(tmp3,map->path);
-  strcat(tmp3,"/objects/explosions/");
-  strcat(tmp3,curr->name);
-  fbuf=fopen(tmp3,"rt");
-  if (fbuf==NULL)
+  tmp3=map->path;
+  tmp3+="/objects/explosions/";
+  tmp3+=curr->name;
+  if (!exists(tmp3.c_str()))
   {
-    strcpy(tmp3,game->mod);
-    strcat(tmp3,"/objects/explosions/");
-    strcat(tmp3,curr->name);
-    fbuf=fopen(tmp3,"rt");
-    if (fbuf==NULL)
+    tmp3=game->mod;
+    tmp3+="/objects/explosions/";
+    tmp3+=curr->name;
+    if (!exists(tmp3.c_str()))
     {
-      strcpy(tmp3,"default/objects/explosions/");
-      strcat(tmp3,curr->name);
-      fbuf=fopen(tmp3,"rt");
+      tmp3="default/objects/explosions/";
+      tmp3+=curr->name;
     };
   };
+  fbuf.open(tmp3.c_str());
 	//if there were no errors...
-	if (fbuf!=NULL)
+	if (fbuf.is_open())
 	{
-		//...parse the file
-		while (!feof(fbuf))
+		while (!fbuf.eof())
 		{
-			tmp1=fgets(tmp2, sizeof(tmp2), fbuf);
-			if (tmp1!=NULL)
+      getline(fbuf, tmp1);
+			if (!tmp1.empty())
 			{
 				i=0;
-				if (tmp1[0]==' ')
+				if (tmp1.c_str()[0]==' ')
 				{
-					
 					//find an equal sign in the current line
-					while (tmp1[i]!='=') i++;
-					
+          i=tmp1.find_first_of('=');
 					//split it
-					var=strmid(tmp1,1,i-1);
-					val=strmid(tmp1,i+1,strlen(tmp1)-i-2);
+					var=tmp1.substr(1,i-1);
+          val=tmp1.substr(i+1);
 					
-					if (strcmp("timeout",var)==0) curr->timeout=atoi(val);
-					else if (strcmp("blow_away_on_hit",var)==0) curr->blow_away=atoi(val);
-					else if (strcmp("bright_variation",var)==0) curr->bright_variation=atoi(val);
-					else if (strcmp("worm_detect_range",var)==0) curr->detect_range=atoi(val);
-					else if (strcmp("shoot_number_on_worm",var)==0) curr->wormshootnum=atoi(val);
-					else if (strcmp("damage",var)==0) curr->damage=atoi(val);
-					else if (strcmp("color",var)==0)
+					if ("timeout"==var) curr->timeout=atoi(val.c_str());
+					else if ("blow_away_on_hit"==var) curr->blow_away=atoi(val.c_str());
+					else if ("bright_variation"==var) curr->bright_variation=atoi(val.c_str());
+					else if ("worm_detect_range"==var) curr->detect_range=atoi(val.c_str());
+					else if ("shoot_number_on_worm"==var) curr->wormshootnum=atoi(val.c_str());
+					else if ("damage"==var) curr->damage=atoi(val.c_str());
+					else if ("color"==var)
 					{
-						curr->color=makecol(atoi(strmid(val,0,3)),atoi(strmid(val,3,3)),atoi(strmid(val,6,3)));
+						curr->color=makecol(atoi(val.substr(0,3).c_str()),atoi(val.substr(3,3).c_str()),atoi(val.substr(6,3).c_str()));
 					}
-          else if (strcmp("light_color",var)==0)
+          else if ("light_color"==var)
 					{
-						curr->light_color=makecol(atoi(strmid(val,0,3)),atoi(strmid(val,3,3)),atoi(strmid(val,6,3)));
+						curr->light_color=makecol(atoi(val.substr(0,3).c_str()),atoi(val.substr(3,3).c_str()),atoi(val.substr(6,3).c_str()));
 					}
-					else if (strcmp("worm_shoot_obj_speed_variation",var)==0) curr->wormshootspeedrnd=atoi(val);
-					else if (strcmp("shoot_object_on_worm",var)==0 && strcmp("null",val)!=0) curr->wormshootobj=load_part(val);
-					else if (strcmp("number_of_frames",var)==0) curr->framenum=atoi(val);
-					else if (strcmp("sprite",var)==0 && strcmp("null",val)!=0) curr->sprt=sprites->load_sprite(val,curr->framenum,game->mod,game->v_depth);
-					else if (strcmp("hole",var)==0 && strcmp("null",val)!=0) curr->hole=sprites->load_sprite(val,1,game->mod,game->v_depth);
-					else if (strcmp("sound",var)==0 && strcmp("null",val)!=0) curr->snd=sounds->load(val);
-					else if (strcmp("affect_worm",var)==0) curr->affect_worm=atoi(val);
-          else if (strcmp("affect_particles",var)==0) curr->affect_particles=atoi(val);
-          else if (strcmp("light_effect",var)==0) curr->light_effect=atoi(val);
-          else if (strcmp("light_fadeness",var)==0) curr->light_fadeness=atoi(val);
-          else if (strcmp("speed_multiply",var)==0) curr->spd_multiply=atoi(val);
+					else if ("worm_shoot_obj_speed_variation"==var) curr->wormshootspeedrnd=atoi(val.c_str());
+					else if ("shoot_object_on_worm"==var && "null"!=val) curr->wormshootobj=load_part(val.c_str());
+					else if ("number_of_frames"==var) curr->framenum=atoi(val.c_str());
+					else if ("sprite"==var && "null"!=val) curr->sprt=sprites->load_sprite(val.c_str(),curr->framenum,game->mod,game->v_depth);
+					else if ("hole"==var && "null"!=val) curr->hole=sprites->load_sprite(val.c_str(),1,game->mod,game->v_depth);
+					else if ("sound"==var && "null"!=val) curr->snd=sounds->load(val.c_str());
+					else if ("affect_worm"==var) curr->affect_worm=atoi(val.c_str());
+          else if ("affect_particles"==var) curr->affect_particles=atoi(val.c_str());
+          else if ("light_effect"==var) curr->light_effect=atoi(val.c_str());
+          else if ("light_fadeness"==var) curr->light_fadeness=atoi(val.c_str());
+          else if ("speed_multiply"==var) curr->spd_multiply=atoi(val.c_str());
 				};
 			};
 		};
-		fclose(fbuf);
+		fbuf.close();
 	};
 	return curr;
 };

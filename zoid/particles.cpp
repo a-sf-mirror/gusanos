@@ -275,32 +275,19 @@ struct part_type* load_part(const char* type_name)
 	//if there were no errors...
 	if (fbuf.is_open())
 	{
-    char getstr[2042];
-    allegro_message("pee");
-		//...parse the file
-    //fbuf.seekg (0, std::ios::beg);
 		while (!fbuf.eof())
 		{
       getline(fbuf, tmp1);
-      //fbuf.getline(getstr,2042,'\n');
-      //tmp1=getstr;
-			//allegro_message(tmp1.c_str());
 			if (!tmp1.empty())
 			{
-        //allegro_message("paa");
 				i=0;
 				if (tmp1.c_str()[0]==' ')
 				{
 					//find an equal sign in the current line
-					//while (tmp1[i]!='=') i++;
           i=tmp1.find_first_of('=');
 					//split it
 					var=tmp1.substr(1,i-1);
-					//if (tmp1[strlen(tmp1)-1]=='\n') tmp1[strlen(tmp1)-1]='\0';
-					//val=strmid(tmp1,i+1,strlen(tmp1)-i);
           val=tmp1.substr(i+1);
-          //rem_spaces(var);
-          //rem_spaces(val);
 						
 					if ("gravity"==var) curr->gravity=atoi(val.c_str());
 					else if ("timeout"==var) curr->exptime=atoi(val.c_str());

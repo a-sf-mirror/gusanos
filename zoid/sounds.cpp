@@ -26,7 +26,7 @@ sound_list::~sound_list()
 class sound* sound_list::load(const char* sound_name)
 {
 	class sound *curr;
-	char tmp3[1024];
+	std::string tmp3;
 	
 	curr=start;
 	while (curr->next!=NULL)
@@ -46,21 +46,21 @@ class sound* sound_list::load(const char* sound_name)
 
   strcpy(end->name,sound_name);
   
-  strcpy(tmp3,map->path);
-  strcat(tmp3,"/sounds/");
-  strcat(tmp3,sound_name);
-  end->snd=load_sample(tmp3);
+  tmp3=map->path;
+  tmp3+="/sounds/";
+  tmp3+=sound_name;
+  end->snd=load_sample(tmp3.c_str());
   if (end->snd==NULL)
   {
-    strcpy(tmp3,game->mod);
-    strcat(tmp3,"/sounds/");
-    strcat(tmp3,sound_name);
-    end->snd=load_sample(tmp3);
+    tmp3=game->mod;
+    tmp3+="/sounds/";
+    tmp3+=sound_name;
+    end->snd=load_sample(tmp3.c_str());
     if (end->snd==NULL)
     {
-      strcpy(tmp3,"default/sounds/");
-      strcat(tmp3,sound_name);
-      end->snd=load_sample(tmp3);
+      tmp3="default/sounds/";
+      tmp3+=sound_name;
+      end->snd=load_sample(tmp3.c_str());
     };
   };
 	return end;

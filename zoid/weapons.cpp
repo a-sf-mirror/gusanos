@@ -61,9 +61,9 @@ weap_list::~weap_list()
 
 class weapon* load_weap(const char* weap_name)
 {
-	FILE *fbuf;
-	char *tmp1,tmp2[1024],tmp3[1024];
-	char *var,*val;
+	ifstream fbuf;
+	std::string tmp1,tmp2,tmp3;
+	std::string var,val;
 	int i;
 	class weapon *curr;
 	
@@ -103,57 +103,56 @@ class weapon* load_weap(const char* weap_name)
 	strcpy(curr->name,curr->filename);
 	
 	//open the configuration file
-  strcpy(tmp3,game->mod);
-	strcat(tmp3,"/weapons/");
-	strcat(tmp3,curr->filename);
-	fbuf=fopen(tmp3,"rt");
+  tmp3=game->mod;
+	tmp3+="/weapons/";
+	tmp3+=curr->filename;
+	fbuf.open(tmp3.c_str());
 	
 	//if there were no errors...
-	if (fbuf!=NULL)
+	if (fbuf.is_open())
 	{
 		//...parse the file
-		while (!feof(fbuf))
+		while (!fbuf.eof())
 		{
-			tmp1=fgets(tmp2, sizeof(tmp2), fbuf);
-			if (tmp1!=NULL)
+      getline(fbuf, tmp1);
+			if (!tmp1.empty())
 			{
 				i=0;
-				if (tmp1[0]==' ')
+				if (tmp1.c_str()[0]==' ')
 				{
 					//find an equal sign in the current line
-					while (tmp1[i]!='=') i++;
-					
+          i=tmp1.find_first_of('=');
 					//split it
-					var=strmid(tmp1,1,i-1);
-					val=strmid(tmp1,i+1,strlen(tmp1)-i-2);
+					var=tmp1.substr(1,i-1);
+          val=tmp1.substr(i+1);
 					
-					if (strcmp("shoot_number",var)==0) curr->shoot_num=atoi(val);
-					else if (strcmp("shoot_speed",var)==0) curr->shoot_spd=atoi(val);
-					else if (strcmp("speed_variation",var)==0) curr->shoot_spd_rnd=atoi(val);
-					else if (strcmp("delay_between_shots",var)==0) curr->shoot_times=atoi(val);
-					else if (strcmp("distribution",var)==0) curr->distribution=atoi(val);
-					else if (strcmp("aim_recoil",var)==0) curr->aim_recoil=atoi(val);
-          else if (strcmp("firecone_timeout",var)==0) curr->firecone_timeout=atoi(val);
-					else if (strcmp("recoil",var)==0) curr->recoil=atoi(val);
-					else if (strcmp("affected_by_motion",var)==0) curr->affected_motion=atoi(val);
-					else if (strcmp("name",var)==0) strcpy(curr->name,val);
-					else if (strcmp("shoot_sound",var)==0 && strcmp("null",val)!=0) curr->shoot_sound=sounds->load(val);
-          else if (strcmp("start_sound",var)==0 && strcmp("null",val)!=0) curr->start_sound=sounds->load(val);
-          else if (strcmp("reload_sound",var)==0 && strcmp("null",val)!=0) curr->reload_sound=sounds->load(val);
-          else if (strcmp("noammo_sound",var)==0 && strcmp("null",val)!=0) curr->noammo_sound=sounds->load(val);
-          else if (strcmp("firecone",var)==0 && strcmp("null",val)!=0) curr->firecone=sprites->load_sprite(val,7,game->mod,game->v_depth);
-					else if (strcmp("shoot_object",var)==0 && strcmp("null",val)!=0) curr->shoot_obj=load_part(val);
-          else if (strcmp("ammo",var)==0) curr->ammo=atoi(val);
-          else if (strcmp("reload_time",var)==0) curr->reload_time=atoi(val);
-          else if (strcmp("autofire",var)==0) curr->autofire=atoi(val);
-          else if (strcmp("lsight_intensity",var)==0) curr->lsight_intensity=atoi(val);
-          else if (strcmp("lsight_fade",var)==0) curr->lsight_fade=atoi(val);
-          else if (strcmp("start_delay",var)==0) curr->start_delay=atoi(val);
-          else if (strcmp("create_on_release",var)==0) curr->create_on_release=load_part(val);
+					if ("shoot_number"==var) curr->shoot_num=atoi(val.c_str());
+					else if ("shoot_speed"==var) curr->shoot_spd=atoi(val.c_str());
+					else if ("speed_variation"==var) curr->shoot_spd_rnd=atoi(val.c_str());
+					else if ("delay_between_shots"==var) curr->shoot_times=atoi(val.c_str());
+					else if ("distribution"==var) curr->distribution=atoi(val.c_str());
+					else if ("aim_recoil"==var) curr->aim_recoil=atoi(val.c_str());
+          else if ("firecone_timeout"==var) curr->firecone_timeout=atoi(val.c_str());
+					else if ("recoil"==var) curr->recoil=atoi(val.c_str());
+					else if ("affected_by_motion"==var) curr->affected_motion=atoi(val.c_str());
+					else if ("name"==var) strcpy(curr->name,val.c_str());
+					else if ("shoot_sound"==var && "null"!=val) curr->shoot_sound=sounds->load(val.c_str());
+          else if ("start_sound"==var && "null"!=val) curr->start_sound=sounds->load(val.c_str());
+          else if ("reload_sound"==var && "null"!=val) curr->reload_sound=sounds->load(val.c_str());
+          else if ("noammo_sound"==var && "null"!=val) curr->noammo_sound=sounds->load(val.c_str());
+          else if ("firecone"==var && "null"!=val) curr->firecone=sprites->load_sprite(val.c_str(),7,game->mod,game->v_depth);
+					else if ("shoot_object"==var && "null"!=val) curr->shoot_obj=load_part(val.c_str());
+          else if ("ammo"==var) curr->ammo=atoi(val.c_str());
+          else if ("reload_time"==var) curr->reload_time=atoi(val.c_str());
+          else if ("autofire"==var) curr->autofire=atoi(val.c_str());
+          else if ("lsight_intensity"==var) curr->lsight_intensity=atoi(val.c_str());
+          else if ("lsight_fade"==var) curr->lsight_fade=atoi(val.c_str());
+          else if ("start_delay"==var) curr->start_delay=atoi(val.c_str());
+          else if ("create_on_release"==var) curr->create_on_release=load_part(val.c_str());
 				};
 			};
 		};
-		fclose(fbuf);
+		fbuf.close();
 	};
 	return curr;
 };

@@ -6,11 +6,14 @@
 #ifdef WINDOWS
 #include "winalleg.h"
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <time.h>
 #include "engine.h"
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using std::ifstream;
 
 //forward
 class sound;

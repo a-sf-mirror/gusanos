@@ -38,7 +38,7 @@ sprite::~sprite()
 class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* folder,int v_depth)
 {
 	class sprite *curr;
-	char tmp3[1024];
+	std::string tmp3;
 	BITMAP* tmp_bmp;
 	
 	curr=start;
@@ -59,52 +59,37 @@ class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* f
 	end=curr;
   end->framenum=frames;
 	strcpy(end->sprite_name,sprite_name);
-  strcpy(tmp3,map->path);
-  strcat(tmp3,"/sprites/");
-  strcat(tmp3,curr->sprite_name);
-  set_color_depth(32);
-  tmp_bmp=load_bmp(tmp3,0);
+  
+  set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
+  tmp3=map->path;
+  tmp3+="/sprites/";
+  tmp3+=curr->sprite_name;
+  //set_color_depth(32);
+  tmp_bmp=load_bmp(tmp3.c_str(),0);
   if (tmp_bmp==NULL)
   {
-    strcpy(tmp3,folder);
-    strcat(tmp3,"/sprites/");
-    strcat(tmp3,curr->sprite_name);
-    set_color_depth(32);
-    tmp_bmp=load_bmp(tmp3,0);
+    tmp3=folder;
+    tmp3+="/sprites/";
+    tmp3+=curr->sprite_name;
+    //set_color_depth(32);
+    tmp_bmp=load_bmp(tmp3.c_str(),0);
     if (tmp_bmp==NULL)
     {
-      strcpy(tmp3,"default/sprites/");
-      strcat(tmp3,curr->sprite_name);
-      tmp_bmp=load_bmp(tmp3,0);
+      tmp3="default/sprites/";
+      tmp3+=curr->sprite_name;
+      tmp_bmp=load_bmp(tmp3.c_str(),0);
     };
   };
+  set_color_conversion(COLORCONV_TOTAL);
 	if (tmp_bmp!=NULL)
 	{
 		int i,x2,y2;
-    BITMAP* tmp_bmp2;
-    set_color_depth(v_depth);
-    tmp_bmp2=create_bitmap(tmp_bmp->w,tmp_bmp->h);
-    if(v_depth==8)
-    {
-      blit(tmp_bmp,tmp_bmp2,0,0,0,0,tmp_bmp->w,tmp_bmp->h);
-      for (y2=0;y2<tmp_bmp->h;y2++)
-      for (x2=0;x2<tmp_bmp->w;x2++)
-      {
-        if (getpixel(tmp_bmp,x2,y2)==MASK_COLOR_32)
-        {
-          putpixel(tmp_bmp2,x2,y2,0);
-        };
-      };
-    }else
-    blit(tmp_bmp,tmp_bmp2,0,0,0,0,tmp_bmp->w,tmp_bmp->h);
 		for(i=0;i<end->framenum;i++)
 		{
-			end->img[i]=create_bitmap(tmp_bmp2->w/frames,tmp_bmp2->h);
-			blit(tmp_bmp2,end->img[i],(tmp_bmp2->w/frames)*i,0,0,0,tmp_bmp2->w/frames,tmp_bmp2->h);
+			end->img[i]=create_bitmap(tmp_bmp->w/frames,tmp_bmp->h);
+			blit(tmp_bmp,end->img[i],(tmp_bmp->w/frames)*i,0,0,0,tmp_bmp->w/frames,tmp_bmp->h);
 		};
     destroy_bitmap(tmp_bmp);
-    destroy_bitmap(tmp_bmp2);
-		
 	};
 	return end;
 };

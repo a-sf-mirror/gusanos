@@ -12,6 +12,8 @@
 #include <time.h>
 #include "engine.h"
 
+#include <string>
+
 class sound
 {
   public:

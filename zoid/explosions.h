@@ -6,14 +6,16 @@
 #ifdef WINDOWS
 #include "winalleg.h"
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <time.h>
 #include "particles.h"
 #include "engine.h"
 #include "sounds.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using std::ifstream;
 
 class exp_type
 {
