@@ -52,7 +52,7 @@ void Sound::play(float volume,float pitch, float volumeVariation, float pitchVar
 	}
 }
 
-void Sound::play2D(const Vec& pos, float loudness, float volume,float pitch, float volumeVariation, float pitchVariation)
+void Sound::play2D(const Vec& pos, float loudness, float pitch, float pitchVariation)
 {
 	if( m_sound ) 
 	{
@@ -65,15 +65,12 @@ void Sound::play2D(const Vec& pos, float loudness, float volume,float pitch, flo
 			float rndPitch = pitch + rnd()*pitchVariation - pitchVariation / 2;
 			FSOUND_SetFrequency(chan, FSOUND_GetFrequency(chan) * rndPitch );
 			
-			float rndVolume = pitch + rnd()*volumeVariation - volumeVariation / 2;
-			FSOUND_SetVolume(chan,FSOUND_GetVolume(chan)*rndVolume);
-			
 			FSOUND_3D_SetMinMaxDistance(chan, loudness, 10000.0f);
 		}
 	}
 }
 
-void Sound::play2D(BaseObject* obj, float loudness, float volume,float pitch, float volumeVariation, float pitchVariation)
+void Sound::play2D(BaseObject* obj, float loudness, float pitch, float pitchVariation)
 {
 	if( m_sound ) 
 	{
@@ -87,9 +84,6 @@ void Sound::play2D(BaseObject* obj, float loudness, float volume,float pitch, fl
 			
 			float rndPitch = pitch + rnd()*pitchVariation - pitchVariation / 2;
 			FSOUND_SetFrequency(chan, FSOUND_GetFrequency(chan) * rndPitch );
-			
-			float rndVolume = pitch + rnd()*volumeVariation - volumeVariation / 2;
-			FSOUND_SetVolume(chan,FSOUND_GetVolume(chan)*rndVolume);
 			
 			FSOUND_3D_SetMinMaxDistance(chan, loudness, 10000.0f);
 		}

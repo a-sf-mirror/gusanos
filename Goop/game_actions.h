@@ -65,9 +65,27 @@ class PlaySound : public BaseAction
 	private:
 		
 	Sound *sound;
-	float volume;
 	float pitch;
-	float volumeVariation;
+	float pitchVariation;
+	float loudness;
+	
+};
+
+BaseAction* playSoundStatic( const std::vector< std::string >& params );
+
+class PlaySoundStatic : public BaseAction
+{
+	public:
+
+	PlaySoundStatic( const std::vector< std::string >& params );
+	~PlaySoundStatic();
+
+	void run( BaseObject *object );
+
+	private:
+		
+	Sound *sound;
+	float pitch;
 	float pitchVariation;
 	float loudness;
 	

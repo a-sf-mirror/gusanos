@@ -43,6 +43,7 @@ class PartType
 	
 	std::vector< TimerEvent* > timer;
 	PartEvent *groundCollision;
+	PartEvent *creation;
 	
 };
 

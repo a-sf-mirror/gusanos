@@ -41,6 +41,8 @@ class Particle : public BaseObject
 	PartType* m_type;
 	float m_angle;
 	float m_angleSpeed;
+	
+	bool justCreated;
 };
 
 #endif  // _PARTICLE_H_

@@ -18,6 +18,7 @@ void registerGameActions()
 	game.actionList["shoot_particles"] = shootParticles;
 	game.actionList["remove"] = remove;
 	game.actionList["play_sound"] = playSound;
+	game.actionList["play_sound_static"] = playSound;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -117,18 +118,17 @@ BaseAction* playSound( const vector< string >& params )
 PlaySound::PlaySound( const vector< string >& params )
 {
 	sound = NULL;
-	volume = 1;
-	pitch = 1;
-	volumeVariation = 0;
-	pitchVariation = 0;
 	loudness = 100;
+	pitch = 1;
+	pitchVariation = 0;
+
 	if ( params.size() >= 1 )
 	{
 		sound = soundList.load(params[0]);
 	}
 	if( params.size() >= 2 )
 	{
-		volume = cast<float>(params[1]);
+		loudness = cast<float>(params[1]);
 	}
 	if( params.size() >= 3 )
 	{
@@ -136,15 +136,7 @@ PlaySound::PlaySound( const vector< string >& params )
 	}
 	if( params.size() >= 4 )
 	{
-		volumeVariation = cast<float>(params[3]);
-	}
-	if( params.size() >= 5 )
-	{
-		pitchVariation = cast<float>(params[4]);
-	}
-	if( params.size() >= 6 )
-	{
-		loudness = cast<float>(params[5]);
+		pitchVariation = cast<float>(params[3]);
 	}
 }
 
@@ -152,15 +144,44 @@ void PlaySound::run( BaseObject* object )
 {
 	if (sound != NULL)
 	{
-		sound->play2D(object,loudness,volume,pitch,volumeVariation,pitchVariation);
+		sound->play2D(object,loudness,pitch,pitchVariation);
 	}
 }
 
+BaseAction* playSoundStatic( const vector< string >& params )
+{
+	return new PlaySoundStatic(params);
+}
 
+PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
+{
+	sound = NULL;
+	loudness = 100;
+	pitch = 1;
+	pitchVariation = 0;
 
+	if ( params.size() >= 1 )
+	{
+		sound = soundList.load(params[0]);
+	}
+	if( params.size() >= 2 )
+	{
+		loudness = cast<float>(params[1]);
+	}
+	if( params.size() >= 3 )
+	{
+		pitch = cast<float>(params[2]);
+	}
+	if( params.size() >= 4 )
+	{
+		pitchVariation = cast<float>(params[3]);
+	}
+}
 
-
-
-
-
-
+void PlaySoundStatic::run( BaseObject* object )
+{
+	if (sound != NULL)
+	{
+		sound->play2D(object->getPos(),loudness,pitch,pitchVariation);
+	}
+}

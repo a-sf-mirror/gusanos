@@ -12,6 +12,7 @@ using namespace std;
 
 Particle::Particle(PartType *type)
 {
+	justCreated = true;
 	m_type = type;
 	
 	do
@@ -34,6 +35,7 @@ Particle::Particle(PartType *type)
 
 Particle::Particle(PartType *type, Vec _pos, Vec _spd)
 {
+	justCreated = true;
 	m_type = type;
 	
 	pos = _pos;
@@ -67,6 +69,12 @@ void Particle::think()
 			(*t).m_tEvent->event->run(this);
 			(*t).reset();
 		}
+	}
+	
+	if ( justCreated && m_type->creation )
+	{
+		m_type->creation->run(this);
+		justCreated = false;
 	}
 	
 	pos = pos + spd;

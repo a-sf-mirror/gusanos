@@ -44,11 +44,13 @@ PartType::PartType()
 	sprite = NULL;
 	
 	groundCollision = NULL;
+	creation = NULL;
 }
 
 PartType::~PartType()
 {
-	delete groundCollision;
+	if (groundCollision) delete groundCollision;
+	if (creation) delete creation;
 	for ( vector<TimerEvent*>::iterator i = timer.begin(); i != timer.end(); i++)
 	{
 		delete *i;
@@ -105,6 +107,11 @@ bool PartType::load(const string &filename)
 					{
 						currEvent = new PartEvent;
 						groundCollision = currEvent;
+					}
+					else if ( eventName == "creation" )
+					{
+						currEvent = new PartEvent;
+						creation = currEvent;
 					}
 					else if ( eventName == "timer" )
 					{
