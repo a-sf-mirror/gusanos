@@ -23,7 +23,7 @@ sound_list::~sound_list()
 
 };
 
-class sound* sound_list::load(char* sound_name)
+class sound* sound_list::load(const char* sound_name)
 {
 	class sound *curr;
 	char tmp3[1024];

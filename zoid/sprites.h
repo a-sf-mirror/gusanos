@@ -26,7 +26,7 @@ class spritelist
     class sprite *start, *end;
     spritelist();
     ~spritelist();
-    class sprite* load_sprite(char* sprite_name,int frames,char* folder,int v_depth);
+    class sprite* load_sprite(const char* sprite_name,int frames,char* folder,int v_depth);
     void destroy_sprite(class sprite*);
 };
 extern class spritelist *sprites;

@@ -6,9 +6,9 @@
 #ifdef WINDOWS
 #include "winalleg.h"
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
+//#include <stdio.h>
+
+//#include <stdlib.h>
 #include <time.h>
 //#include "console.h"
 //#include "water.h"
@@ -16,6 +16,12 @@
 #include "sounds.h"
 #include "explosions.h"
 #include "player.h"
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using std::ifstream;
 
 class worm;
 

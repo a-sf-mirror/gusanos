@@ -28,7 +28,7 @@ class sound_list
 	class sound *start, *end;
 	sound_list();
   ~sound_list();
-	class sound* load(char* sound_name);
+	class sound* load(const char* sound_name);
 	void destroy();
 };
 

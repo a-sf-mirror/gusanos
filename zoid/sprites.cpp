@@ -35,7 +35,7 @@ sprite::~sprite()
   };
 };
 
-class sprite* spritelist::load_sprite(char* sprite_name,int frames,char* folder,int v_depth)
+class sprite* spritelist::load_sprite(const char* sprite_name,int frames,char* folder,int v_depth)
 {
 	class sprite *curr;
 	char tmp3[1024];
