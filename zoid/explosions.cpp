@@ -46,6 +46,7 @@ exp_type::exp_type()
   light_fadeness=200;
   spd_multiply=1000;
   flash=0;
+  flash_radius=0;
 };
 
 exp_type::~exp_type()
@@ -177,6 +178,7 @@ class exp_type* load_exp(const char* exp_name)
           else if ("light_fadeness"==var) curr->light_fadeness=atoi(val.c_str());
           else if ("speed_multiply"==var) curr->spd_multiply=atoi(val.c_str());
           else if ("flash"==var) curr->flash=atoi(val.c_str());
+          else if ("flash_radius"==var) curr->flash_radius=atoi(val.c_str());
 				};
 			};
 		};
@@ -250,7 +252,7 @@ void create_exp(int x,int y,class exp_type *type)
 				if (abs(dx) < exps->end->type->detect_range)
 				if (abs(dy) < exps->end->type->detect_range)
 				{
-					m=fixhypot(dx,dy);
+					m=fixtoi(fixhypot(itofix(dx),itofix(dy)));;
 					if(m < exps->end->type->detect_range)
 					{
 						if (exps->end->type->wormshootobj!=NULL)
@@ -278,7 +280,7 @@ void create_exp(int x,int y,class exp_type *type)
           if (abs(dx) < exps->end->type->detect_range)
           if (abs(dy) < exps->end->type->detect_range)
           {
-            m=fixhypot(dx,dy);
+            m=fixtoi(fixhypot(itofix(dx),itofix(dy)));;
             if(m < exps->end->type->detect_range)
             {
               if (exps->end->type->blow_away!=0)
@@ -293,14 +295,23 @@ void create_exp(int x,int y,class exp_type *type)
         };
       };
 		};
-    if (exps->end->type->flash>0)
+    if (exps->end->type->flash>0 && exps->end->type->flash_radius>0)
     {
+      int r;
       for (i=0;i<player_count;i++)
       {
         if (player[i]->active){
-          if (!obs_line ( map->material, exps->end->x/1000 , exps->end->y/1000 , player[i]->x/1000 , player[i]->y/1000 -4))
+          dx=(player[i]->x-exps->end->x)/1000;
+          dy=((player[i]->y-4000)-exps->end->y)/1000;
+          if (abs(dx) < exps->end->type->flash_radius)
+          if (abs(dy) < exps->end->type->flash_radius)
           {
-            player[i]->flash+=exps->end->type->flash;
+            r=fixtoi(fixhypot(itofix(dx),itofix(dy)));
+            if (r<exps->end->type->flash_radius)
+            if (!obs_line ( map->material, exps->end->x/1000 , exps->end->y/1000 , player[i]->x/1000 , player[i]->y/1000 -4))
+            {
+              player[i]->flash+=exps->end->type->flash-(exps->end->type->flash * r) / exps->end->type->flash_radius;
+            };
           };
         };
       };
@@ -419,13 +430,7 @@ void draw_explosion(BITMAP* image,int x,int y)
   int MASK_COLOR;
 	bool is_on_player_view = false;
   MASK_COLOR=bitmap_mask_color(image);
-	for(i=0;i<local_players;i++)
-	{
-		if (x+image->w/2>player[local_player[i]]->xview && x-image->w/2<player[local_player[i]]->xview+game->viewport[i].w)
-		if (y+image->h/2>player[local_player[i]]->yview && y-image->h/2<player[local_player[i]]->yview+game->viewport[i].h)
-			is_on_player_view=true;
-	};
-	if(is_on_player_view)
+
   if (game->v_depth!=8)
   {
     for (y2=0;y2<image->h;y2++)
@@ -466,10 +471,8 @@ void render_exps()
 		}
 		else
 		{
-			//if (tmp->type->framenum>1)
-			//{
-				//blit(tmp->type->sprt->image,tmp->type->sprt->imgbuf,(tmp->type->sprt->image->w/tmp->type->framenum)*(tmp->currframe),0,0,0,tmp->type->sprt->imgbuf->w,tmp->type->sprt->imgbuf->h);
-				//draw_sprite(map->buffer,tmp->type->sprt->imgbuf,tmp->x/1000-tmp->type->sprt->imgbuf->w/2,tmp->y/1000-tmp->type->sprt->imgbuf->h/2);
+
+        if(CanBeSeen(tmp->x/1000,tmp->y/1000,tmp->type->sprt->img[0]->w,tmp->type->sprt->img[0]->h))
 				draw_explosion(tmp->type->sprt->img[tmp->currframe],tmp->x/1000-tmp->type->sprt->img[0]->w/2,tmp->y/1000-tmp->type->sprt->img[0]->h/2);
 
 			//}
@@ -478,6 +481,7 @@ void render_exps()
 		};
     if (tmp->type->light_effect==1 && tmp->light)
     {
+      if(CanBeSeen(tmp->x/1000,tmp->y/1000,tmp->light->w,tmp->light->h))
       if(game->v_depth==32)
         #ifdef AAFBLEND
         fblend_add(tmp->light,map->buffer,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2,255-(tmp->time*255)/tmp->type->timeout);

@@ -6,6 +6,18 @@
 int video_filter=0;
 BITMAP* screen_buffer;
 
+bool CanBeSeen(int x, int y, int w, int h)
+{
+  int i;
+  for(i=0;i<local_players;i++)
+	{
+		if (x+w/2>player[local_player[i]]->xview && x-w/2<player[local_player[i]]->xview+game->viewport[i].w)
+		if (y+h/2>player[local_player[i]]->yview && y-h/2<player[local_player[i]]->yview+game->viewport[i].h)
+			return true;
+	};
+  return false;
+}
+
 void render_lasersight(worm *player)
 {
   int xadd,yadd,x,y,i,i2,g;
@@ -258,9 +270,9 @@ void engine::render()
     p=player[local_player[i]];
     if (*MAP_SHOW_MODE!=1 || !smallmap)
     {
+      set_clip(buffer,viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h);
       if (p->flash<=25500)
       {
-        set_clip(buffer,viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h);
         if(map->paralax!=NULL)
         {
           blit(map->paralax,buffer,(p->xview*(map->paralax->w-viewport[i].w))/(map->mapimg->w-viewport[i].w),(p->yview*(map->paralax->h-viewport[i].h))/(map->mapimg->h-viewport[i].h),viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
