@@ -7,7 +7,7 @@ INCLUDES= engine.h sprites.h water.h console.h text.h keys.h render.h \
 	input.h sounds.h particles.h explosions.h weapons.h level.h \
 	player.h network.h lights.h
 CFLAGS= -O2 -mwindows # -Wall
-LIBS=  -l2xsai -lalleg -lzoidcom_mw -lfblend
+LIBS=  -l2xsai -lalleg -lzoidcom_mw -lfblend -lpng
 DEFINES= -DAA2XSAI -DWINDOWS -DAAFBLEND
 BIN= ../gusanos.exe
 OBJECTS= gusanos.o sprites.o water.o engine.o console.o text.o keys.o \
