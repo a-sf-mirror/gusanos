@@ -2,6 +2,7 @@
 
 #include "gfx.h"
 #include "material.h"
+#include "liero.h"
 #include <allegro.h>
 #include <string>
 #include <vector>
@@ -31,6 +32,13 @@ Level::~Level()
 
 bool Level::load(const string &name)
 {
+	//check if it is liero level
+	if (name.size() > 4)
+		if (name.substr(name.size() - 4, name.size()) == ".lev")
+			if (loadLiero(name))
+				return true;
+
+	//load Gusanos level
 	path = name;
 	int vdepth=get_color_depth();
 	set_color_depth(8);
@@ -57,6 +65,63 @@ bool Level::load(const string &name)
 	}
 	unload();
 	return false;
+}
+
+bool Level::loadLiero(const std::string &name)
+{
+	path = name;
+
+	Liero::LieroLevel lev;
+	Liero::LieroColor pal[256];
+	if (!Liero::loadPalette(pal, "original.lpl"))
+		return false;
+	if (!Liero::loadLevel(&lev, pal, name))
+		return false;
+
+	int vdepth=get_color_depth();
+	material = create_bitmap_ex(8, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
+	image = create_bitmap_ex(16, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
+	background = create_bitmap_ex(16, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
+
+	for (int y = 0; y < Liero::MAP_HEIGHT; y++)
+	{
+		for (int x = 0; x < Liero::MAP_WIDTH; x++)
+		{
+			int c = lev.level[y][x];
+			int crgb = makecol(pal[c].r, pal[c].g, pal[c].b);
+			int m = 1;
+
+			putpixel(image, x, y, crgb);
+			putpixel(background, x, y, crgb);
+
+			//material
+			//dirt
+			if (c >= 12 && c <= 18 || c == 1 || c == 2)
+				m = 0;
+			else
+			//green dirt
+			if (c >= 94 && c <= 97)
+				m = 0;
+			else
+			//rock
+			if (c >= 98 && c <= 103)
+				m = 0;
+			else
+			//diggable stone
+			if (c >= 176 && c <= 180)
+				m = 0;
+			else
+			//rock
+			if (c >= 19 && c <= 29 || c == 8)
+				m = 0;
+			else
+			//nothing
+				m = 1;
+			putpixel(material, x, y, m);
+		}
+	}
+	loaded = true;
+	return true;
 }
 
 void Level::unload()

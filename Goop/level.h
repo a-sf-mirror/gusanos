@@ -15,6 +15,7 @@ class Level
 	~Level();
 	
 	bool load(const std::string &name);
+	bool loadLiero(const std::string &name);
 	void unload();
 	bool isLoaded();
 	void draw(BITMAP* where, int x, int y);
