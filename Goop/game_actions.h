@@ -69,6 +69,7 @@ class PlaySound : public BaseAction
 	float pitch;
 	float volumeVariation;
 	float pitchVariation;
+	float loudness;
 	
 };
 

@@ -121,6 +121,7 @@ PlaySound::PlaySound( const vector< string >& params )
 	pitch = 1;
 	volumeVariation = 0;
 	pitchVariation = 0;
+	loudness = 100;
 	if ( params.size() >= 1 )
 	{
 		sound = soundList.load(params[0]);
@@ -141,13 +142,17 @@ PlaySound::PlaySound( const vector< string >& params )
 	{
 		pitchVariation = cast<float>(params[4]);
 	}
+	if( params.size() >= 6 )
+	{
+		loudness = cast<float>(params[5]);
+	}
 }
 
 void PlaySound::run( BaseObject* object )
 {
 	if (sound != NULL)
 	{
-		sound->play(volume,pitch,volumeVariation,pitchVariation);
+		sound->play2D(object,loudness,volume,pitch,volumeVariation,pitchVariation);
 	}
 }
 

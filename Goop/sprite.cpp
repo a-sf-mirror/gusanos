@@ -1,6 +1,7 @@
 #include "sprite.h"
 
 #include "resource_list.h"
+#include "gfx.h"
 
 #include <allegro.h>
 #include <string>
@@ -30,7 +31,7 @@ bool Sprite::load(const string &filename)
 {	
 	bool returnValue = false;
 	
-	BITMAP *tempBitmap = load_bmp(filename.c_str(),0);
+	BITMAP *tempBitmap = gfx.loadBitmap(filename.c_str(),0);
 	
 	if (tempBitmap)
 	{

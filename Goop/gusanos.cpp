@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#include <fmod/fmod.h>
+
 using namespace std;
 
 Worm *worm;
@@ -148,6 +150,7 @@ int main(int argc, char **argv)
 	int x,y;
 	int moo=0;
 	int moox,mooy;
+	
 	while (!quit)
 	{
 		
@@ -156,9 +159,31 @@ int main(int argc, char **argv)
 		if ( aimUp ) worm->addToAim(-aimSpeed);
 		if ( aimDown ) worm->addToAim(aimSpeed);	
 
-		for ( iter = game.objects.begin(); iter != game.objects.end(); )
+		for ( iter = game.objects.begin(); iter != game.objects.end(); iter++)
 		{
 			(*iter)->think();
+		}
+		
+		console.checkInput();
+
+		testViewport.interpolateTo(worm->getPos(),0.1);
+		testViewport.render();
+		
+		console.think();
+		console.render(gfx.buffer);
+		
+		gfx.updateScreen();
+		
+		float pos[3] = { worm->getPos().x, worm->getPos().y, -20 };
+		FSOUND_3D_Listener_SetAttributes(pos,NULL,0,0,1,0,1,0);
+		FSOUND_Update();
+		
+		//sfx.updateChanPositions();
+		
+		//sfx.checkForDeletedObjects();
+		
+		for ( iter = game.objects.begin(); iter != game.objects.end(); )
+		{
 			if ( (*iter)->deleteMe )
 			{
 				list<BaseObject*>::iterator tmp = iter;
@@ -168,19 +193,7 @@ int main(int argc, char **argv)
 			}else	iter++;
 		}
 		
-		console.checkInput();
-		
-		//level.draw(buffer,0,object.pos.x);
-		testViewport.interpolateTo(worm->getPos(),0.1);
-		testViewport.render();
-		
-		testViewport2.setPos(worm->getPos().x - 50, worm->getPos().y - 50);
-		//testViewport2.render();
-		
-		console.think();
-		console.render(gfx.buffer);
-		
-		gfx.updateScreen();
+
 	}
 	
 	

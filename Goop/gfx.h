@@ -15,14 +15,17 @@ class Gfx
 	
 	void init();
 	void shutDown();
+	void registerInConsole();
+	
+	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL);
+	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);
+	
 	inline void updateScreen()
 	{
 		if ( m_vsync == 1 ) vsync();
 		blit(buffer,screen,0,0,0,0,320,240);
 		if (m_clearBuffer == 1 ) clear_bitmap(buffer);
 	}
-	
-	void registerInConsole();
 	
 	BITMAP* buffer;
 	

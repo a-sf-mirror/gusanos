@@ -6,6 +6,9 @@
 
 #include <fmod/fmod.h>
 
+class Vec;
+class BaseObject;
+
 class Sound
 {
 	public:
@@ -14,7 +17,9 @@ class Sound
 	~Sound();
 	
 	bool load(const std::string &filename);
-	void play(float volume = 1,float pitch = 1,float volumeVariation = 1,float pitchVariation = 1);
+	void play( float volume = 1,float pitch = 1,float volumeVariation = 1,float pitchVariation = 1);
+	void play2D(const Vec& pos, float loudness, float volume = 1,float pitch = 1,float volumeVariation = 1,float pitchVariation = 1);
+	void play2D( BaseObject* obj, float loudness, float volume = 1,float pitch = 1,float volumeVariation = 1,float pitchVariation = 1);
 	
 	private:
 	

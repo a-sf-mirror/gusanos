@@ -9,12 +9,12 @@
 
 Worm::Worm()
 {
-	skin = spriteList.load("skin.bmp");
+	skin = spriteList.load("skin.png");
 	
 	do
 	{
-		pos.x = rand()%game.level.width();
-		pos.y = rand()%game.level.height();
+		pos.x = rnd()*game.level.width();
+		pos.y = rnd()*game.level.height();
 	} while ( !game.level.getMaterial((int) pos.x,(int) pos.y).particle_pass );
 	
 	dir = 1;
