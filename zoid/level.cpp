@@ -51,6 +51,7 @@ level::level()
   background=NULL;
   water_buffer=NULL; 
   paralax=NULL;
+  light_layer=NULL;
   has_water=false;
   spawnpoint_count=0;
   strcpy(this->path," ");
@@ -169,6 +170,7 @@ level::~level()
   if (map->background!=NULL)destroy_bitmap(map->background);
   if (map->water_buffer!=NULL)destroy_bitmap(map->water_buffer);
   if (map->paralax!=NULL)destroy_bitmap(map->paralax);
+  if (map->light_layer!=NULL)destroy_bitmap(map->light_layer);
   spawnpoint_count=0;
 };
 
@@ -308,7 +310,7 @@ void load_map_config()
         //rem_spaces(val);
         if (strcmp("light",var)==0)
         {
-          int j,x,X,Y,R,G,B,F,N;
+          int j,x,X,Y,R,G,B,F,N,P;
           x=0;
           for(j=x;(val[j]!=',') && (j < strlen(val));j++);
           X=atoi(strmid(val,x,j-x));
@@ -330,7 +332,24 @@ void load_map_config()
           x=j+1;
           for(j=x;(val[j]!=',') && (j < strlen(val));j++);
           N=atoi(strmid(val,x,j-x));
-          render_light(X,Y,R,G,B,F,N,map->mapimg ,map->material);   
+          x=j+1;
+          for(j=x;(val[j]!=',') && (j < strlen(val));j++);
+          P=atoi(strmid(val,x,j-x));
+          x=j+1;
+          
+          if(P!=1)
+          {
+            render_light(X,Y,R,G,B,F,N,map->mapimg ,map->material);
+            render_light(X,Y,R,G,B,F,N,map->background ,map->material);
+          } else
+          {
+            if (!map->light_layer)
+            {
+              map->light_layer=create_bitmap(map->material->w,map->material->h);
+              clear_to_color(map->light_layer,0);
+            }
+            render_light(X,Y,R,G,B,F,N,map->light_layer ,map->material);
+          };
         }
         else if (strcmp("obj",var)==0)
         {

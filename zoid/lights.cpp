@@ -104,7 +104,7 @@ void obs_light(BITMAP *where, int x, int y, int d)
   //int g=where->line[y][x];
   if(map->mat[g+1].blocks_light) obstacle=true;
     
-  if (map->paralax && getpixel(map->mapimg,x,y)==makecol(255,0,255));
+  if (map->paralax && getpixel(_where,x,y)==makecol(255,0,255));
   else
   if(getpixel(lightbuff,x,y)==0/* && !obstacle*/)
   {
@@ -124,7 +124,7 @@ void obs_light(BITMAP *where, int x, int y, int d)
     if(col<=255 && col>0)
     {
     putpixel(_where,x,y,color);
-    putpixel(map->background,x,y,color);
+    //putpixel(map->background,x,y,color);
     };
     solid_mode();
     lightbuff->line[y][x]=1;

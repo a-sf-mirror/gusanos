@@ -465,6 +465,7 @@ void render_exps()
       drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
       set_add_blender(0,0,0,255-(tmp->time*255)/tmp->type->timeout);
       draw_trans_sprite(map->buffer,tmp->light,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2);
+      //fblend_add(tmp->light,map->buffer,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2,255-(tmp->time*255)/tmp->type->timeout);
       solid_mode();
     };
 	};

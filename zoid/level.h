@@ -44,6 +44,7 @@ class level
 	BITMAP* layer;
   BITMAP* paralax;
   BITMAP* water_buffer;
+  BITMAP* light_layer;
   bool has_water;
   char name[32];
   char path[1024];

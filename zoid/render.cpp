@@ -1,6 +1,7 @@
 #include "render.h"
 #include "lights.h"
 
+
 int pepo=0;
 
 int video_filter=0;
@@ -272,6 +273,17 @@ void engine::render()
           blit(map->buffer,buffer,p->xview+o,p->yview+j,viewport[i].x,viewport[i].y+j,viewport[i].w,1);
         };*/
         blit(map->buffer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
+      };
+      if (map->light_layer!=NULL && *RENDER_LAYERS==1)
+      {
+        //drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+        //set_add_blender(0,0,0,255);
+        BITMAP* light_layer_buffer=create_sub_bitmap(map->light_layer, p->xview,p->yview, viewport[i].w,viewport[i].h);
+        //draw_sprite(map->light_layer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
+        //draw_trans_sprite(buffer, light_layer_buffer, viewport[i].x, viewport[i].y);
+        fblend_add(light_layer_buffer,buffer , viewport[i].x, viewport[i].y,255);
+        destroy_bitmap(light_layer_buffer);
+        solid_mode();
       };
       if (map->layer!=NULL && *RENDER_LAYERS==1)
       masked_blit(map->layer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
