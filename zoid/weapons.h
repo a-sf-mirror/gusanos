@@ -43,6 +43,7 @@ class s_playerweap
   int weap;
   int ammo,shoot_time,reload_time,start_delay;
   bool reloading;
+  void shoot(int x, int y, int xspd, int yspd, int aim, int dir);
 };
 
 extern class weap_list *weaps;

@@ -62,7 +62,7 @@ class worm
   void render_flip(BITMAP* where, int frame, int x, int y);
   void init_node(bool is_authority);
   void shoot();
-  void shoot(int x, int y, int xspd, int yspd, int aim, int dir);
+  void shoot(int x, int y, int xspd, int yspd, int aim, int dir, int weap);
   void jump(int jump_force);
   void dig(exp_type *hole);
   void walk(int direction,int acceleration, int maxspeed);
