@@ -2,7 +2,7 @@
 #define alias_h
 
 #include "console.h"
-#include "consoleItem.h"
+#include "consoleitem.h"
 
 #include <string>
 

@@ -1,7 +1,7 @@
 #ifndef command_h
 #define command_h
 
-#include "consoleItem.h"
+#include "consoleitem.h"
 
 #include <string>
 
