@@ -9,6 +9,7 @@
 #include "engine.h"
 #include "level.h"
 #include "sprites.h"
+#include "network.h"
 
 #ifdef AAFBLEND
   #include <fblend.h>
@@ -120,6 +121,8 @@ void render_weapon_selection_menu(BITMAP *where)
       //
       sprintf(str,"NUMBER OF WEAPONS: %d",game->weap_count);
       game->fonty->draw_string(where,str,vp->x+vp->w/2-69,74+16,false);
+			//weaopn HUD
+			game->weaponHUD(where, p, *vp, 0);
     };
   };
 };
@@ -186,7 +189,7 @@ void draw_hud(BITMAP* where, int _player, struct s_viewport viewport)
 			{
 				game->fonty->draw_string(where,weaps->num[p->weap[p->curr_weap].weap]->name,viewport.x+(p->x/1000-p->xview)-(strlen(weaps->num[p->weap[p->curr_weap].weap]->name)*2),viewport.y+p->y/1000-p->yview-16,true);
 				//weapon HUD
-				game->weaponHUD(where, _player, viewport);
+				game->weaponHUD(where, player[_player], viewport, 1);
 			}
 			if (p->air<*game->AIR_CAPACITY-*game->AIR_CAPACITY/6) draw_bar(where,16,1, viewport.x+(p->x/1000-p->xview)-8, viewport.y+p->y/1000-p->yview+2, *game->AIR_CAPACITY-*game->AIR_CAPACITY/6, p->air, makecol(255,255,255));	
 			p->crosshx=(p->x/1000)+fixtoi(fixsin(ftofix(p->aim/1000.))*p->crossr)*p->dir-p->xview;
@@ -350,24 +353,24 @@ void engine::render()
           blit(map->buffer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
         };
         render_paralax_lights(buffer,i,viewport[i]);
+				#ifdef AAFBLEND
         if (map->light_layer!=NULL && *RENDER_LAYERS==1)
         {
-          BITMAP* light_layer_buffer=create_sub_bitmap(map->light_layer, p->xview,p->yview, viewport[i].w,viewport[i].h);
-          #ifdef AAFBLEND
-          fblend_add(light_layer_buffer,buffer , viewport[i].x, viewport[i].y,255);
-          #endif
+          BITMAP* light_layer_buffer=create_sub_bitmap(map->light_layer, p->xview,p->yview, viewport[i].w,viewport[i].h);          
+          fblend_add(light_layer_buffer,buffer , viewport[i].x, viewport[i].y,255);          
           destroy_bitmap(light_layer_buffer);
         };
+				#endif
         if (map->layer!=NULL && *RENDER_LAYERS==1)
-        masked_blit(map->layer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
+          masked_blit(map->layer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
         if (p->flash>0)
         {
           if(v_depth==32)
-	  {
-          #ifdef AAFBLEND
-          fblend_rect_trans(buffer, viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h, makecol(255,255,255)/*p->flash/100,p->flash/100,p->flash/100)*/, p->flash/100);
-          #endif
-	  }
+          {
+            #ifdef AAFBLEND
+            fblend_rect_trans(buffer, viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h, makecol(255,255,255)/*p->flash/100,p->flash/100,p->flash/100)*/, p->flash/100);
+            #endif
+          }
           else
           {
             drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
@@ -380,7 +383,7 @@ void engine::render()
         rectfill(buffer, viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h, makecol(255,255,255));
     }
     if (!game->selecting)
-    draw_hud(buffer,i,viewport[i]);
+      draw_hud(buffer,i,viewport[i]);
   };
 	set_clip_rect(buffer,0,0,320,240);
 	/******HUD*******/
@@ -449,18 +452,28 @@ void engine::render()
 };
 
 //weapon HUD
-void engine::weaponHUD(BITMAP* where, int _player, struct s_viewport viewport)
+void engine::weaponHUD(BITMAP* where, worm* player, struct s_viewport viewport, int position)
+//position: 0 for weapon selection, in the middle; 1 for mid-game, on top-right of viewport
 {
 	int WEAPWIDTH = 90;
 	int WEAPHEIGHT = 60;
-	int WEAPY = viewport.y + 15;
-	int WEAPX = viewport.x + (viewport.w - WEAPWIDTH) - 5;
-	if (*WEAPON_HUD && weaps->num[player[_player]->weap[player[_player]->curr_weap].weap]->image != NULL)
+	int weapx, weapy;
+	if (position==1)
+	{		
+		weapx= viewport.x + (viewport.w - WEAPWIDTH) - 5;
+		weapy= viewport.y + 15;
+	}
+	else
+	{		
+		weapx= viewport.x + (viewport.w - WEAPWIDTH)/2;
+		weapy= viewport.y + 130;
+	}
+	if (*WEAPON_HUD && weaps->num[player->weap[player->curr_weap].weap]->image != NULL)
 	{
 		//drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
 		//set_trans_blender(0, 0, 0, 96);
-		blit(weaps->num[player[_player]->weap[player[_player]->curr_weap].weap]->image->img[0], where, 0, 0, WEAPX, WEAPY, WEAPWIDTH, WEAPHEIGHT);
-		rect(buffer, WEAPX - 1, WEAPY - 1, WEAPX + WEAPWIDTH, WEAPY + WEAPHEIGHT, makecol(100, 100, 100));
+		blit(weaps->num[player->weap[player->curr_weap].weap]->image->img[0], where, 0, 0, weapx, weapy, WEAPWIDTH, WEAPHEIGHT);
+		rect(buffer, weapx - 1, weapy - 1, weapx + WEAPWIDTH, weapy + WEAPHEIGHT, makecol(100, 100, 100));
 		//solid_mode();
 	}
 }
@@ -484,7 +497,7 @@ void engine::minimap()
       case 0: masked_stretch_blit(map->mapimg, buffer, 0, 0, map->mapimg->w, map->mapimg->h, MINIX, MINIY, MINIWIDTH, MINIHEIGHT); break;
       case 1: rectfill(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(0, 0, 0)); break;
     }
-    rect(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(1000, 100, 100));
+    rect(buffer, MINIX, MINIY, MINIX + MINIWIDTH, MINIY + MINIHEIGHT, makecol(230, 100, 100));
     solid_mode();
     //
   
@@ -524,7 +537,7 @@ void engine::scoreboard()
   set_trans_blender(0, 0, 0, 96);
 
   rectfill(buffer, SBX+1, SBY+1, SBX + SBWIDTH - 1, SBY + SBHEIGHT - 1, makecol(0, 0, 0));
-  rect(buffer, SBX, SBY, SBX + SBWIDTH, SBY + SBHEIGHT, makecol(1000, 100, 100));
+  rect(buffer, SBX, SBY, SBX + SBWIDTH, SBY + SBHEIGHT, makecol(230, 100, 100));
 
   //Draw player stats
   //NAME - 16, KILLS - 12, LIVES - 12, DEATHS - 12, PING - 4
@@ -543,9 +556,20 @@ void engine::scoreboard()
           rectfill(buffer, SBX+1, SBY + (game->fonty->chrh + 2) * i + 12, SBX + SBWIDTH - 1, SBY + (game->fonty->chrh + 2) * i + 12 + 4, makecol(32, 32, 32));
           solid_mode();
         }
-      //
+      //ping
       //sprintf(info, " %-16s%-12i%-12i%-12i%-4i", player[i]->name, player[i]->kills, player[i]->lives, player[i]->deaths, 0);
-			sprintf(info, " %-16s%-12c%-12c%-12i%-4c", player[i]->name, '-', '-', player[i]->deaths, '-');
+			if (srv)
+				sprintf(info, " %-16s%-12c%-12c%-12i%-4i", player[i]->name, '-', '-', player[i]->deaths, player[i]->ping);
+			else if (cli)
+			{
+				// change this condition to a real check of "is server" if possible
+				if (player[i]->ping == 0)
+					sprintf(info, " %-16s%-12c%-12c%-12i%-4i", player[i]->name, '-', '-', player[i]->deaths, cli->ZCom_getConnectionStats(player[i]->id).avg_ping);
+				else
+					sprintf(info, " %-16s%-12c%-12c%-12i%-4i", player[i]->name, '-', '-', player[i]->deaths, player[i]->ping);
+			}
+			else
+				sprintf(info, " %-16s%-12c%-12c%-12i%-4c", player[i]->name, '-', '-', player[i]->deaths, '-');
       game->fonty->draw_string(buffer, info, SBX + 4, SBY + 12 + 8 * i, true);
       //Draw players color
       rectfill(buffer, SBX + 2, SBY + (game->fonty->chrh + 2) * i + 12, SBX + 6, SBY + 12 + (game->fonty->chrh + 2) * i + 4, player[i]->color);

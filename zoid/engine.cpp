@@ -27,24 +27,27 @@ void engine::init_node(ZCom_Control *_cont, bool is_server)
   }
 
   node->beginReplicationSetup();
-  node->addReplicationInt((zS32*)GRAVITY,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)ROPE_GRAVITY,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)AIR_CAPACITY,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)FALL_DAMAGE,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)DAMAGE_SPEED,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)GRAVITY,        32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ROPE_GRAVITY,   32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)AIR_CAPACITY,   32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FALL_DAMAGE,    32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)DAMAGE_SPEED,   32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
   node->addReplicationInt((zS32*)WORM_JUMP_FORCE,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)FLASHLIGHT,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FLASHLIGHT,     32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
   node->addReplicationInt((zS32*)WORM_BOUNCINESS,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)AIR_FRICTION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)FRICTION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)ACELERATION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)MAX_SPEED,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)AIR_FRICTION,   32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FRICTION,       32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ACELERATION,    32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)MAX_SPEED,      32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
   node->addReplicationInt((zS32*)AIM_RECOIL_FRICTION,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)RESPAWN_RELOAD,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)ROPE_STRENTH,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)ROPE_LENGHT,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationInt((zS32*)FRIENDLYFIRE,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
-  node->addReplicationBool(&teamplay,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,false,-1,-1 );
+  node->addReplicationInt((zS32*)RESPAWN_RELOAD, 32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ROPE_STRENTH,   32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)ROPE_LENGHT,    32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationInt((zS32*)FRIENDLYFIRE,   32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+  node->addReplicationBool(&teamplay,                    ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,false,-1,-1 );
+  node->addReplicationInt((zS32*)START_HEALTH,   32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+	node->addReplicationInt((zS32*)MAX_HEALTH,     32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
+	node->addReplicationInt((zS32*)RELOAD_MULTIPLIER,32,true,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,-1,-1);
   node->endReplicationSetup();
 
   if(!node->registerNodeUnique(game_classid, (is_server) ? eZCom_RoleAuthority : eZCom_RoleProxy, _cont))
@@ -426,13 +429,17 @@ void engine::calcphysics()
             }
             con->echolist.add_echo(tmpstr);
           };
+
+					calcrope(player[c]);
         }
         else if (player[c]->health<*START_HEALTH) player[c]->health+=10;
         if (player[c]->flash>0) 
         {
           player[c]->flash-=100;
         };
-        calcrope(player[c]);
+				//ping
+				if (srv)
+					calcping(player[c]);
       };
       calc_water();
     };
@@ -571,7 +578,6 @@ void engine::init_game()
 	START_HEALTH=con->create_variable("START_HEALTH",1000);
 	//health
 	MAX_HEALTH=con->create_variable("MAX_HEALTH",2000);
-	WORM_HEIGHT=90;
 	WORM_BOUNCINESS=con->create_variable("BOUNCINESS",200);
 	WORM_BOUNCE_LIMIT=1200;
 	MAP_SHOW_MODE=con->create_variable("MAP_SHOW_MODE",0);
