@@ -30,6 +30,8 @@ class Console
 	void registerFloatVariable(const std::string &name, float* src, float defaultValue);
 	void registerAlias(const std::string &name, const std::string &action);
 	void registerCommand(const std::string &name, std::string (*func)(const std::list<std::string>&));
+	void registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&));
+	
 	void parseLine(const std::string &text, bool parseRelease = false);
 	void parse(std::list<std::string> &args, bool parseRelease);
 	void bind(char key, const std::string &action);

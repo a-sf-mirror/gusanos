@@ -1,6 +1,7 @@
 #include "console.h"
 #include "variables.h"
 #include "command.h"
+#include "special_command.h"
 #include "alias.h"
 #include "text.h"
 #include "consoleitem.h"
@@ -75,6 +76,18 @@ void Console::registerCommand(const std::string &name, std::string (*func)(const
 		if (tempItem == items.end())
 		{
 			items[name] = new Command(func);
+		}
+	}
+}
+
+void Console::registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&))
+{
+	if (!name.empty())
+	{
+		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+		if (tempItem == items.end())
+		{
+			items[name] = new SpecialCommand(index,func);
 		}
 	}
 }
