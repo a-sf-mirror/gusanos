@@ -50,7 +50,8 @@ void create_water(int x,int y,int dir)
   water[game->water_count].dir=dir;
   water[game->water_count].time=0;
   water[game->water_count].matunder=1;
-  water[game->water_count].color=/*makecol(90,90,255);//*/((short *)map->mapimg->line[y])[x];
+  if (game->v_depth==16) water[game->water_count].color=((short *)map->mapimg->line[y])[x];
+  else if (game->v_depth==32) water[game->water_count].color=((long *)map->mapimg->line[y])[x];
   game->water_count++;
 };
 

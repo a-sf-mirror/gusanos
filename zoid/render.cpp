@@ -258,45 +258,50 @@ void engine::render()
     p=player[local_player[i]];
     if (*MAP_SHOW_MODE!=1 || !smallmap)
     {
-      set_clip(buffer,viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h);
-      if(map->paralax!=NULL)
+      if (p->flash<=25500)
       {
-        blit(map->paralax,buffer,(p->xview*(map->paralax->w-viewport[i].w))/(map->mapimg->w-viewport[i].w),(p->yview*(map->paralax->h-viewport[i].h))/(map->mapimg->h-viewport[i].h),viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
-        masked_blit(map->buffer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
-      }
-      else 
-      {
-        /*int j,o,f;
-        for (j=0;j<viewport[i].h;j++)
+        set_clip(buffer,viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h);
+        if(map->paralax!=NULL)
         {
-          o=fixtof(fixsin(ftofix(j*2+pepo/2.)))*20;
-          blit(map->buffer,buffer,p->xview+o,p->yview+j,viewport[i].x,viewport[i].y+j,viewport[i].w,1);
-        };*/
-        blit(map->buffer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
-      };
-      if (map->light_layer!=NULL && *RENDER_LAYERS==1)
-      {
-        BITMAP* light_layer_buffer=create_sub_bitmap(map->light_layer, p->xview,p->yview, viewport[i].w,viewport[i].h);
-#ifdef AAFBLEND
-        fblend_add(light_layer_buffer,buffer , viewport[i].x, viewport[i].y,255);
-#endif
-        destroy_bitmap(light_layer_buffer);
-      };
-      if (map->layer!=NULL && *RENDER_LAYERS==1)
-      masked_blit(map->layer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
-      if (p->flash>0)
-      {
-        if (p->flash<=25500)
-        {
-          fblend_rect_trans(buffer, viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h, makecol(255,255,255)/*p->flash/100,p->flash/100,p->flash/100)*/, p->flash/100);
-          /*drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
-          set_add_blender(0,0,0,p->flash/100);
-          rectfill(buffer, viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h, makecol(255,255,255));
-          solid_mode();*/
+          blit(map->paralax,buffer,(p->xview*(map->paralax->w-viewport[i].w))/(map->mapimg->w-viewport[i].w),(p->yview*(map->paralax->h-viewport[i].h))/(map->mapimg->h-viewport[i].h),viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
+          masked_blit(map->buffer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
         }
-        else
-          rectfill(buffer, viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h, makecol(255,255,255));
-      };
+        else 
+        {
+          /*int j,o,f;
+          for (j=0;j<viewport[i].h;j++)
+          {
+            o=fixtof(fixsin(ftofix(j*2+pepo/2.)))*20;
+            blit(map->buffer,buffer,p->xview+o,p->yview+j,viewport[i].x,viewport[i].y+j,viewport[i].w,1);
+          };*/
+          blit(map->buffer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
+        };
+        if (map->light_layer!=NULL && *RENDER_LAYERS==1)
+        {
+          BITMAP* light_layer_buffer=create_sub_bitmap(map->light_layer, p->xview,p->yview, viewport[i].w,viewport[i].h);
+          #ifdef AAFBLEND
+          fblend_add(light_layer_buffer,buffer , viewport[i].x, viewport[i].y,255);
+          #endif
+          destroy_bitmap(light_layer_buffer);
+        };
+        if (map->layer!=NULL && *RENDER_LAYERS==1)
+        masked_blit(map->layer,buffer,p->xview,p->yview,viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h);
+        if (p->flash>0)
+        {
+          if(v_depth==32)
+          #ifdef AAFBLEND
+          fblend_rect_trans(buffer, viewport[i].x,viewport[i].y,viewport[i].w,viewport[i].h, makecol(255,255,255)/*p->flash/100,p->flash/100,p->flash/100)*/, p->flash/100);
+          #endif
+          else
+          {
+            drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+            set_add_blender(0,0,0,p->flash/100);
+            rectfill(buffer, viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h, makecol(255,255,255));
+            solid_mode();
+          }
+        };
+      }else
+        rectfill(buffer, viewport[i].x,viewport[i].y,viewport[i].x+viewport[i].w,viewport[i].y+viewport[i].h, makecol(255,255,255));
     }
     if (!game->selecting)
     draw_hud(buffer,i,viewport[i]);

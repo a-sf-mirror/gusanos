@@ -360,7 +360,7 @@ void dig_hole(BITMAP* image,int x,int y)
     for (y2=0;y2<image->h;y2++)
     for (x2=0;x2<image->w;x2++)
     {
-      g=_getpixel16(image,x2,y2);
+      g=getpixel(image,x2,y2);
       if (g==makecol(0,0,0))
       if (map->mat[getpixel(map->material,x+x2,y+y2)+1].destroyable)
       {
@@ -416,7 +416,9 @@ void dig_hole(BITMAP* image,int x,int y)
 void draw_explosion(BITMAP* image,int x,int y)
 {
 	int y2,x2,i,o;
+  int MASK_COLOR;
 	bool is_on_player_view = false;
+  MASK_COLOR=bitmap_mask_color(image);
 	for(i=0;i<local_players;i++)
 	{
 		if (x+image->w/2>player[local_player[i]]->xview && x-image->w/2<player[local_player[i]]->xview+game->viewport[i].w)
@@ -430,7 +432,7 @@ void draw_explosion(BITMAP* image,int x,int y)
     for (x2=0;x2<image->w;x2++)
     {
       o=getpixel(image,x2,y2);
-      if (getpixel(image,x2,y2)!=MASK_COLOR_16)
+      if (getpixel(image,x2,y2)!=MASK_COLOR)
       {
         i=getpixel(map->material,x+x2,y+y2);
         if (map->mat[i+1].draw_exps) putpixel(map->buffer,x+x2,y+y2,o);
@@ -476,11 +478,16 @@ void render_exps()
 		};
     if (tmp->type->light_effect==1 && tmp->light)
     {
-      drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
-      set_add_blender(0,0,0,255-(tmp->time*255)/tmp->type->timeout);
-      draw_trans_sprite(map->buffer,tmp->light,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2);
-      //fblend_add(tmp->light,map->buffer,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2,255-(tmp->time*255)/tmp->type->timeout);
-      solid_mode();
+      if(game->v_depth==32)
+        #ifdef AAFBLEND
+        fblend_add(tmp->light,map->buffer,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2,255-(tmp->time*255)/tmp->type->timeout);
+        #endif
+      else{
+        drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
+        set_add_blender(0,0,0,255-(tmp->time*255)/tmp->type->timeout);
+        draw_trans_sprite(map->buffer,tmp->light,tmp->x/1000-tmp->light->w/2,tmp->y/1000-tmp->light->h/2);
+        solid_mode();
+      };
     };
 	};
 };

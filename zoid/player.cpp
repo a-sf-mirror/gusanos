@@ -402,15 +402,17 @@ void worm::render(BITMAP* where, int frame, int _x, int _y)
 {
   int r,g,c,R,G,B,i;
   float h1,s1,v1,h,s,v;
+  int MASK_COLOR;
+  MASK_COLOR=bitmap_mask_color(skin->img[frame]);
   for (i=0;i<skin->img[frame]->w;i++)
   {
     for (r=0;r<skin->img[frame]->h;r++)
     {
       g=getpixel(skin->img[frame],i,r);
       c=getpixel(mask->img[frame],i,r);
-      if(g!=makecol(255,0,255))
+      if(g!=MASK_COLOR)
       {
-        if(c!=makecol(255,0,255))
+        if(c!=MASK_COLOR)
         {
           c=color;
           rgb_to_hsv(getr(c), getg(c), getb(c), &h1, &s1, &v1);
@@ -438,15 +440,17 @@ void worm::render_flip(BITMAP* where, int frame, int _x, int _y)
 {
   int r,g,c,R,G,B,i;
   float h1,s1,v1,h,s,v;
+  int MASK_COLOR;
+  MASK_COLOR=bitmap_mask_color(skin->img[frame]);
   for (i=0;i<skin->img[frame]->w;i++)
   {
     for (r=0;r<skin->img[frame]->h;r++)
     {
       g=getpixel(skin->img[frame],i,r);
       c=getpixel(mask->img[frame],i,r);
-      if(g!=makecol(255,0,255))
+      if(g!=MASK_COLOR)
       {
-        if(c!=makecol(255,0,255))
+        if(c!=MASK_COLOR)
         {
           c=color;
           rgb_to_hsv(getr(c), getg(c), getb(c), &h1, &s1, &v1);
