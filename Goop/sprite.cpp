@@ -86,7 +86,41 @@ bool Sprite::load(const string &filename)
 	return returnValue;
 }
 
-void Sprite::draw(BITMAP *where, int frame,int x, int y, float angle, bool flipped, int xAligment, int yAligment)
+void Sprite::draw(BITMAP *where, int frame,int x, int y, bool flipped, int xAligment, int yAligment)
+{
+	if ( frame < m_frame[0].size() )
+	{
+		int _x,_y;
+		
+		if ( xAligment == ALIGN_LEFT ) _x = 0;
+		else if ( xAligment == ALIGN_RIGHT ) _x = m_frame[0][frame]->w;
+		else 
+		{
+			if ( m_pivotX[frame] == -1 )
+				_x = m_frame[0][frame]->w / 2;
+			else
+				_x = m_pivotX[frame];
+		}
+		
+		if ( yAligment == ALIGN_TOP ) _y = 0;
+		else if ( yAligment == ALIGN_BOTTOM ) _y = m_frame[0][frame]->h;
+		else 
+		{
+			if ( m_pivotY[0] == -1 )
+				_y = m_frame[0][frame]->h / 2;
+			else
+				_y = m_pivotY[0];
+		}
+		
+		if ( flipped )
+			draw_sprite_h_flip(where, m_frame[0][frame], x - (m_frame[0][frame]->w - 1) + _x, y - _y);
+		else
+			draw_sprite(where, m_frame[0][frame], x - _x, y - _y);
+	
+	}
+}
+
+void Sprite::drawAngled(BITMAP *where, int frame,int x, int y, float angle, bool flipped, int xAligment, int yAligment)
 {
 	if ( frame < m_frame[0].size() )
 	{
@@ -125,4 +159,3 @@ void Sprite::draw(BITMAP *where, int frame,int x, int y, float angle, bool flipp
 		}
 	}
 }
-

@@ -33,12 +33,12 @@ struct Vec
 	{
 	}
 	
-	inline Vec operator - ( Vec const &A )
+	inline Vec operator - ( Vec const &A ) const
 	{
 		return Vec( x - A.x, y - A.y );
 	}
 	
-	inline Vec operator + ( Vec const &A )
+	inline Vec operator + ( Vec const &A ) const
 	{
 		return Vec(x+A.x,y+A.y);
 	}
@@ -48,12 +48,12 @@ struct Vec
 		return Vec(A*B.x,A*B.y);
 	}
 	
-	inline Vec operator * ( float A )
+	inline Vec operator * ( float A ) const
 	{
 		return Vec(A*x,A*y);
 	}
 	
-	inline Vec operator / ( float A )
+	inline Vec operator / ( float A ) const
 	{
 		return Vec( x / A, y / A );
 	}
@@ -79,27 +79,38 @@ struct Vec
 		return *this;
 	}
 	
-	inline float dotProduct( Vec const &A )
+	inline float dotProduct( Vec const &A ) const
 	{
 		return x*A.x + y*A.y;
 	}
 	
-	inline float perpDotProduct( Vec const &A )
+	inline float perpDotProduct( Vec const &A ) const
 	{
 		return x * A.y - y * A.x;
 	}
 	
-	inline Vec perp()
+	inline Vec perp() const
 	{
 		return Vec(-y,x);
 	}
 	
-	inline float normal()
+	inline float length() const
 	{
 		return sqrt(x*x + y*y);
 	}
 	
-	inline float getAngle()
+	inline Vec normal() const
+	{
+		float invLength = 1 / length();
+		return Vec(invLength*x, invLength*y);
+	}
+	
+	inline float lengthSqr() const
+	{
+		return x*x + y*y;
+	}
+	
+	inline float getAngle() const
 	{
 		return rad2deg( atan2(x,-y) );
 	}

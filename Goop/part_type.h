@@ -3,12 +3,14 @@
 
 #include "resource_list.h"
 #include "part_events.h"
+#include "distortion.h"
 
 #include <allegro.h>
 #include <string>
 #include <vector>
 
 class Sprite;
+//struct Distortion;
 
 struct TimerEvent
 {
@@ -27,8 +29,7 @@ class PartType
 	~PartType();
 	
 	bool load(const std::string &filename);
-	
-	Sprite* sprite;
+
 	float gravity;
 	float damage;
 	float bounceFactor;
@@ -39,11 +40,23 @@ class PartType
 	int timeoutVariation;
 	float wormDetectRange;
 	float radius;
-	int delayBetweenFrames;
+	
+	Distortion* distortion;
+	float distortMagnitud;
+	
+	Sprite* sprite;
+	int animDuration;
+	int animType;
 	
 	std::vector< TimerEvent* > timer;
 	PartEvent *groundCollision;
 	PartEvent *creation;
+	
+	enum
+	{
+		ANIM_PINGPONG = 0,
+		ANIM_LOOPRIGHT
+	};
 	
 };
 

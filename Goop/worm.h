@@ -5,6 +5,8 @@
 #include "base_object.h"
 #include "sprite.h"
 
+class BaseAnimator;
+
 class Worm : public BaseObject
 {
 	public:
@@ -30,7 +32,9 @@ class Worm : public BaseObject
 	
 	int dir;
 	float aimAngle;
+	float frame;
 	Sprite *skin;
+	BaseAnimator* m_animator;
 };
 
 #endif  // _WORM_H_

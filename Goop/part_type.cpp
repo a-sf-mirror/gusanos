@@ -3,6 +3,7 @@
 #include "resource_list.h"
 
 #include "sprite.h"
+#include "distortion.h"
 #include "text.h"
 #include "parser.h"
 
@@ -39,9 +40,12 @@ PartType::PartType()
 	timeoutVariation = 0;
 	wormDetectRange = 0;
 	radius = 0;
-	delayBetweenFrames = 1;
+	animDuration = 100;
+	animType = ANIM_LOOPRIGHT;
 	
 	sprite = NULL;
+	distortion = NULL;
+	distortMagnitud = 0.8;
 	
 	groundCollision = NULL;
 	creation = NULL;
@@ -51,6 +55,7 @@ PartType::~PartType()
 {
 	if (groundCollision) delete groundCollision;
 	if (creation) delete creation;
+	if (distortion) delete distortion;
 	for ( vector<TimerEvent*>::iterator i = timer.begin(); i != timer.end(); i++)
 	{
 		delete *i;
@@ -97,6 +102,25 @@ bool PartType::load(const string &filename)
 					else if ( var == "bounce_factor" ) bounceFactor = cast<float>(val);
 					else if ( var == "damage" ) damage = cast<float>(val);
 					else if ( var == "worm_detect_range" ) wormDetectRange = cast<float>(val);
+					else if ( var == "sprite" ) sprite = spriteList.load(val);
+					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
+					else if ( var == "anim_type" )
+					{
+						if ( val == "ping_pong" ) animType = ANIM_PINGPONG;
+						else if ( val == "loop_right" ) animType = ANIM_LOOPRIGHT;
+					}
+					else if ( var == "distortion" && !distortion )
+					{
+						if ( val == "lens" && tokens.size() >= 4)
+							distortion = new Distortion( lensMap( cast<int>(tokens[3]) ) );
+						else if ( val == "swirl" && tokens.size() >= 4)
+							distortion = new Distortion( swirlMap( cast<int>(tokens[3]) ) );
+						else if ( val == "ripple" && tokens.size() >= 4)
+							distortion = new Distortion( rippleMap( cast<int>(tokens[3]) ) );
+						else if ( val == "random" && tokens.size() >= 4)
+							distortion = new Distortion( randomMap( cast<int>(tokens[3]) ) );
+					}
+					else if ( var == "distort_magnitud" ) distortMagnitud = cast<float>(val);
 				}
 				
 				if ( lineID == Parser::EVENT_START )

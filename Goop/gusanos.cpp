@@ -15,6 +15,7 @@
 #include "text.h"
 #include "gfx.h"
 #include "sfx.h"
+#include "distortion.h"
 
 #include <string>
 #include <vector>
@@ -106,8 +107,7 @@ string Exit(const list<string> &args)
 int main(int argc, char **argv)
 {
 	game.init();
-	
-	Sprite *sprite = spriteList.load("sprite.bmp");
+
 	Font *tempFont = fontList.load("minifont.bmp");
 	
 	float aimSpeed;
@@ -135,24 +135,34 @@ int main(int argc, char **argv)
 	}else
 		console.addLogMsg("COULDNT LOAD THE MAP");
 	
+	
 	PartType* testType = partTypeList.load("test.obj");
 
 	MenuWindow menu;
 	
 	Viewport testViewport;
 	Viewport testViewport2;
-	
+
 	testViewport.setDestination(gfx.buffer,0,0,320,240);
 	testViewport2.setDestination(gfx.buffer,110,70,100,100);
-	
-	for (int i = 0; i < 1 ; i++)
-	{
-		game.objects.push_back( new Particle(testType) );
-	}
 	
 	worm = new Worm();
 	game.objects.push_back(worm);
 	
+	for (int i = 0; i < 2 ; i++)
+	{
+		Vec pos;
+		while ( !game.level.getMaterial((int) pos.x,(int) pos.y).particle_pass )
+		{
+			pos.x = rnd()*game.level.width();
+			pos.y = rnd()*game.level.height();
+		}
+		BaseObject* tmp = new Particle(testType, pos, angleVec(rnd()*360,rnd()*0.1+1));
+		game.objects.push_back( tmp );
+	}
+
+
+
 	int x,y;
 	int moo=0;
 	int moox,mooy;

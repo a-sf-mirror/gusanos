@@ -3,6 +3,8 @@
 #include "vec.h"
 #include "game.h"
 #include "base_object.h"
+#include "base_animator.h"
+#include "animators.h"
 #include "sprite.h"
 
 #include <math.h>
@@ -10,6 +12,7 @@
 Worm::Worm()
 {
 	skin = spriteList.load("skin.png");
+	m_animator = new AnimLoopRight(skin,35);
 	
 	do
 	{
@@ -121,6 +124,11 @@ void Worm::think()
 	
 	if( aimAngle < 0 ) aimAngle = 0;
 	if( aimAngle > 180 ) aimAngle = 180;
+		
+	if ( movingLeft || movingRight ) m_animator->tick();
+	else frame = 0;
+		
+	if ( frame >= 4 ) frame = 0;
 	
 }
 
@@ -134,7 +142,7 @@ void Worm::draw(BITMAP* where,int xOff, int yOff)
 		Vec crosshair = angleVec(aimAngle*dir,rnd()*10+30) + pos - Vec(xOff,yOff + game.options.worm_weaponHeight);
 		putpixel(where, crosshair.x,crosshair.y,makecol(255,0,0));
 	}
-	skin->draw(where, 1, (int)pos.x-xOff, y-yOff,aimAngle, flipped);
+	skin->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, y-yOff,aimAngle, flipped);
 }
 
 void Worm::moveLeftStart()

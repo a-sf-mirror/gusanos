@@ -6,6 +6,9 @@
 #include "vec.h"
 #include <vector>
 
+class Sprite;
+class BaseAnimator;
+
 struct PartTimer
 {
 	inline PartTimer( TimerEvent* tEvent)
@@ -27,9 +30,7 @@ class Particle : public BaseObject
 {
 	public:
 		
-	Particle();
-	Particle(PartType* type);
-	Particle(PartType* type, Vec _pos, Vec _spd );
+	Particle(PartType* type, Vec _pos = Vec(0,0), Vec _spd = Vec(0,0));
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
@@ -41,6 +42,8 @@ class Particle : public BaseObject
 	PartType* m_type;
 	float m_angle;
 	float m_angleSpeed;
+	Sprite* m_sprite;
+	BaseAnimator* m_animator;
 	
 	bool justCreated;
 };
