@@ -97,7 +97,8 @@ list< list<string> > text2Tree(const string &text)
 		{
 			if ( (*tokensIter) == ";" )
 			{
-				argTree.push_back();
+				list<string> tmplist;
+				argTree.push_back(tmplist);
 			}else
 			{
 				list< list<string> >::iterator iter = argTree.end();
