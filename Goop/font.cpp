@@ -8,7 +8,7 @@
 
 using namespace std;
 
-ResourceList<Font> fontList;
+ResourceList<Font> fontList("fonts/");
 
 Font::Font()
 {

@@ -3,9 +3,21 @@
 
 BaseObject::BaseObject()
 {
+	deleteMe = false;
 }
 
-Vec BaseObject::getPos()
+Vec& BaseObject::getPos()
 {
 	return pos;
 }
+
+Vec& BaseObject::getSpd()
+{
+	return spd;
+}
+
+float BaseObject::getAngle()
+{
+	return 0;
+}
+

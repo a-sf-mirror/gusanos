@@ -16,6 +16,11 @@ class ResourceList
 	{
 	};
 	
+	ResourceList( const std::string& subFolder)
+	{
+		m_subFolder = subFolder;
+	};
+	
 	~ResourceList()
 	{
 		typename std::map<std::string, T1*>::iterator item = m_resItems.begin();
@@ -36,7 +41,7 @@ class ResourceList
 		{
 			m_resItems[filename] = new T1;
 			item = m_resItems.find(filename);
-			if ( gameLoad(filename,*item->second))
+			if ( gameLoad(m_subFolder + filename,*item->second))
 			{
 				return item->second;
 			}else
@@ -50,6 +55,7 @@ class ResourceList
 	
 	private:
 	
+	std::string m_subFolder;
 	std::map<std::string, T1*> m_resItems;
 };
 

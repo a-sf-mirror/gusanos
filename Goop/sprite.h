@@ -24,11 +24,11 @@ class Sprite
 	~Sprite();
 	
 	bool load(const std::string &filename);
-	void draw(BITMAP *where, int frame,int x, int y, bool flipped = false, int xAligment = ALIGN_CENTER, int yAligment = ALIGN_CENTER);
+	void draw(BITMAP *where, int frame,int x, int y, float angle, bool flipped = false, int xAligment = ALIGN_CENTER, int yAligment = ALIGN_CENTER);
 	
 	private:
 	
-	std::vector<BITMAP*> m_frame;
+	std::vector< std::vector< BITMAP* > > m_frame;
 	
 };
 

@@ -9,7 +9,8 @@
 #include "level.h"
 #include "game.h"
 #include "viewport.h"
-#include "test_particle.h"
+#include "part_type.h"
+#include "particle.h"
 #include "worm.h"
 //#include "text.h"
 
@@ -68,8 +69,6 @@ string Exit(const list<string> &args)
 int main(int argc, char **argv)
 {
 	game.init();
-
-	
 	
 	Sprite *sprite = spriteList.load("sprite.bmp");
 	Font *tempFont = fontList.load("minifont.bmp");
@@ -92,8 +91,9 @@ int main(int argc, char **argv)
 		console.addLogMsg("COULDNT LOAD THE MAP");
 	//allegro_message("%d",consoleTest);
 	
-	BITMAP *buffer;
+	PartType* testType = partTypeList.load("test.obj");
 	
+	BITMAP *buffer;
 
 	MenuWindow menu;
 
@@ -106,14 +106,13 @@ int main(int argc, char **argv)
 	testViewport.setDestination(buffer,0,0,320,240);
 	testViewport2.setDestination(buffer,100,50,100,100);
 	
-	for (int i = 0; i < 200 ; i++)
+	for (int i = 0; i < 1 ; i++)
 	{
-		game.objects.push_back( new TestParticle );
+		game.objects.push_back( new Particle(testType) );
 	}
 	
 	worm = new Worm();
 	game.objects.push_back(worm);
-	
 	
 	int x,y;
 	int moo=0;
@@ -122,9 +121,16 @@ int main(int argc, char **argv)
 	{
 		
 		list<BaseObject*>::iterator iter;
-		for ( iter = game.objects.begin(); iter != game.objects.end(); iter++)
+		for ( iter = game.objects.begin(); iter != game.objects.end(); )
 		{
 			(*iter)->think();
+			if ( (*iter)->deleteMe )
+			{
+				list<BaseObject*>::iterator tmp = iter;
+				iter++;
+				delete *tmp;
+				game.objects.erase(tmp);
+			}else	iter++;
 		}
 		
 		console.checkInput();

@@ -110,7 +110,7 @@ void GConsole::render(BITMAP* where)
 	list<std::string>::iterator msg = log.end();
 	if ( m_pos > 0 )
 	{
-		background->draw(where, 0, 0, m_pos, false, ALIGN_LEFT, ALIGN_BOTTOM);
+		background->draw(where, 0, 0, m_pos,0, false, ALIGN_LEFT, ALIGN_BOTTOM);
 		while ((msg != log.begin()) && ((int)m_pos - 20 - (textIndex - 1) * (m_font->height() + 1) > 0))
 		{
 			msg--;

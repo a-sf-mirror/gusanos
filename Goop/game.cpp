@@ -3,6 +3,9 @@
 #include "base_object.h"
 #include "level.h"
 #include "gconsole.h"
+#include "game_actions.h"
+
+#include <fmod/fmod.h>
 
 #include <allegro.h>
 #include <string>
@@ -44,6 +47,7 @@ void Game::init()
 {
 	allegro_init();
 	
+	FSOUND_Init(44100, 32, 0);
 	game.addPath("default/");
 	
 	set_color_depth(16);
@@ -53,9 +57,10 @@ void Game::init()
 		set_display_switch_mode(SWITCH_BACKGROUND);
 
 	console.init();
-	
 	options.registerInConsole();
-
+	
+	registerGameActions();
+	
 }
 
 const vector<string> &Game::getPaths()

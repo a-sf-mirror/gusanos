@@ -3,11 +3,13 @@
 
 #include "level.h"
 #include "base_object.h"
+#include "base_action.h"
 
 #include <allegro.h>
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 
 struct Options
 {
@@ -43,6 +45,8 @@ class Game
 	
 	std::list<BaseObject*> objects;
 	Options options;
+	
+	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
 	
 	private:
 	std::vector<std::string> m_paths;

@@ -28,6 +28,7 @@ class Worm : public BaseObject
 	bool movingRight;
 	bool jumping;
 	int dir;
+	float aimAngle;
 	Sprite *skin;
 };
 

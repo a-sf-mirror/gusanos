@@ -13,7 +13,12 @@ class BaseObject
 
 	virtual void draw(BITMAP* where,int xOff, int yOff) = 0;
 	virtual void think() = 0;
-	Vec getPos();
+	
+	virtual Vec& getPos();
+	virtual Vec& getSpd();
+	virtual float getAngle();
+	
+	bool deleteMe;
 	
 	protected:
 		
