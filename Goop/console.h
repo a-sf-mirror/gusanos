@@ -19,8 +19,6 @@
 //
 class Variable;
 
-using namespace std;
-
 class Console
 {
 	public:

@@ -7,14 +7,12 @@
 #define VAR_TYPE_INVALID 0
 #define VAR_TYPE_INT 1
 
-using namespace std;
-
 class Variable
 {
 	public:
 		
-	virtual void setValue(string value) = 0;
-	virtual string getValue() = 0;
+	virtual void setValue(std::string value) = 0;
+	virtual std::string getValue() = 0;
 	int getType();
 	
 	private:
@@ -30,8 +28,8 @@ class IntVariable : public Variable
 	IntVariable();
 	~IntVariable();
 	
-	void setValue(string value);
-	string getValue();
+	void setValue(std::string value);
+	std::string getValue();
 	
 	private:
 	

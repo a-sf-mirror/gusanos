@@ -1,6 +1,11 @@
 #include "console.h"
+
 #include "variables.h"
+#include "text.h"
+
 #include <allegro.h>
+
+using namespace std;
 
 /////////////////////////////// Console //////////////////////////////////////
 
@@ -36,62 +41,29 @@ void Console::setVariableValue(const string &name, const string &value)
 
 void Console::parseLine(const string &text)
 {
-	int leftIndex = 0;
-	int rightIndex = 0;
+	string textToParse;
+	string textInQueue = text;
 	
 	if (!text.empty())
 	{
-		rightIndex = text.find_first_of(';');
-		while (rightIndex != string::npos)
+		separate_str_by(';', textInQueue, textToParse, textInQueue);
+		while (!textInQueue.empty())
 		{
-			parse(text.substr(leftIndex, rightIndex - leftIndex));
-			leftIndex=rightIndex+1;
-			rightIndex = text.find_first_of(';',leftIndex);
+			parse(textToParse);
+			separate_str_by(';', textInQueue, textToParse, textInQueue);
 		}
-		parse(text.substr(leftIndex));
+		parse(textToParse);
 	}
 }
 
 void Console::parse(const string &text)
 {
-	int leftIndex = 0;
-	int rightIndex = 0;
-	
 	string itemName;
 	string arguments;
 	
-	if (!text.empty())
-	{
-		leftIndex = text.find_first_not_of(' ');
-		if (leftIndex != string::npos)
-		{
-			rightIndex = text.find_first_of(' ', leftIndex);
-			if (rightIndex != string::npos)
-			{
-				itemName = text.substr(leftIndex, rightIndex - leftIndex);
-			}else
-				itemName = text.substr(leftIndex);
-		}
-		leftIndex = text.find_first_not_of(' ',rightIndex);
-		if (leftIndex != string::npos)
-		{
-			rightIndex = text.find_first_of(' ', leftIndex);
-			if (rightIndex != string::npos)
-			{
-				arguments = text.substr(leftIndex, rightIndex - leftIndex);
-			}else
-				arguments = text.substr(leftIndex);
-		}
-		
-		if (!itemName.empty())
-		{
-			allegro_message(itemName.c_str());
-			if (!arguments.empty())
-			{
-				allegro_message(arguments.c_str());
-			}
-		}
-	};
+	separate_str_by(' ',text,itemName,arguments);
+	
+	setVariableValue(itemName, arguments);
 }
 
 //============================= PRIVATE ======================================

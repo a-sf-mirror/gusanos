@@ -4,12 +4,10 @@
 #include <sstream>
 //#include <string>
 
-using namespace std;
-
 template<typename T1, typename T2> 
 T1 cast(const T2 &t2)
 {
-	stringstream strStream;
+	std::stringstream strStream;
 	
 	strStream << t2;
 	T1 t1;
@@ -17,6 +15,6 @@ T1 cast(const T2 &t2)
 	return t1;
 }
 
-void separate_by(char ch, string &left, string &right);
+void separate_str_by(char ch, const std::string &src, std::string &left, std::string &right);
 
 #endif  // _text_h_

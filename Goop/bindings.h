@@ -4,11 +4,9 @@
 #include <string>
 #include <allegro.h>
 
-using namespace std;
-
 struct Binding
 {
-	string m_action;
+	std::string m_action;
 };
 
 class BindTable
@@ -18,7 +16,7 @@ class BindTable
 	BindTable(void);
 	~BindTable(void);
 	
-	void bind(char key, string action);
+	void bind(char key, std::string action);
 	void unBind(char key);
 	void unBindAll();
 	

@@ -30,7 +30,8 @@ int main(int argc, char **argv)
 	allegro_message("%d",consoleTest);
 	allegro_message("%d",pooo);
 	
-	console.parseLine("moo caco;mooish;moootonic");
+	console.parseLine("moo caco;mooish;moootoni;TEST 48");
+	allegro_message("%d",consoleTest);
 	
 	bool quit = false;
 	bool left = false;

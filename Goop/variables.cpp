@@ -1,6 +1,8 @@
 #include "variables.h"
 #include "text.h"
 
+using namespace std;
+
 ///////////////////////////////IntVariable////////////////////////////////
 
 //============================= LIFECYCLE ================================
@@ -28,12 +30,12 @@ IntVariable::IntVariable(int* src, int defaultValue)
 
 //============================= INTERFACE ================================
 
-void IntVariable::setValue(string value)
+void IntVariable::setValue(std::string value)
 {
 	*m_src=cast<int,string>(value);
-};
+}
 
 string IntVariable::getValue()
 {
 	return cast<string,int>(*m_src);
-};
+}
