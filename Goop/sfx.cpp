@@ -12,6 +12,11 @@ using namespace std;
 
 Sfx sfx;
 
+void volume( int oldValue )
+{
+	if (sfx) sfx.volumeChange();
+}
+
 Sfx::Sfx()
 : m_initialized(false), m_outputMode(-1)
 {
@@ -49,9 +54,9 @@ void Sfx::init()
 	FSOUND_Init(44100, 32, 0);
 	FSOUND_3D_SetDistanceFactor(20);
 	FSOUND_3D_SetRolloffFactor(2);
+	volumeChange();
 	
 	console.addLogMsg(string("* FMOD LIB INITIALIZED, USING DRIVER ") + FSOUND_GetDriverName(FSOUND_GetDriver()));
-	
 	m_initialized = true;
 }
 
@@ -87,6 +92,9 @@ void Sfx::registerInConsole()
 		;
 		
 		console.registerEnumVariable("SFX_OUTPUT_MODE", &m_outputMode, -1, outputModes);
+		
+		console.registerIntVariable("SFX_VOLUME", &m_volume, 255, volume);
+		console.registerIntVariable("SFX_LISTENER_DISTANCE", &m_listenerDistance, 20);
 		// NOTE: When/if adding a callback to sfx variables, make it do nothing if
 		// sfx.operator bool() returns false.
 	}
@@ -100,7 +108,7 @@ void Sfx::think()
 	for ( i = 0; i < listeners.size(); ++i )
 	{
 		FSOUND_3D_Listener_SetCurrent(i,listeners.size());
-		float pos[3] = { listeners[i]->pos.x, listeners[i]->pos.y, -20 };
+		float pos[3] = { listeners[i]->pos.x, listeners[i]->pos.y, -m_listenerDistance };
 		FSOUND_3D_Listener_SetAttributes(pos,NULL,0,0,1,0,1,0);
 	}
 	
@@ -157,6 +165,11 @@ void Sfx::freeListener(Listener* listener)
 			break;
 		}
 	}
+}
+
+void Sfx::volumeChange()
+{
+	FSOUND_SetSFXMasterVolume(m_volume);
 }
 
 

@@ -28,8 +28,7 @@ class Sfx
 	void clear();
 	Listener* newListener();
 	void freeListener(Listener* listener);
-	
-	// *** THIS MUST BE PLACED BEFORE THE OBJECT GETS REALLY DELETED *** // or... CRASH! :>
+	void volumeChange();
 	
 	operator bool()
 	{ return m_initialized; } // Returns true if it's safe to use this object
@@ -41,6 +40,7 @@ class Sfx
 	std::list< std::pair< int, BaseObject* > > chanObject;
 	std::vector<Listener*> listeners;
 	
+	int m_volume;
 	int m_listenerDistance;
 	int m_outputMode;
 
