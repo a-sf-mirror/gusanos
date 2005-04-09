@@ -26,6 +26,7 @@ if platform == 'posix':
 		#CPPFLAGS = '-O3 -Wall',
 		CPPFLAGS = '-O0 -g -Wall',
 		CXX='g++-3.4',
+		#CXX='gcc -lstdc++.so.6',
 		)
 elif platform == 'mingw-cross':
 	mingwPath = ARGUMENTS.get('mingw-path', '/usr/local/mingw/')
@@ -56,6 +57,7 @@ def getObjects(env):
 	
 	for i in os.listdir('.'):
 		if sourcePattern.search(i):
+			print("Found " + i)
 			sources.append(i)
 	
 	buildDir = os.path.join('.build', platform)
