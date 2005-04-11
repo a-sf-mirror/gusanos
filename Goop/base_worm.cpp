@@ -27,7 +27,7 @@ BaseWorm::BaseWorm()
 	dir = 1;
 	aimAngle = 90;
 	aimSpeed = 0;
-	aimRecoilSpeed = 0;
+	aimRecoilSpeed = 0;	
 	
 	currentWeapon = 0;
 	m_weapons.push_back(new Weapon(game.weaponList[0], this));

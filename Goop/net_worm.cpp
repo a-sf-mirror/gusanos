@@ -24,7 +24,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,20000,(zFloat*)&pos.x,-1,-1,0);
 		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT,ZCOM_REPRULE_AUTH_2_ALL,99,20000,(zFloat*)&pos.y,-1,-1,0);
 	m_node->endReplicationSetup();
-	
+
 	m_isAuthority = isAuthority;
 	if( isAuthority)
 	{

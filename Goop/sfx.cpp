@@ -6,7 +6,7 @@
 using namespace boost::assign;
 
 #include <vector>
-#include <fmod/fmod.h>
+#include <fmod.h>
 
 using namespace std;
 

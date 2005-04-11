@@ -10,7 +10,7 @@
 #include <allegro.h>
 #include "text.h"
 
-#include <fmod/fmod.h>
+#include <fmod.h>
 
 using namespace std;
 

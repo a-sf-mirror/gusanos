@@ -44,7 +44,7 @@ Gfx::~Gfx()
 
 void Gfx::init()
 {
-	set_color_depth(16); //Ugh
+	set_color_depth(32); //Ugh
 	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
 
 	loadpng_init();
@@ -175,7 +175,7 @@ int Gfx::getGraphicsDriver()
 
 void Gfx::fullscreenChange()
 {
-	set_color_depth(16);
+	set_color_depth(32);
 	
 	// TODO: I suppose that changing graphics driver will clear out bitmaps and such
 
