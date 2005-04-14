@@ -8,6 +8,7 @@
 
 class Sprite;
 class BaseAnimator;
+//class BaseWorm;
 
 struct NRTimer
 {
@@ -28,30 +29,39 @@ struct NRTimer
 
 class NinjaRope : public BaseObject
 {
-	public:
+public:
 
-	NinjaRope(PartType* type);
+	NinjaRope(PartType* type, BaseObject* worm);
 	
 	void shoot(Vec _pos, Vec _spd);
 	void remove();
 
-	void draw(BITMAP* where,int xOff, int yOff);
+	void draw(BITMAP* where, int xOff, int yOff);
 	void think();
 	float getAngle();
 	void addAngleSpeed(float);
+	
+	void addLength(float length_)
+	{
+		m_length += length_;
+		if ( m_length < 0.f )
+			m_length = 0.f;
+	}
 	
 	int getColour();
 	
 	bool active;
 	bool attached;
 	
-	private:
+private:
 	
 	std::vector< NRTimer > timer;
 	PartType* m_type;
 	float m_angle;
 	float m_angleSpeed;
+	float m_length;
 	Sprite* m_sprite;
+	BaseObject* m_worm;
 	BaseAnimator* m_animator;
 	
 	bool justCreated;

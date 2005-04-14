@@ -11,7 +11,7 @@ struct BITMAP;
 
 class Player : public BasePlayer
 {
-	public:
+public:
 	
 	enum Actions
 	{
@@ -35,7 +35,7 @@ class Player : public BasePlayer
 	void actionStart( Actions action );
 	void actionStop( Actions action );
 	
-	private:
+private:
 	
 	bool aimingUp;
 	bool aimingDown;

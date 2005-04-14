@@ -78,7 +78,8 @@ bool WeaponType::load(const string &filename)
 							val = *iter;
 					}
 					
-					if ( var == "ammo" ) ammo= cast<int>(val);
+					if ( var == "ammo" ) ammo = cast<int>(val);
+					else if ( var == "name" ) name = val;
 					else if ( var == "reload_time" ) reloadTime = cast<int>(val);
 					else if ( var == "laser_sight_intensity" ) laserSightIntensity = cast<float>(val);
 					else if ( var == "laser_sight_range" ) laserSightRange = cast<float>(val);

@@ -37,6 +37,7 @@ struct Options
 	float worm_bounceQuotient;
 	float worm_bounceLimit;
 	float worm_jumpForce;
+	int worm_disableWallHugging;
 	int worm_weaponHeight;
 	int worm_height;
 	int worm_maxClimb;

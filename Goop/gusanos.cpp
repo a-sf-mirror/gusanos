@@ -33,6 +33,10 @@
 #include <string>
 #include <vector>
 
+#ifdef POSIX
+#include <unistd.h>
+#endif
+
 using namespace std;
 
 bool quit = false;
@@ -57,6 +61,10 @@ void startGame(const std::string&)
 int main(int argc, char **argv)
 {
 	game.init(argc, argv);
+	
+#ifdef POSIX
+	
+#endif
 
 /*
 	gui::init();
@@ -95,14 +103,16 @@ int main(int argc, char **argv)
 	;
 	
 	console.registerCommands()
-		("QUIT", Exit)
+		(string("QUIT"), Exit)
 	;
 
 	console.parseLine("BIND A +P0_LEFT; BIND D +P0_RIGHT; BIND G +P0_JUMP; BIND W +P0_UP; BIND S +P0_DOWN; BIND F +P0_FIRE; BIND H +P0_CHANGE");
-	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN; BIND 1_PAD +P1_FIRE");
+	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN; BIND 1_PAD +P1_FIRE; BIND 3_PAD +P1_CHANGE");
 	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	console.parseLine("SETCHAR STOP \".\"");
+	
 	///* <GLIP> Stuff for me ;o
+	//console.parseLine("BIND J +P0_LEFT; BIND L +P0_RIGHT; BIND E +P0_JUMP; BIND I +P0_UP; BIND K +P0_DOWN; BIND F +P0_FIRE; BIND S +P0_CHANGE");
 	console.parseLine("SETSHIFTCHAR MINUS \"_\" ; SETSHIFTCHAR 2 \"\\\"\" ; SETSHIFTCHAR COMMA \";\" ; SETALTGRCHAR 7 \"\\{\" ; SETALTGRCHAR 0 \"\\}\"");
 	console.parseLine("SETALTGRCHAR PLUS_PAD \"\\\\\" ; SETSHIFTCHAR 3 \"#\" ; SETSHIFTCHAR STOP \":\"");
 	//*/
@@ -191,6 +201,8 @@ int main(int argc, char **argv)
 			_fps = _fpsCount;
 			_fpsCount = 0;
 			_fpsLast = _timer;
+			
+			//console.addLogMsg(cast<string>(_fps));
 		}
 		
 		if ( game.isLoaded() && game.level.isLoaded() )

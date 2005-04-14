@@ -12,8 +12,9 @@ class AnimPingPong : public BaseAnimator
 	AnimPingPong( Sprite* sprite, int duration );
 	~AnimPingPong();
 	
-	int getFrame();
-	void tick();
+	virtual int getFrame();
+	virtual void tick();
+	virtual void reset();
 	
 	private:
 
@@ -30,8 +31,9 @@ class AnimLoopRight : public BaseAnimator
 	AnimLoopRight( Sprite* sprite, int duration );
 	~AnimLoopRight();
 	
-	int getFrame();
-	void tick();
+	virtual int getFrame();
+	virtual void tick();
+	virtual void reset();
 	
 	private:
 

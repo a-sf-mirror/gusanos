@@ -4,7 +4,7 @@
 #include "resource_list.h"
 #include <string>
 
-class Vec;
+//class Vec;
 class BaseObject;
 struct FSOUND_SAMPLE;
 

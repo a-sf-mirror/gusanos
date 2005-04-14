@@ -13,7 +13,8 @@
 
 using namespace std;
 
-NinjaRope::NinjaRope(PartType *type)
+NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
+: m_worm(worm)
 {
 	justCreated = false;
 	active = false;
@@ -37,6 +38,7 @@ NinjaRope::NinjaRope(PartType *type)
 		}
 	}
 	
+	// Why this?? :OO
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
 	{
 		timer.push_back( NRTimer(*i) );
@@ -47,6 +49,7 @@ void NinjaRope::shoot(Vec _pos, Vec _spd)
 {
 	pos = _pos;
 	spd = _spd;
+	m_length = game.options.ninja_rope_startDistance;
 	
 	justCreated = true;
 	active = true;
@@ -70,10 +73,69 @@ void NinjaRope::remove()
 
 void NinjaRope::think()
 {
-	if ( active )
-	for ( int i = 0; i < m_type->repeat; ++i)
-	{
+	if (!active)
+		return;
 		
+	if ( justCreated && m_type->creation )
+	{
+		m_type->creation->run(this);
+		justCreated = false;
+	}
+	
+	for ( int i = 0; !deleteMe && i < m_type->repeat; ++i)
+	{
+		pos += spd;
+		
+		BaseVec<long> ipos(pos);
+		
+		// TODO: Try to attach to worms/objects
+				
+		Vec diff(m_worm->getPos(), pos);
+		float curLen = diff.length();
+		Vec force(diff * game.options.ninja_rope_pullForce);
+		
+		/*
+		if(<attached to object>)
+		{
+			//Apply force to object
+		}
+		else
+		*/
+		if(!game.level.getMaterial( ipos.x, ipos.y ).particle_pass)
+		{
+			if(!attached)
+			{
+				m_length = 450.f / 16.f - 1.0f;
+				attached = true;
+				spd.zero();
+				if ( m_type->groundCollision != NULL )
+					m_type->groundCollision->run(this);
+			}
+		}
+		else
+			attached = false;
+			
+		if(attached)
+		{
+			if(curLen > m_length)
+			{
+				m_worm->addSpeed(force / curLen);
+			}
+		}
+		else
+		{
+			spd.y += m_type->gravity;
+			
+			if(curLen > m_length)
+			{
+				spd -= force / curLen;
+			}
+		}
+
+		if ( m_animator )
+			m_animator->tick();
+		
+		/* OLD CODE
 		if ( justCreated && m_type->creation )
 		{
 			m_type->creation->run(this);
@@ -127,6 +189,7 @@ void NinjaRope::think()
 			else break;
 			if ( m_animator ) m_animator->tick();
 		}
+		*/
 	}
 }
 

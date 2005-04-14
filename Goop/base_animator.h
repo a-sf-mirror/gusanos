@@ -9,6 +9,7 @@ class BaseAnimator
 	
 	virtual int getFrame() = 0;
 	virtual void tick() = 0;
+	virtual void reset() = 0;
 };
 
 #endif // _BASE_ANIMATOR_

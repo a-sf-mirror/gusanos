@@ -45,6 +45,7 @@ Gfx::~Gfx()
 void Gfx::init()
 {
 	set_color_depth(32); //Ugh
+
 	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
 
 	loadpng_init();

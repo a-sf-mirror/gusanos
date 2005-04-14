@@ -224,15 +224,15 @@ void GConsole::init()
 	;
 
 	console.registerCommands()
-		("BIND", bindCmd)
-		("SWAPKEYS", swapKeysCmd)
-		("SETSHIFTCHAR", setShiftChar)
-		("SETALTGRCHAR", setAltGrChar)
-		("SETCHAR", setChar)
-		("SETCONSOLEKEY", setConsoleKey)
-		("EXEC", execCmd)
-		("ALIAS", aliasCmd)
-		("ECHO", echoCmd)
+		(string("BIND"), bindCmd)
+		(string("SWAPKEYS"), swapKeysCmd)
+		(string("SETSHIFTCHAR"), setShiftChar)
+		(string("SETALTGRCHAR"), setAltGrChar)
+		(string("SETCHAR"), setChar)
+		(string("SETCONSOLEKEY"), setConsoleKey)
+		(string("EXEC"), execCmd)
+		(string("ALIAS"), aliasCmd)
+		(string("ECHO"), echoCmd)
 	;
 	
 	currentCommand = commandsLog.end(); //To workaround a crashbug with uninitialized iterator

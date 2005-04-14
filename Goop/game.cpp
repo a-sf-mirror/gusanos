@@ -84,17 +84,25 @@ void Options::registerInConsole()
 {
 	console.registerVariables()
 		("SV_NINJAROPE_SHOOT_SPEED", &ninja_rope_shootSpeed, 2)
-		("SV_NINJAROPE_PULL_FORCE", &ninja_rope_pullForce, 0.031)
-		("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 20)
+		//("SV_NINJAROPE_PULL_FORCE", &ninja_rope_pullForce, 0.031)
+		("SV_NINJAROPE_PULL_FORCE", &ninja_rope_pullForce, (4.0f / 3.0f) * (70.0f * 70.0f / (100.0f * 100.0f * 16.0f)))
 		
+		//("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 20)
+		("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 4000.0f / 16.f - 1.f)
+
 		("SV_WORM_MAX_SPEED", &worm_maxSpeed, 0.45)
 		("SV_WORM_ACCELERATION", &worm_acceleration, 0.03)
 		("SV_WORM_AIR_ACCELERATION_FACTOR", &worm_airAccelerationFactor, 1)
-		("SV_WORM_FRICTION", &worm_friction, 0.02)
+		//("SV_WORM_FRICTION", &worm_friction, 0.02)
+		("SV_WORM_FRICTION", &worm_friction, pow(0.89, 0.7))
 		("SV_WORM_AIR_FRICTION", &worm_airFriction, 0.000005)
 		("SV_WORM_GRAVITY", &worm_gravity, 0.009)
-		("SV_WORM_BOUNCE_QUOTIENT", &worm_bounceQuotient, 0.3)
-		("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 2)
+		("SV_WORM_DISABLE_WALL_HUGGING", &worm_disableWallHugging, 0)
+		//("SV_WORM_BOUNCE_QUOTIENT", &worm_bounceQuotient, 0.3)
+		("SV_WORM_BOUNCE_QUOTIENT", &worm_bounceQuotient, 0.333)
+		//("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 2)
+		("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 0.56875f)
+		
 		("SV_WORM_JUMP_FORCE", &worm_jumpForce, 0.6)
 		("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 4)
 		("SV_WORM_HEIGHT", &worm_height, 7)
@@ -104,10 +112,10 @@ void Options::registerInConsole()
 	;
 	
 	console.registerCommands()
-		("MAP", mapCmd)
-		("GAME", gameCmd)
-		("ADDBOT", addbotCmd)
-		("CONNECT",connectCmd)
+		(string("MAP"), mapCmd)
+		(string("GAME"), gameCmd)
+		(string("ADDBOT"), addbotCmd)
+		(string("CONNECT"),connectCmd)
 	;
 }
 

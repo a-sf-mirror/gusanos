@@ -239,7 +239,9 @@ void GContext::clear()
 	m_rootWnd = 0;
 	
 	std::istringstream rootGSS(
-		"#root { background: #000080 ; left: 0 ; top: 0 ; bottom : -1 ; right: -1; padding: 29; spacing: 20 }");
+		"#root { background: #000080 ; left: 0 ; top: 0 ; bottom : -1 ; right: -1; padding: 29; spacing: 20 }"
+		"edit { background: #FFFFFF ; border: #666666; border-bottom: #A0A0A0 ; border-right: #A0A0A0 ;"
+		" width: 100 ; height: 15 ; font-family: big }");
 		
 	std::istringstream rootXML("<window id=\"root\" />");
 	

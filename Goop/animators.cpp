@@ -32,7 +32,8 @@ void AnimPingPong::tick()
 			m_currentDir = -1;
 			m_animPos = m_duration - 1;
 		}
-	}else
+	}
+	else
 	{
 		m_animPos--;
 		if ( m_animPos <= 0 )
@@ -41,6 +42,12 @@ void AnimPingPong::tick()
 			m_animPos = 0;
 		}
 	}
+}
+
+void AnimPingPong::reset()
+{
+	m_animPos = 0;
+	m_currentDir = 1;
 }
 
 AnimLoopRight::AnimLoopRight( Sprite* sprite, int duration )
@@ -68,3 +75,7 @@ void AnimLoopRight::tick()
 	}
 }
 
+void AnimLoopRight::reset()
+{
+	m_animPos = 0;
+}

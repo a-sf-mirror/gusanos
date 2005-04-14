@@ -7,7 +7,9 @@ class WeaponType;
 
 class Weapon
 {
-	public:
+public:
+	
+	friend class BaseWorm;
 
 	enum Actions
 	{
@@ -26,7 +28,7 @@ class Weapon
 	void delay( int time );
 	BaseWorm* getOwner();
 
-	private:
+private:
 		
 	bool primaryShooting;
 	int ammo;

@@ -37,22 +37,37 @@ void Player::think()
 {
 	if ( m_worm )
 	{
-		if ( m_viewport ) m_viewport->interpolateTo(m_worm->getRenderPos(),m_options->viewportFollowFactor);
-		if ( aimingUp ) 
+		if ( m_viewport ) m_viewport->interpolateTo(m_worm->getRenderPos(), m_options->viewportFollowFactor);
+		
+		if(changing && m_worm->getNinjaRopeObj()->active)
 		{
-			if ( changing && m_worm->getNinjaRopeObj()->active )
+			if(aimingUp)
 			{
 				m_worm->addRopeLength(-m_options->ropeAdjustSpeed);
-			}else
-				m_worm->addAimSpeed(-m_options->aimAcceleration);
-		}
-		else if ( aimingDown ) 
-		{
-			if ( changing && m_worm->getNinjaRopeObj()->active )
+			}
+			if(aimingDown)
 			{
 				m_worm->addRopeLength(m_options->ropeAdjustSpeed);
-			}else
+			}
+		}
+		else
+		{
+			
+			if (aimingUp && m_worm->aimSpeed > -m_options->aimMaxSpeed) 
+			{
+				m_worm->addAimSpeed(-m_options->aimAcceleration);
+			}
+			// No "else if" since we want to support precision aiming
+			if (aimingDown && m_worm->aimSpeed < m_options->aimMaxSpeed)
+			{
 				m_worm->addAimSpeed(m_options->aimAcceleration);
+			}
+		}
+		
+		if(!aimingDown && !aimingUp)
+		{
+			// I placed this here since BaseWorm doesn't have access to aiming flags
+			m_worm->aimSpeed *= m_options->aimFriction;
 		}
 	}
 }
@@ -70,7 +85,12 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStart(Worm::MOVELEFT);
+				if(changing)
+				{
+					m_worm -> actionStart(Worm::CHANGELEFT);
+				}
+				else
+					m_worm -> actionStart(Worm::MOVELEFT);
 			}
 		}
 		break;
@@ -79,7 +99,12 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStart(Worm::MOVERIGHT);
+				if(changing)
+				{
+					m_worm -> actionStart(Worm::CHANGERIGHT);
+				}
+				else
+					m_worm -> actionStart(Worm::MOVERIGHT);
 			}
 		}
 		break;
@@ -88,7 +113,8 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStart(Worm::FIRE);
+				if(!changing)
+					m_worm -> actionStart(Worm::FIRE);
 			}
 		}
 		break;
@@ -100,11 +126,13 @@ void Player::actionStart ( Actions action )
 				if (changing)
 				{
 					m_worm->actionStart(Worm::NINJAROPE);
-				}else
+				}
+				else
 				{
 					m_worm -> actionStart(Worm::JUMP);
 					m_worm -> actionStop(Worm::NINJAROPE);
 				}
+				
 				jumping = true;
 			}
 		}
@@ -132,11 +160,23 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
-				changing = true;
 				if (jumping)
 				{
 					m_worm->actionStart(Worm::NINJAROPE);
+					jumping = false;
 				}
+				else
+				{
+					m_worm->actionStart(Worm::CHANGEWEAPON);
+					m_worm->actionStop(Worm::FIRE); //TODO: Stop secondary fire also
+					
+					// Stop any movement
+					m_worm->actionStop(Worm::MOVELEFT);
+					m_worm->actionStop(Worm::MOVERIGHT);
+					
+				}
+				
+				changing = true;
 			}
 		}
 		break;
@@ -206,6 +246,8 @@ void Player::actionStop ( Actions action )
 		{
 			if ( m_worm )
 			{
+				m_worm->actionStop(Worm::CHANGEWEAPON);
+
 				changing = false;
 			}
 		}

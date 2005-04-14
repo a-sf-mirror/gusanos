@@ -11,8 +11,8 @@ class NinjaRope;
 
 class BaseWorm : public BaseObject
 {	
-	public:
-	
+public:
+
 	enum Actions
 	{
 		MOVELEFT,
@@ -23,7 +23,20 @@ class BaseWorm : public BaseObject
 		FIRE2,
 		JUMP,
 		DIG,
-		NINJAROPE
+		NINJAROPE,
+		CHANGEWEAPON,
+		CHANGELEFT,
+		CHANGERIGHT,
+	};
+	
+	enum Direction
+	{
+		Down = 0,
+		Left,
+		Up,
+		Right,
+		
+		DirMax
 	};
 		
 	BaseWorm();
@@ -32,6 +45,13 @@ class BaseWorm : public BaseObject
 	void assignOwner( BasePlayer* owner);
 
 	void draw(BITMAP* where,int xOff, int yOff);
+	
+	void calculateReactionForce(BaseVec<long> origin, Direction dir);
+	void calculateAllReactionForces(BaseVec<float>& nextPos, BaseVec<long>& inextPos);
+	void processMoveAndDig(void);
+	void processPhysics();
+	void processJumpingAndNinjaropeControls();
+	
 	virtual void think();
 	void actionStart( Actions action );
 	void actionStop( Actions action );
@@ -39,13 +59,16 @@ class BaseWorm : public BaseObject
 	void addRopeLength(float distance);
 	
 	Vec getPos();
+	Vec getWeaponPos();
 	Vec getRenderPos();
 	float getAngle();
 	char getDir();
 	
 	NinjaRope* getNinjaRopeObj();
 	
-	protected:
+	float aimSpeed; // Useless to add setters and getters for this
+	
+protected:
 
 	Vec renderPos;
 	
@@ -54,12 +77,15 @@ class BaseWorm : public BaseObject
 	bool jumping;
 	
 	int dir;
+	int reacts[DirMax];
+	bool animate;
+	bool movable; // What do we need this for?
+	bool changing;
 	float aimAngle;
-	float aimSpeed;
 	float aimRecoilSpeed;
-	float currentRopeLength;
+	//float currentRopeLength; //moved to Ninjarope
 	
-	int currentWeapon;
+	size_t currentWeapon;
 	
 	std::vector<Weapon*> m_weapons;
 	
