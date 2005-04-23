@@ -15,6 +15,7 @@
 #include "gconsole.h"
 #include "game_actions.h"
 #include "base_player.h"
+#include "proxy_player.h"
 #include "gfx.h"
 #include "sfx.h"
 #include "player_ai.h"
@@ -257,7 +258,6 @@ void Game::unload()
 	}
 	players.clear();
 	localPlayers.clear();
-	
 	level.unload();
 	
 	for ( vector<WeaponType*>::iterator iter = weaponList.begin(); iter != weaponList.end(); ++iter)
@@ -317,57 +317,23 @@ void Game::changeLevel(const std::string& levelName )
 		{
 			if(true)
 			{
-				NetWorm* worm = new NetWorm(true);
-				Player* player = new Player(playerOptions[0]);
-				Viewport* viewport = new Viewport;
-				viewport->setDestination(gfx.buffer,0,0,160,240);
+				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
+				NetWorm* worm = new NetWorm(true); 
+				BasePlayer* player = addPlayer ( OWNER );
+				player->assignNetworkRole(true);
 				player->assignWorm(worm);
-				player->assignViewport(viewport);
 				objects.push_back( worm );
 				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-				players.push_back( player );
-				localPlayers.push_back( player );
 			}
-			if(true)
-			{
-				NetWorm* worm = new NetWorm(true);
-				Player* player = new Player(playerOptions[1]);
-				Viewport* viewport = new Viewport;
-				viewport->setDestination(gfx.buffer,160,0,160,240);
-				player->assignWorm(worm);
-				player->assignViewport(viewport);
-				objects.push_back( worm );
-				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-				players.push_back( player );
-				localPlayers.push_back( player );
-			}
-		}else
+		}else if ( !network.isClient() )
 		{
 			if(true)
 			{
 				Worm* worm = new Worm;
-				Player* player = new Player(playerOptions[0]);
-				Viewport* viewport = new Viewport;
-				viewport->setDestination(gfx.buffer,0,0,160,240);
+				BasePlayer* player = addPlayer ( OWNER );
 				player->assignWorm(worm);
-				player->assignViewport(viewport);
 				objects.push_back( worm );
 				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-				players.push_back( player );
-				localPlayers.push_back( player );
-			}
-			if(true)
-			{
-				Worm* worm = new Worm;
-				Player* player = new Player(playerOptions[1]);
-				Viewport* viewport = new Viewport;
-				viewport->setDestination(gfx.buffer,160,0,160,240);
-				player->assignWorm(worm);
-				player->assignViewport(viewport);
-				objects.push_back( worm );
-				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-				players.push_back( player );
-				localPlayers.push_back( player );
 			}
 		}
 	}
@@ -395,6 +361,32 @@ const string& Game::getMod()
 	return m_modName;
 }
 
+BasePlayer* Game::addPlayer( PLAYER_TYPE type )
+{
+	BasePlayer *retPlayer = NULL;
+	if( type == OWNER )
+	{
+		Player* player = new Player(playerOptions[0]);
+		Viewport* viewport = new Viewport;
+		viewport->setDestination(gfx.buffer,0,0,320,240);
+		player->assignViewport(viewport);
+		players.push_back( player );
+		localPlayers.push_back( player );
+		retPlayer = player;
+	}else if ( type == PROXY )
+	{
+		ProxyPlayer* player = new ProxyPlayer();
+		players.push_back( player );
+		retPlayer = player;
+	}else if ( type == AI )
+	{
+		PlayerAI* player = new PlayerAI();
+		players.push_back( player );
+		retPlayer = player;
+	}
+	return retPlayer;
+}
+
 void Game::addBot()
 {
 	if ( loaded && level.isLoaded() )
@@ -407,3 +399,5 @@ void Game::addBot()
 		players.push_back( player );
 	}
 }
+
+

@@ -1,6 +1,7 @@
 #include "client.h"
 #include "gconsole.h"
 #include "net_worm.h"
+#include "base_player.h"
 #include "game.h"
 
 #ifndef DISABLE_ZOIDCOM
@@ -61,6 +62,21 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
 			NetWorm* worm = new NetWorm(false);
 			game.objects.push_back( worm );
 			game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
+		}
+	}else if ( _requested_class == BasePlayer::classID )
+	{
+		// Creates a player class depending on the role
+		console.addLogMsg("PLAYER NODE REQUESTED");
+		if( _role == eZCom_RoleOwner )
+		{
+			console.addLogMsg("CREATING OWNER PLAYER");
+			BasePlayer* player = game.addPlayer ( Game::OWNER );
+			player->assignNetworkRole(false);
+		}else
+		{
+			console.addLogMsg("CREATING PROXY PLAYER");
+			BasePlayer* player = game.addPlayer ( Game::PROXY );
+			player->assignNetworkRole(false);
 		}
 	}else
 	{

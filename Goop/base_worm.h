@@ -42,7 +42,7 @@ public:
 	BaseWorm();
 	virtual ~BaseWorm();
 	
-	void assignOwner( BasePlayer* owner);
+	virtual void assignOwner( BasePlayer* owner);
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	

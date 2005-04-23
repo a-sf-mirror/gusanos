@@ -33,7 +33,7 @@ void Player::assignViewport(Viewport* viewport)
 	m_viewport = viewport;
 }
 
-void Player::think()
+void Player::subThink()
 {
 	if ( m_worm )
 	{
@@ -90,7 +90,7 @@ void Player::actionStart ( Actions action )
 					m_worm -> actionStart(Worm::CHANGELEFT);
 				}
 				else
-					m_worm -> actionStart(Worm::MOVELEFT);
+					BasePlayer::baseActionStart(BasePlayer::LEFT);
 			}
 		}
 		break;
@@ -104,7 +104,7 @@ void Player::actionStart ( Actions action )
 					m_worm -> actionStart(Worm::CHANGERIGHT);
 				}
 				else
-					m_worm -> actionStart(Worm::MOVERIGHT);
+					BasePlayer::baseActionStart(BasePlayer::RIGHT);
 			}
 		}
 		break;
@@ -191,7 +191,7 @@ void Player::actionStop ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStop(Worm::MOVELEFT);
+				BasePlayer::baseActionStop(BasePlayer::LEFT);
 			}
 		}
 		break;
@@ -200,7 +200,7 @@ void Player::actionStop ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStop(Worm::MOVERIGHT);
+				BasePlayer::baseActionStop(BasePlayer::RIGHT);
 			}
 		}
 		break;

@@ -4,6 +4,7 @@
 #include "gconsole.h"
 #include "text.h"
 #include "net_worm.h"
+#include "base_player.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -64,6 +65,7 @@ void Network::update()
 void Network::registerClasses() // Factorization of class registering in client and server
 {
 	NetWorm::classID = m_control->ZCom_registerClass("worm");
+	BasePlayer::classID = m_control->ZCom_registerClass("player");
 }
 
 void Network::host()

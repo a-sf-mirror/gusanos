@@ -47,6 +47,13 @@ struct Options
 class Game
 {
 	public:
+
+	enum PLAYER_TYPE
+	{
+		OWNER = 0,
+		PROXY,
+		AI,
+	};
 		
 	Game();
 	~Game();
@@ -62,6 +69,7 @@ class Game
 	void refreshResources();
 	void changeLevel(const std::string& level);
 	void addBot();
+	BasePlayer* addPlayer( PLAYER_TYPE player );
 	
 	Level level;
 	std::vector<WeaponType*> weaponList;

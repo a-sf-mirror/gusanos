@@ -11,7 +11,7 @@ class PlayerAI : public BasePlayer
 	PlayerAI();
 	~PlayerAI();
 	void getTarget();       //Find target
-	void think();           //AI processing
+	void subThink();           //AI processing
 	
 	private:
 	BasePlayer* m_target;

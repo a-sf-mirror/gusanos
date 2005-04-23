@@ -1,6 +1,9 @@
 #include "server.h"
 #include "gconsole.h"
 #include "game.h"
+#include "net_worm.h"
+#include "base_worm.h"
+#include "base_player.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -49,6 +52,19 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_Bit
 	}
 	else
 		return false;
+}
+
+void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
+{
+	console.addLogMsg("* CREATING WORM AND PLAYER FOR THE NEW CONNECTION");
+	NetWorm* worm = new NetWorm(true);
+	worm->setOwnerId(_id);
+	BasePlayer* player = game.addPlayer ( Game::PROXY );
+	player->assignNetworkRole(true);
+	player->setOwnerId(_id);
+	player->assignWorm(worm);
+	game.objects.push_back( worm );
+	game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
 }
 
 #endif

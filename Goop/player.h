@@ -27,7 +27,7 @@ public:
 	Player(PlayerOptions* options);
 	~Player();
 	
-	void think();
+	void subThink();
 	void render();
 	
 	void assignViewport(Viewport* Viewport);

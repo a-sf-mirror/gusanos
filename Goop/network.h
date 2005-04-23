@@ -7,6 +7,8 @@
 #include <zoidcom.h>
 #include <string>
 
+static unsigned int INVALID_NODE_ID = 0;
+
 class Network
 {
 	public:

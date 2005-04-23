@@ -47,7 +47,7 @@ void PlayerAI::getTarget()
 	m_target = tmpTarget;
 }
 
-void PlayerAI::think()
+void PlayerAI::subThink()
 {
 	getTarget();
 	if (!m_target)
