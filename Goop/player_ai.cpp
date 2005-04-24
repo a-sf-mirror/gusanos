@@ -66,17 +66,17 @@ void PlayerAI::subThink()
 	if (dist > 48.f)
 	{ 
 		if (x < tmpX)
-			m_worm->actionStart(Worm::MOVERIGHT);
+			baseActionStart(RIGHT);
 		else
-			m_worm->actionStop(Worm::MOVERIGHT);
+			baseActionStop(RIGHT);
 		if (x > tmpX)
-			m_worm->actionStart(Worm::MOVELEFT);
+			baseActionStart(LEFT);
 		else
-			m_worm->actionStop(Worm::MOVELEFT);
+			baseActionStop(LEFT);
 	} else
 	{
-		m_worm->actionStop(Worm::MOVELEFT);
-		m_worm->actionStop(Worm::MOVERIGHT);
+		baseActionStop(LEFT);
+		baseActionStop(RIGHT);
 	}
 	
 	
@@ -115,8 +115,8 @@ void PlayerAI::subThink()
 	if (curAngle - cAimAccuracy < rad2deg(targetAngle) && curAngle + cAimAccuracy > rad2deg(targetAngle))
 	{
 		//aimed accuratley
-		m_worm->actionStart(Worm::FIRE);
+		baseActionStart(FIRE);
 	} else
-		m_worm->actionStop(Worm::FIRE);
+		baseActionStop(FIRE);
 }
 

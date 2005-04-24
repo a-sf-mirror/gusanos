@@ -129,7 +129,7 @@ void Player::actionStart ( Actions action )
 				}
 				else
 				{
-					m_worm -> actionStart(Worm::JUMP);
+					BasePlayer::baseActionStart(BasePlayer::JUMP);
 					m_worm -> actionStop(Worm::NINJAROPE);
 				}
 				
@@ -218,7 +218,7 @@ void Player::actionStop ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStop(Worm::JUMP);
+				BasePlayer::baseActionStop(BasePlayer::JUMP);
 				jumping = false;
 			}
 		}

@@ -59,9 +59,7 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
 		console.addLogMsg("WORM NODE REQUESTED");
 		if(true)
 		{
-			NetWorm* worm = new NetWorm(false);
-			game.objects.push_back( worm );
-			game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
+			game.addWorm(false);
 		}
 	}else if ( _requested_class == BasePlayer::classID )
 	{

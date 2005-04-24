@@ -12,6 +12,7 @@
 #include <map>
 
 class BasePlayer;
+class BaseWorm;
 class PlayerOptions;
 class WeaponType;
 class PartType;
@@ -70,6 +71,7 @@ class Game
 	void changeLevel(const std::string& level);
 	void addBot();
 	BasePlayer* addPlayer( PLAYER_TYPE player );
+	BaseWorm* addWorm(bool isAuthority); // Creates a worm class depending on the network condition.
 	
 	Level level;
 	std::vector<WeaponType*> weaponList;

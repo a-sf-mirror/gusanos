@@ -57,14 +57,15 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_Bit
 void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
 {
 	console.addLogMsg("* CREATING WORM AND PLAYER FOR THE NEW CONNECTION");
-	NetWorm* worm = new NetWorm(true);
-	worm->setOwnerId(_id);
+	BaseWorm* worm = game.addWorm(true);
+	if ( NetWorm* netWorm = dynamic_cast<NetWorm*>(worm) )
+	{
+		netWorm->setOwnerId(_id);
+	}
 	BasePlayer* player = game.addPlayer ( Game::PROXY );
 	player->assignNetworkRole(true);
 	player->setOwnerId(_id);
 	player->assignWorm(worm);
-	game.objects.push_back( worm );
-	game.objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
 }
 
 #endif

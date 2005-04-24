@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include "viewport.h"
+#include "base_worm.h"
 #include "worm.h"
 #include "part_type.h"
 #include "weapon_type.h"
@@ -318,22 +319,18 @@ void Game::changeLevel(const std::string& levelName )
 			if(true)
 			{
 				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
-				NetWorm* worm = new NetWorm(true); 
+				BaseWorm* worm = addWorm(true); 
 				BasePlayer* player = addPlayer ( OWNER );
 				player->assignNetworkRole(true);
 				player->assignWorm(worm);
-				objects.push_back( worm );
-				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
 			}
 		}else if ( !network.isClient() )
 		{
 			if(true)
 			{
-				Worm* worm = new Worm;
+				BaseWorm* worm = addWorm(true);
 				BasePlayer* player = addPlayer ( OWNER );
 				player->assignWorm(worm);
-				objects.push_back( worm );
-				objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
 			}
 		}
 	}
@@ -387,16 +384,31 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 	return retPlayer;
 }
 
+BaseWorm* Game::addWorm(bool isAuthority)
+{
+	BaseWorm* returnWorm = NULL;
+	if ( network.isHost() || network.isClient() )
+	{
+		NetWorm* netWorm = new NetWorm(isAuthority);
+		returnWorm = netWorm;
+	}else
+	{
+		Worm* worm = new Worm();
+		returnWorm = worm;
+	}
+	objects.push_back( returnWorm);
+	objects.push_back( (BaseObject*)returnWorm->getNinjaRopeObj() );
+	return returnWorm;
+}
+
 void Game::addBot()
 {
 	if ( loaded && level.isLoaded() )
 	{
-		Worm* worm = new Worm;
-		PlayerAI* player = new PlayerAI();
+		BaseWorm* worm = addWorm(true); 
+		BasePlayer* player = addPlayer(AI);
+		if ( network.isHost() ) player->assignNetworkRole(true);
 		player->assignWorm(worm);
-		objects.push_back( worm );
-		objects.push_back( (BaseObject*)worm->getNinjaRopeObj() );
-		players.push_back( player );
 	}
 }
 

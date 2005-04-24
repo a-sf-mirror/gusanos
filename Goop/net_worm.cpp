@@ -25,8 +25,9 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	}
 	
 	m_node->beginReplicationSetup();
-		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL,99,20000,(zFloat*)&pos.x,-1,-1,0);
-		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL,99,20000,(zFloat*)&pos.y,-1,-1,0);
+		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL,99,0,(zFloat*)&pos.x,-1,-1,0);
+		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL,99,0,(zFloat*)&pos.y,-1,-1,0);
+		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
 		m_node->addReplicationInt( (zS32*)&m_playerID, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , INVALID_NODE_ID);
 	m_node->endReplicationSetup();
 
