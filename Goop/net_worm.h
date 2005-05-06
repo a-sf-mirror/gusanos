@@ -14,12 +14,25 @@ class NetWorm : public BaseWorm
 {	
 	public:
 		
+	enum NetEvents
+	{
+		PosCorrection	
+	};
+		
+	enum ReplicationItems
+	{
+		Position,
+		PlayerID
+	};
+		
 	static ZCom_ClassID  classID;
+	static const float MAX_ERROR_RADIUS = 10;
 		
 	NetWorm(bool isAuthority);
 	~NetWorm();
 
 	void think();
+	void correctOwnerPosition();
 
 	void assignOwner( BasePlayer* owner);
 	void setOwnerId( ZCom_ConnID _id );

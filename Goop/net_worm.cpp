@@ -25,9 +25,20 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	}
 	
 	m_node->beginReplicationSetup();
-		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL,99,0,(zFloat*)&pos.x,-1,-1,0);
-		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL,99,0,(zFloat*)&pos.y,-1,-1,0);
-		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
+		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY,99,0,(zFloat*)&pos.x,-1,-1,0);
+		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY,99,0,(zFloat*)&pos.y,-1,-1,0);
+		
+		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
+		
+		// Intercepted stuff
+		m_node->setInterceptID(static_cast<ZCom_InterceptID>(Position));
+		
+		m_node->addReplicationFloat ((zFloat*)&pos.x, 32, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_OWNER_2_AUTH, 0, -1, 1000);
+		
+		m_node->addReplicationFloat ((zFloat*)&pos.y, 32, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_OWNER_2_AUTH, 0, -1, 1000);
+		
+		m_node->setInterceptID( static_cast<ZCom_InterceptID>(PlayerID) );
+		
 		m_node->addReplicationInt( (zS32*)&m_playerID, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , INVALID_NODE_ID);
 	m_node->endReplicationSetup();
 
@@ -58,6 +69,44 @@ void NetWorm::think()
 	BaseWorm::think();
 	if ( !m_isAuthority ) renderPos += (pos - renderPos)*0.1;
 	else renderPos = pos;
+	
+	if ( m_node )
+	{
+		while ( m_node->checkEventWaiting() )
+		{
+			ZCom_Node::eEvent type;
+			eZCom_NodeRole    remote_role;
+			ZCom_ConnID       conn_id;
+			
+			ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
+			if (type == ZCom_Node::eEvent_User && data)
+			{
+				NetEvents event = (NetEvents)data->getInt(8);
+				switch ( event )
+				{
+					case PosCorrection: // ACTION TART LOL TBH
+					{
+						pos.x = data->getFloat(32);
+						pos.y = data->getFloat(32);
+						spd.x = data->getFloat(32);
+						spd.y = data->getFloat(32);
+					}
+					break;
+				}
+			}
+		}
+	}
+}
+
+void NetWorm::correctOwnerPosition()
+{
+	ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+	data->addInt(static_cast<int>(PosCorrection),8 );
+	data->addFloat(pos.x,32); // Maybe this packet is too heavy...
+	data->addFloat(pos.y,32);
+	data->addFloat(spd.x,32);
+	data->addFloat(spd.y,32);
+	m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_OWNER, data);
 }
 
 void NetWorm::assignOwner( BasePlayer* owner)
@@ -86,14 +135,35 @@ NetWormInterceptor::NetWormInterceptor( NetWorm* parent )
 
 bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, const RepInfo &info)
 {
-	int recievedID = *static_cast<zU32*>(info.data_ptr_new);
-	vector<BasePlayer*>::iterator playerIter;
-	for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
+	bool returnValue;
+	switch ( (NetWorm::ReplicationItems) info.id )
 	{
-		if ( (*playerIter)->getNodeID() == recievedID )
+		case NetWorm::PlayerID:
 		{
-			m_parent->assignOwner(*playerIter);
-		}
+			int recievedID = *static_cast<zU32*>(info.data_ptr_new);
+			vector<BasePlayer*>::iterator playerIter;
+			for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
+			{
+				if ( (*playerIter)->getNodeID() == recievedID )
+				{
+					m_parent->assignOwner(*playerIter);
+				}
+			}
+			returnValue = true;
+		} break;
+		
+		// Compares the position sent by the player to the authority position, if its too different
+		// it will send a correct position message.
+		case NetWorm::Position:
+		{
+			float recievedPosition = *static_cast<zFloat*>(info.data_ptr_new);
+			float currentPosition = *static_cast<zFloat*>(info.data_ptr_org);
+			if ( abs( currentPosition - recievedPosition ) > NetWorm::MAX_ERROR_RADIUS )
+			{
+				m_parent->correctOwnerPosition();
+			}
+			returnValue = false;
+		}break;
 	}
-	return true;
+	return returnValue;
 }

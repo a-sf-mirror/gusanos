@@ -10,6 +10,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <zoidcom.h>
 
 class BasePlayer;
 class BaseWorm;
@@ -48,6 +49,8 @@ struct Options
 class Game
 {
 	public:
+		
+	static ZCom_ClassID  classID;
 
 	enum PLAYER_TYPE
 	{
@@ -101,12 +104,13 @@ class Game
 	Font *infoFont;
 	
 	private:
-		
+
 	std::string nextMod;
 	std::string m_modPath;
 	std::string m_modName;
 	std::string m_defaultPath;
 	bool loaded;
+	ZCom_Node *m_node;
 
 };
 

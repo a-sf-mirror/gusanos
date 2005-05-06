@@ -38,6 +38,8 @@
 
 using namespace std;
 
+ZCom_ClassID Game::classID = ZCom_Invalid_ID;
+
 Game game;
 
 string mapCmd(const list<string> &args)

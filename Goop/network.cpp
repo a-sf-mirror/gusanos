@@ -66,6 +66,7 @@ void Network::registerClasses() // Factorization of class registering in client 
 {
 	NetWorm::classID = m_control->ZCom_registerClass("worm");
 	BasePlayer::classID = m_control->ZCom_registerClass("player");
+	Game::classID = m_control->ZCom_registerClass("game");
 }
 
 void Network::host()
