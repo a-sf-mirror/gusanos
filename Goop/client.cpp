@@ -3,6 +3,7 @@
 #include "net_worm.h"
 #include "base_player.h"
 #include "game.h"
+#include "network.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -31,6 +32,7 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 	else
 	{
 		console.addLogMsg("* THE CONNECTION WAS ACCEPTED");
+		network.setServerID(_id);
 		ZCom_requestZoidMode(_id, 1);
 		game.setMod( _reply.getStringStatic() );
 		game.changeLevel( _reply.getStringStatic() );

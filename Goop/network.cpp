@@ -25,6 +25,7 @@ Network::~Network()
 {
 	m_host = false;
 	m_client = false;
+	m_serverID = ZCom_Invalid_ID;
 }
 
 void Network::init()
@@ -93,6 +94,12 @@ void Network::disconnect()
 	if ( m_control ) delete m_control;
 	m_client = false;
 	m_host = false;
+	m_serverID = ZCom_Invalid_ID;
+}
+
+void Network::setServerID(ZCom_ConnID serverID)
+{
+	m_serverID = serverID;
 }
 
 bool Network::isHost()
@@ -108,6 +115,16 @@ bool Network::isClient()
 ZCom_Control* Network::getZControl()
 {
 	return m_control;
+}
+
+int Network::getServerPing()
+{
+	if( m_client )
+	{
+		if ( m_serverID ) 
+			return m_control->ZCom_getConnectionStats(m_serverID).avg_ping;
+	}
+	return 0;
 }
 
 #endif

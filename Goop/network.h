@@ -25,10 +25,13 @@ class Network
 	void connect( const std::string &address);
 	void disconnect();
 	
+	void setServerID( ZCom_ConnID serverID );
+	
 	bool isHost();
 	bool isClient();
 	
 	ZCom_Control* getZControl();
+	int getServerPing();
 
 	private:
 
@@ -41,6 +44,7 @@ class Network
 	
 	ZoidCom* m_zcom;
 	ZCom_Control* m_control;
+	ZCom_ConnID m_serverID;
 };
 
 extern Network network;
