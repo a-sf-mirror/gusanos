@@ -90,7 +90,7 @@ void NetWorm::think()
 						pos.y = data->getFloat(32);
 						spd.x = data->getFloat(32);
 						spd.y = data->getFloat(32);
-						for ( int i = 0; i < network.getServerPing()/2; ++i)
+						for ( int i = 0; i < network.getServerPing()/20; ++i)
 						{
 							BaseWorm::think();
 						}
