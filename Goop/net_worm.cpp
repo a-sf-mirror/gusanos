@@ -31,9 +31,9 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		
 		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
 		
-		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY, 90, -1, 1000);
+		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, 90, -1, 1000);
 		
-		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY, 90, -1, 1000);
+		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, 90, -1, 1000);
 		
 		// Intercepted stuff
 		m_node->setInterceptID(static_cast<ZCom_InterceptID>(Position));
