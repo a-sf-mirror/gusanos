@@ -208,6 +208,11 @@ int NinjaRope::getColour()
 	return m_type->colour;
 }
 
+Vec& NinjaRope::getPosRefference()
+{
+	return pos;
+}
+
 void NinjaRope::draw(BITMAP* where,int xOff, int yOff)
 {
 	if (active)

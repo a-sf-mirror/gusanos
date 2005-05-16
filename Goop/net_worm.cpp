@@ -5,6 +5,7 @@
 #include "base_object.h"
 #include "base_player.h"
 #include "player_options.h"
+#include "ninjarope.h"
 #include "network.h"
 
 #include <math.h>
@@ -30,6 +31,10 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		
 		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
 		
+		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY, 90, -1, 1000);
+		
+		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY, 90, -1, 1000);
+		
 		// Intercepted stuff
 		m_node->setInterceptID(static_cast<ZCom_InterceptID>(Position));
 		
@@ -40,6 +45,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		m_node->setInterceptID( static_cast<ZCom_InterceptID>(PlayerID) );
 		
 		m_node->addReplicationInt( (zS32*)&m_playerID, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , INVALID_NODE_ID);
+		
 	m_node->endReplicationSetup();
 
 	m_interceptor = new NetWormInterceptor( this );
@@ -84,13 +90,13 @@ void NetWorm::think()
 				NetEvents event = (NetEvents)data->getInt(8);
 				switch ( event )
 				{
-					case PosCorrection: // ACTION TART LOL TBH
+					case PosCorrection:
 					{
 						pos.x = data->getFloat(32);
 						pos.y = data->getFloat(32);
 						spd.x = data->getFloat(32);
 						spd.y = data->getFloat(32);
-						for ( int i = 0; i < network.getServerPing()/20; ++i)
+						for ( int i = 0; i < network.getServerPing()/10; ++i)
 						{
 							BaseWorm::think();
 						}

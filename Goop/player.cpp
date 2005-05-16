@@ -125,12 +125,12 @@ void Player::actionStart ( Actions action )
 			{
 				if (changing)
 				{
-					m_worm->actionStart(Worm::NINJAROPE);
+					BasePlayer::baseActionStart(BasePlayer::NINJAROPE);
 				}
 				else
 				{
 					BasePlayer::baseActionStart(BasePlayer::JUMP);
-					m_worm -> actionStop(Worm::NINJAROPE);
+					BasePlayer::baseActionStop(BasePlayer::NINJAROPE);
 				}
 				
 				jumping = true;
@@ -162,7 +162,7 @@ void Player::actionStart ( Actions action )
 			{
 				if (jumping)
 				{
-					m_worm->actionStart(Worm::NINJAROPE);
+					BasePlayer::baseActionStart(BasePlayer::NINJAROPE);
 					jumping = false;
 				}
 				else

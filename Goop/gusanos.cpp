@@ -217,6 +217,7 @@ int main(int argc, char **argv)
 			{
 				game.infoFont->draw(gfx.buffer, "OBJECTS: " + cast<string>(game.objects.size()), 5, 10, 0);
 				game.infoFont->draw(gfx.buffer, "PLAYERS: " + cast<string>(game.players.size()), 5, 15, 0);
+				game.infoFont->draw(gfx.buffer, "PING:    " + cast<string>(network.getServerPing()), 5, 20, 0);
 			}
 		}
 		

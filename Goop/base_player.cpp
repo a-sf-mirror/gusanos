@@ -200,6 +200,22 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 		}
 		break;
+		
+		case NINJAROPE:
+		{
+			if ( m_worm )
+			{
+				m_worm->actionStart(Worm::NINJAROPE);
+			}
+			if ( m_node )
+			{
+				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				data->addInt(static_cast<int>(ACTION_START),8 );
+				data->addInt(static_cast<int>(NINJAROPE),8 );
+				m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
+			}
+		}
+		break;
 	}
 }
 
@@ -254,6 +270,21 @@ void BasePlayer::baseActionStop ( BaseActions action )
 			}
 		}
 		break;
+		
+		case NINJAROPE:
+		{
+			if ( m_worm )
+			{
+				m_worm->actionStop(Worm::NINJAROPE);
+			}
+			if ( m_node )
+			{
+				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				data->addInt(static_cast<int>(ACTION_STOP),8 );
+				data->addInt(static_cast<int>(NINJAROPE),8 );
+				m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
+			}
+		}
 	}
 }
 

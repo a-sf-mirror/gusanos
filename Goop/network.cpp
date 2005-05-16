@@ -124,7 +124,7 @@ int Network::getServerPing()
 		if ( m_serverID ) 
 			return m_control->ZCom_getConnectionStats(m_serverID).avg_ping;
 	}
-	return 0;
+	return -1;
 }
 
 #endif
