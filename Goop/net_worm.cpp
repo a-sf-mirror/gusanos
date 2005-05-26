@@ -26,22 +26,19 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	}
 	
 	m_node->beginReplicationSetup();
-		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY,99,0,(zFloat*)&pos.x,-1,-1,0);
-		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY,99,0,(zFloat*)&pos.y,-1,-1,0);
+// 		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,0,(zFloat*)&pos.x,-1,-1,0);
+// 		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,0,(zFloat*)&pos.y,-1,-1,0);
+		
+		m_node->addInterpolationFloat((zFloat*)&pos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,200,NULL,-1,-1,1);
+		m_node->addInterpolationFloat((zFloat*)&pos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,200,NULL,-1,-1,1);
 		
 		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
 		
-		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, 90, -1, 1000);
+		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
 		
-		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, 90, -1, 1000);
+		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, 90, -1, 1000);
 		
 		// Intercepted stuff
-		m_node->setInterceptID(static_cast<ZCom_InterceptID>(Position));
-		
-		m_node->addReplicationFloat ((zFloat*)&pos.x, 32, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_OWNER_2_AUTH, 0, -1, 1000);
-		
-		m_node->addReplicationFloat ((zFloat*)&pos.y, 32, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_OWNER_2_AUTH, 0, -1, 1000);
-		
 		m_node->setInterceptID( static_cast<ZCom_InterceptID>(PlayerID) );
 		
 		m_node->addReplicationInt( (zS32*)&m_playerID, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , INVALID_NODE_ID);
@@ -73,8 +70,8 @@ NetWorm::~NetWorm()
 void NetWorm::think()
 {
 	BaseWorm::think();
-	if ( !m_isAuthority ) renderPos += (pos - renderPos)*0.1;
-	else renderPos = pos;
+	/*if ( !m_isAuthority ) */renderPos += (pos - renderPos)*0.2;
+// 	else renderPos = pos;
 	
 	if ( m_node )
 	{
@@ -96,10 +93,6 @@ void NetWorm::think()
 						pos.y = data->getFloat(32);
 						spd.x = data->getFloat(32);
 						spd.y = data->getFloat(32);
-						for ( int i = 0; i < network.getServerPing()/10; ++i)
-						{
-							BaseWorm::think();
-						}
 					}
 					break;
 				}
@@ -161,19 +154,6 @@ bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZ
 			}
 			returnValue = true;
 		} break;
-		
-		// Compares the position sent by the player to the authority position, if its too different
-		// it will send a correct position message.
-		case NetWorm::Position:
-		{
-			float recievedPosition = *static_cast<zFloat*>(info.data_ptr_new);
-			float currentPosition = *static_cast<zFloat*>(info.data_ptr_org);
-			if ( abs( currentPosition - recievedPosition ) > NetWorm::MAX_ERROR_RADIUS )
-			{
-				m_parent->correctOwnerPosition();
-			}
-			returnValue = false;
-		}break;
 	}
 	return returnValue;
 }

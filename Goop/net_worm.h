@@ -16,12 +16,11 @@ class NetWorm : public BaseWorm
 		
 	enum NetEvents
 	{
-		PosCorrection	
+		PosCorrection
 	};
 		
 	enum ReplicationItems
 	{
-		Position,
 		PlayerID
 	};
 		
