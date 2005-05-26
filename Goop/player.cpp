@@ -114,7 +114,7 @@ void Player::actionStart ( Actions action )
 			if ( m_worm )
 			{
 				if(!changing)
-					m_worm -> actionStart(Worm::FIRE);
+					BasePlayer::baseActionStart(BasePlayer::FIRE);
 			}
 		}
 		break;
@@ -209,7 +209,7 @@ void Player::actionStop ( Actions action )
 		{
 			if ( m_worm )
 			{
-				m_worm -> actionStop(Worm::FIRE);
+				BasePlayer::baseActionStop(BasePlayer::FIRE);
 			}
 		}
 		break;
