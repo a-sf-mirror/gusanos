@@ -21,7 +21,8 @@ class NetWorm : public BaseWorm
 		
 	enum ReplicationItems
 	{
-		PlayerID
+		PlayerID,
+		AIM
 	};
 		
 	static ZCom_ClassID  classID;
