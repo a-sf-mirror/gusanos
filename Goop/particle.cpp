@@ -66,6 +66,18 @@ void Particle::think()
 					m_type->groundCollision->run(this);
 		}
 		
+		for ( vector< WormDetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
+		{
+			ObjectsList::ColLayerIterator worm;
+			for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
+			{
+				if ( (pos - (*worm)->getPos()).lengthSqr() < (*t)->m_range*(*t)->m_range )
+				{
+					(*t)->event->run(this);
+				}
+			}
+		}
+		
 		for ( vector< PartTimer >::iterator t = timer.begin(); t != timer.end(); t++)
 		{
 			(*t).count--;

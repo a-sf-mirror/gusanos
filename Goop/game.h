@@ -4,6 +4,7 @@
 #include "level.h"
 #include "base_object.h"
 #include "base_action.h"
+#include "objects_list.h"
 
 #include <allegro.h>
 #include <string>
@@ -20,6 +21,8 @@ class PartType;
 class Font;
 
 static const int MAX_LOCAL_PLAYERS = 2;
+static const int WORMS_COLLISION_LAYER = 0;
+static const int WORMS_RENDER_LAYER = 4;
 
 class Player;
 
@@ -43,6 +46,9 @@ struct Options
 	int worm_weaponHeight;
 	int worm_height;
 	int worm_maxClimb;
+	float worm_box_radius;
+	float worm_box_top;
+	float worm_box_bottom;
 	int host;
 };
 
@@ -83,7 +89,8 @@ class Game
 	
 	std::vector<Player*> localPlayers;
 	std::vector<BasePlayer*> players;
-	std::list<BaseObject*> objects;
+	
+	ObjectsList objects;
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
 	

@@ -726,7 +726,6 @@ void BaseWorm::actionStart( Actions action)
 			if(++currentWeapon >= m_weapons.size())
 				currentWeapon = 0;
 		break;
-		
 	}
 }
 

@@ -2,6 +2,7 @@
 #include "worm.h"
 #include "net_worm.h"
 #include "player_options.h"
+#include "objects_list.h"
 
 #include <zoidcom.h>
 #include <network.h>
@@ -135,8 +136,8 @@ BasePlayerInterceptor::BasePlayerInterceptor( BasePlayer* parent )
 bool BasePlayerInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, const RepInfo &info)
 {
 	int recievedID = *static_cast<zU32*>(info.data_ptr_new);
-	list<BaseObject*>::iterator objIter;
-	for ( objIter = game.objects.begin(); objIter != game.objects.end(); objIter++)
+	ObjectsList::Iterator objIter;
+	for ( objIter = game.objects.begin(); (bool)objIter; ++objIter)
 	{
 		if ( NetWorm* worm = dynamic_cast<NetWorm*>(*objIter) )
 		{

@@ -111,6 +111,9 @@ void Options::registerInConsole()
 		("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 4)
 		("SV_WORM_HEIGHT", &worm_height, 7)
 		("SV_WORM_MAX_CLIMB", &worm_maxClimb, 4)
+		("SV_WORM_BOX_RADIUS", &worm_box_radius, 2)
+		("SV_WORM_BOX_TOP", &worm_box_top, 3)
+		("SV_WORM_BOX_BOTTOM", &worm_box_bottom, 4)
 		
 		("HOST", &host, 0)
 	;
@@ -126,7 +129,7 @@ void Options::registerInConsole()
 Game::Game()
 {
 	NRPartType = NULL;
-	loaded = true;
+	loaded = false;
 }
 
 Game::~Game()
@@ -243,12 +246,11 @@ void Game::loadMod()
 void Game::unload()
 {
 	loaded = false;
-	
 	OmfgGUI::menu.clear();
 	
 	sfx.clear();
 	// Delete all objects
-	for ( list<BaseObject*>::iterator iter = objects.begin(); iter != objects.end(); ++iter)
+	for ( ObjectsList::Iterator iter = objects.begin(); (bool)iter; ++iter)
 	{
 		delete (*iter);
 	}
@@ -292,7 +294,6 @@ void Game::refreshResources()
 void Game::changeLevel(const std::string& levelName )
 {
 	unload();
-	
 	m_modName = nextMod;
 	m_modPath = nextMod + "/";
 	/*
@@ -398,8 +399,8 @@ BaseWorm* Game::addWorm(bool isAuthority)
 		Worm* worm = new Worm();
 		returnWorm = worm;
 	}
-	objects.push_back( returnWorm);
-	objects.push_back( (BaseObject*)returnWorm->getNinjaRopeObj() );
+	objects.insert(WORMS_COLLISION_LAYER,WORMS_RENDER_LAYER, returnWorm);
+	objects.insert( 1,1, (BaseObject*)returnWorm->getNinjaRopeObj() );
 	return returnWorm;
 }
 

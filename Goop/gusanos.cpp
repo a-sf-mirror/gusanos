@@ -156,8 +156,7 @@ int main(int argc, char **argv)
 		{
 			if ( game.isLoaded() && game.level.isLoaded() )
 			{
-				
-				for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); iter++)
+				for ( ObjectsList::Iterator iter = game.objects.begin(); (bool)iter; ++iter)
 				{
 					(*iter)->think();
 				}
@@ -167,17 +166,16 @@ int main(int argc, char **argv)
 					(*iter)->think();
 				}
 				
-				for ( list<BaseObject*>::iterator iter = game.objects.begin(); iter != game.objects.end(); )
+				for ( ObjectsList::Iterator iter = game.objects.begin();  (bool)iter; )
 				{
 					if ( (*iter)->deleteMe )
 					{
-						list<BaseObject*>::iterator tmp = iter;
-						iter++;
+						ObjectsList::Iterator tmp = iter;
+						++iter;
 						delete *tmp;
 						game.objects.erase(tmp);
-					}else	iter++;
+					}else	++iter;
 				}
-				
 			}
 			sfx.think();
 #ifndef DISABLE_ZOIDCOM

@@ -26,11 +26,8 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	}
 	
 	m_node->beginReplicationSetup();
-// 		m_node->addInterpolationFloat((zFloat*)&renderPos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,0,(zFloat*)&pos.x,-1,-1,0);
-// 		m_node->addInterpolationFloat((zFloat*)&renderPos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,0,(zFloat*)&pos.y,-1,-1,0);
-		
-		m_node->addInterpolationFloat((zFloat*)&pos.x,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,200,NULL,-1,-1,1);
-		m_node->addInterpolationFloat((zFloat*)&pos.y,32,ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH,99,200,NULL,-1,-1,1);
+		m_node->addReplicationFloat ((zFloat*)&pos.x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
+		m_node->addReplicationFloat ((zFloat*)&pos.y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
 		
 		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
 		
@@ -138,7 +135,7 @@ NetWormInterceptor::NetWormInterceptor( NetWorm* parent )
 
 bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, const RepInfo &info)
 {
-	bool returnValue;
+	bool returnValue = false;
 	switch ( (NetWorm::ReplicationItems) info.id )
 	{
 		case NetWorm::PlayerID:

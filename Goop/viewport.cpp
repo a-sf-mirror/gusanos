@@ -35,10 +35,13 @@ void Viewport::render()
 {
 	game.level.draw(m_dest,(int)m_pos.x,(int)m_pos.y);
 	
-	list<BaseObject*>::iterator iter;
-	for ( iter = game.objects.begin(); iter != game.objects.end(); iter++)
+	for ( int i = 0; i < RENDER_LAYERS_AMMOUNT ; ++i)
 	{
-		(*iter)->draw(m_dest, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y) );
+		ObjectsList::RenderLayerIterator iter;
+		for ( iter = game.objects.renderLayerBegin(i); (bool)iter; ++iter)
+		{
+			(*iter)->draw(m_dest, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y) );
+		}
 	}
 }
 

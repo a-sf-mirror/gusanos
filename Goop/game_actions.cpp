@@ -89,7 +89,7 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, Worm *worm, W
 			{
 				spd = angleVec( object->getAngle() + angleOffset + midrnd()*distribution, speed + midrnd()*speedVariation );
 				spd += object->getSpd() * motionInheritance;
-				game.objects.push_back( new Particle( type, object->getPos(), spd ));
+				game.objects.insert(1,1, new Particle( type, object->getPos(), spd ));
 			}
 		}else
 		{
@@ -99,7 +99,7 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, Worm *worm, W
 			{
 				spd = angleVec( object->getAngle() + angleOffset * dir + midrnd()*distribution, speed + midrnd()*speedVariation );
 				spd += object->getSpd() * motionInheritance;
-				game.objects.push_back( new Particle( type, object->getPos(), spd ));
+				game.objects.insert(1,1,new Particle( type, object->getPos(), spd ));
 			}
 		}
 	}

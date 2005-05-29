@@ -28,6 +28,17 @@ TimerEvent::~TimerEvent()
 	delete event;
 }
 
+WormDetectEvent::WormDetectEvent( float range )
+{
+	m_range = range;
+	event = new Event;
+}
+
+WormDetectEvent::~WormDetectEvent()
+{
+	delete event;
+}
+
 PartType::PartType()
 {
 	gravity = 0;
@@ -61,6 +72,10 @@ PartType::~PartType()
 	if (creation) delete creation;
 	if (distortion) delete distortion;
 	for ( vector<TimerEvent*>::iterator i = timer.begin(); i != timer.end(); i++)
+	{
+		delete *i;
+	}
+	for ( vector<WormDetectEvent*>::iterator i = detectRanges.begin(); i != detectRanges.end(); i++)
 	{
 		delete *i;
 	}
@@ -184,6 +199,17 @@ bool PartType::load(const string &filename)
 						}
 						timer.push_back(new TimerEvent(delay, delayVariation));
 						currEvent = timer.back()->event;
+					}
+					else if ( eventName == "detect_range" )
+					{
+						float range = 0;
+						iter++;
+						if( iter != tokens.end())
+						{
+							range = cast<float>(*iter);
+						}
+						detectRanges.push_back( new WormDetectEvent(range));
+						currEvent = detectRanges.back()->event;
 					}
 					else
 					{

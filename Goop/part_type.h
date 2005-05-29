@@ -21,6 +21,14 @@ struct TimerEvent
 	int delayVariation;
 };
 
+struct WormDetectEvent
+{
+	WormDetectEvent( float range );
+	~WormDetectEvent();
+	Event* event;
+	float m_range;
+};
+
 class PartType
 {
 	public:
@@ -53,6 +61,7 @@ class PartType
 	int animType;
 	
 	std::vector< TimerEvent* > timer;
+	std::vector< WormDetectEvent* > detectRanges;
 	Event *groundCollision;
 	Event *creation;
 	
