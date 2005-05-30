@@ -91,13 +91,13 @@ void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 		{
 			origin += BaseVec<long>(1, -3);
 			step = BaseVec<long>(0, 1);
-			len = 7;
+			len = 8;
 		}
 		break;
 		
 		case Up:
 		{
-			origin += BaseVec<long>(-1, 4);
+			origin += BaseVec<long>(-1, 5);
 			step = BaseVec<long>(1, 0);
 			len = 3;
 		}
@@ -107,7 +107,7 @@ void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 		{
 			origin += BaseVec<long>(-1, -3);
 			step = BaseVec<long>(0, 1);
-			len = 7;
+			len = 8;
 		}
 		break;
 		
@@ -605,12 +605,12 @@ Vec BaseWorm::getPos()
 
 Vec BaseWorm::getWeaponPos()
 {
-	return pos - Vec(0.f, 1.f);
+	return pos;
 }
 
 Vec BaseWorm::getRenderPos()
 {
-	return renderPos - Vec(0,game.options.worm_weaponHeight+0.5);
+	return renderPos - Vec(0,0.5);
 }
 /*
 Vec BaseWorm::getWeaponPos()
@@ -628,6 +628,44 @@ char BaseWorm::getDir()
 	return dir;
 }
 
+bool BaseWorm::isCollidingWith( const Vec& point, float radius )
+{
+	if( pos.x+game.options.worm_boxRadius > point.x-radius && pos.x-game.options.worm_boxRadius < point.x+radius )
+	if( pos.y+game.options.worm_boxBottom > point.y-radius && pos.y-game.options.worm_boxTop < point.y+radius )
+	{
+		if ( point.x > pos.x+game.options.worm_boxRadius )
+		{
+			if ( point.y > pos.y+game.options.worm_boxBottom)
+			{
+				if ( (pos + Vec(game.options.worm_boxRadius,game.options.worm_boxBottom) - point).lengthSqr() < radius*radius )
+					return true;
+			}else if (point.y < pos.y-game.options.worm_boxTop)
+			{
+				if ( (pos + Vec(game.options.worm_boxRadius,-game.options.worm_boxTop) - point).lengthSqr() < radius*radius )
+					return true;
+			}else
+				return true;
+		}else if ( point.x < pos.x-game.options.worm_boxRadius )
+		{
+			if ( point.y > pos.y+game.options.worm_boxBottom)
+			{
+				if ( (pos + Vec(-game.options.worm_boxRadius,game.options.worm_boxBottom) - point).lengthSqr() < radius*radius )
+					return true;
+			}else if (point.y < pos.y-game.options.worm_boxTop)
+			{
+				if ( (pos + Vec(-game.options.worm_boxRadius,-game.options.worm_boxTop) - point).lengthSqr() < radius*radius )	
+					return true;
+			}else
+				return true;
+		}else
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 //#define DEBUG_WORM_REACTS
 
 void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
@@ -640,9 +678,9 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 		int y = (int)renderPos.y - yOff;
 		
 		int renderX = x;
-		int renderY = y - 1;
+		int renderY = y;
 		
-		for(int i = 0; i< 10; i++)
+		for(int i = 0; i < 10; i++)
 		{
 			Vec crosshair = angleVec(aimAngle*dir, rnd()*10+30) + renderPos - Vec(xOff, yOff);
 			putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));

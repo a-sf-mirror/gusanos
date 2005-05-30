@@ -63,6 +63,7 @@ public:
 	Vec getRenderPos();
 	float getAngle();
 	char getDir();
+	bool isCollidingWith( const Vec& point, float radius );
 	
 	NinjaRope* getNinjaRopeObj();
 	
@@ -79,7 +80,7 @@ protected:
 	int dir;
 	int reacts[DirMax];
 	bool animate;
-	bool movable; // What do we need this for?
+	bool movable; // What do we need this for? // Dunno, did I put this here? :o
 	bool changing;
 	float aimAngle;
 	float aimRecoilSpeed;

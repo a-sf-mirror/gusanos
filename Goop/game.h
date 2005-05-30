@@ -46,9 +46,9 @@ struct Options
 	int worm_weaponHeight;
 	int worm_height;
 	int worm_maxClimb;
-	float worm_box_radius;
-	float worm_box_top;
-	float worm_box_bottom;
+	float worm_boxRadius;
+	float worm_boxTop;
+	float worm_boxBottom;
 	int host;
 };
 

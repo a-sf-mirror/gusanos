@@ -34,3 +34,8 @@ void BaseObject::remove()
 {
 	deleteMe = true;
 }
+
+bool BaseObject::isCollidingWith( const Vec& point, float radius )
+{
+	return (pos - point).lengthSqr() < radius*radius;
+}

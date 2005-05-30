@@ -71,7 +71,7 @@ void Particle::think()
 			ObjectsList::ColLayerIterator worm;
 			for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
 			{
-				if ( (pos - (*worm)->getPos()).lengthSqr() < (*t)->m_range*(*t)->m_range )
+				if ( (*worm)->isCollidingWith(pos, (*t)->m_range) )
 				{
 					(*t)->event->run(this);
 				}

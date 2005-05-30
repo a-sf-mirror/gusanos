@@ -111,9 +111,9 @@ void Options::registerInConsole()
 		("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 4)
 		("SV_WORM_HEIGHT", &worm_height, 7)
 		("SV_WORM_MAX_CLIMB", &worm_maxClimb, 4)
-		("SV_WORM_BOX_RADIUS", &worm_box_radius, 2)
-		("SV_WORM_BOX_TOP", &worm_box_top, 3)
-		("SV_WORM_BOX_BOTTOM", &worm_box_bottom, 4)
+ 		("SV_WORM_BOX_RADIUS", &worm_boxRadius, 2)
+		("SV_WORM_BOX_TOP", &worm_boxTop, 3)
+		("SV_WORM_BOX_BOTTOM", &worm_boxBottom, 4)
 		
 		("HOST", &host, 0)
 	;
