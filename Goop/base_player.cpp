@@ -5,7 +5,7 @@
 #include "objects_list.h"
 
 #include <zoidcom.h>
-#include <network.h>
+#include "network.h"
 #include <allegro.h>
 #include <list>
 

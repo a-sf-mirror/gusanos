@@ -102,15 +102,11 @@ void PlayerAI::subThink()
 	
 	//aim
 	if (curAngle - cAimAccuracy > rad2deg(targetAngle))
-		m_worm->actionStart(Worm::AIMUP);
-	else
-		m_worm->actionStop(Worm::AIMUP);
+                m_worm->aimSpeed = -0.18;
 	
 	if (curAngle + cAimAccuracy < rad2deg(targetAngle))
-		m_worm->actionStart(Worm::AIMDOWN);
-	else
-		m_worm->actionStop(Worm::AIMDOWN);
-	
+                m_worm->aimSpeed = 0.18;
+
 	//shooting
 	if (curAngle - cAimAccuracy < rad2deg(targetAngle) && curAngle + cAimAccuracy > rad2deg(targetAngle))
 	{
@@ -118,5 +114,19 @@ void PlayerAI::subThink()
 		baseActionStart(FIRE);
 	} else
 		baseActionStop(FIRE);
+
+
+        // TODO: Make decent behaviour
+        //jump
+        if (rand() % 32 == 0)
+            m_worm->actionStart(Worm::JUMP);
+
+        //rope
+        if (rand() % 128 == 0)
+            m_worm->actionStart(Worm::NINJAROPE);
+        else if (rand() % 96 == 0)
+            m_worm->actionStop(Worm::NINJAROPE);
+
+	
 }
 

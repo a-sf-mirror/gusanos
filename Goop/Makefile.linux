@@ -1,7 +1,7 @@
 CC= g++
-CFLAGS= -O3 -I ../loadpng -I ../Console  -I ../GUI
+CFLAGS= -O3 -I ../loadpng -I ../Console  -I ../GUI -I/usr/include/fmod -I/usr/include/boost-1_32/
 LIBS= -L../Console -L../GUI/detail -lpng -lz `allegro-config --libs` -lzoidcom -lgcon -lfmod \
-      -lboost_filesystem -lboost_signals -lomfggui
+      -lboost_filesystem-gcc -lboost_signals-gcc -lomfggui --export-dynamic
 DEFINES= 
 BIN= ../gusanos.exe
 OBJECTS= \
@@ -52,6 +52,8 @@ OBJECTS= \
 	loaders/liero.o \
 	loaders/lierox.o \
 	loaders/losp.o \
+	proxy_player.o \
+	objects_list.o \
 	../loadpng/loadpng.o ../loadpng/regpng.o ../loadpng/savepng.o
 	
 
