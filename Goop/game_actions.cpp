@@ -23,6 +23,7 @@ void registerGameActions()
 	game.actionList["play_sound_static"] = playSoundStatic;
 	game.actionList["delay_fire"] = delayFire;
 	game.actionList["add_angle_speed"] = addAngleSpeed;
+	game.actionList["push"] = push;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -44,6 +45,7 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	motionInheritance = 0;
 	distribution = 360;
 	angleOffset = 0;
+	distanceOffset = 0;
 	if ( params.size() >= 1 )
 	{
 		type = partTypeList.load(params[0]);
@@ -70,42 +72,78 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	}
 	if( params.size() >= 7 )
 	{
-		distribution = cast<int>(params[6]);
+		distribution = cast<float>(params[6]);
 	}
 	if( params.size() >= 8 )
 	{
-		angleOffset = cast<int>(params[7]);
+		angleOffset = cast<float>(params[7]);
+	}
+	if( params.size() >= 9 )
+	{
+		distanceOffset = cast<float>(params[8]);
 	}
 }
 
-void ShootParticles::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon )
+void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
 {
 	if (type != NULL)
 	{
 		if(!weapon)
 		{
 			Vec spd;
+			float tmpAngle;
 			for ( int i = 0; i < amount; i++)
 			{
-				spd = angleVec( object->getAngle() + angleOffset + midrnd()*distribution, speed + midrnd()*speedVariation );
+				tmpAngle = object->getAngle() + angleOffset + midrnd()*distribution;
+				spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
 				spd += object->getSpd() * motionInheritance;
-				game.objects.insert(1,1, new Particle( type, object->getPos(), spd ));
+				game.objects.insert(1,1, new Particle( type, object->getPos() + angleVec(tmpAngle,distanceOffset), spd ));
 			}
 		}else
 		{
 			Vec spd;
+			float tmpAngle;
 			char dir = weapon->getOwner()->getDir();
 			for ( int i = 0; i < amount; i++)
 			{
-				spd = angleVec( object->getAngle() + angleOffset * dir + midrnd()*distribution, speed + midrnd()*speedVariation );
+				tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
+				spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
 				spd += object->getSpd() * motionInheritance;
-				game.objects.insert(1,1,new Particle( type, object->getPos(), spd ));
+				game.objects.insert(1,1,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd ));
 			}
 		}
 	}
 }
 
 ShootParticles::~ShootParticles()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* push( const vector< string >& params )
+{
+	return new Push(params);
+}
+
+Push::Push( const vector< string >& params )
+{
+	factor = 0;
+
+	if ( params.size() >= 1 )
+	{
+		factor = cast<float>(params[0]);
+	}
+}
+
+void Push::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+{
+	object2->spd += object->spd*factor;
+}
+
+Push::~Push()
 {
 }
 
@@ -122,7 +160,7 @@ Remove::Remove( const vector< string >& params )
 {
 }
 
-void Remove::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon  )
+void Remove::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
 {
 	object->remove();
 }
@@ -165,7 +203,7 @@ PlaySound::PlaySound( const vector< string >& params )
 	}
 }
 
-void PlaySound::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon  )
+void PlaySound::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
 {
 	if (sound != NULL)
 	{
@@ -211,7 +249,7 @@ PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
 	}
 }
 
-void PlaySoundStatic::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon  )
+void PlaySoundStatic::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
 {
 	if (sound != NULL)
 	{
@@ -246,7 +284,7 @@ DelayFire::DelayFire( const vector< string >& params )
 	}
 }
 
-void DelayFire::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon )
+void DelayFire::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
 {
 	if(weapon)
 	{
@@ -281,7 +319,7 @@ AddAngleSpeed::AddAngleSpeed( const vector< string >& params )
 	}
 }
 
-void AddAngleSpeed::run( BaseObject* object, BaseObject *object2, Worm *worm, Weapon *weapon )
+void AddAngleSpeed::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
 {
 	if (object)
 	{

@@ -3,6 +3,7 @@
 #include "vec.h"
 #include "game.h"
 #include "base_object.h"
+#include "base_worm.h"
 #include "part_type.h"
 #include "sprite.h"
 #include "base_animator.h"
@@ -73,7 +74,7 @@ void Particle::think()
 			{
 				if ( (*worm)->isCollidingWith(pos, (*t)->m_range) )
 				{
-					(*t)->event->run(this);
+					(*t)->event->run( this,(*worm), dynamic_cast<BaseWorm*>( (*worm) ));
 				}
 			}
 		}

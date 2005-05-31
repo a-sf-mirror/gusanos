@@ -20,7 +20,7 @@ class ShootParticles : public BaseAction
 	ShootParticles( const std::vector< std::string >& params );
 	~ShootParticles();
 
-	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
 
 	private:
 
@@ -34,6 +34,22 @@ class ShootParticles : public BaseAction
 	float speedVariation;
 	float distribution;
 	float angleOffset;
+	float distanceOffset;
+};
+
+BaseAction* push( const std::vector< std::string >& params );
+
+class Push : public BaseAction
+{
+	public:
+
+		Push( const std::vector< std::string >& params );
+		~Push();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+		float factor;
 };
 
 BaseAction* remove( const std::vector< std::string >& params );
@@ -45,7 +61,7 @@ class Remove : public BaseAction
 	Remove( const std::vector< std::string >& params );
 	~Remove();
 
-	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
 
 	private:
 	
@@ -60,7 +76,7 @@ class PlaySound : public BaseAction
 	PlaySound( const std::vector< std::string >& params );
 	~PlaySound();
 
-	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
 
 	private:
 		
@@ -80,7 +96,7 @@ class PlaySoundStatic : public BaseAction
 	PlaySoundStatic( const std::vector< std::string >& params );
 	~PlaySoundStatic();
 
-	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
 
 	private:
 		
@@ -100,7 +116,7 @@ class DelayFire : public BaseAction
 	DelayFire( const std::vector< std::string >& params );
 	~DelayFire();
 
-	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
 
 	private:
 	
@@ -117,7 +133,7 @@ class AddAngleSpeed : public BaseAction
 	AddAngleSpeed( const std::vector< std::string >& params );
 	~AddAngleSpeed();
 
-	void run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon );
+	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
 
 	private:
 	

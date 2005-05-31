@@ -1,5 +1,6 @@
 #include "events.h"
 
+#include "base_worm.h"
 #include "base_object.h"
 //#include "game_actions.h"
 #include "game.h"
@@ -32,7 +33,7 @@ void Event::addAction( const string& name, const vector<string>& params )
 	}
 }
 
-void Event::run( BaseObject *object, BaseObject *object2, Worm *worm, Weapon *weapon )
+void Event::run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
 {
 	for ( vector<BaseAction*>::iterator action = actions.begin(); action != actions.end(); action++)
 	{

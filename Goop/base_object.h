@@ -28,8 +28,6 @@ class BaseObject
 	
 	bool deleteMe;
 	
-	protected:
-		
 	Vec pos;
 	Vec spd;
 };
