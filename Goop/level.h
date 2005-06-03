@@ -3,6 +3,7 @@
 
 #include "material.h"
 #include "resource_locator.h"
+#include "vec.h"
 
 #include <allegro.h>
 #include <string>
@@ -26,6 +27,8 @@ class Level
 	const std::string &getPath();
 	const std::string &getName();
 	void setName(const std::string &_name);
+	
+	Vec getSpawnLocation();
 	
 	const Material& getMaterial(int x, int y);
 	/*inline const Material& getMaterial(int x, int y);

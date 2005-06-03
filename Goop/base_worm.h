@@ -27,6 +27,7 @@ public:
 		CHANGEWEAPON,
 		CHANGELEFT,
 		CHANGERIGHT,
+		RESPAWN
 	};
 	
 	enum Direction
@@ -61,9 +62,16 @@ public:
 	Vec getPos();
 	Vec getWeaponPos();
 	Vec getRenderPos();
+	
+	void damage( float amount );
+	virtual void respawn();
+	void respawn(const Vec& newPos);
+	virtual void die();
+	
 	float getAngle();
 	char getDir();
 	bool isCollidingWith( const Vec& point, float radius );
+	bool isActive();
 	
 	NinjaRope* getNinjaRopeObj();
 	
@@ -72,6 +80,8 @@ public:
 protected:
 
 	Vec renderPos;
+	
+	bool m_isActive;
 	
 	bool movingLeft;
 	bool movingRight;
@@ -84,6 +94,7 @@ protected:
 	bool changing;
 	float aimAngle;
 	float aimRecoilSpeed;
+	float health;
 	//float currentRopeLength; //moved to Ninjarope
 	
 	size_t currentWeapon;

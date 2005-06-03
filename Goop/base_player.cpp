@@ -233,6 +233,25 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 		}
 		break;
+		
+		case RESPAWN:
+		{
+			if ( m_worm )
+			{
+				m_worm->respawn();
+			}
+			if ( m_node )
+			{
+				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				data->addInt(static_cast<int>(ACTION_START),8 );
+				data->addInt(static_cast<int>(RESPAWN),8 );
+				m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
+				// I am sending the event to both the auth and the proxies, but I 
+				//cant really think of any use for the proxies knowing this, maybe 
+				//I should change it to only send to auth? :o
+			}
+		}
+		break;
 	}
 }
 

@@ -24,6 +24,7 @@ void registerGameActions()
 	game.actionList["delay_fire"] = delayFire;
 	game.actionList["add_angle_speed"] = addAngleSpeed;
 	game.actionList["push"] = push;
+	game.actionList["damage"] = damage;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +145,34 @@ void Push::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon 
 }
 
 Push::~Push()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* damage( const vector< string >& params )
+{
+	return new Damage(params);
+}
+
+Damage::Damage( const vector< string >& params )
+{
+	m_damage = 0;
+
+	if ( params.size() >= 1 )
+	{
+		m_damage = cast<float>(params[0]);
+	}
+}
+
+void Damage::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+{
+	worm->damage( m_damage );
+}
+
+Damage::~Damage()
 {
 }
 

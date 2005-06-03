@@ -92,6 +92,16 @@ void NetWorm::think()
 						spd.y = data->getFloat(32);
 					}
 					break;
+					case Respawn:
+					{
+						BaseWorm::respawn(Vec (data->getFloat(32), data->getFloat(32) ) );
+					}
+					break;
+					case Die:
+					{
+						BaseWorm::die();
+					}
+					break;
 				}
 			}
 		}
@@ -126,6 +136,30 @@ ZCom_NodeID NetWorm::getNodeID()
 		return m_node->getNetworkID();
 	else
 		return INVALID_NODE_ID;
+}
+
+void NetWorm::respawn()
+{
+	if ( m_isAuthority && m_node )
+	{
+		BaseWorm::respawn();
+		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+		data->addInt( static_cast<int>( Respawn ),8 );
+		data->addFloat(pos.x,32);
+		data->addFloat(pos.y,32);
+		m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+	}
+}
+
+void NetWorm::die()
+{
+	if ( m_isAuthority && m_node )
+	{
+		BaseWorm::die();
+		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+		data->addInt( static_cast<int>( Die ),8 );
+		m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+	}
 }
 
 NetWormInterceptor::NetWormInterceptor( NetWorm* parent )

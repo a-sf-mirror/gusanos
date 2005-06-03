@@ -52,6 +52,21 @@ class Push : public BaseAction
 		float factor;
 };
 
+BaseAction* damage( const std::vector< std::string >& params );
+
+class Damage : public BaseAction
+{
+	public:
+
+		Damage( const std::vector< std::string >& params );
+		~Damage();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+		float m_damage;
+};
+
 BaseAction* remove( const std::vector< std::string >& params );
 
 class Remove : public BaseAction

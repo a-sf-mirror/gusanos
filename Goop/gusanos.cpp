@@ -165,19 +165,21 @@ int main(int argc, char **argv)
 				{
 					(*iter)->think();
 				}
-				
-				for ( ObjectsList::Iterator iter = game.objects.begin();  (bool)iter; )
-				{
-					if ( (*iter)->deleteMe )
-					{
-						ObjectsList::Iterator tmp = iter;
-						++iter;
-						delete *tmp;
-						game.objects.erase(tmp);
-					}else	++iter;
-				}
 			}
-			sfx.think();
+			
+			sfx.think(); // WARNING: THIS ¡MUST! BE PLACED BEFORE THE OBJECT DELETE LOOP
+				
+			for ( ObjectsList::Iterator iter = game.objects.begin();  (bool)iter; )
+			{
+				if ( (*iter)->deleteMe )
+				{
+					ObjectsList::Iterator tmp = iter;
+					++iter;
+					delete *tmp;
+					game.objects.erase(tmp);
+				}else	++iter;
+			}
+			
 #ifndef DISABLE_ZOIDCOM
 			network.update();
 #endif

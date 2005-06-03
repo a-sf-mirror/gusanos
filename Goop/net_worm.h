@@ -16,7 +16,9 @@ class NetWorm : public BaseWorm
 		
 	enum NetEvents
 	{
-		PosCorrection
+		PosCorrection,
+		Respawn,
+		Die
 	};
 		
 	enum ReplicationItems
@@ -37,6 +39,9 @@ class NetWorm : public BaseWorm
 	void assignOwner( BasePlayer* owner);
 	void setOwnerId( ZCom_ConnID _id );
 	ZCom_NodeID getNodeID();
+	
+	void respawn();
+	void die();
 	
 	private:
 

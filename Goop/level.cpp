@@ -150,6 +150,16 @@ void Level::draw(BITMAP* where, int x, int y)
 	}
 }
 
+Vec Level::getSpawnLocation()
+{
+	Vec pos = Vec(rnd() * material->w, rnd()*material->h);
+	while ( !getMaterial( pos.x, pos.y ).worm_pass )
+	{
+		pos = Vec(rnd() * material->w, rnd()*material->h);
+	}
+	return pos;
+}
+
 const Material& Level::getMaterial(int x, int y)
 {
 	return m_materialList[getpixel(material,x,y)+1];

@@ -50,7 +50,7 @@ struct Options
 	float worm_boxTop;
 	float worm_boxBottom;
 	int host;
-};
+}; 
 
 class Game
 {

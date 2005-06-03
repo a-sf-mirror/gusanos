@@ -123,17 +123,23 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
-				if (changing)
+				if ( m_worm->isActive() )
 				{
-					BasePlayer::baseActionStart(BasePlayer::NINJAROPE);
-				}
-				else
+					if (changing)
+					{
+						BasePlayer::baseActionStart(BasePlayer::NINJAROPE);
+					}
+					else
+					{
+						BasePlayer::baseActionStart(BasePlayer::JUMP);
+						BasePlayer::baseActionStop(BasePlayer::NINJAROPE);
+					}
+					
+					jumping = true;
+				}else
 				{
-					BasePlayer::baseActionStart(BasePlayer::JUMP);
-					BasePlayer::baseActionStop(BasePlayer::NINJAROPE);
+					BasePlayer::baseActionStart(BasePlayer::RESPAWN);
 				}
-				
-				jumping = true;
 			}
 		}
 		break;

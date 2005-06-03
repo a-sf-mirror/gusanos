@@ -25,13 +25,10 @@ BaseWorm::BaseWorm()
 	skin = spriteList.load("skin.png");
 	m_animator = new AnimLoopRight(skin,35);
 	
-	do
-	{
-		pos.x = rnd()*game.level.width();
-		pos.y = rnd()*game.level.height();
-	} while ( !game.level.getMaterial((int) pos.x,(int) pos.y).particle_pass );
+	m_isActive = false;
 	
 	dir = 1;
+	health = 0;
 	aimAngle = 90;
 	aimSpeed = 0;
 	aimRecoilSpeed = 0;	
@@ -416,9 +413,9 @@ void BaseWorm::processMoveAndDig(void)
 
 void BaseWorm::think()
 {
-	/* TODO
-	if(visible)
-	{*/
+	if(m_isActive)
+	{
+		if ( health <= 0 ) die();
 	
 		BaseVec<float> next = pos + spd;
 		
@@ -457,7 +454,7 @@ void BaseWorm::think()
 			m_animator->reset();
 		// TODO: Ninjarope
 		// TODO: Viewport
-	
+	}
 	/* TODO
 	}
 	else
@@ -630,8 +627,9 @@ char BaseWorm::getDir()
 
 bool BaseWorm::isCollidingWith( const Vec& point, float radius )
 {
-	if( pos.x+game.options.worm_boxRadius > point.x-radius && pos.x-game.options.worm_boxRadius < point.x+radius )
-	if( pos.y+game.options.worm_boxBottom > point.y-radius && pos.y-game.options.worm_boxTop < point.y+radius )
+	if ( m_isActive )
+	if ( pos.x+game.options.worm_boxRadius > point.x-radius && pos.x-game.options.worm_boxRadius < point.x+radius )
+	if ( pos.y+game.options.worm_boxBottom > point.y-radius && pos.y-game.options.worm_boxTop < point.y+radius )
 	{
 		if ( point.x > pos.x+game.options.worm_boxRadius )
 		{
@@ -665,53 +663,91 @@ bool BaseWorm::isCollidingWith( const Vec& point, float radius )
 	return false;
 }
 
+bool BaseWorm::isActive()
+{
+	return m_isActive;
+}
 
 //#define DEBUG_WORM_REACTS
 
 void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 {
-	bool flipped = false;
-	if ( dir < 0 ) flipped = true;
-
+	if (m_isActive)
 	{
-		int x = (int)renderPos.x - xOff;
-		int y = (int)renderPos.y - yOff;
-		
-		int renderX = x;
-		int renderY = y;
-		
-		for(int i = 0; i < 10; i++)
-		{
-			Vec crosshair = angleVec(aimAngle*dir, rnd()*10+30) + renderPos - Vec(xOff, yOff);
-			putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
-		}
-		
-		skin->drawAngled(where, m_animator->getFrame(), renderX, renderY, aimAngle, flipped);
-		
-		if (m_ninjaRope->active)
-			line(where, x, y, static_cast<int>(m_ninjaRope->getPos().x) - xOff, static_cast<int>(m_ninjaRope->getPos().y) - yOff, m_ninjaRope->getColour());
-			
-		if(changing)
-		{
-			std::string const& weaponName = m_weapons[currentWeapon]->m_type->name;
-			std::pair<int, int> dim = game.infoFont->getDimensions(weaponName);
-			int wx = x - dim.first / 2;
-			int wy = y - dim.second / 2 - 10;
-						
-			game.infoFont->draw(where, weaponName, wx, wy, 0);
-		}
-	}
+		bool flipped = false;
+		if ( dir < 0 ) flipped = true;
 	
+		{
+			int x = (int)renderPos.x - xOff;
+			int y = (int)renderPos.y - yOff;
+			
+			int renderX = x;
+			int renderY = y;
+			
+			for(int i = 0; i < 10; i++)
+			{
+				Vec crosshair = angleVec(aimAngle*dir, rnd()*10+30) + renderPos - Vec(xOff, yOff);
+				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
+			}
+			
+			skin->drawAngled(where, m_animator->getFrame(), renderX, renderY, aimAngle, flipped);
+			
+			if (m_ninjaRope->active)
+				line(where, x, y, static_cast<int>(m_ninjaRope->getPos().x) - xOff, static_cast<int>(m_ninjaRope->getPos().y) - yOff, m_ninjaRope->getColour());
+				
+			if(changing)
+			{
+				std::string const& weaponName = m_weapons[currentWeapon]->m_type->name;
+				std::pair<int, int> dim = game.infoFont->getDimensions(weaponName);
+				int wx = x - dim.first / 2;
+				int wy = y - dim.second / 2 - 10;
+							
+				game.infoFont->draw(where, weaponName, wx, wy, 0);
+			}
+		}
+		
 #ifdef DEBUG_WORM_REACTS
-	{
-		int x = (int)renderPos.x - xOff;
-		int y = (int)renderPos.y - yOff;
-		game.infoFont->draw(where, lexical_cast<std::string>(reacts[Up]), x, y + 15, 0);
-		game.infoFont->draw(where, lexical_cast<std::string>(reacts[Down]), x, y - 15, 0);
-		game.infoFont->draw(where, lexical_cast<std::string>(reacts[Left]), x + 15, y, 0);
-		game.infoFont->draw(where, lexical_cast<std::string>(reacts[Right]), x - 15, y, 0);
-	}
+		{
+			int x = (int)renderPos.x - xOff;
+			int y = (int)renderPos.y - yOff;
+			game.infoFont->draw(where, lexical_cast<std::string>(reacts[Up]), x, y + 15, 0);
+			game.infoFont->draw(where, lexical_cast<std::string>(reacts[Down]), x, y - 15, 0);
+			game.infoFont->draw(where, lexical_cast<std::string>(reacts[Left]), x + 15, y, 0);
+			game.infoFont->draw(where, lexical_cast<std::string>(reacts[Right]), x - 15, y, 0);
+		}
 #endif
+	}
+}
+
+void BaseWorm::respawn()
+{
+	m_isActive = true;
+	health = 100;
+	spd = Vec ( 0, 0 );
+	pos = game.level.getSpawnLocation();
+	renderPos = pos;
+}
+
+void BaseWorm::respawn( const Vec& newPos)
+{
+	m_isActive = true;
+	health = 100;
+	spd = Vec ( 0, 0 );
+	pos = newPos;
+	renderPos = pos;
+}
+
+void BaseWorm::die()
+{
+	m_isActive = false;
+}
+
+void BaseWorm::damage( float amount )
+{
+	// TODO: maybe we could implement an armor system? ;O
+	health -= amount;
+	if ( health < 0 )
+		health = 0;
 }
 
 void BaseWorm::addAimSpeed( float speed )
@@ -726,7 +762,7 @@ void BaseWorm::addRopeLength( float distance )
 	m_ninjaRope->addLength(distance);
 }
 
-void BaseWorm::actionStart( Actions action)
+void BaseWorm::actionStart( Actions action )
 {
 	switch ( action )
 	{
@@ -764,10 +800,14 @@ void BaseWorm::actionStart( Actions action)
 			if(++currentWeapon >= m_weapons.size())
 				currentWeapon = 0;
 		break;
+		
+		case RESPAWN:
+			respawn();
+		break;
 	}
 }
 
-void BaseWorm::actionStop( Actions action)
+void BaseWorm::actionStop( Actions action )
 {
 	switch ( action )
 	{

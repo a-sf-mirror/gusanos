@@ -23,7 +23,8 @@ class BasePlayer
 		FIRE,
 		JUMP,
 		CHANGE,
-		NINJAROPE
+		NINJAROPE,
+		RESPAWN
 	};
 	
 	enum NetEvents
