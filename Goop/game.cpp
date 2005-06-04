@@ -129,6 +129,7 @@ void Options::registerInConsole()
 Game::Game()
 {
 	NRPartType = NULL;
+	deathObject = NULL;
 	loaded = false;
 }
 
@@ -233,6 +234,7 @@ void Game::loadMod()
 	console.loadResources();
 	loadWeapons();
 	NRPartType = partTypeList.load("ninjarope.obj");
+	deathObject = partTypeList.load("death.obj");
 	infoFont = fontLocator.load("minifont");
 	if (weaponList.size() > 0 )
 		loaded = true;

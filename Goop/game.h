@@ -95,6 +95,7 @@ class Game
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
 	
 	PartType* NRPartType;
+	PartType* deathObject;
 	
 	const std::string& getMod();
 	

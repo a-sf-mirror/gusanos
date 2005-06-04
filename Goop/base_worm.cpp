@@ -5,6 +5,7 @@
 #include "base_object.h"
 #include "base_player.h"
 #include "weapon_type.h"
+#include "particle.h"
 #include "player_options.h"
 #include "base_animator.h"
 #include "animators.h"
@@ -731,17 +732,14 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 
 void BaseWorm::respawn()
 {
-	m_isActive = true;
-	health = 100;
-	spd = Vec ( 0, 0 );
-	pos = game.level.getSpawnLocation();
-	renderPos = pos;
+	respawn( game.level.getSpawnLocation() );
 }
 
 void BaseWorm::respawn( const Vec& newPos)
 {
 	m_isActive = true;
 	health = 100;
+	aimAngle = 90;
 	spd = Vec ( 0, 0 );
 	pos = newPos;
 	renderPos = pos;
@@ -750,6 +748,11 @@ void BaseWorm::respawn( const Vec& newPos)
 void BaseWorm::die()
 {
 	m_isActive = false;
+	m_ninjaRope->remove();
+	if ( game.deathObject )
+	{
+		game.objects.insert(1,1, new Particle( game.deathObject, pos, spd ));
+	}
 }
 
 void BaseWorm::damage( float amount )
