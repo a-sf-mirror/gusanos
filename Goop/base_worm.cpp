@@ -615,6 +615,11 @@ Vec BaseWorm::getWeaponPos()
 	return renderPos - Vec(0,game.options.worm_weaponHeight+0.5);
 }*/
 
+float BaseWorm::getHealth()
+{
+	return health;
+}
+
 float BaseWorm::getAngle()
 {
 	return aimAngle*dir;
@@ -623,6 +628,11 @@ float BaseWorm::getAngle()
 char BaseWorm::getDir()
 {
 	return dir;
+}
+
+void BaseWorm::setDir(char d)
+{
+	dir = d;
 }
 
 bool BaseWorm::isCollidingWith( const Vec& point, float radius )

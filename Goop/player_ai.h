@@ -5,16 +5,20 @@
 #include "worm.h"
 #include "base_object.h"
 
+//AI Worm Player
 class PlayerAI : public BasePlayer
 {
 	public:
 	PlayerAI();
 	~PlayerAI();
-	void getTarget();       //Find target
-	void subThink();           //AI processing
+	void getTarget();	//Find target
+	void getPath();		//Create path for AI worm to follow (to get to target)
+	void subThink();	//AI processing
 	
 	private:
-	BasePlayer* m_target;
+	unsigned int m_pathSteps;	//"steps" to take in A* pathfinding
+	int m_nodes[128][128];	//A* nodes
+	BasePlayer* m_target;	//Target worm
 };
 
 #endif

@@ -62,6 +62,8 @@ public:
 	Vec getPos();
 	Vec getWeaponPos();
 	Vec getRenderPos();
+
+	float getHealth();
 	
 	void damage( float amount );
 	virtual void respawn();
@@ -70,6 +72,7 @@ public:
 	
 	float getAngle();
 	char getDir();
+	void setDir(char d);
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();
 	
