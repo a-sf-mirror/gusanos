@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 
+// DONT USE THIS NYM, USE Vec::length() ! ;D
 inline float distance(float x1, float y1, float x2, float y2)
 {
 	return sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
@@ -24,8 +25,10 @@ PlayerAI::~PlayerAI()
 
 void PlayerAI::getTarget()
 {
-	if (!m_worm->isActive())
-		m_worm->respawn();
+	// Added random to make it not be instant
+	// I also wonder why is this here and not in the think function
+	if ( !m_worm->isActive() && rnd()*100 < 1)
+		baseActionStart(RESPAWN);
 
 	//iterate through players
 	Vec pos = m_worm->getPos();
@@ -77,14 +80,15 @@ void PlayerAI::subThink()
 	Vec pos = m_worm->getPos();		//AI position
 	Vec target = m_target->getPos();	//Target position
 	
-	float dist = distance(pos.x, pos.y, target.x, target.y);
+	float dist = distance(pos.x, pos.y, target.x, target.y); 
+	// nym!! change this ^^^ to (pos - target).length() !!!
 	if (dist > 48.f)
 	{ 
 		if (pos.x < target.x)
 			baseActionStart(RIGHT);
 		else
 			baseActionStop(RIGHT);
-		if (pos.x > target.y)
+		if (pos.x > target.x)
 			baseActionStart(LEFT);
 		else
 			baseActionStop(LEFT);
@@ -93,17 +97,20 @@ void PlayerAI::subThink()
 		baseActionStop(LEFT);
 		baseActionStop(RIGHT);
 
+		// The ai player shouldnt modify the dir like this
+		// Use the baseActions to move the player, or else it will not
+		// work over network games :<
 		//face
 		if (target.x > pos.x)
-			m_worm->setDir(1);
+			;//m_worm->setDir(1);
 		else
-			m_worm->setDir(-1);
+			;//m_worm->setDir(-1);
 	}
 	
 	
 	//aiming
 	float curAngle = m_worm->getAngle() / m_worm->getDir();
-	float targetAngle = atan2(target.y - pos.y, target.x - pos.x);
+	float targetAngle = atan2(target.y - pos.y, target.x - pos.x); // use Vec::getAngle()
 	
 	//convert to gusanos angle system
 	targetAngle -= deg2rad(90);
@@ -137,16 +144,16 @@ void PlayerAI::subThink()
 		baseActionStop(FIRE);
 
 
-        // TODO: Make decent behaviour
-        //jump
-        if (rand() % 32 == 0)
-            m_worm->actionStart(Worm::JUMP);
+	// TODO: Make decent behaviour
+	//jump
+	if (rand() % 32 == 0)
+		baseActionStart(JUMP);
 
         //rope
-        if (rand() % 128 == 0)
-            m_worm->actionStart(Worm::NINJAROPE);
-        else if (rand() % 96 == 0)
-            m_worm->actionStop(Worm::NINJAROPE);
+	if (rand() % 128 == 0)
+		baseActionStart(NINJAROPE);
+	else if (rand() % 96 == 0)
+		baseActionStop(NINJAROPE);
 
 	
 }

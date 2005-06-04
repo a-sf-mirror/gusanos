@@ -33,7 +33,7 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 
 void Viewport::render()
 {
-	game.level.draw(m_dest,(int)m_pos.x,(int)m_pos.y);
+	game.level.draw(m_dest,static_cast<int>(m_pos.x), static_cast<int>(m_pos.y));
 	
 	for ( int i = 0; i < RENDER_LAYERS_AMMOUNT ; ++i)
 	{
