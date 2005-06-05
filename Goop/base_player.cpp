@@ -89,7 +89,8 @@ void BasePlayer::assignNetworkRole( bool authority )
 	}
 
 	m_node->beginReplicationSetup();
-		m_node->addReplicationInt( (zS32*)&deaths, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , 0);
+		//m_node->addReplicationInt( (zS32*)&deaths, 32, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL , 0);
+		m_node->setInterceptID( static_cast<ZCom_InterceptID>(WormID) );
 		m_node->addReplicationInt( (zS32*)&m_wormID, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , INVALID_NODE_ID);
 	m_node->endReplicationSetup();
 
@@ -135,19 +136,26 @@ BasePlayerInterceptor::BasePlayerInterceptor( BasePlayer* parent )
 
 bool BasePlayerInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, const RepInfo &info)
 {
-	int recievedID = *static_cast<zU32*>(info.data_ptr_new);
-	ObjectsList::Iterator objIter;
-	for ( objIter = game.objects.begin(); (bool)objIter; ++objIter)
+	switch ( (BasePlayer::ReplicationItems) info.id )
 	{
-		if ( NetWorm* worm = dynamic_cast<NetWorm*>(*objIter) )
+		case BasePlayer::WormID:
 		{
-			if ( worm->getNodeID() == recievedID )
+			int recievedID = *static_cast<zU32*>(info.data_ptr_new);
+			ObjectsList::Iterator objIter;
+			for ( objIter = game.objects.begin(); (bool)objIter; ++objIter)
 			{
-				m_parent->assignWorm(worm);
+				if ( NetWorm* worm = dynamic_cast<NetWorm*>(*objIter) )
+				{
+					if ( worm->getNodeID() == recievedID )
+					{
+						m_parent->assignWorm(worm);
+					}
+				}
 			}
-		}
+			return true;
+		} break;
 	}
-	return true;
+	return false;
 }
 
 void BasePlayer::baseActionStart ( BaseActions action )

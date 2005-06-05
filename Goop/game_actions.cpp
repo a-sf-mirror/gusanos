@@ -98,7 +98,7 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 				tmpAngle = object->getAngle() + angleOffset + midrnd()*distribution;
 				spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
 				spd += object->getSpd() * motionInheritance;
-				game.objects.insert(1,1, new Particle( type, object->getPos() + angleVec(tmpAngle,distanceOffset), spd ));
+				game.objects.insert(1,1, new Particle( type, object->getPos() + angleVec(tmpAngle,distanceOffset), spd , object->getOwner()));
 			}
 		}else
 		{
@@ -110,7 +110,7 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 				tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
 				spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
 				spd += object->getSpd() * motionInheritance;
-				game.objects.insert(1,1,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd ));
+				game.objects.insert(1,1,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getOwner() ));
 			}
 		}
 	}
@@ -169,7 +169,8 @@ Damage::Damage( const vector< string >& params )
 
 void Damage::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
 {
-	worm->damage( m_damage );
+	if ( worm )
+		worm->damage( m_damage, object->getOwner() );
 }
 
 Damage::~Damage()

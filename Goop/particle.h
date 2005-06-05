@@ -8,6 +8,7 @@
 
 class Sprite;
 class BaseAnimator;
+class BasePlayer;
 
 struct PartTimer
 {
@@ -30,7 +31,7 @@ class Particle : public BaseObject
 {
 	public:
 		
-	Particle(PartType* type, Vec _pos = Vec(0,0), Vec _spd = Vec(0,0));
+	Particle(PartType* type, Vec _pos = Vec(0,0), Vec _spd = Vec(0,0), BasePlayer* owner = NULL);
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();

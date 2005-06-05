@@ -79,6 +79,7 @@ class Game
 	void refreshResources();
 	void changeLevel(const std::string& level);
 	void addBot();
+	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
 	BasePlayer* addPlayer( PLAYER_TYPE player );
 	BaseWorm* addWorm(bool isAuthority); // Creates a worm class depending on the network condition.
 	

@@ -1,6 +1,8 @@
 #include "weapon.h"
 #include "weapon_type.h"
 
+#include "base_worm.h"
+
 Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 {
 	m_type = type;
@@ -21,19 +23,19 @@ void Weapon::think()
 	{
 		if ( primaryShooting )
 		{
-			if (m_type->primaryShoot) m_type->primaryShoot->run((BaseObject*)m_owner, NULL, NULL, this);
+			if (m_type->primaryShoot) m_type->primaryShoot->run((BaseObject*)m_owner, NULL, NULL, this );
 		}
 	}
 }
 
-void Weapon::actionStart( Actions action)
+void Weapon::actionStart( Actions action )
 {
 	switch ( action )
 	{
 		case PRIMARY_TRIGGER:
 			if ( !inactiveTime && m_type->primaryPressed )
 			{
-				m_type->primaryPressed->run( (BaseObject*)m_owner, NULL, NULL, this);
+				m_type->primaryPressed->run( (BaseObject*)m_owner, NULL, NULL, this );
 			}
 			primaryShooting = true;
 		break;

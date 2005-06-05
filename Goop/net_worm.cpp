@@ -99,6 +99,7 @@ void NetWorm::think()
 					break;
 					case Die:
 					{
+						//m_lastHurt = game.findPlayerWithID( data->getInt(32) );
 						BaseWorm::die();
 					}
 					break;
@@ -155,10 +156,18 @@ void NetWorm::die()
 {
 	if ( m_isAuthority && m_node )
 	{
-		BaseWorm::die();
 		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
 		data->addInt( static_cast<int>( Die ),8 );
+		if ( m_lastHurt )
+		{
+			data->addInt( static_cast<int>( m_lastHurt->getNodeID() ), 32 );
+		}
+		else
+		{
+			data->addInt( INVALID_NODE_ID, 32 );
+		}
 		m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		BaseWorm::die();
 	}
 }
 
@@ -188,3 +197,4 @@ bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZ
 	}
 	return returnValue;
 }
+

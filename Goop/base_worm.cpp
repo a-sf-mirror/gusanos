@@ -21,10 +21,12 @@
 using boost::lexical_cast;
 
 BaseWorm::BaseWorm()
-: animate(false), movable(false), changing(false)
+	: BaseObject(), animate(false), movable(false), changing(false)
 {
 	skin = spriteList.load("skin.png");
 	m_animator = new AnimLoopRight(skin,35);
+	m_lastHurt = NULL;
+	
 	
 	m_isActive = false;
 	
@@ -32,7 +34,7 @@ BaseWorm::BaseWorm()
 	health = 0;
 	aimAngle = 90;
 	aimSpeed = 0;
-	aimRecoilSpeed = 0;	
+	aimRecoilSpeed = 0;
 	
 	currentWeapon = 0;
 	
@@ -42,8 +44,7 @@ BaseWorm::BaseWorm()
 	{
 		m_weapons.push_back(new Weapon(*i, this));
 	}
-	
-	m_owner = NULL;
+
 	m_ninjaRope = new NinjaRope(game.NRPartType, this);
 	movingLeft = false;
 	movingRight = false;
@@ -743,21 +744,25 @@ void BaseWorm::respawn( const Vec& newPos)
 	spd = Vec ( 0, 0 );
 	pos = newPos;
 	renderPos = pos;
+	m_lastHurt = NULL;
 }
 
 void BaseWorm::die()
 {
 	m_isActive = false;
+	if (m_owner) m_owner->deaths++;
+	if (m_lastHurt) m_lastHurt->kills++;
 	m_ninjaRope->remove();
 	if ( game.deathObject )
 	{
-		game.objects.insert(1,1, new Particle( game.deathObject, pos, spd ));
+		game.objects.insert(1,1, new Particle( game.deathObject, pos, spd, m_owner ));
 	}
 }
 
-void BaseWorm::damage( float amount )
+void BaseWorm::damage( float amount, BasePlayer* damager )
 {
 	// TODO: maybe we could implement an armor system? ;O
+	m_lastHurt = damager;
 	health -= amount;
 	if ( health < 0 )
 		health = 0;

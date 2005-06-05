@@ -5,11 +5,13 @@
 
 #include <allegro.h>
 
+class BasePlayer;
+
 class BaseObject
 {
 	public:
 		
-	BaseObject();
+	BaseObject( BasePlayer* owner = NULL );
 	virtual ~BaseObject();
 
 	virtual void draw(BITMAP* where,int xOff, int yOff) = 0;
@@ -18,6 +20,7 @@ class BaseObject
 	virtual Vec getPos();
 	virtual Vec getRenderPos();
 	virtual Vec getSpd();
+	virtual BasePlayer* getOwner();
 	virtual float getAngle();
 	virtual void addAngleSpeed( float speed ) {}
 	virtual void remove();
@@ -30,6 +33,10 @@ class BaseObject
 	
 	Vec pos;
 	Vec spd;
+	
+	protected:
+	
+	BasePlayer* m_owner;
 };
 
 #endif  // _base_object_h_

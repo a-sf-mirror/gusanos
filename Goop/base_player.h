@@ -32,6 +32,12 @@ class BasePlayer
 		ACTION_STOP,
 		ACTION_START
 	};
+	
+	enum ReplicationItems
+	{
+		WormID,
+		Other
+	};
 
 	static ZCom_ClassID  classID;
 	
@@ -49,16 +55,19 @@ class BasePlayer
 	
 	void baseActionStart( BaseActions action );
 	void baseActionStop( BaseActions action );
+	
+	void addKill();
+	void addDeath();
 
 	ZCom_NodeID getNodeID();
 	
 	PlayerOptions* getOptions();
 	Vec getPos();
 	
-	protected:
-	
 	int deaths;
 	int kills;
+	
+	protected:
 
 	BaseWorm* m_worm;
 	PlayerOptions* m_options;

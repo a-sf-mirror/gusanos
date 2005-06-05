@@ -65,7 +65,7 @@ public:
 
 	float getHealth();
 	
-	void damage( float amount );
+	void damage( float amount, BasePlayer* damager );
 	virtual void respawn();
 	void respawn(const Vec& newPos);
 	virtual void die();
@@ -104,7 +104,7 @@ protected:
 	
 	std::vector<Weapon*> m_weapons;
 	
-	BasePlayer* m_owner;
+	BasePlayer* m_lastHurt;
 	NinjaRope* m_ninjaRope;
 	
 	Sprite *skin;

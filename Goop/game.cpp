@@ -363,6 +363,19 @@ const string& Game::getMod()
 	return m_modName;
 }
 
+BasePlayer* Game::findPlayerWithID( ZCom_NodeID ID )
+{
+	vector<BasePlayer*>::iterator playerIter;
+	for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
+	{
+		if ( (*playerIter)->getNodeID() == ID )
+		{
+			return (*playerIter);
+		}
+	}
+	return NULL;
+}
+
 BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 {
 	BasePlayer *retPlayer = NULL;

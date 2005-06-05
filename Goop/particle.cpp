@@ -4,6 +4,7 @@
 #include "game.h"
 #include "base_object.h"
 #include "base_worm.h"
+#include "base_player.h"
 #include "part_type.h"
 #include "sprite.h"
 #include "base_animator.h"
@@ -14,7 +15,7 @@
 
 using namespace std;
 
-Particle::Particle(PartType *type, Vec _pos, Vec _spd)
+Particle::Particle(PartType *type, Vec _pos, Vec _spd, BasePlayer* owner) : BaseObject(owner)
 {
 	justCreated = true;
 	m_type = type;

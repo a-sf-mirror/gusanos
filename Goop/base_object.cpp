@@ -1,9 +1,10 @@
 #include "base_object.h"
 #include "vec.h"
+#include "base_player.h"
 
-BaseObject::BaseObject()
+BaseObject::BaseObject( BasePlayer* owner ) :
+	deleteMe(false), m_owner(owner)
 {
-	deleteMe = false;
 }
 
 BaseObject::~BaseObject()
@@ -28,6 +29,11 @@ Vec BaseObject::getSpd()
 float BaseObject::getAngle()
 {
 	return 0;
+}
+
+BasePlayer* BaseObject::getOwner()
+{
+	return m_owner;
 }
 
 void BaseObject::remove()
