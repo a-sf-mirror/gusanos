@@ -50,6 +50,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	{
 		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
 		allegro_message("ERRORBasePlayer: Unable to register worm authority node.");
+		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 	}else
 	{
 		if( !m_node->registerRequestedNode( classID, network.getZControl() ) )
@@ -62,6 +63,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 NetWorm::~NetWorm()
 {
 	if ( m_node ) delete m_node;
+	if ( m_interceptor ) delete m_interceptor;
 }
 
 void NetWorm::think()
@@ -79,7 +81,10 @@ void NetWorm::think()
 			ZCom_ConnID       conn_id;
 			
 			ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
-			if (type == ZCom_Node::eEvent_User && data)
+			switch(type)
+			{
+			case ZCom_Node::eEvent_User:
+			if ( data )
 			{
 				NetEvents event = (NetEvents)data->getInt(8);
 				switch ( event )
@@ -99,11 +104,24 @@ void NetWorm::think()
 					break;
 					case Die:
 					{
-						//m_lastHurt = game.findPlayerWithID( data->getInt(32) );
+						m_lastHurt = game.findPlayerWithID( data->getInt(32) );
 						BaseWorm::die();
 					}
 					break;
+					case SYNC:
+					{
+						m_isActive = data->getBool();
+						m_ninjaRope->active = data->getBool();
+					}
+					break;
 				}
+			}
+			break;
+			case ZCom_Node::eEvent_Init:
+			{
+				sendSyncMessage( conn_id );
+			}
+			break;
 			}
 		}
 	}
@@ -129,6 +147,15 @@ void NetWorm::assignOwner( BasePlayer* owner)
 void NetWorm::setOwnerId( ZCom_ConnID _id )
 {
 	m_node->setOwner(_id,true);
+}
+
+void NetWorm::sendSyncMessage( ZCom_ConnID id )
+{
+	ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+	data->addInt(static_cast<int>(SYNC),8 );
+	data->addBool(m_isActive);
+	data->addBool(m_ninjaRope->active);
+	m_node->sendEventDirect(ZCom_Node::eEventMode_ReliableOrdered, data, id);
 }
 
 ZCom_NodeID NetWorm::getNodeID()
@@ -184,7 +211,7 @@ bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZ
 		case NetWorm::PlayerID:
 		{
 			int recievedID = *static_cast<zU32*>(info.data_ptr_new);
-			vector<BasePlayer*>::iterator playerIter;
+			list<BasePlayer*>::iterator playerIter;
 			for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
 			{
 				if ( (*playerIter)->getNodeID() == recievedID )

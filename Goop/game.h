@@ -89,7 +89,7 @@ class Game
 	std::vector<PlayerOptions*> playerOptions;
 	
 	std::vector<Player*> localPlayers;
-	std::vector<BasePlayer*> players;
+	std::list<BasePlayer*> players;
 	
 	ObjectsList objects;
 	

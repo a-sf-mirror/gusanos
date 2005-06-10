@@ -54,7 +54,7 @@ BaseWorm::BaseWorm()
 BaseWorm::~BaseWorm()
 {
 	delete m_animator;
-	m_ninjaRope->deleteMe = true;
+	//m_ninjaRope->deleteMe = true;
 	for ( size_t i = 0; i < m_weapons.size(); i++)
 	{
 		delete m_weapons[i];
@@ -678,6 +678,13 @@ bool BaseWorm::isCollidingWith( const Vec& point, float radius )
 bool BaseWorm::isActive()
 {
 	return m_isActive;
+}
+
+void BaseWorm::removeRefsToPlayer(BasePlayer* player)
+{
+	if ( m_lastHurt == player )
+		m_lastHurt = NULL;
+	BaseObject::removeRefsToPlayer(player);
 }
 
 //#define DEBUG_WORM_REACTS

@@ -29,6 +29,7 @@ class BasePlayer
 	
 	enum NetEvents
 	{
+		SYNC,
 		ACTION_STOP,
 		ACTION_START
 	};
@@ -50,8 +51,10 @@ class BasePlayer
 
 	void assignNetworkRole( bool authority );
 	void setOwnerId( ZCom_ConnID id );
+	void sendSyncMessage( ZCom_ConnID id );
 
 	void assignWorm(BaseWorm* worm);
+	void removeWorm();
 	
 	void baseActionStart( BaseActions action );
 	void baseActionStop( BaseActions action );
@@ -60,12 +63,15 @@ class BasePlayer
 	void addDeath();
 
 	ZCom_NodeID getNodeID();
+	ZCom_ConnID getConnectionID();
 	
 	PlayerOptions* getOptions();
 	Vec getPos();
 	
 	int deaths;
 	int kills;
+	
+	bool deleteMe;
 	
 	protected:
 
@@ -76,7 +82,7 @@ class BasePlayer
 	ZCom_Node *m_node;
 	BasePlayerInterceptor* m_interceptor;
 	ZCom_NodeID m_wormID;
-	ZCom_ConnID id; // NOTE: Why is this here??
+	ZCom_ConnID m_id;
 };
 
 class BasePlayerInterceptor : public ZCom_NodeReplicationInterceptor

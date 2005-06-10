@@ -45,3 +45,9 @@ bool BaseObject::isCollidingWith( const Vec& point, float radius )
 {
 	return (pos - point).lengthSqr() < radius*radius;
 }
+
+void BaseObject::removeRefsToPlayer(BasePlayer* player)
+{
+	if ( m_owner == player )
+		m_owner = NULL;
+}

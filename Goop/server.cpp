@@ -8,6 +8,7 @@
 #ifndef DISABLE_ZOIDCOM
 
 #include <zoidcom.h>
+#include <list.h>
 
 Server::Server( int _udpport )
 {
@@ -41,6 +42,13 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 {
 	console.addLogMsg("* A CONNECTION WAS CLOSED");
+	for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+	{
+		if ( (*iter)->getConnectionID() == _id )
+		{
+			(*iter)->deleteMe = true;
+		}
+	}
 }
 
 bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)

@@ -1,5 +1,6 @@
 #include "base_player.h"
 #include "worm.h"
+#include "ninjarope.h"
 #include "net_worm.h"
 #include "player_options.h"
 #include "objects_list.h"
@@ -18,7 +19,9 @@ BasePlayer::BasePlayer()
 	deaths = 0;
 	kills = 0;
 	
+	deleteMe = false;
 	m_worm = NULL;
+	m_id = 0; // TODO: make a invalid_connection_id define thingy
 	m_wormID = INVALID_NODE_ID;
 	m_node = NULL;
 	m_interceptor = NULL;
@@ -27,7 +30,18 @@ BasePlayer::BasePlayer()
 
 BasePlayer::~BasePlayer()
 {
+	if (m_node) delete m_node;
 	if (m_interceptor) delete m_interceptor;
+}
+
+void BasePlayer::removeWorm()
+{
+	if ( m_worm )
+	{
+		m_worm->deleteMe = true;
+		if ( m_worm->getNinjaRopeObj() ) 
+			m_worm->getNinjaRopeObj()->deleteMe = true;
+	}
 }
 
 void BasePlayer::think()
@@ -42,24 +56,45 @@ void BasePlayer::think()
 			ZCom_ConnID       conn_id;
 			
 			ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
-			if (type == ZCom_Node::eEvent_User && data)
+			switch ( type )
 			{
-				NetEvents event = (NetEvents)data->getInt(8);
-				switch ( event )
+				case ZCom_Node::eEvent_User:
+				if ( data )
 				{
-					case ACTION_START: // ACTION TART LOL TBH
+					NetEvents event = (NetEvents)data->getInt(8);
+					switch ( event )
 					{
-						BaseActions action = (BaseActions)data->getInt(8);
-						baseActionStart(action);
+						case ACTION_START: // ACTION TART LOL TBH
+						{
+							BaseActions action = (BaseActions)data->getInt(8);
+							baseActionStart(action);
+						}
+						break;
+						case ACTION_STOP:
+						{
+							BaseActions action = (BaseActions)data->getInt(8);
+							baseActionStop(action);
+						}
+						break;
+						case SYNC:
+						{
+							kills = data->getInt(32);
+							deaths = data->getInt(32);
+						}
+						break;
 					}
-					break;
-					case ACTION_STOP:
-					{
-						BaseActions action = (BaseActions)data->getInt(8);
-						baseActionStop(action);
-					}
-					break;
 				}
+				break;
+				case ZCom_Node::eEvent_Init:
+				{
+					sendSyncMessage( conn_id );
+				}
+				break;
+				case ZCom_Node::eEvent_Removed:
+				{
+					deleteMe = true;
+				}
+				break;
 			}
 		}
 	}
@@ -101,11 +136,13 @@ void BasePlayer::assignNetworkRole( bool authority )
 	if( m_isAuthority)
 	{
 		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
-		allegro_message("ERROR: Unable to register player authority node.");
+			allegro_message("ERROR: Unable to register player authority node.");
+		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 	}else
 	{
 		if( !m_node->registerRequestedNode( classID, network.getZControl() ) )
 		allegro_message("ERROR: Unable to register player requested node.");
+		m_node->setEventNotification(false, true); // Enables the eEvent_Init.
 	}
 
 	m_node->applyForZoidLevel(1);
@@ -114,6 +151,16 @@ void BasePlayer::assignNetworkRole( bool authority )
 void BasePlayer::setOwnerId( ZCom_ConnID id )
 {
 	m_node->setOwner( id, true );
+	m_id = id;
+}
+
+void BasePlayer::sendSyncMessage( ZCom_ConnID id )
+{
+	ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+	data->addInt(static_cast<int>(SYNC),8 );
+	data->addInt(deaths,32);
+	data->addInt(kills,32);
+	m_node->sendEventDirect(ZCom_Node::eEventMode_ReliableOrdered, data, id);
 }
 
 ZCom_NodeID BasePlayer::getNodeID()
@@ -122,6 +169,11 @@ ZCom_NodeID BasePlayer::getNodeID()
 		return m_node->getNetworkID();
 	else
 		return INVALID_NODE_ID;
+}
+
+ZCom_NodeID BasePlayer::getConnectionID()
+{
+	return m_id;
 }
 
 Vec BasePlayer::getPos()
@@ -244,7 +296,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 		
 		case RESPAWN:
 		{
-			if ( m_worm )
+			if ( m_worm && !m_worm->isActive() )
 			{
 				m_worm->respawn();
 			}

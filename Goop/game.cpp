@@ -259,7 +259,7 @@ void Game::unload()
 	objects.clear();
 	
 	// Delete all players
-	for ( vector<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
+	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
 	{
 		delete (*iter);
 	}
@@ -365,7 +365,7 @@ const string& Game::getMod()
 
 BasePlayer* Game::findPlayerWithID( ZCom_NodeID ID )
 {
-	vector<BasePlayer*>::iterator playerIter;
+	list<BasePlayer*>::iterator playerIter;
 	for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
 	{
 		if ( (*playerIter)->getNodeID() == ID )

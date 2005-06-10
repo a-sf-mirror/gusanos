@@ -75,6 +75,7 @@ public:
 	void setDir(char d);
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();
+	void removeRefsToPlayer( BasePlayer* player );
 	
 	NinjaRope* getNinjaRopeObj();
 	

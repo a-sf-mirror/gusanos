@@ -161,14 +161,31 @@ int main(int argc, char **argv)
 					(*iter)->think();
 				}
 				
-				for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+				for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 				{
 					(*iter)->think();
 				}
 			}
 			
 			sfx.think(); // WARNING: THIS ¡MUST! BE PLACED BEFORE THE OBJECT DELETE LOOP
-				
+			
+			for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end();)
+			{
+				if ( (*iter)->deleteMe )
+				{
+					for ( ObjectsList::Iterator objIter = game.objects.begin(); (bool)objIter; ++objIter)
+					{
+						(*objIter)->removeRefsToPlayer(*iter);
+					}
+					(*iter)->removeWorm();
+					list<BasePlayer*>::iterator tmp = iter;
+					++iter;
+					delete *tmp;
+					game.players.erase(tmp);
+				}else
+					++iter;
+			}
+
 			for ( ObjectsList::Iterator iter = game.objects.begin();  (bool)iter; )
 			{
 				if ( (*iter)->deleteMe )
@@ -207,7 +224,7 @@ int main(int argc, char **argv)
 		
 		if ( game.isLoaded() && game.level.isLoaded() )
 		{
-			for ( vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+			for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 			{
 				(*iter)->render();
 			}

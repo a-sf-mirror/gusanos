@@ -36,7 +36,7 @@ void PlayerAI::getTarget()
 	int y = static_cast<int>(pos.y);
 	float tmpDist = 0;
 	BasePlayer* tmpTarget = NULL;
-	for (std::vector<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+	for (std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 	{
 		//(*iter)->think();
 		Vec tmpPos = (*iter)->getPos(); // WARNING: There can be players without worms! "spectators".

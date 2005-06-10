@@ -25,6 +25,7 @@ class BaseObject
 	virtual void addAngleSpeed( float speed ) {}
 	virtual void remove();
 	virtual bool isCollidingWith( const Vec& point, float radius );
+	virtual void removeRefsToPlayer( BasePlayer* player );
 	
 	void addSpeed( Vec spd_ )
 	{ spd += spd_; }
