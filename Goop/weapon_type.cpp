@@ -37,6 +37,7 @@ WeaponType::~WeaponType()
 bool WeaponType::load(const string &filename)
 {
 
+	fileName = filename;
 	ifstream fileStream;
 	
 	fileStream.open( filename.c_str() );
