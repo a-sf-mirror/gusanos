@@ -24,11 +24,23 @@ class WeaponType
 
  	Sprite *firecone;
 	std::string name;
+	std::string fileName;
 
 	Event *primaryShoot;
 	Event *primaryPressed;
 	Event *primaryReleased;
 	Event *outOfAmmo;
+};
+
+class WeaponOrder
+{
+	public:
+	bool operator () ( WeaponType* weap1, WeaponType* weap2)
+	{
+		if ( weap1->fileName < weap2->fileName )
+			return true;
+		return false;
+	}
 };
 
 #endif // _WEAPON_TYPE_H_

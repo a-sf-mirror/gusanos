@@ -226,6 +226,9 @@ void Game::loadWeapons()
 	}
 	al_findclose(file);
 	
+	WeaponOrder comp;
+	std::sort(weaponList.begin(), weaponList.end(), comp); 
+	
 	delete file;
 };
 
