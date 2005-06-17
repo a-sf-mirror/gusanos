@@ -71,7 +71,6 @@ public:
 	virtual void die();
 	
 	float getAngle();
-	char getDir();
 	void setDir(char d);
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();
@@ -90,8 +89,7 @@ protected:
 	bool movingLeft;
 	bool movingRight;
 	bool jumping;
-	
-	int dir;
+
 	int reacts[DirMax];
 	bool animate;
 	bool movable; // What do we need this for? // Dunno, did I put this here? :o

@@ -2,8 +2,8 @@
 #include "vec.h"
 #include "base_player.h"
 
-BaseObject::BaseObject( BasePlayer* owner ) :
-	deleteMe(false), m_owner(owner)
+BaseObject::BaseObject( BasePlayer* owner, int dir ) :
+	deleteMe(false), m_owner(owner), m_dir(dir)
 {
 }
 
@@ -29,6 +29,11 @@ Vec BaseObject::getSpd()
 float BaseObject::getAngle()
 {
 	return 0;
+}
+
+int BaseObject::getDir()
+{
+	return m_dir;
 }
 
 BasePlayer* BaseObject::getOwner()

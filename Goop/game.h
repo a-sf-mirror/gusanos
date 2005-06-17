@@ -13,7 +13,7 @@
 #include <map>
 #include <zoidcom.h>
 
-class BasePlayer;
+class BasePlayer; 
 class BaseWorm;
 class PlayerOptions;
 class WeaponType;
@@ -99,6 +99,8 @@ class Game
 	PartType* deathObject;
 	
 	const std::string& getMod();
+	const std::string& getModPath();
+	const std::string& getDefaultPath();
 	
 	template <typename T1>
 	bool specialLoad(const std::string& name, T1 &resource)

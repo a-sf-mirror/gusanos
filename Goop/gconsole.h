@@ -24,6 +24,7 @@ class GConsole : public Console
 	void checkInput();
 	void render(BITMAP *where, bool fullScreen = false);
 	void think();
+	int executeConfig(const std::string &filename);
 	
 	bool eventPrintableChar(char c);
 	bool eventKeyDown(int k);

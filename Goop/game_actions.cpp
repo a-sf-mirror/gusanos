@@ -89,30 +89,17 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 {
 	if (type != NULL)
 	{
-		if(!weapon)
+		Vec spd;
+		float tmpAngle;
+		char dir = object->getDir();
+		for ( int i = 0; i < amount; i++)
 		{
-			Vec spd;
-			float tmpAngle;
-			for ( int i = 0; i < amount; i++)
-			{
-				tmpAngle = object->getAngle() + angleOffset + midrnd()*distribution;
-				spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
-				spd += object->getSpd() * motionInheritance;
-				game.objects.insert(1,1, new Particle( type, object->getPos() + angleVec(tmpAngle,distanceOffset), spd , object->getOwner()));
-			}
-		}else
-		{
-			Vec spd;
-			float tmpAngle;
-			char dir = weapon->getOwner()->getDir();
-			for ( int i = 0; i < amount; i++)
-			{
-				tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
-				spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
-				spd += object->getSpd() * motionInheritance;
-				game.objects.insert(1,1,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getOwner() ));
-			}
+			tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
+			spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
+			spd += object->getSpd() * motionInheritance;
+			game.objects.insert(1,1,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getDir(), object->getOwner() ));
 		}
+
 	}
 }
 
@@ -353,7 +340,7 @@ void AddAngleSpeed::run( BaseObject* object, BaseObject *object2, BaseWorm *worm
 {
 	if (object)
 	{
-		object->addAngleSpeed( speed + rnd()*speedVariation );
+		object->addAngleSpeed( object->getDir()*speed + rnd()*speedVariation );
 	}
 }
 

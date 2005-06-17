@@ -41,6 +41,7 @@ class PartType
 	float gravity;
 	float damage;
 	float bounceFactor;
+	float groundFriction;
 	float damping;
 	float acceleration;
 	float maxSpeed;
@@ -59,6 +60,7 @@ class PartType
 	Sprite* sprite;
 	int animDuration;
 	int animType;
+	int animOnGround;
 	
 	std::vector< TimerEvent* > timer;
 	std::vector< WormDetectEvent* > detectRanges;

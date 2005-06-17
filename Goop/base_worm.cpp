@@ -29,8 +29,7 @@ BaseWorm::BaseWorm()
 	
 	
 	m_isActive = false;
-	
-	dir = 1;
+
 	health = 0;
 	aimAngle = 90;
 	aimSpeed = 0;
@@ -377,10 +376,10 @@ void BaseWorm::processMoveAndDig(void)
 				spd.x -= game.options.worm_acceleration;
 			}
 			
-			if(dir > 0)
+			if(m_dir > 0)
 			{
 				aimSpeed = 0.f;
-				dir = -1;
+				m_dir = -1;
 			}
 			
 			animate = true;
@@ -393,10 +392,10 @@ void BaseWorm::processMoveAndDig(void)
 				spd.x += game.options.worm_acceleration;
 			}
 			
-			if(dir < 0)
+			if(m_dir < 0)
 			{
 				aimSpeed = 0.f;
-				dir = 1;
+				m_dir = 1;
 			}
 			
 			animate = true;
@@ -624,17 +623,12 @@ float BaseWorm::getHealth()
 
 float BaseWorm::getAngle()
 {
-	return aimAngle*dir;
-}
-
-char BaseWorm::getDir()
-{
-	return dir;
+	return aimAngle*m_dir;
 }
 
 void BaseWorm::setDir(char d)
 {
-	dir = d;
+	m_dir = d;
 }
 
 bool BaseWorm::isCollidingWith( const Vec& point, float radius )
@@ -694,7 +688,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 	if (m_isActive)
 	{
 		bool flipped = false;
-		if ( dir < 0 ) flipped = true;
+		if ( m_dir < 0 ) flipped = true;
 	
 		{
 			int x = (int)renderPos.x - xOff;
@@ -705,7 +699,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			for(int i = 0; i < 10; i++)
 			{
-				Vec crosshair = angleVec(aimAngle*dir, rnd()*10+30) + renderPos - Vec(xOff, yOff);
+				Vec crosshair = angleVec(aimAngle*m_dir, rnd()*10+30) + renderPos - Vec(xOff, yOff);
 				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
 			
@@ -762,7 +756,7 @@ void BaseWorm::die()
 	m_ninjaRope->remove();
 	if ( game.deathObject )
 	{
-		game.objects.insert(1,1, new Particle( game.deathObject, pos, spd, m_owner ));
+		game.objects.insert(1,1, new Particle( game.deathObject, pos, spd, m_dir, m_owner ));
 	}
 }
 
@@ -808,7 +802,7 @@ void BaseWorm::actionStart( Actions action )
 		break;
 			
 		case NINJAROPE:
-			m_ninjaRope->shoot(getWeaponPos(), angleVec(aimAngle*dir, game.options.ninja_rope_shootSpeed));
+			m_ninjaRope->shoot(getWeaponPos(), angleVec(aimAngle*m_dir, game.options.ninja_rope_shootSpeed));
 		break;
 		
 		case CHANGEWEAPON:

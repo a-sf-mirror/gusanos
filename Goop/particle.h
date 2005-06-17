@@ -31,7 +31,7 @@ class Particle : public BaseObject
 {
 	public:
 		
-	Particle(PartType* type, Vec _pos = Vec(0,0), Vec _spd = Vec(0,0), BasePlayer* owner = NULL);
+	Particle(PartType* type, Vec _pos = Vec(0,0), Vec _spd = Vec(0,0), int dir = 1, BasePlayer* owner = NULL);
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();

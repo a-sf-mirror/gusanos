@@ -5,7 +5,7 @@
 
 #include <allegro.h>
 
-AnimPingPong::AnimPingPong( Sprite* sprite, int duration )
+AnimPingPong::AnimPingPong( Sprite* sprite, int duration ) : BaseAnimator()
 {
 	m_totalFrames = sprite->getFramesWidth();
 	m_duration = duration;
@@ -24,23 +24,29 @@ int AnimPingPong::getFrame()
 
 void AnimPingPong::tick()
 {
-	if (m_currentDir == 1)
+	if ( freezeTicks <= 0 )
 	{
-		m_animPos++;
-		if( m_animPos >= m_duration )
+		if (m_currentDir == 1)
 		{
-			m_currentDir = -1;
-			m_animPos = m_duration - 1;
+			m_animPos++;
+			if( m_animPos >= m_duration )
+			{
+				m_currentDir = -1;
+				m_animPos = m_duration - 1;
+			}
 		}
-	}
-	else
+		else
+		{
+			m_animPos--;
+			if ( m_animPos <= 0 )
+			{
+				m_currentDir = 1;
+				m_animPos = 0;
+			}
+		}
+	}else
 	{
-		m_animPos--;
-		if ( m_animPos <= 0 )
-		{
-			m_currentDir = 1;
-			m_animPos = 0;
-		}
+		--freezeTicks;
 	}
 }
 
@@ -50,7 +56,7 @@ void AnimPingPong::reset()
 	m_currentDir = 1;
 }
 
-AnimLoopRight::AnimLoopRight( Sprite* sprite, int duration )
+AnimLoopRight::AnimLoopRight( Sprite* sprite, int duration ) : BaseAnimator()
 {
 	m_totalFrames = sprite->getFramesWidth();
 	m_duration = duration;
@@ -68,10 +74,16 @@ int AnimLoopRight::getFrame()
 
 void AnimLoopRight::tick()
 {
-	m_animPos++;
-	if( m_animPos >= m_duration )
+	if ( freezeTicks <= 0)
 	{
-		m_animPos = 0;
+		m_animPos++;
+		if( m_animPos >= m_duration )
+		{
+			m_animPos = 0;
+		}
+	}else
+	{
+		--freezeTicks;
 	}
 }
 

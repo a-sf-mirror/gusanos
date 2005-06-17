@@ -548,6 +548,13 @@ void GConsole::think()
 	if (m_pos < 0) m_pos = 0;
 }
 
+int GConsole::executeConfig(const std::string& filename)
+{
+	if ( exists((game.getModPath()+filename).c_str()))
+		return Console::executeConfig((game.getModPath()+filename).c_str());
+	else return Console::executeConfig((game.getDefaultPath()+filename).c_str());
+}
+
 //============================= PRIVATE ======================================
 
 

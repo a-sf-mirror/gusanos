@@ -15,7 +15,7 @@
 
 using namespace std;
 
-Particle::Particle(PartType *type, Vec _pos, Vec _spd, BasePlayer* owner) : BaseObject(owner)
+Particle::Particle(PartType *type, Vec _pos, Vec _spd, int dir, BasePlayer* owner) : BaseObject(owner,dir)
 {
 	justCreated = true;
 	m_type = type;
@@ -49,24 +49,30 @@ void Particle::think()
 {
 	for ( int i = 0; i < m_type->repeat; ++i)
 	{
+	
 		spd.y+=m_type->gravity;
 		
 		bool collision = false;
-		if ( !game.level.getMaterial( (int)(pos+spd).x, (int)pos.y ).particle_pass)
+		if ( !game.level.getMaterial( (int)(pos.x+spd.x), (int)pos.y ).particle_pass)
 		{
-			spd.x*=-m_type->bounceFactor;
+			spd.x *= -m_type->bounceFactor;
+			spd.y *= m_type->groundFriction;
 			collision = true;
 		}
-		if ( !game.level.getMaterial( (int)pos.x, (int)(pos+spd).y ).particle_pass)
+		if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y+spd.y) ).particle_pass)
 		{
 			spd.y*=-m_type->bounceFactor;
+			spd.x*=m_type->groundFriction;
 			collision = true;
 		}
 		if( collision )
 		{
 			if ( m_type->groundCollision != NULL )
 					m_type->groundCollision->run(this);
+			if ( !m_type->animOnGround && m_animator )
+				m_animator->freeze(5); //I GOT DEFEATED!
 		}
+		if ( deleteMe ) break;
 		
 		for ( vector< WormDetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
 		{
@@ -79,6 +85,7 @@ void Particle::think()
 				}
 			}
 		}
+		if ( deleteMe ) break;
 		
 		for ( vector< PartTimer >::iterator t = timer.begin(); t != timer.end(); t++)
 		{
@@ -88,13 +95,16 @@ void Particle::think()
 				(*t).m_tEvent->event->run(this);
 				(*t).reset();
 			}
+			if ( deleteMe ) break;
 		}
+		if ( deleteMe ) break;
 		
 		if ( justCreated && m_type->creation )
 		{
 			m_type->creation->run(this);
 			justCreated = false;
 		}
+		if ( deleteMe ) break;
 		
 		if ( m_type->acceleration )
 		{
@@ -112,9 +122,7 @@ void Particle::think()
 		while ( m_angle > 360 ) m_angle -= 360;
 		while ( m_angle < 0 ) m_angle += 360;
 		
-		
-		if ( !deleteMe ) pos = pos + spd;
-		else break;
+		pos = pos + spd;
 		if ( m_animator ) m_animator->tick();
 	}
 }

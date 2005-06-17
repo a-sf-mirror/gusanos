@@ -181,15 +181,11 @@ void Game::init(int argc, char** argv)
 	
 	sfx.registerInConsole();
 	gfx.registerInConsole();
-
-	parseCommandLine(argc, argv);
-
-	gfx.init();
-	sfx.init();
+	options.registerInConsole();
 #ifndef DISABLE_ZOIDCOM
-	network.init();
+	network.registerInConsole();
 #endif
-
+	
 	for ( int i = 0; i< MAX_LOCAL_PLAYERS; ++i)
 	{
 		PlayerOptions *options = new PlayerOptions;
@@ -197,11 +193,14 @@ void Game::init(int argc, char** argv)
 		playerOptions.push_back(options);
 	}
 	
-	
-	//TODO: Check and move the rest of registerInConsole() before init()
-	options.registerInConsole(); 
+	console.executeConfig("autoexec.cfg");
+
+	parseCommandLine(argc, argv);
+
+	gfx.init();
+	sfx.init();
 #ifndef DISABLE_ZOIDCOM
-	network.registerInConsole();
+	network.init();
 #endif
 	registerGameActions();
 	registerPlayerInput();
@@ -246,6 +245,7 @@ void Game::loadMod()
 		loaded = false;
 		console.addLogMsg("ERROR: NO WEAPONS FOUND IN MOD FOLDER");
 	}
+	console.executeConfig("mod.cfg");
 }
 
 void Game::unload()
@@ -364,6 +364,16 @@ void Game::setMod( const string& modname )
 const string& Game::getMod()
 {
 	return m_modName;
+}
+
+const string& Game::getModPath()
+{
+	return m_modPath;
+}
+
+const string& Game::getDefaultPath()
+{
+	return m_defaultPath;
 }
 
 BasePlayer* Game::findPlayerWithID( ZCom_NodeID ID )

@@ -11,7 +11,7 @@ class BaseObject
 {
 	public:
 		
-	BaseObject( BasePlayer* owner = NULL );
+	BaseObject( BasePlayer* owner = NULL, int dir = 1 );
 	virtual ~BaseObject();
 
 	virtual void draw(BITMAP* where,int xOff, int yOff) = 0;
@@ -22,6 +22,7 @@ class BaseObject
 	virtual Vec getSpd();
 	virtual BasePlayer* getOwner();
 	virtual float getAngle();
+	virtual int getDir();
 	virtual void addAngleSpeed( float speed ) {}
 	virtual void remove();
 	virtual bool isCollidingWith( const Vec& point, float radius );
@@ -37,6 +38,7 @@ class BaseObject
 	
 	protected:
 	
+	int m_dir;
 	BasePlayer* m_owner;
 };
 

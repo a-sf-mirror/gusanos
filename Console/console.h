@@ -66,7 +66,7 @@ class Console
 		}
 		
 		template<class FT>
-		RegisterCommandProxy const& operator()(std::string const& name, FT const& func) const
+		RegisterCommandProxy const& operator()(std::string const& name, FT func) const
 		{
 			m_console.registerCommand(name, new Command(func));
 			return *this;
@@ -100,7 +100,7 @@ class Console
 	void bind(char key, const std::string &action);
 	void addLogMsg(const std::string &msg);
 	void analizeKeyEvent(bool state, char key);
-	int executeConfig(const std::string &filename);
+	virtual int executeConfig(const std::string &filename);
 	std::string autoComplete(const std::string &text);
 	void listItems(const std::string &text);
 	
