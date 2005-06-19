@@ -160,10 +160,12 @@ Vec Level::getSpawnLocation()
 	return pos;
 }
 
+/*
 const Material& Level::getMaterial(int x, int y)
 {
 	return m_materialList[getpixel(material,x,y)+1];
 }
+*/
 
 int Level::width()
 {

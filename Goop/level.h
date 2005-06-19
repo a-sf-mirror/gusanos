@@ -27,14 +27,23 @@ class Level
 	const std::string &getPath();
 	const std::string &getName();
 	void setName(const std::string &_name);
+	/*
+	const Material& getMaterial(int x, int y);*/
 	
 	Vec getSpawnLocation();
 	
-	const Material& getMaterial(int x, int y);
-	/*inline const Material& getMaterial(int x, int y);
+	Material const& getMaterial(unsigned int x, unsigned int y)
 	{
-		return m_materialList[getpixel(material,x,y)+1];
-	}*/
+		if(x < material->w && y < material->h)
+			return m_materialList[material->line[y][x] + 1];
+		else
+			return m_materialList[0];
+	}
+	
+	Material const& unsafeGetMaterial(unsigned int x, unsigned int y)
+	{
+		return m_materialList[material->line[y][x] + 1];
+	}
 	
 	//private:
 		

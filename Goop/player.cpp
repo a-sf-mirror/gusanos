@@ -166,6 +166,8 @@ void Player::actionStart ( Actions action )
 		{
 			if ( m_worm )
 			{
+				m_worm->actionStart(Worm::CHANGEWEAPON);
+				
 				if (jumping)
 				{
 					BasePlayer::baseActionStart(BasePlayer::NINJAROPE);
@@ -173,7 +175,6 @@ void Player::actionStart ( Actions action )
 				}
 				else
 				{
-					m_worm->actionStart(Worm::CHANGEWEAPON);
 					m_worm->actionStop(Worm::FIRE); //TODO: Stop secondary fire also
 					
 					// Stop any movement

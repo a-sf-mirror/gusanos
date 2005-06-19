@@ -2,6 +2,7 @@
 
 #include "game.h"
 #include "sfx.h"
+#include "culling.h"
 #include <list>
 #include <allegro.h>
 
@@ -14,14 +15,60 @@ Viewport::Viewport()
 
 Viewport::~Viewport()
 {
-	if ( m_dest ) destroy_bitmap(m_dest);
+	destroy_bitmap(m_dest);
 	sfx.freeListener(m_listener);
 }
+
+struct TestCuller
+{
+	TestCuller(BITMAP* dest_, int x_, int y_, int scrOffX_, int scrOffY_, int limitX_)
+	: dest(dest_), x(x_), y(y_), scrOffX(scrOffX_), scrOffY(scrOffY_), limitX(limitX_)
+	{
+		
+	}
+	
+	int beginH()
+	{
+		return y;
+	}
+	
+	int beginV()
+	{
+		return x;
+	}
+	
+	int limitV()
+	{
+		return limitX;
+	}
+	
+	void incrementV(int& vp)
+	{
+		++vp;
+	}
+	
+	bool block(int y, int x)
+	{
+		return !game.level.getMaterial(x, y).worm_pass;
+	}
+	
+	void line(int x, int y1, int y2)
+	{
+		vline(dest, x + scrOffX, y1 + scrOffY, y2 + scrOffY, 0);
+	}
+	
+	BITMAP* dest;
+	int x;
+	int y;
+	int scrOffX;
+	int scrOffY;
+	int limitX;
+};
 
 void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height)
 {
 
-	if ( m_dest ) destroy_bitmap(m_dest);
+	destroy_bitmap(m_dest);
 	if ( x < 0 ) x = 0;
 	if ( y < 0 ) y = 0;
 	if ( x + width > where->w ) x = where->w - x;
@@ -35,6 +82,21 @@ void Viewport::render()
 {
 	game.level.draw(m_dest,static_cast<int>(m_pos.x), static_cast<int>(m_pos.y));
 	
+/*
+	static bool flag = false;
+	
+	if(!flag)
+	{
+		list<BaseObject*>::iterator iter = game.objects.begin();
+		//++iter; ++iter;
+		int x = (int)(*iter)->getPos().x;
+		int y = (int)(*iter)->getPos().y;
+		Culler<TestCuller> testCuller(TestCuller(m_dest, x, y, -(int)m_pos.x, -(int)m_pos.y, x + 200));
+		testCuller.cull();
+		//flag = true;
+	}
+	*/
+
 	for ( int i = 0; i < RENDER_LAYERS_AMMOUNT ; ++i)
 	{
 		ObjectsList::RenderLayerIterator iter;

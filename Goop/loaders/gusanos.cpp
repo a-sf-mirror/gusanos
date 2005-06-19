@@ -129,3 +129,34 @@ const char* GusanosFontLoader::getName()
 {
 	return "Gusanos 0.9 font loader";
 }
+
+/*
+
+const char* XMLLoader::getName()
+{
+	return "XML loader";
+}
+
+
+XMLLoader XMLLoader::instance;
+
+bool XMLLoader::canLoad(fs::path const& path, std::string& name)
+{
+	if(fs::extension(path) == ".xml")
+	{
+		name = basename(path);
+		return true;
+	}
+	return false;
+}
+	
+bool XMLLoader::load(XMLFile* xml, fs::path const& path)
+{
+	xml->ss.clear();
+}
+
+const char* GusanosFontLoader::getName()
+{
+	return "Gusanos 0.9 font loader";
+}
+*/

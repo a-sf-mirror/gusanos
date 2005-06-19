@@ -2,6 +2,7 @@
 #define GUSANOS_MENU_H
 
 #include "omfggui.h"
+#include "resource_locator.h"
 
 class Font;
 
@@ -68,5 +69,19 @@ public:
 extern GContext menu;
 
 }
+
+class XMLFile
+{
+	//std::stringstream ss;
+};
+
+extern ResourceLocator<XMLFile, false> xmlLocator;
+
+class GSSFile
+{
+	//std::stringstream ss;
+};
+
+extern ResourceLocator<GSSFile, false> gssLocator;
 
 #endif //GUSANOS_MENU_H

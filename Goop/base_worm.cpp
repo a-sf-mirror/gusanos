@@ -79,7 +79,7 @@ void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 	{
 		case Down:
 		{
-			origin += BaseVec<long>(-1, -4);
+			origin += BaseVec<long>(-1, -3);
 			step = BaseVec<long>(1, 0);
 			len = 3;
 		}
@@ -87,9 +87,9 @@ void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 		
 		case Left:
 		{
-			origin += BaseVec<long>(1, -3);
+			origin += BaseVec<long>(1, -2);
 			step = BaseVec<long>(0, 1);
-			len = 8;
+			len = 7;
 		}
 		break;
 		
@@ -103,9 +103,9 @@ void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 		
 		case Right:
 		{
-			origin += BaseVec<long>(-1, -3);
+			origin += BaseVec<long>(-1, -2);
 			step = BaseVec<long>(0, 1);
-			len = 8;
+			len = 7;
 		}
 		break;
 		

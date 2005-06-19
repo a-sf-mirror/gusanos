@@ -22,6 +22,11 @@
 #include "network.h"
 #include "keyboard.h"
 
+//TEST
+/*
+#include "IoState.h"
+#include "IoObject.h"*/
+
 #if 1
 #include "menu.h"
 #endif
@@ -61,7 +66,11 @@ void startGame(const std::string&)
 int main(int argc, char **argv)
 {
 	game.init(argc, argv);
-	
+/*
+	IoState* state = IoState_new();
+	IoObject* result = IoState_doCString_(state, "10 * 10");
+	IoState_free(state);
+	*/
 #ifdef POSIX
 	
 #endif
@@ -105,17 +114,17 @@ int main(int argc, char **argv)
 	console.registerCommands()
 		(string("QUIT"), Exit)
 	;
+	
 
-	console.parseLine("BIND A +P0_LEFT; BIND D +P0_RIGHT; BIND G +P0_JUMP; BIND W +P0_UP; BIND S +P0_DOWN; BIND F +P0_FIRE; BIND H +P0_CHANGE");
-	console.parseLine("BIND LEFT +P1_LEFT; BIND RIGHT +P1_RIGHT; BIND 2_PAD +P1_JUMP; BIND UP +P1_UP; BIND DOWN +P1_DOWN; BIND 1_PAD +P1_FIRE; BIND 3_PAD +P1_CHANGE");
 	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	console.parseLine("SETCHAR STOP \".\"");
 	
 	///* <GLIP> Stuff for me ;o
-	//console.parseLine("BIND J +P0_LEFT; BIND L +P0_RIGHT; BIND E +P0_JUMP; BIND I +P0_UP; BIND K +P0_DOWN; BIND F +P0_FIRE; BIND S +P0_CHANGE");
+	//console.parseLine("BIND LEFT +P0_LEFT; BIND RIGHT +P0_RIGHT; BIND 2_PAD +P0_JUMP; BIND UP +P0_UP; BIND DOWN +P0_DOWN; BIND 1_PAD +P0_FIRE; BIND 3_PAD +P0_CHANGE");
 	console.parseLine("SETSHIFTCHAR MINUS \"_\" ; SETSHIFTCHAR 2 \"\\\"\" ; SETSHIFTCHAR COMMA \";\" ; SETALTGRCHAR 7 \"\\{\" ; SETALTGRCHAR 0 \"\\}\"");
 	console.parseLine("SETALTGRCHAR PLUS_PAD \"\\\\\" ; SETSHIFTCHAR 3 \"#\" ; SETSHIFTCHAR STOP \":\"");
 	//*/
+	
 	OmfgGUI::menu.clear();
 	game.loadMod();
 	
