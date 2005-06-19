@@ -14,7 +14,7 @@
 
 using namespace std;
 
-ResourceList<PartType> partTypeList("/objects/");
+ResourceList<PartType> partTypeList("objects/");
 
 TimerEvent::TimerEvent(int _delay, int _delayVariation)
 {

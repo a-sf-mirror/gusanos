@@ -307,7 +307,7 @@ void Game::changeLevel(const std::string& levelName )
 		level.load( m_defaultPath +"maps/"+ levelName );
 	}
 	*/
-	level.setName(levelName); // Nice GLIPTIC! >;o
+	level.setName(levelName);
 	refreshResources();
 	levelLocator.load(&level, levelName);
 	loadMod();

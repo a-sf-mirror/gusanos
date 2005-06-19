@@ -218,7 +218,7 @@ bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZ
 			{
 				if ( (*playerIter)->getNodeID() == recievedID )
 				{
-					m_parent->assignOwner(*playerIter);
+					(*playerIter)->assignWorm(m_parent);
 				}
 			}
 			returnValue = true;
