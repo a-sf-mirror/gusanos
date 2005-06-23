@@ -2,7 +2,7 @@
 
 #include "game.h"
 #include "sfx.h"
-#include "culling.h"
+//#include "culling.h"
 #include <list>
 #include <allegro.h>
 
