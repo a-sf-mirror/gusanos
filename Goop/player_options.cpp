@@ -1,6 +1,7 @@
 #include "player_options.h"
 #include "gconsole.h"
 #include "text.h"
+#include <cmath>
 
 using namespace std;
 

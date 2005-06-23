@@ -1,161 +1,71 @@
 #include "sprite.h"
 
-#include "resource_list.h"
 #include "gfx.h"
 
 #include <allegro.h>
-#include <string>
-#include <vector>
 
 using namespace std;
 
-ResourceList<Sprite> spriteList("sprites/");
-
-Sprite::Sprite()
+Sprite::Sprite( BITMAP* bitmap, int xPivot, int yPivot) : m_bitmap(bitmap)
 {
-	
+	if ( xPivot == -1 ) m_xPivot = m_bitmap->w / 2;
+	else m_xPivot = xPivot;
+	if ( yPivot == -1 ) m_yPivot = m_bitmap->h / 2;
+	else m_yPivot = yPivot;
+	m_mirror = NULL;
 }
 
 Sprite::~Sprite()
 {
-	vector< vector<BITMAP*> >::iterator frameY;
-	vector< BITMAP* >::iterator frameX;
-	for (frameY = m_frame.begin(); frameY != m_frame.end(); frameY++)
-	for (frameX = (*frameY).begin(); frameX != (*frameY).end(); frameX++)
-	{
-		if (*frameX) destroy_bitmap( *frameX );
-	}
+	if (m_bitmap) destroy_bitmap( m_bitmap );
+	if (m_mirror) destroy_bitmap( m_mirror );
 }
 
-bool Sprite::load(const string &filename)
-{	
-	bool returnValue = false;
-	
-	BITMAP *tempBitmap = gfx.loadBitmap(filename.c_str(),0);
-	
-	if (tempBitmap)
-	{
-		if ( (tempBitmap->w > 1) && (tempBitmap->h > 1) )
-		{
-			int lastY = 1;
-			int pivotY = -1;
-			
-			for (int y = 1; y < tempBitmap->h; ++y)
-			{
-				
-				if( getpixel(tempBitmap,0,y) == makecol(255,0,0) ) // Red pixel marks the pivot of the sprite
-				{
-					pivotY = y-lastY;
-				}
-				else	if(getpixel(tempBitmap,0,y) == 0 || y == tempBitmap->h - 1 )
-				{
-					m_frame.push_back( vector<BITMAP*>() );
-
-					int lastX = 1;
-					int pivotX = -1;
-					
-					for (int x = 1; x < tempBitmap->w; ++x)
-					{
-						if( getpixel(tempBitmap,x,0) == makecol(255,0,0) ) // Pivot again but for X axis
-						{
-							pivotX = x-lastX;
-						}
-						else if(getpixel(tempBitmap,x,0) == 0 || x == tempBitmap->w - 1 )
-						{
-							BITMAP* spriteFrame = create_bitmap(x-lastX+1,y-lastY+1);
-							blit(tempBitmap,spriteFrame,lastX,lastY,0,0,spriteFrame->w,spriteFrame->h);
-							m_frame.back().push_back(spriteFrame);
-							
-							m_pivotX.push_back( pivotX );
-							pivotX = -1;
-							
-							lastX = x + 1;
-						}
-					}
-
-					m_pivotY.push_back( pivotY );
-					pivotY = -1;
-					lastY = y + 1;
-				}
-			}
-			
-			returnValue = true;
-		}
-		destroy_bitmap(tempBitmap);
-	}
-	return returnValue;
-}
-
-void Sprite::draw(BITMAP *where, int frame,int x, int y, bool flipped, int xAligment, int yAligment)
+void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int Alignment )
 {
-	if ( frame < static_cast<int>(m_frame[0].size()) )
-	{
-		int _x,_y;
-		
-		if ( xAligment == ALIGN_LEFT ) _x = 0;
-		else if ( xAligment == ALIGN_RIGHT ) _x = m_frame[0][frame]->w;
-		else 
-		{
-			if ( m_pivotX[frame] == -1 )
-				_x = m_frame[0][frame]->w / 2;
-			else
-				_x = m_pivotX[frame];
-		}
-		
-		if ( yAligment == ALIGN_TOP ) _y = 0;
-		else if ( yAligment == ALIGN_BOTTOM ) _y = m_frame[0][frame]->h;
-		else 
-		{
-			if ( m_pivotY[0] == -1 )
-				_y = m_frame[0][frame]->h / 2;
-			else
-				_y = m_pivotY[0];
-		}
-		
-		if ( flipped )
-			draw_sprite_h_flip(where, m_frame[0][frame], x - (m_frame[0][frame]->w - 1) + _x, y - _y);
-		else
-			draw_sprite(where, m_frame[0][frame], x - _x, y - _y);
+	int _x,_y;
 	
-	}
+	if ( Alignment & ALIGN_LEFT ) _x = 0;
+	else if ( Alignment & ALIGN_RIGHT ) _x = m_bitmap->w;
+	else _x = m_xPivot;
+	
+	if ( Alignment & ALIGN_TOP ) _y = 0;
+	else if ( Alignment & ALIGN_BOTTOM ) _y = m_bitmap->h;
+	else _y = m_yPivot;
+	
+	if ( flipped )
+		draw_sprite_h_flip(where, m_bitmap, x - ( m_bitmap->w - 1 ) + _x, y - _y);
+	else
+		draw_sprite( where, m_bitmap, x - _x, y - _y);
 }
 
-void Sprite::drawAngled(BITMAP *where, int frame,int x, int y, float angle, bool flipped, int xAligment, int yAligment)
+void Sprite::drawBlended(BITMAP *where, int x, int y, int alpha, bool flipped, int Alignment, Blenders blender )
 {
-	if ( frame < static_cast<int>(m_frame[0].size()) )
+	gfx.setBlender( blender, alpha );
+	
+	int _x,_y;
+	
+	if ( Alignment & ALIGN_LEFT ) _x = 0;
+	else if ( Alignment & ALIGN_RIGHT ) _x = m_bitmap->w;
+	else _x = m_xPivot;
+	
+	if ( Alignment & ALIGN_TOP ) _y = 0;
+	else if ( Alignment & ALIGN_BOTTOM ) _y = m_bitmap->h;
+	else _y = m_yPivot;
+	
+	if ( flipped )
 	{
-		int _x,_y;
-		
-		float angleDivisionSize = 180 / m_frame.size();
-		size_t angleFrame = static_cast<size_t>( (angle + angleDivisionSize / 2 ) * (m_frame.size()-1) / 180 );
-		
-		if ( angleFrame < m_frame.size() )
+		if(!m_mirror) //TODO: REMOVE THIS CRAP AND MAKE SOME BETTER FIX >:O
 		{
-		
-			if ( xAligment == ALIGN_LEFT ) _x = 0;
-			else if ( xAligment == ALIGN_RIGHT ) _x = m_frame[angleFrame][frame]->w;
-			else 
-			{
-				if ( m_pivotX[frame] == -1 )
-					_x = m_frame[angleFrame][frame]->w / 2;
-				else
-					_x = m_pivotX[frame];
-			}
-			
-			if ( yAligment == ALIGN_TOP ) _y = 0;
-			else if ( yAligment == ALIGN_BOTTOM ) _y = m_frame[angleFrame][frame]->h;
-			else 
-			{
-				if ( m_pivotY[angleFrame] == -1 )
-					_y = m_frame[angleFrame][frame]->h / 2;
-				else
-					_y = m_pivotY[angleFrame];
-			}
-			
-			if ( flipped )
-				draw_sprite_h_flip(where, m_frame[angleFrame][frame], x - (m_frame[angleFrame][frame]->w - 1) + _x, y - _y);
-			else
-				draw_sprite(where, m_frame[angleFrame][frame], x - _x, y - _y);
+			m_mirror = create_bitmap(m_bitmap->w,m_bitmap->h);
+			clear_to_color(m_mirror,makecol(255,0,255));
+			draw_sprite_h_flip(m_mirror, m_bitmap, 0, 0);
 		}
+		draw_trans_sprite(where, m_mirror, x - ( m_bitmap->w - 1 ) + _x, y - _y);
 	}
+	else
+		draw_trans_sprite( where, m_bitmap, x - _x, y - _y);
+	
+	solid_mode();
 }
+

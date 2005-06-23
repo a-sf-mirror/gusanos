@@ -1,6 +1,8 @@
 #include "network.h"
+
 #include "server.h"
 #include "client.h"
+#include "game.h"
 #include "gconsole.h"
 #include "text.h"
 #include "net_worm.h"

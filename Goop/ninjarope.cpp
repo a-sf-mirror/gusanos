@@ -4,6 +4,7 @@
 #include "game.h"
 #include "base_object.h"
 #include "part_type.h"
+#include "sprite_set.h"
 #include "sprite.h"
 #include "base_animator.h"
 #include "animators.h"
@@ -38,7 +39,7 @@ NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 		}
 	}
 	
-	// Why this?? :OO
+	// Why this?? :OO // Re: Modders may want to make the rope leave trails or sth :o
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
 	{
 		timer.push_back( NRTimer(*i) );
@@ -223,10 +224,10 @@ void NinjaRope::draw(BITMAP* where,int xOff, int yOff)
 		{
 			if ( m_angle < 180 )
 			{
-				m_sprite->drawAngled(where, m_animator->getFrame(), static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_angle);
+				m_sprite->getSprite(m_animator->getFrame(),m_angle)->draw(where,static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
 			}else
 			{
-				m_sprite->drawAngled(where, m_animator->getFrame(), static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), 360-m_angle , true);
+				m_sprite->getSprite(m_animator->getFrame(),360-m_angle)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), true);
 			}
 		}
 		if (m_type->distortion)

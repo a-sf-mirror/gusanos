@@ -6,7 +6,7 @@
 #include "vec.h"
 #include <vector>
 
-class Sprite;
+class SpriteSet;
 class BaseAnimator;
 //class BaseWorm;
 
@@ -61,7 +61,7 @@ private:
 	float m_angle;
 	float m_angleSpeed;
 	float m_length;
-	Sprite* m_sprite;
+	SpriteSet* m_sprite;
 	BaseObject* m_worm;
 	BaseAnimator* m_animator;
 	

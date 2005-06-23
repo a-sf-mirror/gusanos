@@ -3,13 +3,13 @@
 
 #include "base_animator.h"
 
-class Sprite;
+class SpriteSet;
 
 class AnimPingPong : public BaseAnimator
 {
 	public:
 
-	AnimPingPong( Sprite* sprite, int duration );
+	AnimPingPong( SpriteSet* sprite, int duration );
 	~AnimPingPong();
 	
 	virtual int getFrame();
@@ -28,7 +28,7 @@ class AnimLoopRight : public BaseAnimator
 {
 	public:
 
-	AnimLoopRight( Sprite* sprite, int duration );
+	AnimLoopRight( SpriteSet* sprite, int duration );
 	~AnimLoopRight();
 	
 	virtual int getFrame();

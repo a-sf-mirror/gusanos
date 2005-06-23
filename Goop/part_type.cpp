@@ -2,7 +2,8 @@
 
 #include "resource_list.h"
 
-#include "sprite.h"
+#include "sprite_set.h"
+#include "gfx.h"
 #include "distortion.h"
 #include "text.h"
 #include "parser.h"
@@ -63,6 +64,8 @@ PartType::PartType()
 	sprite = NULL;
 	distortion = NULL;
 	distortMagnitude = 0.8;
+	
+	blender = NONE;
 	
 	groundCollision = NULL;
 	creation = NULL;
@@ -144,6 +147,12 @@ bool PartType::load(const string &filename)
 					{
 						if ( val == "ping_pong" ) animType = ANIM_PINGPONG;
 						else if ( val == "loop_right" ) animType = ANIM_LOOPRIGHT;
+					}
+					else if ( var == "alpha" ) alpha = cast<int>(val);
+					else if ( var == "blender" )
+					{
+						if ( val == "add" ) blender = ADD;
+						else if ( val == "alpha" ) blender = ALPHA;
 					}
 					else if ( var == "colour" || var == "color" )
 					{

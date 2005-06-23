@@ -156,4 +156,21 @@ class AddAngleSpeed : public BaseAction
 	float speedVariation;
 };
 
+BaseAction* setAlphaFade( const std::vector< std::string >& params );
+
+class SetAlphaFade : public BaseAction
+{
+	public:
+
+		SetAlphaFade( const std::vector< std::string >& params );
+		~SetAlphaFade();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+	
+		int frames;
+		int dest;
+};
+
 #endif  // _GAME_ACTIONS_H_

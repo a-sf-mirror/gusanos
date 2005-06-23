@@ -1,7 +1,9 @@
 #include "player_ai.h"
 #include "player_options.h"
 #include "worm.h"
+#include "game.h"
 #include <vector>
+#include <list>
 #include <cmath>
 
 // DONT USE THIS NYM, USE Vec::length() ! ;D

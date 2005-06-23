@@ -9,6 +9,7 @@
 #include "player_options.h"
 #include "base_animator.h"
 #include "animators.h"
+#include "sprite_set.h"
 #include "sprite.h"
 #include "weapon.h"
 #include "ninjarope.h"
@@ -23,7 +24,7 @@ using boost::lexical_cast;
 BaseWorm::BaseWorm()
 	: BaseObject(), animate(false), movable(false), changing(false)
 {
-	skin = spriteList.load("skin.png");
+	skin = spriteList.load("skin");
 	m_animator = new AnimLoopRight(skin,35);
 	m_lastHurt = NULL;
 	
@@ -437,23 +438,20 @@ void BaseWorm::think()
 		}
 		
 		processJumpingAndNinjaropeControls();
+		processPhysics();
+		// TODO: Weapon changes
+		// TODO: Sight
+		processMoveAndDig();
 		// TODO: Weapons
 		for ( size_t i = 0; i < m_weapons.size(); ++i )
 		{
 			m_weapons[i]->think();
 		}
-		processPhysics();
-		// TODO: Weapon changes
-		// TODO: Sight
-		processMoveAndDig();
-		// TODO: Bleeding
-		// TODO: Death
 
 		if(animate)
 			m_animator->tick();
 		else
 			m_animator->reset();
-		// TODO: Ninjarope
 		// TODO: Viewport
 	}
 	/* TODO
@@ -703,7 +701,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
 			
-			skin->drawAngled(where, m_animator->getFrame(), renderX, renderY, aimAngle, flipped);
+			skin->getSprite(m_animator->getFrame(),aimAngle)->draw(where, renderX, renderY, flipped);
 			
 			if (m_ninjaRope->active)
 				line(where, x, y, static_cast<int>(m_ninjaRope->getPos().x) - xOff, static_cast<int>(m_ninjaRope->getPos().y) - yOff, m_ninjaRope->getColour());

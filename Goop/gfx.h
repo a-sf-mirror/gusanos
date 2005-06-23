@@ -6,6 +6,13 @@
 #include <string>
 #include <list>
 
+enum Blenders
+{
+	ALPHA,
+	ADD,
+	NONE
+};
+
 class Gfx
 {
 	public:
@@ -27,7 +34,22 @@ class Gfx
 	
 	operator bool()
 	{ return m_initialized; } // Returns true if it's safe to use this object
-
+	
+	inline void setBlender( Blenders blender, int alpha )
+	{
+		drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+		switch ( blender )
+		{
+			case ALPHA:
+			{
+				set_trans_blender(255, 255, 255, alpha);
+			}break;
+			case ADD:
+			{
+				set_add_blender( 255,255,255, alpha);
+			}break;
+		}
+	}
 	
 	BITMAP* buffer;
 	

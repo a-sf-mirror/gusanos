@@ -6,7 +6,7 @@
 #include "part_type.h"
 #include "weapon_type.h"
 #include "sound.h"
-#include "sprite.h"
+#include "sprite_set.h"
 #include "base_object.h"
 #include "player.h"
 #include "player_input.h"

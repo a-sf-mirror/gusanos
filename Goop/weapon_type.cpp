@@ -1,6 +1,6 @@
 #include "weapon_type.h"
 
-#include "sprite.h"
+#include "sprite_set.h"
 #include "text.h"
 #include "parser.h"
 
@@ -132,7 +132,6 @@ bool WeaponType::load(const string &filename)
 		return true;
 	} else
 	{
-		std::cout << "ERROR: Loading " << filename << std::endl;
 		return false;
 	}
 }

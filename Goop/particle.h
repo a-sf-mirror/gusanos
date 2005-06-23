@@ -37,6 +37,7 @@ class Particle : public BaseObject
 	void think();
 	float getAngle();
 	void addAngleSpeed(float);
+	void setAlphaFade(int frames, int dest);
 	
 	private:
 	
@@ -44,7 +45,10 @@ class Particle : public BaseObject
 	PartType* m_type;
 	float m_angle;
 	float m_angleSpeed;
-	Sprite* m_sprite;
+	float m_fadeSpeed;
+	float m_alpha;
+	int m_alphaDest;
+	SpriteSet* m_sprite;
 	BaseAnimator* m_animator;
 	
 	bool justCreated;

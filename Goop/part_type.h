@@ -2,6 +2,7 @@
 #define PART_TYPE_H
 
 #include "resource_list.h"
+#include "gfx.h"
 #include "events.h"
 #include "distortion.h"
 
@@ -9,7 +10,7 @@
 #include <string>
 #include <vector>
 
-class Sprite;
+class SpriteSet;
 //struct Distortion;
 
 struct TimerEvent
@@ -57,10 +58,11 @@ class PartType
 	Distortion* distortion;
 	float distortMagnitude;
 	
-	Sprite* sprite;
+	SpriteSet* sprite;
 	int animDuration;
 	int animType;
 	int animOnGround;
+	Blenders blender;
 	
 	std::vector< TimerEvent* > timer;
 	std::vector< WormDetectEvent* > detectRanges;

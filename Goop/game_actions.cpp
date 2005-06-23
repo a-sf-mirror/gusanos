@@ -25,6 +25,7 @@ void registerGameActions()
 	game.actionList["add_angle_speed"] = addAngleSpeed;
 	game.actionList["push"] = push;
 	game.actionList["damage"] = damage;
+	game.actionList["set_alpha_fade"] = setAlphaFade;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -345,5 +346,40 @@ void AddAngleSpeed::run( BaseObject* object, BaseObject *object2, BaseWorm *worm
 }
 
 AddAngleSpeed::~AddAngleSpeed()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* setAlphaFade( const vector< string >& params )
+{
+	return new SetAlphaFade(params);
+}
+
+SetAlphaFade::SetAlphaFade( const vector< string >& params )
+{
+	frames = 0;
+	dest = 0;
+	if ( params.size() > 0 )
+	{
+		frames = cast<int>(params[0]);
+	}
+	if( params.size() > 1 )
+	{
+		dest = cast<int>(params[1]);
+	}
+}
+
+void SetAlphaFade::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+{
+	if (object)
+	{
+		object->setAlphaFade( frames, dest );
+	}
+}
+
+SetAlphaFade::~SetAlphaFade()
 {
 }

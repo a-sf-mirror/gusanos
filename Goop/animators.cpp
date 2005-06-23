@@ -1,11 +1,11 @@
 #include "animators.h"
 
 #include "base_animator.h"
-#include "sprite.h"
+#include "sprite_set.h"
 
 #include <allegro.h>
 
-AnimPingPong::AnimPingPong( Sprite* sprite, int duration ) : BaseAnimator()
+AnimPingPong::AnimPingPong( SpriteSet* sprite, int duration ) : BaseAnimator()
 {
 	m_totalFrames = sprite->getFramesWidth();
 	m_duration = duration;
@@ -56,7 +56,7 @@ void AnimPingPong::reset()
 	m_currentDir = 1;
 }
 
-AnimLoopRight::AnimLoopRight( Sprite* sprite, int duration ) : BaseAnimator()
+AnimLoopRight::AnimLoopRight( SpriteSet* sprite, int duration ) : BaseAnimator()
 {
 	m_totalFrames = sprite->getFramesWidth();
 	m_duration = duration;

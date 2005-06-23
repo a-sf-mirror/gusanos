@@ -3,7 +3,6 @@
 
 #include <console.h>
 #include "font.h"
-#include "sprite.h"
 
 #include <allegro.h>
 
@@ -11,6 +10,8 @@
 #include <string>
 #include <list>
 #include <map>
+
+class SpriteSet;
 
 class GConsole : public Console
 {
@@ -45,7 +46,7 @@ class GConsole : public Console
 	std::string m_fontName;
 	int m_consoleKey;
 	std::string m_inputBuff;
-	Sprite *background;
+	SpriteSet *background;
 	
 	std::list< std::string > commandsLog;
 	std::list< std::string >::iterator currentCommand;

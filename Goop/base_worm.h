@@ -3,11 +3,12 @@
 
 #include "vec.h"
 #include "base_object.h"
-#include "sprite.h"
 
 class BaseAnimator;
 class BasePlayer;
 class NinjaRope;
+class Weapon;
+class SpriteSet;
 
 class BaseWorm : public BaseObject
 {	
@@ -106,7 +107,7 @@ protected:
 	BasePlayer* m_lastHurt;
 	NinjaRope* m_ninjaRope;
 	
-	Sprite *skin;
+	SpriteSet *skin;
 	BaseAnimator* m_animator;
 };
 

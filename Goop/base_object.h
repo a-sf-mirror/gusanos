@@ -27,6 +27,7 @@ class BaseObject
 	virtual void remove();
 	virtual bool isCollidingWith( const Vec& point, float radius );
 	virtual void removeRefsToPlayer( BasePlayer* player );
+	virtual void setAlphaFade( int frames, int dest ) {};
 	
 	void addSpeed( Vec spd_ )
 	{ spd += spd_; }

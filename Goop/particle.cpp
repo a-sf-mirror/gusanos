@@ -6,7 +6,9 @@
 #include "base_worm.h"
 #include "base_player.h"
 #include "part_type.h"
+#include "gfx.h"
 #include "sprite.h"
+#include "sprite_set.h"
 #include "base_animator.h"
 #include "animators.h"
 #include "vec.h"
@@ -25,6 +27,10 @@ Particle::Particle(PartType *type, Vec _pos, Vec _spd, int dir, BasePlayer* owne
 	m_angle = spd.getAngle();
 	m_angleSpeed = 0;
 	m_animator = NULL;
+	
+	m_alpha = m_type->alpha;
+	m_fadeSpeed = 0;
+	m_alphaDest = 255;
 	
 	m_sprite = m_type->sprite;
 	if ( m_sprite )
@@ -51,6 +57,14 @@ void Particle::think()
 	{
 	
 		spd.y+=m_type->gravity;
+		
+		if ( m_type->acceleration )
+		{
+			if ( spd.dotProduct(angleVec(m_angle,1)) < m_type->maxSpeed || m_type->maxSpeed < 0)
+				spd+= angleVec(m_angle,m_type->acceleration);
+		}
+		
+		spd*=m_type->damping;
 		
 		bool collision = false;
 		if ( !game.level.getMaterial( (int)(pos.x+spd.x), (int)pos.y ).particle_pass)
@@ -105,14 +119,7 @@ void Particle::think()
 			justCreated = false;
 		}
 		if ( deleteMe ) break;
-		
-		if ( m_type->acceleration )
-		{
-			if ( spd.dotProduct(angleVec(m_angle,1)) < m_type->maxSpeed || m_type->maxSpeed < 0)
-			spd+= angleVec(m_angle,m_type->acceleration);
-		}
-		
-		spd*=m_type->damping;
+
 		
 		if ( abs(m_angleSpeed) < m_type->angularFriction ) m_angleSpeed = 0;
 		else if ( m_angleSpeed < 0 ) m_angleSpeed += m_type->angularFriction;
@@ -122,8 +129,22 @@ void Particle::think()
 		while ( m_angle > 360 ) m_angle -= 360;
 		while ( m_angle < 0 ) m_angle += 360;
 		
+		//Position update
 		pos = pos + spd;
+		
+		// Animation
 		if ( m_animator ) m_animator->tick();
+		
+		// Alpha Fade
+		if ( m_type->blender != NONE && m_fadeSpeed )
+		{
+			if ( fabs(m_alphaDest-m_alpha) < fabs(m_fadeSpeed) )
+			{
+				m_fadeSpeed = 0;
+				m_alpha = m_alphaDest;
+			}else
+				m_alpha += m_fadeSpeed;
+		}
 	}
 }
 
@@ -137,18 +158,36 @@ void Particle::addAngleSpeed( float speed )
 	m_angleSpeed += speed;
 }
 
+void Particle::setAlphaFade(int frames, int dest)
+{
+	m_fadeSpeed = ( dest - m_alpha ) / frames;
+	m_alphaDest = dest;
+}
+
 void Particle::draw(BITMAP* where,int xOff, int yOff)
 {
 	if (!m_sprite)
-		putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
+		if ( m_type->blender != NONE )
+		{
+			gfx.setBlender( m_type->blender, (int)m_alpha );
+			putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
+			solid_mode();
+		}
+		else putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
 	else
 	{
 		if ( m_angle < 180 )
 		{
-			m_sprite->drawAngled(where, m_animator->getFrame(), static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_angle);
+			if ( m_type->blender == NONE )
+				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
+			else
+				m_sprite->getSprite(m_animator->getFrame(), m_angle)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, false, 0, m_type->blender);
 		}else
 		{
-			m_sprite->drawAngled(where, m_animator->getFrame(), (int)pos.x-xOff, (int)pos.y-yOff, 360-m_angle , true);
+			if ( m_type->blender == NONE )
+				m_sprite->getSprite(m_animator->getFrame(), 360-m_angle)->draw(where, (int)pos.x-xOff, (int)pos.y-yOff, true);
+			else
+				m_sprite->getSprite(m_animator->getFrame(), 360-m_angle)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, true, 0, m_type->blender);
 		}
 	}
 	if (m_type->distortion)

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-class Sprite;
+class SpriteSet;
 
 class WeaponType
 {
@@ -22,7 +22,7 @@ class WeaponType
 	float laserSightIntensity;
 	float laserSightRange;
 
- 	Sprite *firecone;
+ 	SpriteSet *firecone;
 	std::string name;
 	std::string fileName;
 
