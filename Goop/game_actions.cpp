@@ -4,6 +4,7 @@
 #include "particle.h"
 #include "part_type.h"
 #include "sound.h"
+#include "sprite_set.h"
 #include "text.h"
 #include "base_object.h"
 #include "weapon.h"
@@ -20,12 +21,14 @@ void registerGameActions()
 	game.actionList["shoot_particles"] = shootParticles;
 	game.actionList["remove"] = remove;
 	game.actionList["play_sound"] = playSound;
+	game.actionList["play_random_sound"] = playRandomSound;
 	game.actionList["play_sound_static"] = playSoundStatic;
 	game.actionList["delay_fire"] = delayFire;
 	game.actionList["add_angle_speed"] = addAngleSpeed;
 	game.actionList["push"] = push;
 	game.actionList["damage"] = damage;
 	game.actionList["set_alpha_fade"] = setAlphaFade;
+	game.actionList["show_firecone"] = showFirecone;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +101,7 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 			tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
 			spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
 			spd += object->getSpd() * motionInheritance;
-			game.objects.insert(1,1,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getDir(), object->getOwner() ));
+			game.objects.insert(1,type->renderLayer,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getDir(), object->getOwner() ));
 		}
 
 	}
@@ -237,6 +240,60 @@ PlaySound::~PlaySound()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
+BaseAction* playRandomSound( const vector< string >& params )
+{
+	return new PlayRandomSound(params);
+}
+
+PlayRandomSound::PlayRandomSound( const vector< string >& params )
+{
+	loudness = 100;
+	pitch = 1;
+	pitchVariation = 0;
+
+	int i = 0;
+	if( params.size() > i )
+	{
+		loudness = cast<float>(params[i]);
+	}
+	++i;
+	if( params.size() > i )
+	{
+		pitch = cast<float>(params[i]);
+	}
+	++i;
+	if( params.size() > i )
+	{
+		pitchVariation = cast<float>(params[i]);
+	}
+	++i;
+	while ( params.size() > i )
+	{
+		sounds.push_back( soundList.load(params[i]) );
+		++i;
+	}
+}
+
+void PlayRandomSound::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+{
+	if ( !sounds.empty() )
+	{
+		int sound = rnd() * sounds.size();
+		if ( sounds[sound] != NULL )
+		{
+			sounds[sound]->play2D(object,loudness,pitch,pitchVariation);
+		}
+	}
+}
+
+PlayRandomSound::~PlayRandomSound()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
 BaseAction* playSoundStatic( const vector< string >& params )
 {
 	return new PlaySoundStatic(params);
@@ -311,6 +368,47 @@ void DelayFire::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, We
 }
 
 DelayFire::~DelayFire()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* showFirecone( const vector< string >& params )
+{
+	return new ShowFirecone(params);
+}
+
+ShowFirecone::ShowFirecone( const vector< string >& params )
+{
+	sprite = NULL;
+	frames = 0;
+	drawDistance = 0;
+	if ( params.size() > 0 )
+	{
+		sprite = spriteList.load(params[0]);
+	}
+	if( params.size() > 1 )
+	{
+		frames = cast<int>(params[1]);
+	}
+	if( params.size() > 2 )
+	{
+		drawDistance = cast<float>(params[2]);
+	}
+}
+
+void ShowFirecone::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+{
+	BaseWorm* w;
+	if( w = dynamic_cast<BaseWorm*>(object) )
+	{
+		w->showFirecone( sprite, frames, drawDistance );
+	}
+}
+
+ShowFirecone::~ShowFirecone()
 {
 }
 

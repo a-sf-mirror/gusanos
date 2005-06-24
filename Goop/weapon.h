@@ -1,7 +1,6 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
-
 class BaseWorm;
 class WeaponType;
 

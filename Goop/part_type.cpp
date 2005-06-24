@@ -17,10 +17,11 @@ using namespace std;
 
 ResourceList<PartType> partTypeList("objects/");
 
-TimerEvent::TimerEvent(int _delay, int _delayVariation)
+TimerEvent::TimerEvent(int _delay, int _delayVariation, int _triggerTimes)
 {
 	delay=_delay;
 	delayVariation = _delayVariation;
+	triggerTimes = _triggerTimes;
 	event = new Event;
 }
 
@@ -29,9 +30,10 @@ TimerEvent::~TimerEvent()
 	delete event;
 }
 
-WormDetectEvent::WormDetectEvent( float range )
+WormDetectEvent::WormDetectEvent( float range, bool detectOwner )
 {
 	m_range = range;
+	m_detectOwner = detectOwner;
 	event = new Event;
 }
 
@@ -43,16 +45,11 @@ WormDetectEvent::~WormDetectEvent()
 PartType::PartType()
 {
 	gravity = 0;
-	damage = 0;
 	bounceFactor = 1;
 	groundFriction = 1;
 	colour = -1;
 	repeat = 1;
 	alpha = 255;
-	timeout = -1;
-	timeoutVariation = 0;
-	wormDetectRange = 0;
-	radius = 0;
 	angularFriction = 0;
 	animDuration = 100;
 	animType = ANIM_LOOPRIGHT;
@@ -61,6 +58,7 @@ PartType::PartType()
 	acceleration = 0;
 	maxSpeed = -1;
 	
+	renderLayer = 1;
 	sprite = NULL;
 	distortion = NULL;
 	distortMagnitude = 0.8;
@@ -138,8 +136,6 @@ bool PartType::load(const string &filename)
 					else if ( var == "acceleration" ) acceleration = cast<float>(val);
 					else if ( var == "max_speed" ) maxSpeed = cast<float>(val);
 					else if ( var == "angular_friction" ) angularFriction = cast<float>(val);
-					else if ( var == "damage" ) damage = cast<float>(val);
-					else if ( var == "worm_detect_range" ) wormDetectRange = cast<float>(val);
 					else if ( var == "sprite" ) sprite = spriteList.load(val);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
 					else if ( var == "anim_on_ground" ) animOnGround = cast<int>(val);
@@ -148,6 +144,7 @@ bool PartType::load(const string &filename)
 						if ( val == "ping_pong" ) animType = ANIM_PINGPONG;
 						else if ( val == "loop_right" ) animType = ANIM_LOOPRIGHT;
 					}
+					else if ( var == "render_layer" ) renderLayer = cast<int>(val);
 					else if ( var == "alpha" ) alpha = cast<int>(val);
 					else if ( var == "blender" )
 					{
@@ -200,28 +197,42 @@ bool PartType::load(const string &filename)
 					{
 						int delay = 100;
 						int delayVariation = 0;
+						int triggerTimes = 0;
 						iter++;
 						if( iter != tokens.end())
 						{
 							delay = cast<int>(*iter);
+							++iter;
 						}
-						iter++;
 						if( iter != tokens.end())
 						{
 							delayVariation = cast<int>(*iter);
+							++iter;
 						}
-						timer.push_back(new TimerEvent(delay, delayVariation));
+						if( iter != tokens.end())
+						{
+							triggerTimes = cast<int>(*iter);
+						}
+						timer.push_back(new TimerEvent(delay, delayVariation, triggerTimes));
 						currEvent = timer.back()->event;
+						
 					}
 					else if ( eventName == "detect_range" )
 					{
 						float range = 0;
+						bool detectOwner = true;
 						iter++;
 						if( iter != tokens.end())
 						{
 							range = cast<float>(*iter);
+							++iter;
 						}
-						detectRanges.push_back( new WormDetectEvent(range));
+						if( iter != tokens.end())
+						{
+							detectOwner = (bool)cast<int>(*iter);
+							++iter;
+						}
+						detectRanges.push_back( new WormDetectEvent(range, detectOwner));
 						currEvent = detectRanges.back()->event;
 					}
 					else

@@ -15,19 +15,21 @@ class SpriteSet;
 
 struct TimerEvent
 {
-	TimerEvent(int _delay, int _delayVariation);
+	TimerEvent(int _delay, int _delayVariation, int _triggerTimes);
 	~TimerEvent();
 	Event* event;
 	int delay;
 	int delayVariation;
+	int triggerTimes;
 };
 
 struct WormDetectEvent
 {
-	WormDetectEvent( float range );
+	WormDetectEvent( float range, bool detectOwner );
 	~WormDetectEvent();
 	Event* event;
 	float m_range;
+	bool m_detectOwner;
 };
 
 class PartType
@@ -40,24 +42,20 @@ class PartType
 	bool load(const std::string &filename);
 
 	float gravity;
-	float damage;
 	float bounceFactor;
 	float groundFriction;
 	float damping;
 	float acceleration;
 	float maxSpeed;
-	int colour;
 	int repeat;
-	int alpha;
-	int timeout;
-	int timeoutVariation;
-	float wormDetectRange;
-	float radius;
 	float angularFriction;
 	
 	Distortion* distortion;
 	float distortMagnitude;
 	
+	int renderLayer;
+	int colour;
+	int alpha;
 	SpriteSet* sprite;
 	int animDuration;
 	int animType;

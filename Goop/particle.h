@@ -16,6 +16,22 @@ struct PartTimer
 	{
 		m_tEvent = tEvent;
 		count = m_tEvent->delay + (int)(rnd() * m_tEvent->delayVariation);
+		triggerCount = 0;
+	}
+	
+	inline bool tick()
+	{
+		if ( m_tEvent->triggerTimes <= 0 || triggerCount < m_tEvent->triggerTimes )
+		{
+			--count;
+			if ( count < 0 )
+			{
+				reset();
+				++triggerCount;
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	inline void reset()
@@ -24,6 +40,7 @@ struct PartTimer
 	}
 	
 	int count;
+	int triggerCount;
 	TimerEvent* m_tEvent;
 };
 

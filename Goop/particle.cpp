@@ -93,6 +93,7 @@ void Particle::think()
 			ObjectsList::ColLayerIterator worm;
 			for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
 			{
+				if ( (*t)->m_detectOwner || (*worm)->getOwner() != m_owner )
 				if ( (*worm)->isCollidingWith(pos, (*t)->m_range) )
 				{
 					(*t)->event->run( this,(*worm), dynamic_cast<BaseWorm*>( (*worm) ));
@@ -103,11 +104,9 @@ void Particle::think()
 		
 		for ( vector< PartTimer >::iterator t = timer.begin(); t != timer.end(); t++)
 		{
-			(*t).count--;
-			if ( (*t).count < 0 )
+			if ( (*t).tick() )
 			{
 				(*t).m_tEvent->event->run(this);
-				(*t).reset();
 			}
 			if ( deleteMe ) break;
 		}

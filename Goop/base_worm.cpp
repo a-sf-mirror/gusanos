@@ -28,6 +28,10 @@ BaseWorm::BaseWorm()
 	m_animator = new AnimLoopRight(skin,35);
 	m_lastHurt = NULL;
 	
+	m_fireconeTime = 0;
+	m_currentFirecone = NULL;
+	m_fireconeAnimator = NULL;
+	m_fireconeDistance = 0;
 	
 	m_isActive = false;
 
@@ -53,7 +57,8 @@ BaseWorm::BaseWorm()
 
 BaseWorm::~BaseWorm()
 {
-	delete m_animator;
+	if ( m_animator ) delete m_animator;
+	if ( m_fireconeAnimator ) delete m_fireconeAnimator;
 	//m_ninjaRope->deleteMe = true;
 	for ( size_t i = 0; i < m_weapons.size(); i++)
 	{
@@ -452,6 +457,14 @@ void BaseWorm::think()
 			m_animator->tick();
 		else
 			m_animator->reset();
+		
+		if ( m_currentFirecone )
+		{
+			if ( m_fireconeTime == 0 ) m_currentFirecone = NULL;
+			--m_fireconeTime;
+			if(m_fireconeAnimator)
+				m_fireconeAnimator->tick();
+		}
 		// TODO: Viewport
 	}
 	/* TODO
@@ -701,10 +714,17 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
 			
-			skin->getSprite(m_animator->getFrame(),aimAngle)->draw(where, renderX, renderY, flipped);
-			
 			if (m_ninjaRope->active)
 				line(where, x, y, static_cast<int>(m_ninjaRope->getPos().x) - xOff, static_cast<int>(m_ninjaRope->getPos().y) - yOff, m_ninjaRope->getColour());
+			
+			skin->getSprite(m_animator->getFrame(),aimAngle)->draw(where, renderX, renderY, flipped);
+			
+			if ( m_currentFirecone )
+			{
+				Vec distance = angleVec(aimAngle,m_fireconeDistance);
+				m_currentFirecone->getSprite(m_fireconeAnimator->getFrame(),aimAngle)->
+				draw(where, renderX+distance.x*m_dir, renderY+distance.y, flipped);
+			}
 				
 			if(changing)
 			{
@@ -777,6 +797,16 @@ void BaseWorm::addAimSpeed( float speed )
 void BaseWorm::addRopeLength( float distance )
 {
 	m_ninjaRope->addLength(distance);
+}
+
+void BaseWorm::showFirecone( SpriteSet* sprite, int frames, float distance )
+{
+	m_fireconeTime = frames;
+	m_currentFirecone = sprite;
+	if ( m_fireconeAnimator ) delete m_fireconeAnimator;
+	m_fireconeAnimator = new AnimLoopRight( sprite, frames );
+	m_fireconeDistance = distance;
+	
 }
 
 void BaseWorm::actionStart( Actions action )

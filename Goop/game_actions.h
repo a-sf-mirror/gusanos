@@ -7,6 +7,7 @@
 
 class PartType;
 class Sound;
+class SpriteSet;
 class BaseObject;
 
 void registerGameActions();
@@ -102,6 +103,26 @@ class PlaySound : public BaseAction
 	
 };
 
+BaseAction* playRandomSound( const std::vector< std::string >& params );
+
+class PlayRandomSound : public BaseAction
+{
+	public:
+
+		PlayRandomSound( const std::vector< std::string >& params );
+		~PlayRandomSound();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+		
+		std::vector<Sound*> sounds;
+		float pitch;
+		float pitchVariation;
+		float loudness;
+	
+};
+
 BaseAction* playSoundStatic( const std::vector< std::string >& params );
 
 class PlaySoundStatic : public BaseAction
@@ -137,6 +158,24 @@ class DelayFire : public BaseAction
 	
 	int delayTime;
 	int delayTimeVariation;
+};
+
+BaseAction* showFirecone( const std::vector< std::string >& params );
+
+class ShowFirecone : public BaseAction
+{
+	public:
+
+		ShowFirecone( const std::vector< std::string >& params );
+		~ShowFirecone();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+	
+		int frames;
+		float drawDistance;
+		SpriteSet* sprite;
 };
 
 BaseAction* addAngleSpeed( const std::vector< std::string >& params );

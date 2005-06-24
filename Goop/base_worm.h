@@ -77,6 +77,8 @@ public:
 	bool isActive();
 	void removeRefsToPlayer( BasePlayer* player );
 	
+	void showFirecone( SpriteSet* sprite, int frames, float distance );
+	
 	NinjaRope* getNinjaRopeObj();
 	
 	float aimSpeed; // Useless to add setters and getters for this
@@ -100,6 +102,9 @@ protected:
 	float health;
 	//float currentRopeLength; //moved to Ninjarope
 	
+	int m_fireconeTime;
+	float m_fireconeDistance;
+	
 	size_t currentWeapon;
 	
 	std::vector<Weapon*> m_weapons;
@@ -108,6 +113,8 @@ protected:
 	NinjaRope* m_ninjaRope;
 	
 	SpriteSet *skin;
+	SpriteSet *m_currentFirecone;
+	BaseAnimator* m_fireconeAnimator;
 	BaseAnimator* m_animator;
 };
 
