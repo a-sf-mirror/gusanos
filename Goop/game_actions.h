@@ -66,6 +66,7 @@ class Damage : public BaseAction
 
 	private:
 		float m_damage;
+		float m_damageVariation;
 };
 
 BaseAction* remove( const std::vector< std::string >& params );

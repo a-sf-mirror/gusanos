@@ -151,17 +151,22 @@ BaseAction* damage( const vector< string >& params )
 Damage::Damage( const vector< string >& params )
 {
 	m_damage = 0;
+	m_damageVariation = 0;
 
-	if ( params.size() >= 1 )
+	if ( params.size() > 0 )
 	{
 		m_damage = cast<float>(params[0]);
+	}
+	if ( params.size() > 1 )
+	{
+		m_damageVariation = cast<float>(params[1]);
 	}
 }
 
 void Damage::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
 {
 	if ( worm )
-		worm->damage( m_damage, object->getOwner() );
+		worm->damage( m_damage + rnd() * m_damageVariation, object->getOwner() );
 }
 
 Damage::~Damage()
