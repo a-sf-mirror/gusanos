@@ -35,7 +35,6 @@ Gfx::Gfx()
 : buffer(NULL), m_initialized(false), m_fullscreen(true), m_doubleRes(false)
 , m_vwidth(320), m_vheight(240)
 {
-
 }
 
 Gfx::~Gfx()
@@ -44,6 +43,8 @@ Gfx::~Gfx()
 
 void Gfx::init()
 {
+	register_png_file_type();
+	
 	set_color_depth(32); //Ugh
 
 	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
@@ -221,17 +222,7 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette )
 	
 	if ( exists( filename.c_str() ) )
 	{
-		string extension = filename.substr(filename.length() - 3);
-		transform(extension.begin(), extension.end(), extension.begin(), (int(*)(int)) toupper);
-		
-		if ( extension == "PNG" )
-		{
-			returnValue = load_png(filename.c_str(), palette);
-		}
-		else
-		{
-			returnValue = load_bitmap(filename.c_str(), palette);
-		}
+		returnValue = load_bitmap(filename.c_str(), palette);
 	}else
 	{
 		string tmp = filename;
@@ -258,17 +249,7 @@ bool Gfx::saveBitmap( const string &filename,BITMAP* image, RGB* palette )
 {
 	bool returnValue = false;
 	
-	string extension = filename.substr(filename.length() - 3);
-	transform(extension.begin(), extension.end(), extension.begin(), (int(*)(int)) toupper);
-	
-	if ( extension == "PNG" )
-	{
-		if ( !save_png(filename.c_str(), image, palette) ) returnValue = true;
-	}
-	else
-	{
-		if ( !save_bitmap(filename.c_str(), image, palette) ) returnValue = true;
-	}
+	if ( !save_bitmap(filename.c_str(), image, palette) ) returnValue = true;
 	
 	return returnValue;
 }
@@ -284,7 +265,7 @@ string screenShot(const list<string> &args)
 		++nameIndex;
 	} while( exists( filename.c_str() ) );
 	
-	BITMAP * tmpbitmap = create_bitmap(screen->w,screen->h);
+	BITMAP * tmpbitmap = create_bitmap_ex(16,screen->w,screen->h);
 	blit(screen,tmpbitmap,0,0,0,0,screen->w,screen->h);
 	bool success = gfx.saveBitmap( filename.c_str(),tmpbitmap,0);
 	destroy_bitmap(tmpbitmap);

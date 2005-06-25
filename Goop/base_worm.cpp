@@ -708,11 +708,18 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			int renderX = x;
 			int renderY = y;
 			
-			for(int i = 0; i < 10; i++)
+			if ( m_weapons[currentWeapon]->reloading )
 			{
-				Vec crosshair = angleVec(aimAngle*m_dir, rnd()*10+30) + renderPos - Vec(xOff, yOff);
+				Vec crosshair = angleVec(aimAngle*m_dir, 25) + renderPos - Vec(xOff, yOff);
+				float radius = m_weapons[currentWeapon]->reloadTime / (float)m_weapons[currentWeapon]->m_type->reloadTime;
+				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(255*radius,255*(1-radius),0));
+			}
+			else for(int i = 0; i < 10; i++)
+			{
+				Vec crosshair = angleVec(aimAngle*m_dir, rnd()*10+20) + renderPos - Vec(xOff, yOff);
 				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
+			
 			
 			if (m_ninjaRope->active)
 				line(where, x, y, static_cast<int>(m_ninjaRope->getPos().x) - xOff, static_cast<int>(m_ninjaRope->getPos().y) - yOff, m_ninjaRope->getColour());
@@ -762,8 +769,13 @@ void BaseWorm::respawn( const Vec& newPos)
 	aimAngle = 90;
 	spd = Vec ( 0, 0 );
 	pos = newPos;
+	m_dir = 1;
 	renderPos = pos;
 	m_lastHurt = NULL;
+	for ( size_t i = 0; i < m_weapons.size(); ++i )
+	{
+		m_weapons[i]->reset();
+	}
 }
 
 void BaseWorm::die()
@@ -822,6 +834,7 @@ void BaseWorm::actionStart( Actions action )
 		break;
 		
 		case FIRE:
+			if ( m_isActive )
 			m_weapons[currentWeapon]->actionStart( Weapon::PRIMARY_TRIGGER );
 		break;
 		
@@ -830,6 +843,7 @@ void BaseWorm::actionStart( Actions action )
 		break;
 			
 		case NINJAROPE:
+			if ( m_isActive )
 			m_ninjaRope->shoot(getWeaponPos(), angleVec(aimAngle*m_dir, game.options.ninja_rope_shootSpeed));
 		break;
 		

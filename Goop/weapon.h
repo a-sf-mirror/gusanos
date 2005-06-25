@@ -21,17 +21,23 @@ public:
 	
 	void think();
 	
+	void reset();
+	
 	void actionStart( Actions action );
 	void actionStop( Actions action );
 	
 	void delay( int time );
 	BaseWorm* getOwner();
+	
+	
+	bool reloading;
 
 private:
 		
 	bool primaryShooting;
 	int ammo;
 	int inactiveTime;
+	int reloadTime;
 	
 	WeaponType* m_type;
 	BaseWorm* m_owner;

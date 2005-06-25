@@ -23,15 +23,17 @@ WeaponType::WeaponType()
 	primaryPressed = NULL;
 	primaryReleased = NULL;
 	outOfAmmo = NULL;
+	reloadEnd = NULL;
 }
 
 WeaponType::~WeaponType()
 {
 	// <GLIP> There's no need to test for a zero-pointer before deleting
-	delete primaryShoot;
-	delete primaryPressed;
-	delete primaryReleased;
-	delete outOfAmmo;
+	if(primaryShoot) delete primaryShoot;
+	if(primaryPressed) delete primaryPressed;
+	if(primaryReleased) delete primaryReleased;
+	if(outOfAmmo) delete outOfAmmo;
+	if(reloadEnd) delete reloadEnd;
 }
 
 bool WeaponType::load(const string &filename)
@@ -110,6 +112,16 @@ bool WeaponType::load(const string &filename)
 					{
 						currEvent = new Event;
 						primaryReleased = currEvent;
+					}
+					else if ( eventName == "out_of_ammo" )
+					{
+						currEvent = new Event;
+						outOfAmmo = currEvent;
+					}
+					else if ( eventName == "reaload_end" )
+					{
+						currEvent = new Event;
+						reloadEnd = currEvent;
 					}
 					else
 					{

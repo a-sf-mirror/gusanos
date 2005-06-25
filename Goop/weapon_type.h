@@ -30,6 +30,7 @@ class WeaponType
 	Event *primaryPressed;
 	Event *primaryReleased;
 	Event *outOfAmmo;
+	Event *reloadEnd;
 };
 
 class WeaponOrder
