@@ -96,7 +96,7 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 		Vec spd;
 		float tmpAngle;
 		char dir = object->getDir();
-		for ( int i = 0; i < amount; i++)
+		for ( int i = 0; i < amount + rnd()*amountVariation; i++)
 		{
 			tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
 			spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );

@@ -76,6 +76,11 @@ NinjaRope* BaseWorm::getNinjaRopeObj()
 	return m_ninjaRope;
 }
 
+Weapon* BaseWorm::getCurrentWeapon()
+{
+	return m_weapons[currentWeapon];
+}
+
 void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 {
 	BaseVec<long> step;

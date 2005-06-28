@@ -16,16 +16,15 @@ Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 
 Weapon::~Weapon()
 {
+}
+
+void Weapon::reset()
+{
 	primaryShooting = false;
 	ammo = m_type->ammo;
 	inactiveTime = 0;
 	reloading = false;
 	reloadTime = 0;
-}
-
-void Weapon::reset()
-{
-	
 }
 
 void Weapon::think()

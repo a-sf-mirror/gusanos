@@ -2,6 +2,7 @@
 #include "player_options.h"
 #include "worm.h"
 #include "game.h"
+#include "weapon.h"
 #include <vector>
 #include <list>
 #include <cmath>
@@ -12,7 +13,7 @@ inline float distance(float x1, float y1, float x2, float y2)
 	return sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
 }
 
-const float cAimAccuracy = 8.0;
+const float cAimAccuracy = 2.0;
 
 PlayerAI::PlayerAI()
 	: m_pathSteps(100)
@@ -130,12 +131,14 @@ void PlayerAI::subThink()
 	while (rad2deg(targetAngle) >= 360)
 		targetAngle -= deg2rad(360);
 	
+	if ( rnd()*100 < 1 )
+	randomError = midrnd()*30;
 	//aim
-	if (curAngle - cAimAccuracy > rad2deg(targetAngle))
-                m_worm->aimSpeed = -0.48;
+	if (curAngle - cAimAccuracy > rad2deg(targetAngle)+randomError)
+                m_worm->aimSpeed = -0.68;
 	
-	if (curAngle + cAimAccuracy < rad2deg(targetAngle))
-                m_worm->aimSpeed = 0.48;
+	if (curAngle + cAimAccuracy < rad2deg(targetAngle)+randomError)
+                m_worm->aimSpeed = 0.68;
 
 	//shooting
 	if (curAngle - cAimAccuracy < rad2deg(targetAngle) && curAngle + cAimAccuracy > rad2deg(targetAngle))
@@ -145,6 +148,11 @@ void PlayerAI::subThink()
 	} else
 		baseActionStop(FIRE);
 
+
+	if ( ( m_worm->getCurrentWeapon()->reloading && rand() % 50 == 0 ) || rand() % 1000 == 0 )
+	{
+		m_worm->actionStart(Worm::CHANGERIGHT);
+	}
 
 	// TODO: Make decent behaviour
 	//jump

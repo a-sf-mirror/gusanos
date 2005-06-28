@@ -19,6 +19,7 @@ class PlayerAI : public BasePlayer
 	unsigned int m_pathSteps;	//"steps" to take in A* pathfinding
 	int m_nodes[128][128];	//A* nodes
 	BasePlayer* m_target;	//Target worm
+	float randomError; // I temporally use this to make it aim worse or sth.
 };
 
 #endif

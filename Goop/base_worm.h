@@ -71,6 +71,8 @@ public:
 	void respawn(const Vec& newPos);
 	virtual void die();
 	
+	Weapon* getCurrentWeapon();
+	
 	float getAngle();
 	void setDir(char d);
 	bool isCollidingWith( const Vec& point, float radius );
@@ -82,6 +84,7 @@ public:
 	NinjaRope* getNinjaRopeObj();
 	
 	float aimSpeed; // Useless to add setters and getters for this
+	float aimAngle;
 	
 protected:
 
@@ -97,7 +100,6 @@ protected:
 	bool animate;
 	bool movable; // What do we need this for? // Dunno, did I put this here? :o
 	bool changing;
-	float aimAngle;
 	float aimRecoilSpeed;
 	float health;
 	//float currentRopeLength; //moved to Ninjarope

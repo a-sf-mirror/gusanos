@@ -7,6 +7,7 @@
 #include "player_options.h"
 #include "ninjarope.h"
 #include "network.h"
+#include "vector_replicator.h"
 
 #include <math.h>
 #include <vector>
@@ -18,6 +19,8 @@ ZCom_ClassID NetWorm::classID = ZCom_Invalid_ID;
 
 NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 {
+	timeSinceLastUpdate = 1;
+	
 	m_playerID = INVALID_NODE_ID;
 	m_node = new ZCom_Node();
 	if (!m_node)
@@ -25,15 +28,17 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		allegro_message("ERROR: Unable to create worm node.");
 	}
 	
-	m_node->beginReplicationSetup();
-		m_node->addReplicationFloat ((zFloat*)&pos.x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
-		m_node->addReplicationFloat ((zFloat*)&pos.y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
+	m_node->beginReplicationSetup(0);
+	
+		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH , (int)Position, -1, 1000);
 		
+		m_node->addReplicator(new VectorReplicator( &posSetup, &pos ), true);
+		
+		static ZCom_ReplicatorSetup nrSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
+		
+		m_node->addReplicator(new VectorReplicator( &nrSetup, &m_ninjaRope->getPosRefference() ), true);
+				
 		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
-		
-		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().x, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
-		
-		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getPosRefference().y, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
 		
 		m_node->addReplicationInt ( (zS32*) &currentWeapon, 8, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
 		
@@ -73,6 +78,8 @@ void NetWorm::think()
 	BaseWorm::think();
 	/*if ( !m_isAuthority ) */renderPos += (pos - renderPos)*0.2;
 // 	else renderPos = pos;
+	
+	++timeSinceLastUpdate;
 	
 	if ( m_node )
 	{
@@ -137,7 +144,7 @@ void NetWorm::correctOwnerPosition()
 	data->addFloat(pos.y,32);
 	data->addFloat(spd.x,32);
 	data->addFloat(spd.y,32);
-	m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_OWNER, data);
+	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_OWNER, data);
 }
 
 void NetWorm::assignOwner( BasePlayer* owner)
@@ -157,7 +164,7 @@ void NetWorm::sendSyncMessage( ZCom_ConnID id )
 	data->addInt(static_cast<int>(SYNC),8 );
 	data->addBool(m_isActive);
 	data->addBool(m_ninjaRope->active);
-	m_node->sendEventDirect(ZCom_Node::eEventMode_ReliableOrdered, data, id);
+	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 
 ZCom_NodeID NetWorm::getNodeID()
@@ -177,7 +184,7 @@ void NetWorm::respawn()
 		data->addInt( static_cast<int>( Respawn ),8 );
 		data->addFloat(pos.x,32);
 		data->addFloat(pos.y,32);
-		m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 	}
 }
 
@@ -195,7 +202,7 @@ void NetWorm::die()
 		{
 			data->addInt( INVALID_NODE_ID, 32 );
 		}
-		m_node->sendEvent(ZCom_Node::eEventMode_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 		BaseWorm::die();
 	}
 }
@@ -205,14 +212,14 @@ NetWormInterceptor::NetWormInterceptor( NetWorm* parent )
 	m_parent = parent;
 }
 
-bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, const RepInfo &info)
+bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, ZCom_Replicator *_replicator, zU32 _estimated_time_sent)
 {
 	bool returnValue = false;
-	switch ( (NetWorm::ReplicationItems) info.id )
+	switch ( (NetWorm::ReplicationItems) _replicator->getSetup()->getInterceptID() )
 	{
 		case NetWorm::PlayerID:
 		{
-			int recievedID = *static_cast<zU32*>(info.data_ptr_new);
+			int recievedID = *static_cast<zU32*>(_replicator->peekData());
 			list<BasePlayer*>::iterator playerIter;
 			for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
 			{
@@ -221,6 +228,15 @@ bool NetWormInterceptor::inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZ
 					(*playerIter)->assignWorm(m_parent);
 				}
 			}
+			returnValue = true;
+		} break;
+		case NetWorm::Position:
+		{
+			Vec recievedPos = *static_cast<Vec*>(_replicator->peekData());
+			Vec speedPrediction = (recievedPos - m_parent->lastPosUpdate) / m_parent->timeSinceLastUpdate;
+			m_parent->lastPosUpdate = recievedPos;
+			m_parent->timeSinceLastUpdate = 0;
+			m_parent->spd = m_parent->spd*0.2 + speedPrediction*0.8;
 			returnValue = true;
 		} break;
 	}
