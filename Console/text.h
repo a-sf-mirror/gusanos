@@ -20,6 +20,22 @@ void separate_str_by(char ch, const std::string &src, std::string &left, std::st
 
 std::list< std::list<std::string> > text2Tree(const std::string &text);
 
+inline bool iStrCmp( const std::string &a, const std::string &b )
+{
+	std::string::const_iterator itA, itB;
+	
+	for (itA = a.begin(), itB = b.begin();
+		    itA != a.end() && itB != b.end();
+		    ++itA, ++itB)
+	{
+		char ca = std::toupper(*itA);
+		char cb = std::toupper(*itB);
+		if(ca != cb)
+			return false;
+	}
+	return true;
+};
+
 struct IStrCompare
 {
 	template<class StringT>

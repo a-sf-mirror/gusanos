@@ -252,7 +252,7 @@ int Console::executeConfig(const string &filename)
 		while (!file.eof())
 		{
 			getline(file,text2Parse);
-			std::transform(text2Parse.begin(), text2Parse.end(), text2Parse.begin(), (int(*)(int)) toupper);
+			//std::transform(text2Parse.begin(), text2Parse.end(), text2Parse.begin(), (int(*)(int)) toupper);
 			parseLine(text2Parse);
 		};
 		file.close();
@@ -273,12 +273,12 @@ string Console::autoComplete(const string &text)
 		map<string, ConsoleItem*>::iterator item = items.lower_bound( text );
 		if( item != items.end() )
 		{
-			if ( text == item->first.substr(0, text.length()) )
+			if ( iStrCmp( text, item->first.substr(0, text.length()) ) )
 			{	
 				map<string, ConsoleItem*>::iterator firstMatch = item;
 				map<string, ConsoleItem*>::iterator lastMatch;
 				
-				while ( item != items.end() && text == item->first.substr(0, text.length() ) )
+				while ( item != items.end() && iStrCmp( text, item->first.substr(0, text.length() ) ) )
 				{
 					lastMatch = item;
 					item++;
@@ -298,7 +298,7 @@ string Console::autoComplete(const string &text)
 						i++;
 						for (item = firstMatch; item != lastMatch ; item++)
 						{
-							if (firstMatch->first.substr(0, text.length() + i) != item->first.substr(0, text.length() + i) )
+							if ( !iStrCmp( firstMatch->first.substr(0, text.length() + i) , item->first.substr(0, text.length() + i) ) )
 							{
 								differenceFound = true;
 							}
