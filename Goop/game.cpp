@@ -114,7 +114,10 @@ void Options::registerInConsole()
  		("SV_WORM_BOX_RADIUS", &worm_boxRadius, 2)
 		("SV_WORM_BOX_TOP", &worm_boxTop, 3)
 		("SV_WORM_BOX_BOTTOM", &worm_boxBottom, 4)
-		
+
+		("SV_MAX_RESPAWN_TIME", &maxRespawnTime, -1 )
+		("SV_MIN_RESPAWN_TIME", &minRespawnTime, 100 )
+
 		("HOST", &host, 0)
 	;
 	
@@ -172,6 +175,7 @@ void Game::init(int argc, char** argv)
 
 	m_defaultPath = "default/";
 	m_modPath = "default/";
+	m_modName = "default";
 	setMod("default");
 	refreshResources(); // 
 

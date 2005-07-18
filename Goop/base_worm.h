@@ -107,6 +107,8 @@ protected:
 	int m_fireconeTime;
 	float m_fireconeDistance;
 	
+	int m_timeSinceDeath; // Used for the min and max respawn time sv variables
+	
 	size_t currentWeapon;
 	
 	std::vector<Weapon*> m_weapons;

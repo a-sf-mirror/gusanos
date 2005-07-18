@@ -49,6 +49,8 @@ struct Options
 	float worm_boxRadius;
 	float worm_boxTop;
 	float worm_boxBottom;
+	int maxRespawnTime;
+	int minRespawnTime;
 	int host;
 }; 
 

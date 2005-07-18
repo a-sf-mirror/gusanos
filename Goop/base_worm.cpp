@@ -7,6 +7,7 @@
 #include "weapon_type.h"
 #include "particle.h"
 #include "player_options.h"
+#include "player.h"
 #include "base_animator.h"
 #include "animators.h"
 #include "sprite_set.h"
@@ -32,6 +33,8 @@ BaseWorm::BaseWorm()
 	m_currentFirecone = NULL;
 	m_fireconeAnimator = NULL;
 	m_fireconeDistance = 0;
+	
+	m_timeSinceDeath = 0;
 	
 	m_isActive = false;
 
@@ -471,6 +474,13 @@ void BaseWorm::think()
 				m_fireconeAnimator->tick();
 		}
 		// TODO: Viewport
+	}else
+	{
+		if ( m_timeSinceDeath > game.options.maxRespawnTime && game.options.maxRespawnTime >= 0 )
+		{
+			respawn();
+		}
+		++m_timeSinceDeath;
 	}
 	/* TODO
 	}
@@ -747,6 +757,18 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 							
 				game.infoFont->draw(where, weaponName, wx, wy, 0);
 			}
+			
+			if ( true && m_owner && !dynamic_cast<Player*>(m_owner) )
+			{
+				std::string const& playerName = m_owner->m_name;
+				std::pair<int, int> dim = game.infoFont->getDimensions(playerName);
+				int wx = x - dim.first / 2;
+				int wy = y - dim.second / 2 - 10;
+								
+				game.infoFont->draw(where, playerName, wx, wy, 0);
+			}
+			
+			
 		}
 		
 #ifdef DEBUG_WORM_REACTS
@@ -764,7 +786,9 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 
 void BaseWorm::respawn()
 {
-	respawn( game.level.getSpawnLocation() );
+	// Check if its already allowed to respawn
+	if ( m_timeSinceDeath > game.options.minRespawnTime )
+		respawn( game.level.getSpawnLocation() );
 }
 
 void BaseWorm::respawn( const Vec& newPos)
@@ -789,6 +813,7 @@ void BaseWorm::die()
 	if (m_owner) m_owner->deaths++;
 	if (m_lastHurt) m_lastHurt->kills++;
 	m_ninjaRope->remove();
+	m_timeSinceDeath = 0;
 	if ( game.deathObject )
 	{
 		game.objects.insert(1,1, new Particle( game.deathObject, pos, spd, m_dir, m_owner ));

@@ -12,7 +12,7 @@ class Client : public ZCom_Control
 	Client( int _udpport );
 	~Client();
 	
-	void request_players();
+	void requestPlayers();
 
 	protected:
 

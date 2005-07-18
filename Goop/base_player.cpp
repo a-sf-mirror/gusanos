@@ -4,6 +4,7 @@
 #include "net_worm.h"
 #include "player_options.h"
 #include "objects_list.h"
+#include "gconsole.h"
 
 #include <zoidcom.h>
 #include "network.h"
@@ -84,6 +85,17 @@ void BasePlayer::think()
 						{
 							kills = data->getInt(32);
 							deaths = data->getInt(32);
+							m_name = data->getStringStatic();
+						}
+						break;
+						case NAME_CHANGE:
+						{
+							changeName( data->getStringStatic() );
+						}
+						break;
+						case NAME_PETITION:
+						{
+							changeName( data->getStringStatic() );
 						}
 						break;
 					}
@@ -101,6 +113,47 @@ void BasePlayer::think()
 				break;
 			}
 		}
+	}
+	
+	if ( m_options->nameChanged() )
+	{
+		if ( m_node )
+		{
+			if ( m_isAuthority )
+			{
+				changeName( m_options->name );
+			}else
+			{
+				nameChangePetition();
+			}
+		}else
+		{
+			changeName(m_options->name);
+		}
+	}
+}
+
+void BasePlayer::changeName( const std::string& name )
+{
+	console.addLogMsg( "* " + m_name + " CHANGED NAME TO " + name );
+	m_name = name;
+	if ( m_node && m_isAuthority )
+	{
+		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+		data->addInt(static_cast<int>(NAME_CHANGE),8 );
+		data->addString( name.c_str() );
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+	}
+}
+
+void BasePlayer::nameChangePetition()
+{
+	if ( m_node )
+	{
+		ZCom_BitStream *data = new ZCom_BitStream;
+		data->addInt(static_cast<int>(NAME_PETITION),8 );
+		data->addString( m_options->name.c_str() );
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, data);
 	}
 }
 
@@ -160,10 +213,11 @@ void BasePlayer::setOwnerId( ZCom_ConnID id )
 
 void BasePlayer::sendSyncMessage( ZCom_ConnID id )
 {
-	ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+	ZCom_BitStream *data = new ZCom_BitStream;
 	data->addInt(static_cast<int>(SYNC),8 );
 	data->addInt(deaths,32);
 	data->addInt(kills,32);
+	data->addString( m_name.c_str() );
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 

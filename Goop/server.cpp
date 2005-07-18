@@ -4,6 +4,7 @@
 #include "net_worm.h"
 #include "base_worm.h"
 #include "base_player.h"
+#include "network.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -24,6 +25,30 @@ Server::Server( int _udpport )
 Server::~Server()
 {	
 }
+
+void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data) 
+{
+	Network::NetEvents event = (Network::NetEvents) _data.getInt(8);
+	switch( event )
+	{
+		case Network::PLAYER_REQUEST:
+		{
+			std::string name = _data.getStringStatic();
+			
+			console.addLogMsg( "* " + name + " HAS JOINED THE GAME");
+			BaseWorm* worm = game.addWorm(true);
+			if ( NetWorm* netWorm = dynamic_cast<NetWorm*>(worm) )
+			{
+				netWorm->setOwnerId(_id);
+			}
+			BasePlayer* player = game.addPlayer ( Game::PROXY );
+			player->changeName( name );
+			player->assignNetworkRole(true);
+			player->setOwnerId(_id);
+			player->assignWorm(worm);
+		};
+	};
+};
 
 bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
 {
@@ -64,16 +89,7 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_Bit
 
 void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
 {
-	console.addLogMsg("* CREATING WORM AND PLAYER FOR THE NEW CONNECTION");
-	BaseWorm* worm = game.addWorm(true);
-	if ( NetWorm* netWorm = dynamic_cast<NetWorm*>(worm) )
-	{
-		netWorm->setOwnerId(_id);
-	}
-	BasePlayer* player = game.addPlayer ( Game::PROXY );
-	player->assignNetworkRole(true);
-	player->setOwnerId(_id);
-	player->assignWorm(worm);
+	console.addLogMsg("* NEW CONNECTION JOINED ZOIDMODE");
 }
 
 #endif

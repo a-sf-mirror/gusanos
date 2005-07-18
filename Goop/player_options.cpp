@@ -1,5 +1,6 @@
 #include "player_options.h"
 #include "gconsole.h"
+#include <boost/bind.hpp>
 #include "text.h"
 #include <cmath>
 
@@ -14,6 +15,8 @@ PlayerOptions::PlayerOptions()
 	viewportFollowFactor = 1;
 	ropeAdjustSpeed = 0.5;
 	colour = 0;
+	name = "GusPlayer";
+	m_nameChanged = false;
 }
 
 void PlayerOptions::registerInConsole(int index)
@@ -24,6 +27,22 @@ void PlayerOptions::registerInConsole(int index)
 		("P" + cast<string>(index) +"_AIM_SPEED", &aimMaxSpeed, 1.7)
 		("P" + cast<string>(index) +"_VIEWPORT_FOLLOW", &viewportFollowFactor, 0.1)
 		("P" + cast<string>(index) +"_ROPE_ADJUST_SPEED", &ropeAdjustSpeed, 0.5)
+		("P" + cast<string>(index) +"_NAME", &name, "GusPlayer",
+		 boost::bind( &PlayerOptions::nameChange, this ) )
 	;
 }
 
+void PlayerOptions::nameChange()
+{
+	m_nameChanged = true;
+}
+
+bool PlayerOptions::nameChanged()
+{
+	if ( m_nameChanged )
+	{
+		m_nameChanged = false;
+		return true;
+	}
+	return false;
+}

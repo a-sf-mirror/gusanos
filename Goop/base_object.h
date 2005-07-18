@@ -7,7 +7,7 @@
 
 class BasePlayer;
 
-class BaseObject
+class BaseObject 
 {
 	public:
 		

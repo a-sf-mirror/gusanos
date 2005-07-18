@@ -25,8 +25,9 @@ class Server : public ZCom_Control
 	
 	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason);
 
-
-	void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) {}
+	void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data );
+	
+	
 	void ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply ) {}
 	void ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requested_class, eZCom_NodeRole _role, ZCom_NodeID _net_id ) {}
 	void ZCom_cbNodeRequest_Tag( ZCom_ConnID _id, ZCom_ClassID _requested_class, eZCom_NodeRole _role, zU32 _tag ) {}

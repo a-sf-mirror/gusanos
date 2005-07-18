@@ -4,6 +4,7 @@
 #include "base_player.h"
 #include "game.h"
 #include "network.h"
+#include "player_options.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -22,6 +23,14 @@ Client::Client( int _udpport )
 Client::~Client()
 {
 }
+
+void Client::requestPlayers()
+{
+	ZCom_BitStream *req = new ZCom_BitStream;
+	req->addInt(Network::PLAYER_REQUEST,8);
+	req->addString( game.playerOptions[0]->name.c_str() );
+	ZCom_sendData( network.getServerID(), req, eZCom_ReliableOrdered );
+};
 
 void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply )
 {
@@ -49,8 +58,11 @@ void Client::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _n
 	if (_result != eZCom_ZoidEnabled)
 	{
 		console.addLogMsg("* ERROR: COULDNT ENTER ZOIDMODE");
+	}else
+	{
+		console.addLogMsg("* JOINED ZOIDMODE");
+		requestPlayers();
 	}
-	console.addLogMsg("* JOINED ZOIDMODE 1");
 }
 
 void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested_class, eZCom_NodeRole _role, ZCom_NodeID _net_id)

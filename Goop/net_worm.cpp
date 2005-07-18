@@ -108,7 +108,10 @@ void NetWorm::think()
 					break;
 					case Respawn:
 					{
-						BaseWorm::respawn(Vec (data->getFloat(32), data->getFloat(32) ) );
+						Vec newpos;
+						newpos.x = data->getFloat(32);
+						newpos.y = data->getFloat(32);
+						BaseWorm::respawn( newpos );
 					}
 					break;
 					case Die:
@@ -180,11 +183,14 @@ void NetWorm::respawn()
 	if ( m_isAuthority && m_node )
 	{
 		BaseWorm::respawn();
-		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
-		data->addInt( static_cast<int>( Respawn ),8 );
-		data->addFloat(pos.x,32);
-		data->addFloat(pos.y,32);
-		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		if ( m_isActive )
+		{
+			ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+			data->addInt( static_cast<int>( Respawn ),8 );
+			data->addFloat(pos.x,32);
+			data->addFloat(pos.y,32);
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		}
 	}
 }
 

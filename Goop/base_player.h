@@ -31,7 +31,9 @@ class BasePlayer
 	{
 		SYNC,
 		ACTION_STOP,
-		ACTION_START
+		ACTION_START,
+		NAME_CHANGE,
+		NAME_PETITION
 	};
 	
 	enum ReplicationItems
@@ -61,6 +63,9 @@ class BasePlayer
 	
 	void addKill();
 	void addDeath();
+	
+	void nameChangePetition();
+	void changeName( const std::string& name );
 
 	ZCom_NodeID getNodeID();
 	ZCom_ConnID getConnectionID();
@@ -72,6 +77,8 @@ class BasePlayer
 	int kills;
 	
 	bool deleteMe;
+	
+	std::string m_name;
 	
 	protected:
 

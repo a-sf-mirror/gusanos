@@ -13,6 +13,11 @@ class Network
 {
 	public:
 		
+	enum NetEvents
+	{
+		PLAYER_REQUEST
+	};
+		
 	Network();
 	~Network();
 	
@@ -26,6 +31,10 @@ class Network
 	void disconnect();
 	
 	void setServerID( ZCom_ConnID serverID );
+	ZCom_ConnID getServerID()
+	{
+		return m_serverID;
+	}
 	
 	bool isHost();
 	bool isClient();
