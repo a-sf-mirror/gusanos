@@ -6,6 +6,7 @@
 #include <list>
 #include <set>
 #include <iostream>
+#include <algorithm>
 #include <console.h> //For IStrCompare
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -13,7 +14,7 @@
 #include <boost/utility.hpp>
 namespace fs = boost::filesystem;
 
-template<class T, bool Cache = true>
+template<class T, bool Cache = true, bool ReturnResource = true>
 struct ResourceLocator
 {
 	ResourceLocator()
@@ -93,7 +94,9 @@ struct ResourceLocator
 	// Adds a path to the path list
 	void addPath(fs::path const& path)
 	{
-		m_paths.insert(path);
+		//m_paths.insert(path);
+		if(std::find(m_paths.begin(), m_paths.end(), path) == m_paths.end())
+			m_paths.push_back(path);
 	}
 	
 	// Loads the named resource
@@ -116,11 +119,12 @@ private:
 	NamedResourceMap m_namedResources; //The resource list
 	
 	std::list<BaseLoader *> m_loaders; // Registered loaders
-	std::set<fs::path>      m_paths; // Paths to scan
+	//std::set<fs::path>      m_paths; // Paths to scan
+	std::list<fs::path>     m_paths; // Paths to scan
 };
 
-template<class T, bool Cache>
-void ResourceLocator<T, Cache>::refresh(fs::path const& path)
+template<class T, bool Cache, bool ReturnResource>
+void ResourceLocator<T, Cache, ReturnResource>::refresh(fs::path const& path)
 {
 	std::cout << "Scanning: " << path.native_file_string() << std::endl;
 	try
@@ -171,21 +175,21 @@ void ResourceLocator<T, Cache>::refresh(fs::path const& path)
 	}
 }
 
-template<class T, bool Cache>
-void ResourceLocator<T, Cache>::refresh()
+template<class T, bool Cache, bool ReturnResource>
+void ResourceLocator<T, Cache, ReturnResource>::refresh()
 {
 	clearUncached();
 	
-	for(std::set<fs::path>::const_iterator p = m_paths.begin();
-	    p != m_paths.end();
+	for(std::list<fs::path>::const_reverse_iterator p = m_paths.rbegin();
+	    p != std::list<fs::path>::const_reverse_iterator(m_paths.rend());
 	    ++p)
 	{
 		refresh(*p);
 	}
 }
 
-template<class T, bool Cache>
-bool ResourceLocator<T, Cache>::load(T* dest, std::string const& name)
+template<class T, bool Cache, bool ReturnResource>
+bool ResourceLocator<T, Cache, ReturnResource>::load(T* dest, std::string const& name)
 {
 	typename NamedResourceMap::iterator i = m_namedResources.find(name);
 	if(i == m_namedResources.end())
@@ -194,9 +198,12 @@ bool ResourceLocator<T, Cache>::load(T* dest, std::string const& name)
 	return i->second.loader->load(dest, i->second.path);
 }
 
-template<class T, bool Cache>
-T* ResourceLocator<T, Cache>::load(std::string const& name)
+template<class T, bool Cache, bool ReturnResource>
+T* ResourceLocator<T, Cache, ReturnResource>::load(std::string const& name)
 {
+	if(!ReturnResource)
+		return 0;
+		
 	typename NamedResourceMap::iterator i = m_namedResources.find(name);
 	if(i == m_namedResources.end())
 		return 0;

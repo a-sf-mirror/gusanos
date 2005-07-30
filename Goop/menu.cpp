@@ -2,6 +2,8 @@
 #include "keyboard.h"
 #include "gfx.h"
 #include "font.h"
+#include "sprite_set.h"
+#include "sprite.h"
 #include "gconsole.h"
 #include <boost/bind.hpp>
 #include <iostream>
@@ -11,6 +13,9 @@
 #include <sstream>
 using std::cout;
 using std::endl;
+
+ResourceLocator<XMLFile, false, false> xmlLocator;
+ResourceLocator<GSSFile, false, false> gssLocator;
 
 namespace OmfgGUI
 {
@@ -35,10 +40,10 @@ std::string cmdLoadXML(std::list<std::string> const& args)
 		if(!loadTo)
 			return "DESTINATION WINDOW NOT FOUND";
 			
-		std::ifstream f(path.c_str());
-		if(f)
+		XMLFile f;
+		if(xmlLocator.load(&f, path))
 		{
-			menu.buildFromXML(f, loadTo);
+			menu.buildFromXML(f.f, loadTo);
 			return "";
 		}
 		else
@@ -65,10 +70,10 @@ std::string cmdLoadGSS(std::list<std::string> const& args)
 		}
 		
 
-		std::ifstream f(path.c_str());
-		if(f)
+		GSSFile f;
+		if(gssLocator.load(&f, path))
 		{
-			menu.loadGSS(f);
+			menu.loadGSS(f.f);
 			if(!passive) menu.updateGSS();
 			return "";
 		}
@@ -128,6 +133,11 @@ std::string cmdFocus(std::list<std::string> const& args)
 	}
 	
 	return "GUI_FOCUS <WINDOW ID> : FOCUSES A WINDOW";
+}
+
+int GusanosSpriteSet::getFrameCount()
+{
+	return spriteSet->getFramesWidth();
 }
 
 void GContext::init()
@@ -210,7 +220,7 @@ bool GContext::eventKeyDown(int k)
 			case KEY_ENTER:
 			{
 				std::string cmd;
-				if(focus->getAttrib("command", cmd))
+				if(focus && focus->getAttrib("command", cmd))
 				{
 					console.parseLine(cmd);
 				}
@@ -255,6 +265,14 @@ BaseFont* GContext::loadFont(std::string const& name)
 	if(!f)
 		return 0;
 	return new GusanosFont(f);
+}
+
+BaseSpriteSet* GContext::loadSpriteSet(std::string const& name)
+{
+	SpriteSet *s = spriteList.load(name);
+	if(!s)
+		return 0;
+	return new GusanosSpriteSet(s);
 }
 
 int allegroColor(RGB const& rgb)
@@ -303,7 +321,10 @@ void AllegroRenderer::drawText(BaseFont const& font, std::string const& str, ulo
 
 void AllegroRenderer::drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y)
 {
-	//TODO: Render sprite
+	if(GusanosSpriteSet const* s = dynamic_cast<GusanosSpriteSet const*>(&spriteSet))
+	{
+		s->spriteSet->getSprite(frame)->draw(gfx.buffer, x, y);
+	}
 }
 
 void AllegroRenderer::setClip(Rect const& rect)

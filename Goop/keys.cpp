@@ -1,5 +1,6 @@
 #include "keys.h"
 
+#include <console.h>
 #include <string>
 #include <vector>
 
@@ -8,11 +9,12 @@ using namespace std;
 int kName2Int(const string &name)
 {
 	int i;
-	for (i=0;i<120;i++)
+	for (int i = 0; i < 120; ++i)
 	{
 		if (name == keyNames[i])
-		return i;
-	};
+		if(iStrCmp( name, keyNames[i] ))
+			return i;
+	}
 	return -1;
 }
 

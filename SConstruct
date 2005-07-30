@@ -17,21 +17,27 @@ sconscript = ['./GUI/detail/SConscript',
             './loadpng/SConscript',
             './Goop/SConscript',
             './liero2gus/SConscript',
-            './Panzer/SConscript']
+            './lua/SConscript',
+            #'./Panzer/SConscript',
+            #'./IoVM/SConscript',
+			#'./ParserGen/SConscript',
+			#'./SmallLang/SConscript',
+			]
 
 if platform == 'posix':
 	env = Environment(
-		CPPPATH = ['.', '#loadpng', '/usr/local/include/zoidcom', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
+		CPPPATH = ['.', '#IoVM', '#loadpng', '#lua', '/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib', os.path.join('#lib/', platform)],
-		#CPPFLAGS = '-O3 -Wall',
-		CPPFLAGS = '-O0 -g -Wall',
+		CPPFLAGS = '-O3 -Wall -DNDEBUG',
+		#CPPFLAGS = '-O0 -g -Wall -DDEBUG',
 		CXX='g++-3.4',
+		#CXX='g++-4.0',
 		#CXX='gcc -lstdc++.so.6',
 		)
 elif platform == 'mingw-cross':
 	mingwPath = ARGUMENTS.get('mingw-path', '/usr/local/mingw/')
 	env = Environment(
-		CPPPATH = ['.', '#loadpng', os.path.join(mingwPath, 'include', 'boost-1_32'), '#Console', '#GUI'],
+		CPPPATH = ['.', '#loadpng', '#lua', os.path.join(mingwPath, 'include', 'boost-1_32'), '#Console', '#GUI', os.path.join(mingwPath, 'include', 'fmod')],
 		LIBPATH = [os.path.join('#lib', platform)],
 		CPPFLAGS = '-O3 -Wall -DWINDOWS',
 		CXX = os.path.join(mingwPath, 'bin', 'g++'),
@@ -42,7 +48,7 @@ elif platform == 'mingw-cross':
 		)
 elif platform == 'basara':
 	env = Environment(
-		CPPPATH = ['.', '/usr/local/include/zoidcom', '#loadpng', '#Console', '#GUI'],
+		CPPPATH = ['.', '/usr/local/include/zoidcom', '#lua', '#loadpng', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', os.path.join('#lib/', platform)],
 		CPPFLAGS = '-O3 -Wall',
 		#CPPFLAGS = '-O0 -g -Wall',
@@ -57,7 +63,6 @@ def getObjects(env):
 	
 	for i in os.listdir('.'):
 		if sourcePattern.search(i):
-			print("Found " + i)
 			sources.append(i)
 	
 	buildDir = os.path.join('.build', platform)

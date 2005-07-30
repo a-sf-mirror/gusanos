@@ -111,6 +111,8 @@ public:
 protected:
 
 	void setContext_(Context* context);
+	
+	bool readSpriteSet(BaseSpriteSet*& dest, std::string const& str);
 
 /*
 	//Transfers ownership
@@ -158,8 +160,7 @@ protected:
 		{
 			
 		}
-		
-		
+
 		struct Border
 		{
 			Border()
@@ -173,11 +174,17 @@ protected:
 		struct Background
 		{
 			Background()
-			: color(128, 128, 128)
+			: color(128, 128, 128), spriteSet(0)
 			{
 			}
 			
+			~Background()
+			{
+				delete spriteSet;
+			}
+			
 			RGB color;
+			BaseSpriteSet *spriteSet;
 		} background;
 		
 		int         width;

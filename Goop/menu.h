@@ -3,8 +3,10 @@
 
 #include "omfggui.h"
 #include "resource_locator.h"
+#include <boost/filesystem/fstream.hpp>
 
 class Font;
+class SpriteSet;
 
 namespace OmfgGUI
 {
@@ -17,6 +19,18 @@ struct GusanosFont : public BaseFont
 	}
 	
 	Font *font;
+};
+
+struct GusanosSpriteSet : public BaseSpriteSet
+{
+	GusanosSpriteSet(SpriteSet* spriteSet_)
+	: spriteSet(spriteSet_)
+	{
+	}
+	
+	virtual int getFrameCount();
+	
+	SpriteSet *spriteSet;
 };
 
 struct AllegroRenderer : public Renderer
@@ -64,6 +78,7 @@ public:
 	void clear();
 	
 	virtual BaseFont* loadFont(std::string const& name);
+	virtual BaseSpriteSet* loadSpriteSet(std::string const& name);
 };
 
 extern GContext menu;
@@ -72,16 +87,28 @@ extern GContext menu;
 
 class XMLFile
 {
-	//std::stringstream ss;
+public:
+	operator bool()
+	{
+		return f;
+	}
+	
+	fs::ifstream f;
 };
 
-extern ResourceLocator<XMLFile, false> xmlLocator;
+extern ResourceLocator<XMLFile, false, false> xmlLocator;
 
 class GSSFile
 {
-	//std::stringstream ss;
+public:
+	operator bool()
+	{
+		return f;
+	}
+	
+	fs::ifstream f;
 };
 
-extern ResourceLocator<GSSFile, false> gssLocator;
+extern ResourceLocator<GSSFile, false, false> gssLocator;
 
 #endif //GUSANOS_MENU_H

@@ -322,7 +322,7 @@ string WeapSettings::writeWObj()
 		f << "repeat = 8" << endl;
 
 	if(multspeed != 100)
-		f << "damping = " << factor(multspeed) << endl;
+		f << "damping = " << factor(multspeed) << endl; //WRONG!
 
 	if(explground)
 	{

@@ -77,7 +77,7 @@ class Console
 
 	Console(void);
 	Console(int logMaxSize);
-	~Console(void);
+	virtual ~Console(void);
 
 	void registerVariable(Variable* var);
 	RegisterVariableProxy registerVariables()

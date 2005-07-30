@@ -34,16 +34,20 @@ class ResourceList
 		if (item != m_resItems.end())
 		{
 			return item->second;
-		}else
+		}
+		else
 		{
-			m_resItems[filename] = new T1;
-			item = m_resItems.find(filename);
-			if ( game.specialLoad(m_subFolder + filename,*item->second))
+			T1 *i = new T1;
+			m_resItems[filename] = i;
+
+			if ( game.specialLoad(m_subFolder + filename, *i) )
 			{
-				return item->second;
-			}else
+				return i;
+			}
+			else
 			{
-				delete item->second;
+				delete i;
+				item = m_resItems.find(filename);
 				m_resItems.erase(item);
 				return NULL;
 			}

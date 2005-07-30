@@ -33,3 +33,4 @@ string Alias::invoke(const std::list<std::string> &args)
 	}
 	return "";
 }
+

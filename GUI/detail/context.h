@@ -321,6 +321,7 @@ public:
 	}
 	
 	virtual BaseFont* loadFont(std::string const& name) = 0;
+	virtual BaseSpriteSet* loadSpriteSet(std::string const& name) = 0;
 //	BaseFont const& m_defaultFont; //TEMP
 	
 protected:

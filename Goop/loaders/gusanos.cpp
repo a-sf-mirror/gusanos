@@ -7,6 +7,9 @@
 #include <boost/filesystem/convenience.hpp>
 namespace fs = boost::filesystem;
 
+#include <iostream>
+using namespace std;
+
 GusanosLevelLoader GusanosLevelLoader::instance;
 
 bool GusanosLevelLoader::canLoad(fs::path const& path, std::string& name)
@@ -130,14 +133,6 @@ const char* GusanosFontLoader::getName()
 	return "Gusanos 0.9 font loader";
 }
 
-/*
-
-const char* XMLLoader::getName()
-{
-	return "XML loader";
-}
-
-
 XMLLoader XMLLoader::instance;
 
 bool XMLLoader::canLoad(fs::path const& path, std::string& name)
@@ -152,11 +147,47 @@ bool XMLLoader::canLoad(fs::path const& path, std::string& name)
 	
 bool XMLLoader::load(XMLFile* xml, fs::path const& path)
 {
-	xml->ss.clear();
+	cerr << "Opening: " << path.native_file_string() << endl;
+
+	xml->f.open(path, std::ios::binary);
+	
+	if(!xml->f)
+		return false;
+		
+	return true;
 }
 
-const char* GusanosFontLoader::getName()
+const char* XMLLoader::getName()
 {
-	return "Gusanos 0.9 font loader";
+	return "XML loader";
 }
-*/
+
+
+GSSLoader GSSLoader::instance;
+
+bool GSSLoader::canLoad(fs::path const& path, std::string& name)
+{
+	if(fs::extension(path) == ".gss")
+	{
+		name = basename(path);
+		return true;
+	}
+	return false;
+}
+	
+bool GSSLoader::load(GSSFile* gss, fs::path const& path)
+{
+	cerr << "Opening: " << path.native_file_string() << endl;
+
+	gss->f.open(path, std::ios::binary);
+	
+	if(!gss->f)
+		return false;
+		
+	return true;
+}
+
+const char* GSSLoader::getName()
+{
+	return "GSS loader";
+}

@@ -3,9 +3,9 @@
 namespace OmfgGUI
 {
 
-void List::Node::render(List::node_iter_t self, Renderer* renderer, long& y, List& list)
+void List::Node::render(Renderer* renderer, long& y, List& list)
 {
-	//long halfRowHeight = rowHeight/2;
+	long halfRowHeight = rowHeight/2;
 	
 	if(selected)
 	{
@@ -18,12 +18,13 @@ void List::Node::render(List::node_iter_t self, Renderer* renderer, long& y, Lis
 			list.m_formatting.borders[3].color);
 	}
 
-	if(self == list.m_MainSel)
+/*
+	if(this == list.m_MainSel)
 	{
 		//TODO: aRenderer->drawFrame(Rect(list.m_Rect.x1 + 1, y, list.m_Rect.x2 - 2, y + rowHeight), RGB(0, 0, 0));
-	}
+	}*/
 	
-	//renderer->drawText(list.m_context->m_defaultFont, text, BaseFont::CenterV, list.m_rect.x1 + 3 + level * 5, y + halfRowHeight, RGB(0, 0, 0));
+	renderer->drawText(*list.m_font, text, BaseFont::CenterV, list.m_rect.x1 + 3 + level * 5, y + halfRowHeight, RGB(0, 0, 0));
 	
 	//renderChildren(aRenderer, y, list);
 }
@@ -40,42 +41,53 @@ void List::Node::renderChildren(Renderer* aRenderer, long& y, List& list)
 	}
 }*/
 
-void List::Node::renderFrom(node_iter_t i, Renderer* renderer, long& y, List& list)
+void List::Node::renderFrom(Renderer* renderer, long& y, List& list)
 {
-	node_iter_t parent = i->parent;
-	bool        hasParent = i->hasParent;
-	list_t*     parentList = i->parentList;
+	node_iter_t i(this);
+	//bool        hasParent = i->hasParent;
+	//list_t*     parentList = i->parentList;
 	//assert(parentList);
 	
 	//Only the root element has parentList == 0, and we can't even obtain an iterator
 	//to the root element, thus it's safe to assume that parentList is a valid pointer.
 	
-	while(y < list.getRect().y2)
+	while(i && y < list.getRect().y2)
 	{
-		i->render(i, renderer, y, list);
-	
+		i->render(renderer, y, list);
+			
 		y += rowHeight;
+		
+		if(i->expanded)
+		{
+			i->children.getFirst()->renderFrom(renderer, y, list);
+			
+			if(y >= list.getRect().y2)
+				break;
+		}
+		
 		++i;
-		while(i == parentList->end())
+		
+		/*
+		while(i == 0)
 		{
 			if(!hasParent)
 				return;
 				
 			i = parent;
-			parentList = i->parentList;
+			//parentList = i->parentList;
 			//assert(parentList);
 			hasParent = i->hasParent;
 			parent = i->parent;
 			++i;
-		}
+		}*/
 	}
 }
 
 List::node_iter_t List::Node::findByIdx(node_iter_t i, long aIdx)
 {
 	node_iter_t parent = i->parent;
-	bool        hasParent = i->hasParent;
-	list_t*     parentList = i->parentList;
+	//bool        hasParent = i->hasParent;
+	//list_t*     parentList = i->parentList;
 	//assert(parentList);
 	
 	//Only the root element has parentList == 0, and we can't even obtain an iterator
@@ -88,28 +100,28 @@ List::node_iter_t List::Node::findByIdx(node_iter_t i, long aIdx)
 		if(i->expanded)
 		{
 			parent = i;
-			hasParent = true;
-			parentList = &i->children;
+			//hasParent = true;
+			//parentList = &i->children;
 			i = i->children.begin();
 			
 		}
 		
 		++i;
-		while(i == parentList->end())
+		while(!i)
 		{
-			if(!hasParent)
+			if(!parent)
 				return lastValid;
 				
 			i = parent;
-			parentList = i->parentList;
+			//parentList = i->parentList;
 			//assert(parentList);
-			hasParent = i->hasParent;
+			//hasParent = i->hasParent;
 			parent = i->parent;
 			++i;
 		}
 	}
 	
-	return i->parentList->end(); //TEMP
+	return i;
 }
 
 bool List::render(Renderer* renderer)
@@ -122,13 +134,36 @@ bool List::render(Renderer* renderer)
 		m_formatting.borders[2].color,
 		m_formatting.borders[3].color);
 	
-	//long halfRowHeight = rowHeight/2;
+	long halfRowHeight = rowHeight/2;
 	
-	//long y = getRect().y1;
+	long y = getRect().y1;
+	
+	if(true) //TODO: Check view column headers parameter
+	{
+		renderer->drawBox(
+			Rect(getRect().x1, getRect().y1, getRect().x2, getRect().y1 + rowHeight),
+			RGB(170, 170, 255),
+			m_formatting.borders[0].color,
+			m_formatting.borders[1].color,
+			m_formatting.borders[2].color,
+			m_formatting.borders[3].color);
+			
+		// Render column headers
+		double x = 3.0 + getRect().x1;
+		for(std::vector<ColumnHeader>::const_iterator i = m_columnHeaders.begin();
+			i != m_columnHeaders.end();
+			++i)
+		{
+			renderer->drawText(*m_font, i->name, BaseFont::CenterV, long(x), y + halfRowHeight, RGB(0, 0, 0));
+			x += i->widthFactor * getRect().getWidth();
+		}
+		
+		y += rowHeight;
+	}
 	
 	//node_iter_t cur = m_Base;
 	
-	//Node::renderFrom(m_Base, renderer, y, *this);
+	m_RootNode.children.getFirst()->renderFrom(renderer, y, *this);
 	
 	/*
 	while(isValid(cur) && y < m_Rect.y2)

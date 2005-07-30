@@ -25,7 +25,7 @@ class SpriteSet
 	{
 		return m_frame[0].size();
 	}
-	
+		
 	private:
 		
 	std::vector< std::vector< Sprite* > > m_frame;

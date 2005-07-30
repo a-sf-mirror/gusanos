@@ -4,6 +4,7 @@
 using boost::lexical_cast;
 
 using std::cout;
+using std::cerr;
 using std::endl;
 
 namespace OmfgGUI
@@ -117,6 +118,23 @@ static bool readColor(RGB& dest, std::string const& str)
 	return false;
 }
 
+bool Wnd::readSpriteSet(BaseSpriteSet*& dest, std::string const& str)
+{
+	if(str.size() == 0)
+	{
+		dest = 0;
+		return true;
+	}
+	
+	delete dest;
+	dest = m_context->loadSpriteSet(str);
+	cerr << "Loaded: " << str << "(" << dest << ")" << endl;
+	if(!dest)
+		return false;
+
+	return true;
+}
+
 void Wnd::applyGSSnoState(Context::GSSselectorMap const& style)
 {
 	applyFormatting(style(m_tagLabel)(           )(    )());
@@ -169,6 +187,14 @@ void Wnd::applyFormatting(Context::GSSpropertyMap const& f)
 			EACH_VALUE(v)
 			{
 				readColor(m_formatting.background.color, *v);
+			}
+		}
+		if(i->first == "background-image")
+		{
+			EACH_VALUE(v)
+			{
+				if(readSpriteSet(m_formatting.background.spriteSet, *v))
+					break;
 			}
 		}
 		else if(i->first == "border")

@@ -53,13 +53,21 @@ Console::~Console()
 void Console::registerVariable(Variable* var)
 {
 	string const& name = var->getName();
-	if (!name.empty() && items.find(name) == items.end())
+	if (!name.empty())
 	{
-		items[name] = var;
+		std::map<std::string, ConsoleItem*, IStrCompare>::iterator i = items.find(name);
+		if(i != items.end())
+		{
+			// Replace old variable
+			delete i->second;
+			i->second = var;
+		}
+		else
+			items[name] = var;
 	}
 	else
 	{
-		delete var; // Already got a var with that name or it's an empty name
+		delete var; // Empty name
 	}
 }
 
@@ -270,7 +278,7 @@ string Console::autoComplete(const string &text)
 	
 	if ( !text.empty() )
 	{
-		map<string, ConsoleItem*>::iterator item = items.lower_bound( text );
+		map<string, ConsoleItem*, IStrCompare>::iterator item = items.lower_bound( text );
 		if( item != items.end() )
 		{
 			if ( iStrCmp( text, item->first.substr(0, text.length()) ) )

@@ -85,6 +85,7 @@ struct XMLHandler
 	
 	void beginTag(std::string const& label)
 	{
+		cerr << "Tag: " << label << endl;
 		tag = Tag(label);
 	}
 	
@@ -119,7 +120,13 @@ struct XMLHandler
 		}
 		else if(tag.label == "list")
 		{
-			newWindow = new List(windows.top().wnd, tag.label, className, id, tag.attributes);
+			List* l = new List(windows.top().wnd, tag.label, className, id, tag.attributes);
+			newWindow = l;
+			List::Node* n = new List::Node(":o");
+			l->push_back(n);
+			n = new List::Node(">:O");
+			n->selected = true;
+			l->push_back(n);
 		}
 		else if(tag.label == "button")
 		{
@@ -143,6 +150,7 @@ struct XMLHandler
 	
 	void endTag(std::string const& label)
 	{
+		cerr << "End tag: " << label << endl;
 		windows.pop();
 	}
 	
@@ -156,8 +164,10 @@ struct XMLHandler
 void Context::buildFromXML(std::istream& s, Wnd* dest)
 {
 	if(dest && dest->m_context != this)
+	{
 		return; // The destination window belongs to a different context
-		
+	}
+
 	XMLHandler handler(*this, dest, m_gss);
 	xmlDocument(s, handler);
 }

@@ -34,7 +34,7 @@ inline bool iStrCmp( const std::string &a, const std::string &b )
 			return false;
 	}
 	return true;
-};
+}
 
 struct IStrCompare
 {

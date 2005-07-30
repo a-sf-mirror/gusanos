@@ -29,12 +29,14 @@
 #include "loaders/lierox.h"
 #include "loaders/liero.h"
 #include "loaders/losp.h"
+#include "lua/bindings.h"
 
 #include <allegro.h>
 #include <string>
 #include <algorithm>
 #include <list>
 #include <iostream>
+#include <sstream> //TEMP
 
 using namespace std;
 
@@ -172,6 +174,9 @@ void Game::init(int argc, char** argv)
 	fontLocator.registerLoader(&GusanosFontLoader::instance);
 	fontLocator.registerLoader(&LOSPFontLoader::instance);
 	fontLocator.registerLoader(&LieroFontLoader::instance);
+	
+	xmlLocator.registerLoader(&XMLLoader::instance);
+	gssLocator.registerLoader(&GSSLoader::instance);
 
 	m_defaultPath = "default/";
 	m_modPath = "default/";
@@ -257,6 +262,9 @@ void Game::unload()
 	loaded = false;
 	OmfgGUI::menu.clear();
 	
+	lua.reset();
+	LuaBindings::init(lua);
+	
 	sfx.clear();
 	// Delete all objects
 	for ( ObjectsList::Iterator iter = objects.begin(); (bool)iter; ++iter)
@@ -286,6 +294,8 @@ void Game::unload()
 	//fontList.clear();
 	
 	fontLocator.clear();
+	xmlLocator.clear();
+	gssLocator.clear();
 }
 
 bool Game::isLoaded()
@@ -298,6 +308,14 @@ void Game::refreshResources()
 	fontLocator.addPath(fs::path("default/fonts"));
 	fontLocator.addPath(fs::path(nextMod) / "fonts");
 	fontLocator.refresh();
+	
+	xmlLocator.addPath(fs::path("default/gui"));
+	xmlLocator.addPath(fs::path(nextMod) / "gui");
+	xmlLocator.refresh();
+	
+	gssLocator.addPath(fs::path("default/gui"));
+	gssLocator.addPath(fs::path(nextMod) / "gui");
+	gssLocator.refresh();
 }
 
 void Game::changeLevel(const std::string& levelName )
@@ -447,4 +465,10 @@ void Game::addBot()
 	}
 }
 
-
+int Game::luaimpl_print(lua_State *L)
+{
+	const char* s = lua_tostring(L, 1);
+	console.addLogMsg(s);
+	
+	return 0;
+}

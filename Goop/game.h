@@ -5,6 +5,7 @@
 #include "base_object.h"
 #include "base_action.h"
 #include "objects_list.h"
+#include "lua/context.h"
 
 #include <allegro.h>
 #include <string>
@@ -115,6 +116,9 @@ class Game
 	}
 	
 	Font *infoFont;
+	LuaContext lua;
+	
+	static int luaimpl_print(lua_State *L);
 	
 	private:
 
@@ -124,7 +128,6 @@ class Game
 	std::string m_defaultPath;
 	bool loaded;
 	ZCom_Node *m_node;
-
 };
 
 extern Game game;
