@@ -3,6 +3,8 @@
 #include "renderer.h"
 #include "wnd.h"
 #include <iostream>
+using std::cerr;
+using std::endl;
 
 namespace OmfgGUI
 {
@@ -114,6 +116,7 @@ void Context::registerNamedWindow(std::string const& id, Wnd* wnd)
 	std::map<std::string, Wnd*>::iterator i = m_namedWindows.find(id);
 	if(i != m_namedWindows.end())
 	{
+		cerr << "Deleting conflicting window (named '" << id << "'): " << i->second << endl;
 		delete i->second; //Delete conflicting window
 	}
 	m_namedWindows[id] = wnd;

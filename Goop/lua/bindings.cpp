@@ -171,24 +171,25 @@ int l_game_players(lua_State* L)
 
 int l_player_kills(lua_State* L)
 {
-	//if(BasePlayer* p = dynamic_cast<BasePlayer *>(lua_touserdata (L, 1)))
 	BasePlayer* p = *static_cast<BasePlayer **>(lua_touserdata (L, 1));
 	lua_pushnumber(L, p->kills);
-	/*
-	else
-		lua_pushnil(L);*/
-	
+
+	return 1;
+}
+
+int l_player_deaths(lua_State* L)
+{
+	BasePlayer* p = *static_cast<BasePlayer **>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->deaths);
+
 	return 1;
 }
 
 int l_player_name(lua_State* L)
 {
-	//if(BasePlayer* p = dynamic_cast<BasePlayer *>(lua_touserdata(L, 1)))
 	BasePlayer* p = *static_cast<BasePlayer **>(lua_touserdata (L, 1));
 	lua_pushstring(L, p->m_name.c_str());
-	/*else
-		lua_pushnil(L);*/
-	
+
 	return 1;
 }
 
@@ -341,8 +342,8 @@ void LuaBindings::init(LuaContext& context)
 	lua_pushcfunction(context, l_game_playerIterator);
 	LuaBindings::playerIterator = context.createReference();
 	
-	context.function("player_kills", l_player_kills);
-	context.function("player_name", l_player_name);
+	//context.function("player_kills", l_player_kills);
+	//context.function("player_name", l_player_name);
 	
 	context.function("gui_find", l_gui_find);
 
@@ -363,6 +364,10 @@ void LuaBindings::init(LuaContext& context)
 	
 	lua_pushstring(context, "kills");
 	lua_pushcfunction(context, l_player_kills);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "deaths");
+	lua_pushcfunction(context, l_player_deaths);
 	lua_rawset(context, -3);
 	
 	lua_pushstring(context, "name");

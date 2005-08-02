@@ -207,12 +207,4 @@ private:
 	int        m_FirstFreeRef;
 };
 
-class LuaBaseType
-{
-public:
-	virtual ~LuaBaseType()
-	{
-	}
-};
-
 #endif //LUA_CONTEXT_H

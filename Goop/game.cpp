@@ -263,9 +263,10 @@ void Game::loadMod()
 
 void Game::unload()
 {
+	//cerr << "Unloading..." << endl;
 	loaded = false;
 	OmfgGUI::menu.clear();
-	
+
 	lua.reset();
 	luaCallbacks = LuaCallbacks(); // Reset callbacks
 	LuaBindings::init(lua);
@@ -330,7 +331,9 @@ void Game::refreshResources()
 
 void Game::changeLevel(const std::string& levelName )
 {
+	//cerr << "Unloading resources" << endl;
 	unload();
+	
 	m_modName = nextMod;
 	m_modPath = nextMod + "/";
 	/*
@@ -341,7 +344,9 @@ void Game::changeLevel(const std::string& levelName )
 	*/
 	level.setName(levelName);
 	refreshResources();
+	//cerr << "Loading level" << endl;
 	levelLocator.load(&level, levelName);
+	//cerr << "Loading mod" << endl;
 	loadMod();
 	
 	if ( options.host )
@@ -351,6 +356,7 @@ void Game::changeLevel(const std::string& levelName )
 #endif
 	}
 	
+	//cerr << "Creating players and worms" << endl;
 	// All this is temporal, dont be scared ;D
 	if ( loaded && level.isLoaded() ) 
 	{
@@ -374,7 +380,8 @@ void Game::changeLevel(const std::string& levelName )
 			}
 		}
 	}
-
+	//cerr << "changeLevel() done." << endl;
+	
 }
 
 void Game::setMod( const string& modname )

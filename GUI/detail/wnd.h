@@ -9,6 +9,8 @@
 #include <iostream>
 #include <list>
 #include <map>
+using std::cerr;
+using std::endl;
 
 namespace OmfgGUI
 {
@@ -36,6 +38,7 @@ public:
 		{
 			setContext_(m_parent->m_context);
 			m_parent->m_children.push_back(this);
+			cerr << "Adding window " << this << " to " << m_parent << endl;
 		}
 		else
 			m_context = 0;
@@ -186,6 +189,7 @@ protected:
 			
 			~Background()
 			{
+				//cerr << "Deleting spriteSet " << spriteSet << endl;
 				delete spriteSet;
 			}
 			

@@ -11,7 +11,7 @@ struct PlayerOptions;
 class BaseWorm;
 class BasePlayerInterceptor;
 
-class BasePlayer : public LuaBaseType
+class BasePlayer
 {
 public:
 	

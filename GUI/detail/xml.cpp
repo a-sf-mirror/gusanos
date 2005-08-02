@@ -28,6 +28,7 @@ struct GSSHandler
 	void selector(std::string const& tagLabel, std::string const& className, std::string const& id, std::string const& state
 	, std::string const& property, std::vector<std::string> const& value)
 	{
+		//cerr << "GSS " << tagLabel << "." << className << "#" << id << ":" << state << "  " << property << endl;
 		Context::GSSpropertyMap& dest = style.insert(tagLabel).insert(className).insert(id).insert(state);
 
 		dest[property] = value;
@@ -80,7 +81,7 @@ struct XMLHandler
 	
 	void error(std::string err)
 	{
-		cout << err << endl;
+		cerr << err << endl;
 	}
 	
 	void beginTag(std::string const& label)
@@ -145,8 +146,11 @@ struct XMLHandler
 		
 		if(newWindow)
 		{
+			cerr << "Created window: " << newWindow << endl;
 			newWindow->applyGSS(style);
+			cerr << "Applied GSS" << endl;
 			newWindow->updatePlacement();
+			cerr << "Updated placement" << endl;
 
 			windows.push(WndInfo(newWindow)); // Done last
 		}

@@ -245,8 +245,10 @@ bool GContext::eventKeyUp(int k)
 
 void GContext::clear()
 {
+	cerr << "Deleting root window " << m_rootWnd << " ...";
 	delete m_rootWnd;
 	m_rootWnd = 0;
+	cerr << "done" << endl;
 	
 	std::istringstream rootGSS(
 		"#root { background: #000080 ; left: 0 ; top: 0 ; bottom : -1 ; right: -1; padding: 29; spacing: 20 }"
@@ -255,6 +257,7 @@ void GContext::clear()
 		
 	std::istringstream rootXML("<window id=\"root\" />");
 	
+	cerr << "Begins loading root GSS" << endl;
 	loadGSS(rootGSS);
 	buildFromXML(rootXML, 0);
 }
