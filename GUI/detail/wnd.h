@@ -30,7 +30,7 @@ public:
 	  std::string const& id, std::map<std::string, std::string> const& attributes,
 	  std::string const& text = std::string(""))
 	: m_text(text), m_parent(parent), m_font(0), m_tagLabel(tagLabel)
-	, m_className(className), m_id(id), m_attributes(attributes)
+	, m_className(className), m_id(id), m_attributes(attributes), m_visible(true)
 	{
 		if(m_parent)
 		{
@@ -106,6 +106,11 @@ public:
 	//Sends a mouse button up event
 	virtual bool mouseUp(ulong aNewX, ulong aNewY, Context::MouseKey::type aButton);
 	
+	virtual int classID();
+	
+	void setVisibility(bool v)
+	{ m_visible = v; }
+	
 	std::string const& getText() const;
 	
 protected:
@@ -127,6 +132,7 @@ protected:
 		return wnd;
 	}*/
 
+	bool                 m_visible;
 	std::string          m_text;
 	Rect                 m_rect;
 	std::list<Wnd *>     m_children;

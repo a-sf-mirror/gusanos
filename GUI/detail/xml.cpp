@@ -122,11 +122,15 @@ struct XMLHandler
 		{
 			List* l = new List(windows.top().wnd, tag.label, className, id, tag.attributes);
 			newWindow = l;
+			/*
+			l->addColumn(List::ColumnHeader("Foo", 0.5));
 			List::Node* n = new List::Node(":o");
 			l->push_back(n);
+			n->setText(1, ":O");
 			n = new List::Node(">:O");
 			n->selected = true;
 			l->push_back(n);
+			n->setText(1, "<:o");*/
 		}
 		else if(tag.label == "button")
 		{

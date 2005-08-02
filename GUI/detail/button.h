@@ -25,6 +25,8 @@ public:
 
 	virtual bool mouseUp(ulong newX, ulong newY, Context::MouseKey::type button);
 	
+	virtual int classID();
+	
 private:
 	bool m_state;
 };

@@ -1,4 +1,5 @@
 #include "list.h"
+#include <cassert>
 
 namespace OmfgGUI
 {
@@ -24,7 +25,23 @@ void List::Node::render(Renderer* renderer, long& y, List& list)
 		//TODO: aRenderer->drawFrame(Rect(list.m_Rect.x1 + 1, y, list.m_Rect.x2 - 2, y + rowHeight), RGB(0, 0, 0));
 	}*/
 	
-	renderer->drawText(*list.m_font, text, BaseFont::CenterV, list.m_rect.x1 + 3 + level * 5, y + halfRowHeight, RGB(0, 0, 0));
+	//renderer->drawText(*list.m_font, text, BaseFont::CenterV, list.m_rect.x1 + 3 + level * 5, y + halfRowHeight, RGB(0, 0, 0));
+	
+	double x = list.getRect().x1 + 3.0 + level * 5.0;
+	double w = list.getRect().getWidth();
+	
+	assert(columns.size() == list.m_columnHeaders.size());
+	
+	std::vector<std::string>::const_iterator i = columns.begin();
+	std::vector<ColumnHeader>::const_iterator h = list.m_columnHeaders.begin();
+	
+	for(;
+		i != columns.end();
+		++i, ++h)
+	{
+		renderer->drawText(*list.m_font, *i, BaseFont::CenterV, long(x), y + halfRowHeight, RGB(0, 0, 0));
+		x += h->widthFactor * w;
+	}
 	
 	//renderChildren(aRenderer, y, list);
 }
@@ -198,6 +215,35 @@ bool List::mouseDown(ulong newX, ulong newY, Context::MouseKey::type mutton)
 		
 	}*/
 	return false;
+}
+
+void List::addColumn(ColumnHeader const& column)
+{
+	m_columnHeaders.push_back(column);
+	
+	node_iter_t i(m_RootNode.children.begin());
+	
+	while(i)
+	{
+		//Do stuff
+		i->columns.resize(m_columnHeaders.size());
+		
+		if(i->children.begin())
+			i = i->children.begin();
+		else
+		{
+			node_iter_t i2 = i; ++i2;
+			if(!i2)
+				i = i->parent;
+			else
+				i = i2;
+		}
+	}
+}
+
+int List::classID()
+{
+	return Context::List;
 }
 
 }

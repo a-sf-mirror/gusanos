@@ -26,7 +26,7 @@ sconscript = ['./GUI/detail/SConscript',
 
 if platform == 'posix':
 	env = Environment(
-		CPPPATH = ['.', '#IoVM', '#loadpng', '#lua', '/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
+		CPPPATH = ['.', '#loadpng', '#lua', '/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib', os.path.join('#lib/', platform)],
 		CPPFLAGS = '-O3 -Wall -DNDEBUG',
 		#CPPFLAGS = '-O0 -g -Wall -DDEBUG',

@@ -24,6 +24,7 @@
 #include "network.h"
 #include "menu.h"
 #include "keyboard.h"
+#include "script.h"
 
 #include "loaders/gusanos.h"
 #include "loaders/lierox.h"
@@ -177,6 +178,9 @@ void Game::init(int argc, char** argv)
 	
 	xmlLocator.registerLoader(&XMLLoader::instance);
 	gssLocator.registerLoader(&GSSLoader::instance);
+	scriptLocator.registerLoader(&LuaLoader::instance);
+	
+	LuaBindings::init(lua);
 
 	m_defaultPath = "default/";
 	m_modPath = "default/";
@@ -263,6 +267,7 @@ void Game::unload()
 	OmfgGUI::menu.clear();
 	
 	lua.reset();
+	luaCallbacks = LuaCallbacks(); // Reset callbacks
 	LuaBindings::init(lua);
 	
 	sfx.clear();
@@ -296,6 +301,7 @@ void Game::unload()
 	fontLocator.clear();
 	xmlLocator.clear();
 	gssLocator.clear();
+	scriptLocator.clear();
 }
 
 bool Game::isLoaded()
@@ -316,6 +322,10 @@ void Game::refreshResources()
 	gssLocator.addPath(fs::path("default/gui"));
 	gssLocator.addPath(fs::path(nextMod) / "gui");
 	gssLocator.refresh();
+	
+	scriptLocator.addPath(fs::path("default/scripts"));
+	scriptLocator.addPath(fs::path(nextMod) / "scripts");
+	scriptLocator.refresh();
 }
 
 void Game::changeLevel(const std::string& levelName )
@@ -401,7 +411,7 @@ const string& Game::getDefaultPath()
 BasePlayer* Game::findPlayerWithID( ZCom_NodeID ID )
 {
 	list<BasePlayer*>::iterator playerIter;
-	for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
+	for ( playerIter = game.players.begin(); playerIter != game.players.end(); ++playerIter)
 	{
 		if ( (*playerIter)->getNodeID() == ID )
 		{
@@ -465,10 +475,12 @@ void Game::addBot()
 	}
 }
 
-int Game::luaimpl_print(lua_State *L)
+void Game::LuaCallbacks::bind(std::string callback, std::string file, std::string function)
 {
-	const char* s = lua_tostring(L, 1);
-	console.addLogMsg(s);
-	
-	return 0;
+	Script* s = scriptLocator.load(file);
+	int ref = s->createFunctionRef(function);
+	if(callback == "afterRender")
+		afterRender.push_back(ref);
+	else if(callback == "afterUpdate")
+		afterUpdate.push_back(ref);
 }

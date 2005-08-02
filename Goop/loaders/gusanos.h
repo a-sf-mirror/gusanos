@@ -5,6 +5,7 @@
 #include "../level.h"
 #include "../font.h"
 #include "../menu.h"
+#include "../script.h"
 
 struct GusanosLevelLoader : ResourceLocator<Level>::BaseLoader
 {
@@ -48,6 +49,17 @@ struct GSSLoader : ResourceLocator<GSSFile, false, false>::BaseLoader
 	virtual const char* getName();
 	
 	static GSSLoader instance;
+};
+
+struct LuaLoader : ResourceLocator<Script>::BaseLoader
+{
+	virtual bool canLoad(fs::path const& path, std::string& name);
+	
+	virtual bool load(Script*, fs::path const& path);
+	
+	virtual const char* getName();
+	
+	static LuaLoader instance;
 };
 
 #endif //GUSANOS_LOADERS_GUSANOS_H

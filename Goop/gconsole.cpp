@@ -4,6 +4,7 @@
 #include "font.h"
 #include "sprite_set.h"
 #include "sprite.h"
+#include "script.h"
 
 #include <allegro.h>
 #include <boost/bind.hpp>
@@ -183,6 +184,35 @@ string aliasCmd(const list<string> &args)
 	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
 }
 
+string execScript(list<string> const& args)
+{
+	if (args.size() >= 2)
+	{
+		list<string>::const_iterator i = args.begin();
+		Script* s = scriptLocator.load(*i++);
+		s->pushFunction(*i++);
+		int params = 0;
+		for(; i != args.end(); ++i)
+		{
+			lua_pushstring(*s->lua, i->c_str());
+			++params;
+		}
+		
+		int result = s->lua->call(params);
+		
+		if(result < 0)
+		{
+			i = args.begin();
+			string const& file = *i++;
+			string const& function = *i++;
+			return ( "COULDN'T EXECUTE " + file + " " + function );
+		}
+		else
+			return "";
+	}
+	return "EXECSCRIPT <FILE> <FUNCTION> : EXECUTE A SCRIPT FILE";
+}
+
 /////////////////////////////// Console //////////////////////////////////////
 
 //============================= LIFECYCLE ====================================
@@ -233,6 +263,7 @@ void GConsole::init()
 		(string("SETCHAR"), setChar)
 		(string("SETCONSOLEKEY"), setConsoleKey)
 		(string("EXEC"), execCmd)
+		(string("EXECSCRIPT"), execScript)
 		(string("ALIAS"), aliasCmd)
 		(string("ECHO"), echoCmd)
 	;

@@ -57,7 +57,7 @@ struct Options
 
 class Game
 {
-	public:
+public:
 		
 	static ZCom_ClassID  classID;
 
@@ -118,9 +118,15 @@ class Game
 	Font *infoFont;
 	LuaContext lua;
 	
-	static int luaimpl_print(lua_State *L);
+	struct LuaCallbacks
+	{
+		void bind(std::string callback, std::string file, std::string function);
+		std::vector<int> atGameStart;
+		std::vector<int> afterRender;
+		std::vector<int> afterUpdate;
+	} luaCallbacks;
 	
-	private:
+private:
 
 	std::string nextMod;
 	std::string m_modPath;

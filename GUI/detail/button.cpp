@@ -52,4 +52,9 @@ bool Button::mouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
 	return false;
 }
 
+int Button::classID()
+{
+	return Context::Button;
+}
+
 }

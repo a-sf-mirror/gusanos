@@ -23,6 +23,15 @@ public:
 	friend struct GSSHandler;
 	friend class Wnd; //TEMP
 	
+	enum
+	{
+		Unknown = 0,
+		Button,
+		Edit,
+		List,
+		WndCount
+	};
+	
 	struct MouseKey
 	{
 		enum type

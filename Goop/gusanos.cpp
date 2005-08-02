@@ -22,6 +22,8 @@
 #include "network.h"
 #include "keyboard.h"
 
+#include "script.h"
+
 //TEST
 /*
 #include "IoState.h"
@@ -255,6 +257,12 @@ int main(int argc, char **argv)
 
 		OmfgGUI::menu.render(&renderer);
 		console.render(gfx.buffer);
+		for(std::vector<int>::iterator i = game.luaCallbacks.afterRender.begin();
+			i != game.luaCallbacks.afterRender.end();
+			++i)
+		{
+			game.lua.callReference(*i);
+		}
 		
 		gfx.updateScreen();
 	}

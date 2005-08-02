@@ -1,5 +1,6 @@
 #include "gusanos.h"
 #include "../gfx.h"
+#include "../game.h"
 #include <string>
 
 #include <boost/filesystem/path.hpp>
@@ -190,4 +191,50 @@ bool GSSLoader::load(GSSFile* gss, fs::path const& path)
 const char* GSSLoader::getName()
 {
 	return "GSS loader";
+}
+
+
+LuaLoader LuaLoader::instance;
+
+bool LuaLoader::canLoad(fs::path const& path, std::string& name)
+{
+	if(fs::extension(path) == ".lua")
+	{
+		name = basename(path);
+		return true;
+	}
+	return false;
+}
+	
+bool LuaLoader::load(Script* script, fs::path const& path)
+{
+	fs::ifstream f(path, std::ios::binary);
+	if(!f)
+		return false;
+		
+	// Create the table to store the functions in	
+	std::string name = basename(path);
+	lua_pushstring(game.lua, name.c_str());
+	lua_rawget(game.lua, LUA_GLOBALSINDEX);
+	if(lua_isnil(game.lua, -1))
+	{
+		// The table does not exist, create it
+		
+		lua_pushstring(game.lua, name.c_str());
+		lua_newtable(game.lua);
+		lua_rawset(game.lua, LUA_GLOBALSINDEX);
+	}
+	lua_settop(game.lua, -2); // Pop table or nil
+	
+	game.lua.load(f);
+	
+	script->lua = &game.lua;
+	script->table = name;
+	
+	return true;
+}
+
+const char* LuaLoader::getName()
+{
+	return "Lua loader";
 }

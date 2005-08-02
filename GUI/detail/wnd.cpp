@@ -458,6 +458,8 @@ Wnd* Wnd::findClosestChild(Wnd* org, Dir direction)
 bool Wnd::doRender(Renderer* renderer, Rect const& clip)
 {
 	//Render parent first
+	if(!m_visible)
+		return false;
 		
 	Rect rect(clip);
 	rect.intersect(m_rect);
@@ -605,6 +607,11 @@ void Wnd::setContext_(Context* context)
 	
 	for(; i != e; ++i)
 		(*i)->setContext_(context);
+}
+
+int Wnd::classID()
+{
+	return Context::Unknown;
 }
 
 }

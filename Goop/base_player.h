@@ -3,6 +3,7 @@
 
 #include <string>
 #include "vec.h"
+#include "lua/context.h"
 
 #include <zoidcom.h>
 
@@ -10,9 +11,9 @@ struct PlayerOptions;
 class BaseWorm;
 class BasePlayerInterceptor;
 
-class BasePlayer
+class BasePlayer : public LuaBaseType
 {
-	public:
+public:
 	
 	enum BaseActions
 	{
@@ -80,7 +81,7 @@ class BasePlayer
 	
 	std::string m_name;
 	
-	protected:
+protected:
 
 	BaseWorm* m_worm;
 	PlayerOptions* m_options;

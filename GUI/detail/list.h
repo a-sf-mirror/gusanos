@@ -36,56 +36,44 @@ public:
 	{
 		friend class List;
 		
-		Node(std::string const& aText)
-			: text(aText), selected(false), expanded(true),
+		Node(std::string const& text)
+			: selected(false), expanded(true),
 			  parent(0), level(0)
 		{
+			columns.push_back(text);
 		}
 		
-		static node_iter_t push_back(node_iter_t self, Node* aNode)
+		node_iter_t push_back(Node* node)
 		{
-			self->children.insert(aNode);
+			children.insert(node);
 			
-			aNode->level = self->level + 1;
-			//i->parentList = &self->children;
-			aNode->parent = self;
-			//i->hasParent = true;
+			node->level = level + 1;
+			node->parent = this;
 
-			return node_iter_t(aNode);
+			return node_iter_t(node);
 		}
 		
-		//Disjoint insert (does not have a parent)
-		node_iter_t push_back(Node* aNode)
-		{
-			children.insert(aNode);
-			
-			aNode->level = level + 1;
-			//aNode->parentList = &children;
-			
-
-			return node_iter_t(aNode);
-		}
-
 		void render(Renderer* renderer, long& y, List& list);
 		//void renderChildren(Renderer* aRenderer, long& y, List& list);
 		void renderFrom(Renderer* renderer, long& y, List& list);
 		static node_iter_t findByIdx(node_iter_t i, long aIdx);
 		
-		/*
-		static bool isValid(node_iter_t aIter)
+		void setText(unsigned int column, std::string const& text)
 		{
-			return aIter != aIter->parentList->end();
-		}*/
-		
-		std::string text;
+			if(column < columns.size())
+				columns[column] = text;
+		}
+				
+		//std::string text;
+		std::vector<std::string> columns;
 		bool        selected;
 		bool        expanded;
 		//list_t*     parentList;
-		node_iter_t parent;
+		Node*       parent;
 		//bool        hasParent;
 		long        level;
 		//TODO: columns
-	private:
+
 		list_t      children;
 	};
 	
@@ -95,27 +83,25 @@ public:
 	  std::string const& id, std::map<std::string, std::string> const& attributes)
 	: Wnd(parent, tagLabel, className, id, attributes, ""), m_RootNode("root")
 	{
-		//m_MainSel = m_Base = m_Nodes.end(); //TODO
-		m_columnHeaders.push_back(ColumnHeader("Moo", 1.0));
-		
+		m_MainSel = m_Base = node_iter_t(0);
+		//addColumn(ColumnHeader("Moo", 0.5));
 	}
 	
-	node_iter_t push_back(Node* aNode)
+	void addColumn(ColumnHeader const& column);
+	
+	node_iter_t push_back(Node* node)
 	{
-	/*
-		m_Nodes.push_back(aNode);
-		
-		if(!isValid(m_Base))
-			m_Base =  m_Nodes.begin();
-			
-		node_iter_t i = m_Nodes.end();
-		
-		--i;*/
-		
-		node_iter_t i = m_RootNode.push_back(aNode);
-		
+		node->columns.resize(m_columnHeaders.size());
+		node_iter_t i = m_RootNode.children.insert(node);
+		node->parent = 0; // Just to be sure
+		node->level = m_RootNode.level + 1;
 
 		return i;
+	}
+	
+	void clear()
+	{
+		m_RootNode.children.clear();
 	}
 	
 	bool isValid()
@@ -126,6 +112,8 @@ public:
 	virtual bool render(Renderer* renderer);
 	virtual bool mouseDown(ulong newX, ulong newY, Context::MouseKey::type button);
 
+	virtual int classID();
+	
 private:
 	//list_t           m_Nodes;
 	Node             m_RootNode;
