@@ -367,6 +367,7 @@ void Game::changeLevel(const std::string& levelName )
 				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
 				BaseWorm* worm = addWorm(true); 
 				BasePlayer* player = addPlayer ( OWNER );
+				player->changeName( playerOptions[0]->name );
 				player->assignNetworkRole(true);
 				player->assignWorm(worm);
 			}
@@ -376,6 +377,7 @@ void Game::changeLevel(const std::string& levelName )
 			{
 				BaseWorm* worm = addWorm(true);
 				BasePlayer* player = addPlayer ( OWNER );
+				player->changeName( playerOptions[0]->name );
 				player->assignWorm(worm);
 			}
 		}
@@ -396,8 +398,6 @@ void Game::setMod( const string& modname )
 	levelLocator.addPath(fs::path("default/maps"));
 	levelLocator.addPath(fs::path(nextMod) / "maps");
 	levelLocator.refresh();
-	
-	
 }
 
 const string& Game::getMod()
@@ -449,6 +449,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 	{
 		PlayerAI* player = new PlayerAI();
 		players.push_back( player );
+		player->changeName( "bot" );
 		retPlayer = player;
 	}
 	return retPlayer;

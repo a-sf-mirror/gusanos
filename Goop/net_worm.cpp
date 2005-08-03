@@ -55,9 +55,9 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	m_isAuthority = isAuthority;
 	if( isAuthority)
 	{
+		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
 		allegro_message("ERRORBasePlayer: Unable to register worm authority node.");
-		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 	}else
 	{
 		if( !m_node->registerRequestedNode( classID, network.getZControl() ) )

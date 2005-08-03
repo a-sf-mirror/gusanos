@@ -192,14 +192,14 @@ void BasePlayer::assignNetworkRole( bool authority )
 	m_isAuthority = authority;
 	if( m_isAuthority)
 	{
+		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
 			allegro_message("ERROR: Unable to register player authority node.");
-		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 	}else
 	{
+		m_node->setEventNotification(false, true); // Same but for the remove event.
 		if( !m_node->registerRequestedNode( classID, network.getZControl() ) )
 		allegro_message("ERROR: Unable to register player requested node.");
-		m_node->setEventNotification(false, true); // Enables the eEvent_Init.
 	}
 
 	m_node->applyForZoidLevel(1);
