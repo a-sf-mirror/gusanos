@@ -116,6 +116,8 @@ public:
 	
 	std::string const& getText() const;
 	
+	bool                 m_focusable;
+	
 protected:
 
 	void setContext_(Context* context);
@@ -134,8 +136,7 @@ protected:
 		m_children.push_back(wnd);
 		return wnd;
 	}*/
-
-	bool                 m_visible;
+	
 	std::string          m_text;
 	Rect                 m_rect;
 	std::list<Wnd *>     m_children;
@@ -148,6 +149,9 @@ protected:
 	std::string          m_id;
 	
 	std::map<std::string, std::string> m_attributes;
+	
+	bool                 m_visible;
+	
 	
 	Rect                 m_freeRect;
 	int                  m_freeNextX;
@@ -165,7 +169,8 @@ protected:
 		};
 		
 		Formatting()
-		: width(50), height(50), spacing(5), padding(5), flags(0), rect(10, 10, 0, 0)
+		: width(50), height(50), spacing(5), padding(5), flags(0)
+		, alpha(100), rect(10, 10, 0, 0)
 		{
 			
 		}
@@ -203,6 +208,7 @@ protected:
 		int         spacing;
 		int         padding;
 		long        flags;
+		int         alpha;
 	
 		Rect        rect;
 

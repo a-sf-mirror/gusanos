@@ -96,6 +96,9 @@ public:
 	virtual Rect const& getClip() = 0;
 	virtual Rect const& getViewportRect() = 0;
 	
+	virtual void setBlending(int alpha) = 0;
+	virtual void resetBlending() = 0;
+	
 	
 };
 

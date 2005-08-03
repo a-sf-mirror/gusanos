@@ -159,6 +159,10 @@ public:
 	inline void		clear(void);				//clear the whole lists (frees the memory)
 	inline void		unlinkAll(void);			//unlinks all members from the list (this practically sets the first and last pointers to NULL)
 	
+	/*
+	template<class Op>
+	inline void		sort(Op const&);
+	*/
 	iterator begin()
 	{
 		return iterator(getFirst());
@@ -356,6 +360,34 @@ inline void LList<T>::unlinkAll(void)
 	m_First = m_Last = 0;
 	m_Count = 0;
 }
+
+/*
+template<class T>
+template<class Op>
+inline void LList<T>::sort(Op const& op)
+{
+	T* pivot = m_First;
+	if(!pivot)
+		return;
+		
+	T* lo = 0;
+	T* hi = 0;
+		
+	T* i = m_First->getNext();
+	while(i)
+	{
+		if(op(i, pivot))
+		{
+			i->setPrev(lo);
+			lo = i;
+		}
+		else
+		{
+			i->setNext(hi);
+			hi = i;
+		}
+	}
+}*/
 
 template<class T>
 inline T* LList<T>::getFirst(void)

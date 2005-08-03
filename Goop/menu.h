@@ -54,7 +54,8 @@ struct AllegroRenderer : public Renderer
 	virtual Rect const& getClip();
 	virtual Rect const& getViewportRect();
 	
-	
+	virtual void setBlending(int alpha);
+	virtual void resetBlending();
 	
 private:
 	Rect clipRect;

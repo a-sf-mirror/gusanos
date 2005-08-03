@@ -347,5 +347,14 @@ Rect const& AllegroRenderer::getViewportRect()
 	return screenRect;
 }
 
+void AllegroRenderer::setBlending(int alpha)
+{
+	gfx.setBlender(ALPHA, alpha);
+}
+
+void AllegroRenderer::resetBlending()
+{
+	solid_mode();
+}
 
 }

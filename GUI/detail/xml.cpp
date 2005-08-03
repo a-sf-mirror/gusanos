@@ -112,6 +112,7 @@ struct XMLHandler
 		std::string className = getAttrib("class", "");
 		std::string label = getAttrib("label", "");
 		std::string id = getAttrib("id", "");
+		bool focusable = getAttrib("selectable", "1") != "0";
 				
 		Wnd* newWindow = 0;
 					
@@ -137,6 +138,7 @@ struct XMLHandler
 		{
 			newWindow = new Button(windows.top().wnd, tag.label, className, id, tag.attributes, label);
 		}
+		newWindow->m_focusable = focusable;
 		
 		if(!windows.top().wnd)
 		{

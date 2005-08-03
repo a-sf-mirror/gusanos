@@ -11,8 +11,6 @@ bool Button::render(Renderer* renderer)
 {
 	//Draw a flat, grey box with the text by default
 	
-	
-		
 	renderer->drawBox(
 		getRect(), m_formatting.background.color,
 		m_formatting.borders[0].color,

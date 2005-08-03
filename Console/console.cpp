@@ -248,26 +248,57 @@ void Console::bind(char key, const string &action)
 	bindTable.bind(key , action);
 };
 
+template<class InputT>
+bool portable_getline(InputT& str, std::string& s)
+{
+	std::string l;
+	
+	for(int len = 0; ; ++len)
+	{
+		int c = str.get();
+		if(c == InputT::traits_type::eof())
+		{
+			if(len == 0)
+				return false;
+			s = l;
+			return true;
+		}
+		
+		if(c == '\r' || c == '\n')
+		{
+			if(len == 0) // Skip zero length lines
+			{
+				--len;
+			}
+			else
+			{
+				s = l;
+				return true;
+			}
+		}
+		else
+			l += (char)c;
+	}
+}
+
 int Console::executeConfig(const string &filename)
 {
-	ifstream file;
+	ifstream file(filename.c_str());
 
-	file.open(filename.c_str());
 	if (file.is_open() && file.good())
 	{
 		string text2Parse;
 		//...parse the file
-		while (!file.eof())
+		while (portable_getline(file, text2Parse))
 		{
-			getline(file,text2Parse);
+			//getline(file,text2Parse);
 			//std::transform(text2Parse.begin(), text2Parse.end(), text2Parse.begin(), (int(*)(int)) toupper);
 			parseLine(text2Parse);
-		};
-		file.close();
-		
+		}
+
 		return 1;
-	};
-	file.close();
+	}
+	
 	
 	return 0;
 };

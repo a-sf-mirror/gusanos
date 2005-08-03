@@ -323,7 +323,13 @@ void Wnd::applyFormatting(Context::GSSpropertyMap const& f)
 					break;
 			}
 		}
-		
+		else if(i->first == "alpha")
+		{
+			EACH_VALUE(v)
+			{
+				m_formatting.alpha = lexical_cast<int>(*v);
+			}
+		}		
 	}
 	
 	#undef EACH_VALUE
@@ -436,7 +442,7 @@ Wnd* Wnd::findClosestChild(Wnd* org, Dir direction)
 	
 	for(; i != e; ++i)
 	{
-		if(*i != org)
+		if(*i != org && (*i)->m_focusable && (*i)->m_visible)
 		{
 			Dir thisDir;
 			int x = (*i)->getRect().centerX() - orgx;
@@ -480,7 +486,12 @@ bool Wnd::doRender(Renderer* renderer, Rect const& clip)
 	if(!rect.isValid())
 		return false;
 	renderer->setClip(rect);
-		
+	
+	if(m_formatting.alpha != 100)
+		renderer->setBlending(m_formatting.alpha);
+	else
+		renderer->resetBlending();
+	
 	if(!render(renderer))
 		return false;
 

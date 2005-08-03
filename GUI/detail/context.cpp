@@ -84,6 +84,7 @@ void Context::render(Renderer* renderer)
 		Rect oldClip(renderer->getClip());
 		m_rootWnd->doRender(renderer, renderer->getViewportRect());
 		renderer->setClip(oldClip);
+		renderer->resetBlending();
 	}	
 }
 
