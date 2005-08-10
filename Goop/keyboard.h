@@ -58,7 +58,7 @@ class KeyHandler
 	
 	boost::signal<bool (int), StopEarly> keyDown;
 	boost::signal<bool (int), StopEarly> keyUp;
-	boost::signal<bool (char), StopEarly> printableChar;
+	boost::signal<bool (char, int), StopEarly> printableChar;
 	
 	private:
 	

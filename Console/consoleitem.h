@@ -6,14 +6,15 @@
 
 class ConsoleItem
 {
-	public:
+public:
 		
 	ConsoleItem(bool locked = true);
 
 	virtual std::string invoke(const std::list<std::string> &args) = 0;
 	bool isLocked();
 	
-	private:
+	bool temp;
+private:
 		
 	bool m_locked;
 };

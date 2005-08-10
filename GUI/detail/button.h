@@ -33,5 +33,5 @@ private:
 
 }
 
-#endif //LOSP_gui_button_h
+#endif //OMFG_GUI_BUTTON_H
 

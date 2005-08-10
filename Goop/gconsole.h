@@ -27,7 +27,7 @@ class GConsole : public Console
 	void think();
 	int executeConfig(const std::string &filename);
 	
-	bool eventPrintableChar(char c);
+	bool eventPrintableChar(char c, int k);
 	bool eventKeyDown(int k);
 	bool eventKeyUp(int k);
 	

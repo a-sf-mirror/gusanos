@@ -3,6 +3,8 @@
 #include "wnd.h"
 #include "list.h"
 #include "button.h"
+#include "edit.h"
+#include "group.h"
 #include <sstream>
 #include <iostream>
 
@@ -137,6 +139,14 @@ struct XMLHandler
 		else if(tag.label == "button")
 		{
 			newWindow = new Button(windows.top().wnd, tag.label, className, id, tag.attributes, label);
+		}
+		else if(tag.label == "group")
+		{
+			newWindow = new Group(windows.top().wnd, tag.label, className, id, tag.attributes, label);
+		}
+		else if(tag.label == "edit")
+		{
+			newWindow = new Edit(windows.top().wnd, tag.label, className, id, tag.attributes, label);
 		}
 		newWindow->m_focusable = focusable;
 		

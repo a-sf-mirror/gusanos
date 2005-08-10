@@ -29,6 +29,7 @@ public:
 		Button,
 		Edit,
 		List,
+		Group,
 		WndCount
 	};
 	

@@ -180,7 +180,7 @@ void Game::init(int argc, char** argv)
 	gssLocator.registerLoader(&GSSLoader::instance);
 	scriptLocator.registerLoader(&LuaLoader::instance);
 	
-	LuaBindings::init(lua);
+	LuaBindings::init();
 
 	m_defaultPath = "default/";
 	m_modPath = "default/";
@@ -266,11 +266,12 @@ void Game::unload()
 	//cerr << "Unloading..." << endl;
 	loaded = false;
 	OmfgGUI::menu.clear();
+	
+	console.clearTemporaries();
 
 	lua.reset();
 	luaCallbacks = LuaCallbacks(); // Reset callbacks
-	LuaBindings::init(lua);
-	
+
 	sfx.clear();
 	// Delete all objects
 	for ( ObjectsList::Iterator iter = objects.begin(); (bool)iter; ++iter)
@@ -333,6 +334,7 @@ void Game::changeLevel(const std::string& levelName )
 {
 	//cerr << "Unloading resources" << endl;
 	unload();
+	LuaBindings::init();
 	
 	m_modName = nextMod;
 	m_modPath = nextMod + "/";

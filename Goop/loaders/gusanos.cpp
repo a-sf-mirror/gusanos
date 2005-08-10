@@ -61,7 +61,7 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 			level->m_materialList[8].worm_pass = false;
 			level->m_materialList[8].particle_pass = false;
 			
-			level->loaded = true;
+			level->loaderSucceeded();
 			return true;
 		}
 	}
@@ -89,10 +89,20 @@ bool GusanosFontLoader::canLoad(fs::path const& path, std::string& name)
 bool GusanosFontLoader::load(Font* font, fs::path const& path)
 {
 	font->free();
+	
+	int oldColorDepth = get_color_depth();
+	int oldColorConversion = get_color_conversion();
+	set_color_depth(8);
+	set_color_conversion(COLORCONV_REDUCE_TO_256 | COLORCONV_KEEP_TRANS);
 
 	font->m_bitmap = load_bmp(path.native_file_string().c_str(), 0);
 	if(!font->m_bitmap)
 		return false;
+		
+	set_color_conversion(oldColorConversion);
+	set_color_depth(oldColorDepth);
+		
+	font->m_supportColoring = true;
 		
 	int monoWidth = font->m_bitmap->w / 256;
 	int monoHeight = font->m_bitmap->h;
@@ -109,6 +119,8 @@ bool GusanosFontLoader::load(Font* font, fs::path const& path)
 		
 		x += monoWidth;
 	}
+	
+	font->buildSubBitmaps();
 	
 	return true;
 	/*

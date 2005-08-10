@@ -11,7 +11,7 @@ static unsigned int INVALID_NODE_ID = 0;
 
 class Network
 {
-	public:
+public:
 		
 	enum NetEvents
 	{
@@ -20,6 +20,8 @@ class Network
 		
 	Network();
 	~Network();
+	
+	static void log(char const* msg);
 	
 	void init();
 	void shutDown();
@@ -42,7 +44,7 @@ class Network
 	ZCom_Control* getZControl();
 	int getServerPing();
 
-	private:
+private:
 
 	void registerClasses();
 		

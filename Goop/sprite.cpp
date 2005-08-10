@@ -3,6 +3,7 @@
 #include "gfx.h"
 
 #include <allegro.h>
+#include <iostream>
 
 using namespace std;
 
@@ -37,6 +38,24 @@ void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int Alignment )
 		draw_sprite_h_flip(where, m_bitmap, x - ( m_bitmap->w - 1 ) + _x, y - _y);
 	else
 		draw_sprite( where, m_bitmap, x - _x, y - _y);
+}
+
+void Sprite::drawCut(BITMAP *where, int x, int y, int alignment, int left, int top, int bottom, int right)
+{
+	int realX = x + left, realY = y + top;
+	
+	if ( alignment & ALIGN_LEFT ) /* Do nothing */;
+	else if ( alignment & ALIGN_RIGHT ) realX += m_bitmap->w;
+	else realX += m_xPivot;
+	
+	if ( alignment & ALIGN_TOP ) /* Do nothing */;
+	else if ( alignment & ALIGN_BOTTOM ) realY += m_bitmap->h;
+	else realY += m_yPivot;
+	
+	int x1 = left, y1 = top, w = m_bitmap->w - (left + right), h = m_bitmap->h - (top + bottom);
+	//cerr << m_xPivot << ", " << m_yPivot << endl;
+	masked_blit(m_bitmap, where, x1, y1, realX, realY, w, h);
+
 }
 
 void Sprite::drawBlended(BITMAP *where, int x, int y, int alpha, bool flipped, int Alignment, Blenders blender )

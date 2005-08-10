@@ -31,8 +31,9 @@ public:
 	Wnd(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes,
 	  std::string const& text = std::string(""))
-	: m_text(text), m_parent(parent), m_font(0), m_tagLabel(tagLabel)
-	, m_className(className), m_id(id), m_attributes(attributes), m_visible(true)
+	: m_focusable(true), m_text(text), m_parent(parent), m_font(0)
+	, m_tagLabel(tagLabel), m_className(className), m_id(id)
+	, m_attributes(attributes), m_visible(true), m_active(false)
 	{
 		if(m_parent)
 		{
@@ -62,8 +63,22 @@ public:
 	
 	virtual void process();
 	
+	virtual void setActivation(bool active);
+	
+	void doSetActivation(bool active);
+	
+	void toggleActivation()
+	{
+		doSetActivation(!m_active);
+	}
+	
 	void setText(std::string const& aStr);
 
+	std::string const& getText()
+	{
+		return m_text;
+	}
+	
 	Rect const& getRect()
 	{ return m_rect; }
 	
@@ -109,6 +124,12 @@ public:
 	//Sends a mouse button up event
 	virtual bool mouseUp(ulong aNewX, ulong aNewY, Context::MouseKey::type aButton);
 	
+	virtual bool keyDown(int key);
+	
+	virtual bool keyUp(int key);
+	
+	virtual bool charPressed(char c, int key);
+	
 	virtual int classID();
 	
 	void setVisibility(bool v)
@@ -123,6 +144,8 @@ protected:
 	void setContext_(Context* context);
 	
 	bool readSpriteSet(BaseSpriteSet*& dest, std::string const& str);
+	
+	bool readSkin(BaseSpriteSet*& dest, std::string const& str);
 
 /*
 	//Transfers ownership
@@ -151,7 +174,7 @@ protected:
 	std::map<std::string, std::string> m_attributes;
 	
 	bool                 m_visible;
-	
+	bool                 m_active;
 	
 	Rect                 m_freeRect;
 	int                  m_freeNextX;
@@ -170,7 +193,7 @@ protected:
 		
 		Formatting()
 		: width(50), height(50), spacing(5), padding(5), flags(0)
-		, alpha(100), rect(10, 10, 0, 0)
+		, alpha(100), rect(10, 10, 0, 0), fontColor(255, 255, 255)
 		{
 			
 		}
@@ -188,7 +211,7 @@ protected:
 		struct Background
 		{
 			Background()
-			: color(128, 128, 128), spriteSet(0)
+			: color(128, 128, 128), spriteSet(0), skin(0)
 			{
 			}
 			
@@ -199,6 +222,7 @@ protected:
 			}
 			
 			RGB color;
+			BaseSpriteSet *skin;
 			BaseSpriteSet *spriteSet;
 		} background;
 		
@@ -211,6 +235,7 @@ protected:
 		int         alpha;
 	
 		Rect        rect;
+		RGB         fontColor;
 
 	} m_formatting;
 };

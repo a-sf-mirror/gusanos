@@ -3,20 +3,23 @@
 
 #include "context.h"
 #include <vector>
+#include <string>
+#include <list>
 
-class LuaBindings
+namespace LuaBindings
 {
-public:
-	static void init(LuaContext& context);
+	void init();
 
-	static int print(lua_State* state);
+	int print(lua_State* state);
 	
-	static void addGUIWndFunctions(LuaContext& context);
-	static void addGUIListFunctions(LuaContext& context);
+	std::string runLua(int ref, std::list<std::string> const& args);
+	void addGUIWndFunctions(LuaContext& context);
+	void addGUIListFunctions(LuaContext& context);
 	
-	static int playerIterator;
-	static int playerMetaTable;
-	static std::vector<int> guiWndMetaTable;
-};
+	extern int playerIterator;
+	extern int playerMetaTable;
+	extern int fontMetaTable;
+	extern std::vector<int> guiWndMetaTable;
+}
 
 #endif //LUA_BINDINGS_H

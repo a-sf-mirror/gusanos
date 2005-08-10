@@ -8,6 +8,8 @@
 
 #include <allegro.h>
 #include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
 
 using namespace std;
 
@@ -242,7 +244,7 @@ void GConsole::init()
 	//keyHandler.init();
 	
 	//Connect the handlers as group 0 so they are called first
-	keyHandler.printableChar.connect(0, boost::bind(&GConsole::eventPrintableChar, this, _1));
+	keyHandler.printableChar.connect(0, boost::bind(&GConsole::eventPrintableChar, this, _1, _2));
 	keyHandler.keyDown.connect(0, boost::bind(&GConsole::eventKeyDown, this, _1));
 	keyHandler.keyUp.connect(0, boost::bind(&GConsole::eventKeyUp, this, _1));
 
@@ -528,7 +530,7 @@ bool GConsole::eventKeyUp(int k)
 	return true;
 }
 
-bool GConsole::eventPrintableChar(char c)
+bool GConsole::eventPrintableChar(char c, int k)
 {
 
 	if ( m_mode == CONSOLE_MODE_INPUT ) // console is in input read mode so..

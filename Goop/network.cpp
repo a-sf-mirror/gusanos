@@ -11,6 +11,7 @@
 #ifndef DISABLE_ZOIDCOM
 
 #include <string>
+#include <iostream>
 #include <zoidcom.h>
 
 using namespace std;
@@ -28,6 +29,11 @@ Network::~Network()
 	m_host = false;
 	m_client = false;
 	m_serverID = ZCom_Invalid_ID;
+}
+
+void Network::log(char const* msg)
+{
+	cerr << "ZOIDCOM: " << msg << endl;
 }
 
 void Network::init()

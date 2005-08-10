@@ -49,9 +49,11 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 	if(!f)
 		return false;
 
-	font->m_bitmap = create_bitmap(bitmapWidth, bitmapHeight);
+	font->m_bitmap = create_bitmap_ex(8, bitmapWidth, bitmapHeight);
 	if(!font->m_bitmap)
 		return false;
+		
+	font->m_supportColoring = true;
 		
 	font->m_chars.assign(32, Font::CharInfo(Rect(0, 0, 1, 1), 0));
 	
@@ -77,11 +79,14 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 			if(!f.get(v))
 				return false;
 				
-			int c = v ? makecol(v, v, v) : makecol(255, 0, 255);
+			int c = v ? 1 : 0;
 
 			putpixel(font->m_bitmap, x, y, c);
 		}
 	}
+	
+	font->buildSubBitmaps();
+	
 	return true;
 }
 

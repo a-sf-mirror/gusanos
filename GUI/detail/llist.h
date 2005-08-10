@@ -3,6 +3,11 @@
 #ifndef _LLIST_H_
 #define _LLIST_H_
 
+#include <utility>
+#include <iostream>
+using std::cerr;
+using std::endl;
+
 template<class T>
 class LList;
 
@@ -92,6 +97,9 @@ private:
 	T *m_First;
 	T *m_Last;
 	long m_Count;
+	
+	template<class Op>
+	static std::pair<T*, T*> sort_private(T* section, Op& op);
 
 public:
 	struct iterator
@@ -158,11 +166,10 @@ public:
 	inline void		erase(T* a_Item);			//Removes the item from the list and frees it's memory
 	inline void		clear(void);				//clear the whole lists (frees the memory)
 	inline void		unlinkAll(void);			//unlinks all members from the list (this practically sets the first and last pointers to NULL)
-	
-	/*
+
 	template<class Op>
-	inline void		sort(Op const&);
-	*/
+	inline void		sort(Op&);
+
 	iterator begin()
 	{
 		return iterator(getFirst());
@@ -361,24 +368,50 @@ inline void LList<T>::unlinkAll(void)
 	m_Count = 0;
 }
 
-/*
+
 template<class T>
 template<class Op>
-inline void LList<T>::sort(Op const& op)
+inline void LList<T>::sort(Op& op)
 {
-	T* pivot = m_First;
-	if(!pivot)
+	if(!m_First)
 		return;
+		
+	std::pair<T*, T*> p = sort_private(m_First, op);
+	m_First = p.first;
+	m_Last = p.second;
+	m_Last->setNext(0);
+	
+	// Correct the prev pointers
+	T* i = m_First;
+	T* last = 0;
+	
+	for(;i ; i = i->getNext())
+	{
+		i->setPrev(last);
+		last = i;
+	}
+}
+
+template<class T>
+template<class Op>
+std::pair<T*, T*> LList<T>::sort_private(T* section, Op& op)
+{
+	T* pivot = section;
+	
+	if(pivot->getNext() == 0)
+		return std::make_pair(pivot, pivot); // Section is sorted (only one element)
 		
 	T* lo = 0;
 	T* hi = 0;
 		
-	T* i = m_First->getNext();
+	T* i = pivot->getNext();
 	while(i)
 	{
+		T* next = i->getNext();
+		
 		if(op(i, pivot))
 		{
-			i->setPrev(lo);
+			i->setNext(lo);
 			lo = i;
 		}
 		else
@@ -386,8 +419,32 @@ inline void LList<T>::sort(Op const& op)
 			i->setNext(hi);
 			hi = i;
 		}
+		
+		i = next;
 	}
-}*/
+	
+	std::pair<T*, T*> ret;
+	
+	if(lo)
+	{
+		std::pair<T*, T*> p = sort_private(lo, op);
+		p.second->setNext(pivot);
+		ret.first = p.first;
+	}
+	else
+		ret.first = pivot;
+	
+	if(hi)
+	{
+		std::pair<T*, T*> p = sort_private(hi, op);
+		pivot->setNext(p.first);
+		ret.second = p.second;
+	}	
+	else
+		ret.second = pivot;
+				
+	return ret;
+}
 
 template<class T>
 inline T* LList<T>::getFirst(void)

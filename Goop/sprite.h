@@ -14,15 +14,22 @@ enum
 	
 class Sprite
 {
-	public:
+public:
 		
 	Sprite(BITMAP* bitmap, int xPivot, int yPivot);
 	~Sprite();
 	
 	void draw(BITMAP *where, int x, int y, bool flipped = false, int Alignment = 0);
+	void drawCut(BITMAP *where, int x, int y, int alignment, int left, int top, int bottom, int right);
 	void drawBlended(BITMAP *where, int x, int y, int alpha, bool flipped = false, int Alignment = 0, Blenders blender = ADD );
 	
-	private:
+	int getWidth()
+	{ return m_bitmap->w; }
+	
+	int getHeight()
+	{ return m_bitmap->h; }
+	
+private:
 	
 	BITMAP *m_bitmap;
 	BITMAP *m_mirror;

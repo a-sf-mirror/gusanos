@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <iostream>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
 ResourceLocator<Font> fontLocator;
 
 Font::Font()
-: m_bitmap(0)
+: m_bitmap(0), m_supportColoring(false)
 {
 	
 }
@@ -34,9 +35,15 @@ Font::~Font()
 
 void Font::free()
 {
+	for(std::vector<CharInfo>::iterator i = m_chars.begin(); i != m_chars.end(); ++i)
+	{
+		destroy_bitmap(i->subBitmap);
+	}
+	
 	m_chars.clear();
-	if(m_bitmap)
-		destroy_bitmap(m_bitmap);
+
+	destroy_bitmap(m_bitmap);
+	
 	m_bitmap = 0;
 }
 
@@ -49,16 +56,35 @@ Font::CharInfo* Font::lookupChar(char c)
 	return &m_chars[idx];
 }
 
-void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing)
-{
+void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing, int cr, int cg, int cb)
+{/*
+	if(!m_supportColoring)
+	{
+		for(; b != e; ++b)
+		{
+			CharInfo *c = lookupChar(*b);
+			
+			masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
+			//draw_character_ex(where, c->subBitmap, x, y, color, -1);
+			
+			
+			x += c->width + c->spacing + spacing;
+		}
+	}
+	else
+	{*/
+	int color = makecol(cr, cg, cb);
 	for(; b != e; ++b)
 	{
 		CharInfo *c = lookupChar(*b);
 		
-		masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
-		
+		//masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
+		if(c->subBitmap)
+			draw_character_ex(where, c->subBitmap, x, y, color, -1);
+
 		x += c->width + c->spacing + spacing;
 	}
+	/*}*/
 }
 
 pair<int, int> Font::getDimensions(std::string const& text, int spacing)
@@ -85,7 +111,28 @@ pair<int, int> Font::getDimensions(std::string const& text, int spacing)
 	return make_pair(w, h);
 }
 
-
+pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing)
+{
+	if(b == e)
+		return zeroDimensions();
+		
+	CharInfo *c = lookupChar(*b);
+	int w = c->width;
+	int h = c->height;
+	
+	++b;
+	
+	for(; b != e; ++b)
+	{
+		w += c->spacing + spacing;
+		c = lookupChar(*b);
+		w += c->width;
+		if(c->height > h)
+			h = c->height;
+	}
+	
+	return make_pair(w, h);
+}
 
 pair<int, int> Font::zeroDimensions()
 {
@@ -107,6 +154,13 @@ void Font::removeSpacing(pair<int, int>& dim, char ch, int spacing)
 	dim.first -= c->spacing + spacing;
 }
 
+void Font::buildSubBitmaps()
+{
+	for(std::vector<CharInfo>::iterator i = m_chars.begin(); i != m_chars.end(); ++i)
+	{
+		i->subBitmap = create_sub_bitmap(m_bitmap, i->rect.x1, i->rect.y1, i->width, i->height);
+	}
+}
 /*
 int Font::width()
 {

@@ -153,7 +153,7 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 	level->m_materialList[5].worm_pass = false;
 	level->m_materialList[5].particle_pass = false;
 	
-	level->loaded = true;
+	level->loaderSucceeded();
 	return true;
 }
 

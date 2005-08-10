@@ -49,7 +49,7 @@ public:
 	}
 	
 	int getColour();
-	Vec& getPosRefference();
+	Vec& getPosReference();
 	
 	bool active;
 	bool attached;

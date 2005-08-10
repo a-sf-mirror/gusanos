@@ -113,13 +113,51 @@ void Gfx::updateScreen()
 	if ( !m_doubleRes )
 	{
 		blit(buffer,screen,0,0,0,0,m_vwidth,m_vheight);
-	}else
+	}
+	else
 	{
+		bool blitFromBuffer = true;
 		switch ( (Filters)m_filter )
 		{
 			case NO_FILTER: 
-				stretch_blit(buffer, m_doubleResBuffer, 0, 0, buffer->w, buffer->h, 0, 0, m_doubleResBuffer->w, m_doubleResBuffer->h);
+				switch(bitmap_color_depth(screen))
+				{
+					case 32:
+						acquire_screen();
+						
+						bmp_select(screen);
+
+						for(int y = 0; y < 240; ++y)
+						{
+							unsigned long* src = (unsigned long *)buffer->line[y];
+
+							unsigned long dest1 = bmp_write_line(screen, y*2);
+							unsigned long dest2 = bmp_write_line(screen, y*2 + 1);
+														
+							for(int x = 0; x < 320; ++x)
+							{
+								unsigned long p = *src++;
+
+								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
+								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
+								bmp_write32(dest2, p); dest2 += sizeof(unsigned long);
+								bmp_write32(dest2, p); dest2 += sizeof(unsigned long);
+							}
+						}
+						
+						bmp_unwrite_line(screen);
+						
+						release_screen();
+					break;
+					
+					default:
+						stretch_blit(buffer, screen, 0, 0, buffer->w, buffer->h, 0, 0, screen->w, screen->h);
+					break;
+				}
+
+				blitFromBuffer = false;
 			break;
+			
 			case SCANLINES: 
 				stretch_blit(buffer, m_doubleResBuffer, 0, 0, buffer->w, buffer->h, 0, 0, m_doubleResBuffer->w, m_doubleResBuffer->h);
 				drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
@@ -131,7 +169,8 @@ void Gfx::updateScreen()
 				solid_mode();
 			break;
 		}
-		blit(m_doubleResBuffer,screen,0,0,0,0,m_vwidth,m_vheight);
+		if(blitFromBuffer)
+			blit(m_doubleResBuffer, screen, 0, 0, 0, 0, m_vwidth, m_vheight);
 	}
 	if ( m_clearBuffer ) clear_bitmap(buffer);
 }

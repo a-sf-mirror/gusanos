@@ -1,4 +1,4 @@
-#include "button.h"
+#include "group.h"
 
 using std::cout;
 using std::cerr;
@@ -7,10 +7,8 @@ using std::endl;
 namespace OmfgGUI
 {
 
-bool Button::render(Renderer* renderer)
+bool Group::render(Renderer* renderer)
 {
-	//Draw a flat, grey box with the text by default
-	
 	if(m_formatting.background.skin)
 	{
 		renderer->drawSkinnedBox(*m_formatting.background.skin, getRect(), m_formatting.background.color);
@@ -27,39 +25,35 @@ bool Button::render(Renderer* renderer)
 		
 	if(m_formatting.background.spriteSet)
 	{
-		//cerr << "Rendering: " << m_formatting.background.spriteSet << endl;
-		//cerr << "Pos: (" << getRect().centerX() << ", " << getRect().centerY() << ")" << endl;
-		renderer->drawSprite(*m_formatting.background.spriteSet, 0, getRect().centerX(), getRect().centerY());
-		
-		//delete m_formatting.background.spriteSet;
-		//m_formatting.background.spriteSet = 0;
+		renderer->drawSprite(*m_formatting.background.spriteSet, 0, getRect().centerX(), getRect().centerY());	
 	}
 	
+	/*
 	if(m_font)
 		renderer->drawText(*m_font, m_text, BaseFont::CenterV | BaseFont::CenterH, m_rect.centerX(), m_rect.centerY(), m_formatting.fontColor);
-	
+	*/
 	return true;
 }
 
-void Button::process()
+void Group::process()
 {
 }
-
+/*
 //Sends a mouse button down event
-bool Button::mouseDown(ulong newX, ulong newY, Context::MouseKey::type button)
+bool Group::mouseDown(ulong newX, ulong newY, Context::MouseKey::type button)
 {
 	return false;
 }
 
 //Sends a mouse button up event
-bool Button::mouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
+bool Group::mouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
 {
 	return false;
-}
+}*/
 
-int Button::classID()
+int Group::classID()
 {
-	return Context::Button;
+	return Context::Group;
 }
 
 }

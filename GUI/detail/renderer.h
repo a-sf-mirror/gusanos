@@ -4,6 +4,7 @@
 #include "common.h"
 #include <string>
 #include <algorithm>
+#include <utility>
 
 namespace OmfgGUI
 {
@@ -58,7 +59,10 @@ struct RGB
 
 struct BaseSpriteSet
 {
-	virtual int getFrameCount() = 0;
+	virtual int getFrameCount() const = 0;
+	
+	virtual ulong getFrameWidth(int frame, int angle = 0) const = 0;
+	virtual ulong getFrameHeight(int frame, int angle = 0) const = 0;
 	
 	virtual ~BaseSpriteSet() {}
 };
@@ -86,11 +90,20 @@ public:
 		RGB const& borderTopColor,
 		RGB const& borderRightColor,
 		RGB const& borderBottomColor) = 0;
+		
+	virtual void drawBox(
+		Rect const& rect,
+		RGB const& color) = 0;
+		
+	virtual void drawVLine(ulong x, ulong y1, ulong y2, RGB const& color) = 0;
 	
 	// Draws text
 	virtual void drawText(BaseFont const& font, std::string const& str, ulong flags, ulong x, ulong y, RGB const& aColor) = 0;
 	
+	virtual std::pair<int, int> getTextDimensions(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e) = 0;
+	
 	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y) = 0;
+	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y, ulong left, ulong top, ulong bottom, ulong right) = 0;
 
 	virtual void setClip(Rect const& rect) = 0;
 	virtual Rect const& getClip() = 0;
@@ -99,7 +112,7 @@ public:
 	virtual void setBlending(int alpha) = 0;
 	virtual void resetBlending() = 0;
 	
-	
+	void drawSkinnedBox(BaseSpriteSet const& skin, Rect const& rect, RGB const& backgroundColor);
 };
 
 }

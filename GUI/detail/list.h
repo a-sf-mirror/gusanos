@@ -5,6 +5,8 @@
 #include "llist.h"
 
 #include <string>
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
 //#include <list>
 
 namespace OmfgGUI
@@ -63,6 +65,14 @@ public:
 			if(column < columns.size())
 				columns[column] = text;
 		}
+		
+		std::string getText(unsigned int column)
+		{
+			if(column < columns.size())
+				return columns[column];
+			else
+				return "";
+		}
 				
 		//std::string text;
 		std::vector<std::string> columns;
@@ -102,6 +112,29 @@ public:
 	void clear()
 	{
 		m_RootNode.children.clear();
+	}
+	
+	struct NumericLT
+	{
+		NumericLT(unsigned int column_)
+		: column(column_)
+		{
+			
+		}
+		
+		bool operator()(Node* a, Node* b)
+		{
+			return lexical_cast<int>(a->getText(column))
+				> lexical_cast<int>(b->getText(column));
+		}
+		
+		unsigned int column;
+	};
+	
+	void sortNumerically(int byColumn)
+	{
+		NumericLT criteria(byColumn);
+		m_RootNode.children.sort(criteria);
 	}
 	
 	bool isValid()

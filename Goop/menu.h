@@ -28,9 +28,14 @@ struct GusanosSpriteSet : public BaseSpriteSet
 	{
 	}
 	
-	virtual int getFrameCount();
+	virtual int getFrameCount() const;
+	
+	virtual ulong getFrameWidth(int frame, int angle = 0) const;
+	virtual ulong getFrameHeight(int frame, int angle = 0) const;
 	
 	SpriteSet *spriteSet;
+	
+	
 };
 
 struct AllegroRenderer : public Renderer
@@ -44,11 +49,20 @@ struct AllegroRenderer : public Renderer
 		RGB const& borderTopColor,
 		RGB const& borderRightColor,
 		RGB const& borderBottomColor);
+		
+	virtual void drawBox(
+		Rect const& rect,
+		RGB const& color);
+		
+	virtual void drawVLine(ulong x, ulong y1, ulong y2, RGB const& color);
 	
 	// Draws text
 	virtual void drawText(BaseFont const& font, std::string const& str, ulong flags, ulong x, ulong y, RGB const& aColor);
 	
+	virtual std::pair<int, int> getTextDimensions(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e);
+	
 	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y);
+	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y, ulong left, ulong top, ulong bottom, ulong right);
 
 	virtual void setClip(Rect const& rect);
 	virtual Rect const& getClip();
@@ -75,6 +89,7 @@ public:
 	
 	bool eventKeyDown(int k);
 	bool eventKeyUp(int k);
+	bool eventPrintableChar(char c, int k);
 	
 	void clear();
 	

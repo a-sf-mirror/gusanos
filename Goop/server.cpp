@@ -9,7 +9,7 @@
 #ifndef DISABLE_ZOIDCOM
 
 #include <zoidcom.h>
-#include <list.h>
+#include <list>
 
 Server::Server( int _udpport )
 {

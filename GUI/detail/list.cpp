@@ -39,7 +39,7 @@ void List::Node::render(Renderer* renderer, long& y, List& list)
 		i != columns.end();
 		++i, ++h)
 	{
-		renderer->drawText(*list.m_font, *i, BaseFont::CenterV, long(x), y + halfRowHeight, RGB(0, 0, 0));
+		renderer->drawText(*list.m_font, *i, BaseFont::CenterV, long(x), y + halfRowHeight, list.m_formatting.fontColor);
 		x += h->widthFactor * w;
 	}
 	
@@ -143,6 +143,7 @@ List::node_iter_t List::Node::findByIdx(node_iter_t i, long aIdx)
 
 bool List::render(Renderer* renderer)
 {
+	/*
 	renderer->drawBox(
 		getRect(),
 		m_formatting.background.color,
@@ -150,6 +151,21 @@ bool List::render(Renderer* renderer)
 		m_formatting.borders[1].color,
 		m_formatting.borders[2].color,
 		m_formatting.borders[3].color);
+	*/
+	
+	if(m_formatting.background.skin)
+	{
+		renderer->drawSkinnedBox(*m_formatting.background.skin, getRect(), m_formatting.background.color);
+	}
+	else
+	{
+		renderer->drawBox(
+			getRect(), m_formatting.background.color,
+			m_formatting.borders[0].color,
+			m_formatting.borders[1].color,
+			m_formatting.borders[2].color,
+			m_formatting.borders[3].color);
+	}
 	
 	long halfRowHeight = rowHeight/2;
 	

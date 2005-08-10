@@ -88,8 +88,8 @@ void KeyHandler::pollKeyboard()
 	
 	while(keypressed())
 	{
-		char key = readkey();
-		printableChar(key);
+		int key = readkey();
+		printableChar(key & 0xFF, (key >> 8) & 0xFF);
 	}
 }
 

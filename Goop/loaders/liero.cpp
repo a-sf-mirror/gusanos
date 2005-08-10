@@ -58,6 +58,122 @@ static unsigned char const lieroPalette[] =
 0x0,0xe0,0x0,0xfc,0x0,0x0,0xe8,0x4,0x14,0xd8,0xc,0x2c,0xc4,0x14,0x44,0xb4,0x18,0x58,0xa0,0x20,0x70,0x90,0x28,0x88,
 0x7c,0x2c,0x9c,0x6c,0x34,0xb4,0x58,0x3c,0xcc,0x48,0x44,0xe4};
 
+static unsigned char const lieroMaterials[1280]={
+0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,
+0,0,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,
+1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
+1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,
+0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+
+static unsigned char materialMappings[256];
+
+enum LieroMaterialFlags
+{
+	Dirt = 0,
+	Dirt2,
+	Rock,
+	Back,
+	Shadow
+};
+
+bool getLieroMaterialFlag(LieroMaterialFlags type, int material)
+{
+	return lieroMaterials[material + int(type)*256];
+}
+
+void initMaterialMappings()
+{
+	for(int i = 0; i < 256; ++i)
+	{
+		bool dirt = getLieroMaterialFlag(Dirt, i);
+		bool dirt2 = getLieroMaterialFlag(Dirt2, i);
+		bool rock = getLieroMaterialFlag(Rock, i);
+		bool back = getLieroMaterialFlag(Back, i);
+		bool shadow = getLieroMaterialFlag(Shadow, i);
+		
+		int mapTo = 0;
+		
+		if(dirt || dirt2)
+		{
+			if(back)
+				mapTo = 2; // Special dirt
+			else
+				mapTo = 1; // TODO: Change to real dirt
+		}
+		else if(rock)
+		{
+			if(back)
+				mapTo = 3; // Special rock
+			else
+				mapTo = 1; // Rock
+		}
+		else
+			mapTo = 0; // Background
+			
+		materialMappings[i] = mapTo;
+	}
+}
+
 bool LieroLevelLoader::load(Level* level, fs::path const& path)
 {
 	fs::ifstream f(path, std::ios::binary);
@@ -77,6 +193,8 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 	level->material = create_bitmap_ex(8, width, height);
 	level->image = create_bitmap(width, height);
 	level->background = create_bitmap(width, height);
+	
+	initMaterialMappings();
 
 	for (int y = 0; y < height; y++)
 	{
@@ -92,15 +210,24 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 			int backgroundc = makecol(entry[0], entry[1], entry[2]);
 			putpixel(level->background, x, y, backgroundc);
 			
-			putpixel(level->material, x, y, 1); //TODO
+			putpixel(level->material, x, y, materialMappings[c]); //TODO
 		}
 	}
 	
-	//TODO
-	level->m_materialList[2].worm_pass = true;
-	level->m_materialList[2].particle_pass = true;
+	//TODO: Dirt
+	level->m_materialList[1].worm_pass = true;
+	level->m_materialList[1].particle_pass = true;
+	
+	level->m_materialList[2].worm_pass = false;
+	level->m_materialList[2].particle_pass = false;
+	
+	level->m_materialList[3].worm_pass = true;
+	level->m_materialList[3].particle_pass = false;
+	
+	level->m_materialList[4].worm_pass = false;
+	level->m_materialList[4].particle_pass = true;
 
-	level->loaded = true;
+	level->loaderSucceeded();
 	return true;
 }
 
@@ -131,9 +258,11 @@ bool LieroFontLoader::load(Font* font, fs::path const& path)
 		
 	long bitmapWidth = 7, bitmapHeight = 250 * 8;
 
-	font->m_bitmap = create_bitmap(bitmapWidth, bitmapHeight);
+	font->m_bitmap = create_bitmap_ex(8, bitmapWidth, bitmapHeight);
 	if(!font->m_bitmap)
 		return false;
+		
+	font->m_supportColoring = true;
 		
 	std::vector<char> buffer(16000);
 	
@@ -160,12 +289,14 @@ bool LieroFontLoader::load(Font* font, fs::path const& path)
 			{
 				char v = buffer[y*8 + x + 1];
 				
-				int c = v ? makecol(255, 255, 255) : makecol(255, 0, 255);
+				int c = v ? 1 : 0;
 
 				putpixel(font->m_bitmap, x, y, c);
 			}
 		}
 	}
+	
+	font->buildSubBitmaps();
 	
 	return true;
 }

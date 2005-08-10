@@ -4,6 +4,7 @@
 #include "font.h"
 #include "sprite_set.h"
 #include "sprite.h"
+#include "script.h"
 #include "gconsole.h"
 #include <boost/bind.hpp>
 #include <iostream>
@@ -20,7 +21,6 @@ ResourceLocator<GSSFile, false, false> gssLocator;
 namespace OmfgGUI
 {
 
-//GusanosFont defaultMenuFont;
 GContext menu;
 
 std::string cmdLoadXML(std::list<std::string> const& args)
@@ -135,15 +135,26 @@ std::string cmdFocus(std::list<std::string> const& args)
 	return "GUI_FOCUS <WINDOW ID> : FOCUSES A WINDOW";
 }
 
-int GusanosSpriteSet::getFrameCount()
+int GusanosSpriteSet::getFrameCount() const
 {
 	return spriteSet->getFramesWidth();
+}
+
+ulong GusanosSpriteSet::getFrameWidth(int frame, int angle) const
+{
+	return spriteSet->getSprite(frame)->getWidth();
+}
+
+ulong GusanosSpriteSet::getFrameHeight(int frame, int angle) const
+{
+	return spriteSet->getSprite(frame)->getHeight();
 }
 
 void GContext::init()
 {
 	keyHandler.keyDown.connect(boost::bind(&GContext::eventKeyDown, this, _1));
 	keyHandler.keyUp.connect(boost::bind(&GContext::eventKeyUp, this, _1));
+	keyHandler.printableChar.connect(boost::bind(&GContext::eventPrintableChar, this, _1, _2));
 	
 	console.registerCommands()
 		("GUI_LOADXML", cmdLoadXML)
@@ -156,7 +167,7 @@ void GContext::init()
 bool GContext::eventKeyDown(int k)
 {
 	Wnd* focus = getFocus();
-	if(focus)
+	if(focus && focus->keyDown(k))
 	{
 		Wnd* parent = focus->getParent();
 		if(parent)
@@ -215,18 +226,7 @@ bool GContext::eventKeyDown(int k)
 			}
 		}
 		
-		switch(k)
-		{
-			case KEY_ENTER:
-			{
-				std::string cmd;
-				if(focus && focus->getAttrib("command", cmd))
-				{
-					console.parseLine(cmd);
-				}
-			}
-			break;
-		}
+		
 	}
 
 	return true;
@@ -234,11 +234,43 @@ bool GContext::eventKeyDown(int k)
 
 bool GContext::eventKeyUp(int k)
 {
-	/*Wnd* focus = getFocus();
-	if(focus)
+	Wnd* focus = getFocus();
+	if(focus && focus->keyUp(k))
 	{
-		
-	}*/
+		// Do sth?
+		switch(k)
+		{
+			case KEY_ENTER:
+			{
+				std::string cmd;
+				if(focus && focus->getAttrib("command", cmd))
+				{
+					std::string::size_type p = cmd.find('.');
+					if(p != std::string::npos)
+					{
+						Script* s = scriptLocator.load(cmd.substr(0, p));
+						if(s)
+						{
+							s->pushFunction(cmd.substr(p + 1, cmd.size() - p - 1));
+							s->lua->call();
+						}
+					}
+				}
+			}
+			break;
+		}
+	}
+	
+	return true;
+}
+
+bool GContext::eventPrintableChar(char c, int k)
+{
+	Wnd* focus = getFocus();
+	if(focus && focus->charPressed(c, k))
+	{
+		// Do sth?
+	}
 	
 	return true;
 }
@@ -297,8 +329,19 @@ void AllegroRenderer::drawBox(
 	vline(gfx.buffer, rect.x2, rect.y1, rect.y2, allegroColor(borderRightColor));
 	vline(gfx.buffer, rect.x1, rect.y1, rect.y2, allegroColor(borderLeftColor));
 	hline(gfx.buffer, rect.x1, rect.y1, rect.x2, allegroColor(borderTopColor));
-	
-	//TODO: Render borders
+}
+
+// Draws a box
+void AllegroRenderer::drawBox(
+	Rect const& rect,
+	RGB const& color)
+{
+	rectfill(gfx.buffer, rect.x1, rect.y1, rect.x2, rect.y2, allegroColor(color));
+}
+
+void AllegroRenderer::drawVLine(ulong x, ulong y1, ulong y2, RGB const& color)
+{
+	vline(gfx.buffer, x, y1, y2, allegroColor(color));
 }
 
 // Draws text
@@ -318,8 +361,17 @@ void AllegroRenderer::drawText(BaseFont const& font, std::string const& str, ulo
 				y -= dim.second / 2;
 		}
 		
-		f->font->draw(gfx.buffer, str, x, y, spacing);
+		f->font->draw(gfx.buffer, str, x, y, spacing, aColor.r, aColor.g, aColor.b);
 	}
+}
+
+std::pair<int, int> AllegroRenderer::getTextDimensions(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e)
+{
+	if(GusanosFont const* f = dynamic_cast<GusanosFont const*>(&font))
+	{
+		return f->font->getDimensions(b, e);
+	}
+	return std::make_pair(0, 0);
 }
 
 void AllegroRenderer::drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y)
@@ -327,6 +379,14 @@ void AllegroRenderer::drawSprite(BaseSpriteSet const& spriteSet, int frame, ulon
 	if(GusanosSpriteSet const* s = dynamic_cast<GusanosSpriteSet const*>(&spriteSet))
 	{
 		s->spriteSet->getSprite(frame)->draw(gfx.buffer, x, y);
+	}
+}
+
+void AllegroRenderer::drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y, ulong left, ulong top, ulong bottom, ulong right)
+{
+	if(GusanosSpriteSet const* s = dynamic_cast<GusanosSpriteSet const*>(&spriteSet))
+	{
+		s->spriteSet->getSprite(frame)->drawCut(gfx.buffer, x, y, 0, left, top, bottom, right);
 	}
 }
 

@@ -11,7 +11,7 @@ class Sprite;
 	
 class SpriteSet
 {
-	public:
+public:
 		
 	SpriteSet();
 	~SpriteSet();
@@ -25,8 +25,8 @@ class SpriteSet
 	{
 		return m_frame[0].size();
 	}
-		
-	private:
+			
+private:
 		
 	std::vector< std::vector< Sprite* > > m_frame;
 };

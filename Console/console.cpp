@@ -15,6 +15,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -105,6 +106,29 @@ void Console::registerAlias(const std::string &name, const std::string &action)
 		{
 			items[name] = new Alias(this,name,action);
 		}
+	}
+}
+
+struct IsTemporary
+{
+	bool operator()(std::pair<std::string, ConsoleItem*> const& x) const
+	{
+		return x.second->temp;
+	}
+};
+
+void Console::clearTemporaries()
+{
+	//std::remove_if(items.begin(), items.end(), IsTemporary());
+	
+	std::map<std::string, ConsoleItem*, IStrCompare>::iterator i = items.begin(), temp;
+	
+	for(; i != items.end();)
+	{
+		temp = i; ++i;
+		
+		if(temp->second->temp)
+			items.erase(temp);
 	}
 }
 

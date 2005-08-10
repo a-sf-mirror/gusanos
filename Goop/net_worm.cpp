@@ -32,11 +32,11 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	
 		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH , (int)Position, -1, 1000);
 		
-		m_node->addReplicator(new VectorReplicator( &posSetup, &pos ), true);
+		m_node->addReplicator(new VectorReplicator( &posSetup, &pos, game.level.vectorEncoding ), true);
 		
 		static ZCom_ReplicatorSetup nrSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
 		
-		m_node->addReplicator(new VectorReplicator( &nrSetup, &m_ninjaRope->getPosRefference() ), true);
+		m_node->addReplicator(new VectorReplicator( &nrSetup, &m_ninjaRope->getPosReference(), game.level.vectorEncoding ), true);
 				
 		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
 		

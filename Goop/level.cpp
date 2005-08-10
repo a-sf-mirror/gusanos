@@ -31,7 +31,7 @@ Level::Level()
 Level::~Level()
 {
 }
-
+/*
 bool Level::load(const string &name)
 {
 	//check if it is liero level
@@ -124,7 +124,7 @@ bool Level::loadLiero(const std::string &name)
 	loaded = true;
 	return true;
 }
-
+*/
 void Level::unload()
 {
 	loaded = false;
@@ -135,6 +135,7 @@ void Level::unload()
 	image = NULL;
 	material = NULL;
 	background = NULL;
+	vectorEncoding = Encoding::VectorEncoding();
 }
 
 bool Level::isLoaded()
@@ -196,4 +197,13 @@ const string& Level::getPath()
 const string& Level::getName()
 {
 	return name;
+}
+
+void Level::loaderSucceeded()
+{
+	loaded = true;
+	// Make the domain one pixel larger than the level so that things like ninjarope hook
+	// can get slightly outside the level and attach.
+	vectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 2048);
+	cerr << "vectorEncoding: " << vectorEncoding.totalBits() << endl;
 }

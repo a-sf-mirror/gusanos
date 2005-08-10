@@ -209,7 +209,7 @@ int NinjaRope::getColour()
 	return m_type->colour;
 }
 
-Vec& NinjaRope::getPosRefference()
+Vec& NinjaRope::getPosReference()
 {
 	return pos;
 }

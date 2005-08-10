@@ -149,6 +149,47 @@ bool Wnd::readSpriteSet(BaseSpriteSet*& dest, std::string const& str)
 	return true;
 }
 
+bool Wnd::readSkin(BaseSpriteSet*& dest, std::string const& str)
+{
+	if(str.size() == 0)
+	{
+		dest = 0;
+		return true;
+	}
+	
+	delete dest;
+	dest = m_context->loadSpriteSet(str);
+
+	if(!dest)
+		return false;
+		
+	int frames = dest->getFrameCount();
+	
+	if(frames < 8)
+	{
+		cerr << "Not enough sprites in skin " << str << endl;
+		delete dest;
+		dest = 0;
+		return false;
+	}
+	
+	int w = dest->getFrameWidth(0);
+	int h = dest->getFrameHeight(0);
+	for(int i = 1; i < 8; ++i)
+	{
+		if(dest->getFrameWidth(i) != w
+		|| dest->getFrameHeight(i) != h)
+		{
+			cerr << "Sprites in skin " << str << " are not all the same size" << endl;
+			delete dest;
+			dest = 0;
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 void Wnd::applyGSSnoState(Context::GSSselectorMap const& style)
 {
 	applyFormatting(style(m_tagLabel)(           )(    )());
@@ -181,7 +222,9 @@ void Wnd::applyGSSstate(Context::GSSselectorMap const& style, std::string const&
 void Wnd::applyGSS(Context::GSSselectorMap const& style)
 {
 	//cout << "Context: " << m_context << endl;
-	if(m_context && m_context->getFocus() == this)
+	if(m_active)
+		applyGSSstate(style, "active");
+	else if(m_context && m_context->getFocus() == this)
 		applyGSSstate(style, "focused");
 	else
 		applyGSSnoState(style);
@@ -203,11 +246,26 @@ void Wnd::applyFormatting(Context::GSSpropertyMap const& f)
 				readColor(m_formatting.background.color, *v);
 			}
 		}
-		if(i->first == "background-image")
+		else if(i->first == "color" || i->first == "colour")
+		{
+			EACH_VALUE(v)
+			{
+				readColor(m_formatting.fontColor, *v);
+			}
+		}
+		else if(i->first == "background-image")
 		{
 			EACH_VALUE(v)
 			{
 				if(readSpriteSet(m_formatting.background.spriteSet, *v))
+					break;
+			}
+		}
+		else if(i->first == "skin")
+		{
+			EACH_VALUE(v)
+			{
+				if(readSkin(m_formatting.background.skin, *v))
 					break;
 			}
 		}
@@ -527,6 +585,21 @@ void Wnd::process()
 {
 }
 
+void Wnd::setActivation(bool active)
+{
+	// Do nothing
+}
+
+void Wnd::doSetActivation(bool active)
+{
+	if(active != m_active)
+	{
+		setActivation(active);
+		m_active = active;
+		applyGSS(m_context->m_gss);
+	}
+}
+
 void Wnd::setText(std::string const& aStr)
 {
 	m_text = aStr;
@@ -621,6 +694,21 @@ bool Wnd::mouseDown(ulong newX, ulong newY, Context::MouseKey::type button)
 bool Wnd::mouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
 {
 	return false;
+}
+
+bool Wnd::keyDown(int key)
+{
+	return true;
+}
+	
+bool Wnd::keyUp(int key)
+{
+	return true;
+}
+
+bool Wnd::charPressed(char c, int key)
+{
+	return true;
 }
 
 void Wnd::setContext_(Context* context)

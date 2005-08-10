@@ -25,7 +25,7 @@ class Console;
 
 class Console
 {
-	public:
+public:
 
 	struct RegisterVariableProxy
 	{
@@ -72,6 +72,15 @@ class Console
 			return *this;
 		}
 		
+		template<class FT>
+		RegisterCommandProxy const& operator()(std::string const& name, FT func, bool temp) const
+		{
+			Command *c = new Command(func);
+			m_console.registerCommand(name, c);
+			c->temp = temp;
+			return *this;
+		}
+		
 		Console& m_console;
 	};
 
@@ -93,6 +102,7 @@ class Console
 	void registerAlias(const std::string &name, const std::string &action);
 	void registerCommand(std::string const& name, Command* command);
 	void registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&));
+	void clearTemporaries();
 	
 	void parseLine(const std::string &text, bool parseRelease = false);
 	//void parse(std::list<std::string> &args, bool parseRelease);
@@ -104,7 +114,7 @@ class Console
 	std::string autoComplete(const std::string &text);
 	void listItems(const std::string &text);
 	
-	protected:
+protected:
 	
 	BindTable bindTable;
 	std::map<std::string, ConsoleItem*, IStrCompare> items;

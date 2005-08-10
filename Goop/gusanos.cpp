@@ -118,7 +118,8 @@ int main(int argc, char **argv)
 	;
 	
 
-	console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
+	//console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
+	console.parseLine("BIND F12 SCREENSHOT");
 	console.parseLine("SETCHAR STOP \".\"");
 	
 	///* <GLIP> Stuff for me ;o
