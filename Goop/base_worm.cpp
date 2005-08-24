@@ -377,10 +377,12 @@ void BaseWorm::processJumpingAndNinjaropeControls()
 
 void BaseWorm::processMoveAndDig(void)
 {
-	if(!movable && !movingLeft && !movingRight)
-		movable = true;
+	// ????????????? wtf is this for?
+	//if(!movable && !movingLeft && !movingRight) 
+	//	movable = true;
 	
-	if(movable)
+	//if(movable)
+	if( true )
 	{
 		if(movingLeft && !movingRight)
 		{
@@ -456,10 +458,13 @@ void BaseWorm::think()
 		// TODO: Sight
 		processMoveAndDig();
 		// TODO: Weapons
+		
 		for ( size_t i = 0; i < m_weapons.size(); ++i )
 		{
 			m_weapons[i]->think();
 		}
+		
+		m_weapons[currentWeapon]->focusedThink();
 
 		if(animate)
 			m_animator->tick();
@@ -652,6 +657,16 @@ float BaseWorm::getAngle()
 	return aimAngle*m_dir;
 }
 
+int BaseWorm::getWeaponIndexOffset( int offset )
+{
+	// <basara> Glipic, why would using % with size_t crap it? answer on irc plz
+	
+	int returnValue = ( static_cast<int>(currentWeapon) + offset ) % static_cast<int>(m_weapons.size());
+	// For some reason c/c++ % will return negative values of the modulo for negative numbers
+	if ( returnValue < 0 ) returnValue += m_weapons.size(); // so I make it positive again :P
+	return returnValue;
+}
+
 void BaseWorm::setDir(char d)
 {
 	m_dir = d;
@@ -727,7 +742,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			{
 				Vec crosshair = angleVec(aimAngle*m_dir, 25) + renderPos - Vec(xOff, yOff);
 				float radius = m_weapons[currentWeapon]->reloadTime / (float)m_weapons[currentWeapon]->m_type->reloadTime;
-				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(255*radius,255*(1-radius),0));
+				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(255*static_cast<int>(radius), 255*(1-static_cast<int>(radius)),0));
 			}
 			else for(int i = 0; i < 10; i++)
 			{
@@ -745,7 +760,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			{
 				Vec distance = angleVec(aimAngle,m_fireconeDistance);
 				m_currentFirecone->getSprite(m_fireconeAnimator->getFrame(),aimAngle)->
-				draw(where, renderX+distance.x*m_dir, renderY+distance.y, flipped);
+						draw(where, renderX+static_cast<int>(distance.x)*m_dir, renderY+static_cast<int>(distance.y), flipped);
 			}
 				
 			if(changing)
@@ -820,6 +835,14 @@ void BaseWorm::die()
 	}
 }
 
+void BaseWorm::changeWeaponTo( unsigned int weapIndex )
+{
+	m_weapons[currentWeapon]->actionStop( Weapon::PRIMARY_TRIGGER );
+	m_weapons[currentWeapon]->actionStop( Weapon::SECONDARY_TRIGGER );
+	if ( weapIndex < m_weapons.size() )
+		currentWeapon = weapIndex;
+}
+
 void BaseWorm::damage( float amount, BasePlayer* damager )
 {
 	// TODO: maybe we could implement an armor system? ;O
@@ -879,17 +902,6 @@ void BaseWorm::actionStart( Actions action )
 		
 		case CHANGEWEAPON:
 			changing = true;
-		break;
-		
-		case CHANGELEFT: //TODO: Stop the current weapon if it's firing
-			if(currentWeapon == 0)
-				currentWeapon = m_weapons.size();
-			--currentWeapon;
-		break;
-		
-		case CHANGERIGHT: //TODO: Stop the current weapon if it's firing
-			if(++currentWeapon >= m_weapons.size())
-				currentWeapon = 0;
 		break;
 		
 		case RESPAWN:

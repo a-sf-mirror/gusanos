@@ -30,7 +30,11 @@ void Weapon::reset()
 void Weapon::think()
 {
 	if (inactiveTime > 0) inactiveTime--;
-	else
+}
+
+void Weapon::focusedThink()
+{
+	if (inactiveTime <= 0)
 	{
 		if ( primaryShooting && ammo > 0)
 		{
@@ -54,7 +58,6 @@ void Weapon::think()
 			ammo = m_type->ammo;
 		}
 	}
-	
 }
 
 void Weapon::actionStart( Actions action )
@@ -101,6 +104,6 @@ BaseWorm* Weapon::getOwner()
 
 void Weapon::delay( int time )
 {
-	inactiveTime = time;
+	inactiveTime = time+1;
 }
 

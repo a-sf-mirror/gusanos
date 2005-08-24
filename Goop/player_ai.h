@@ -18,8 +18,18 @@ class PlayerAI : public BasePlayer
 	private:
 	unsigned int m_pathSteps;	//"steps" to take in A* pathfinding
 	int m_nodes[128][128];	//A* nodes
-	BasePlayer* m_target;	//Target worm
+	BaseObject* m_target;	//Target worm
 	float randomError; // I temporally use this to make it aim worse or sth.
+	
+	int m_thinkTime; // A timer to limit the amount of events it spams ( it was bad for network )
+	static const int thinkDelay = 30; // How often it will think the events part
+	
+	static const int maxInaccuracy = 10;
+	static const int maxAimErrorOffset = 20;
+	
+	bool m_movingRight;
+	bool m_movingLeft;
+	bool m_shooting;
 };
 
 #endif

@@ -43,4 +43,5 @@ class BaseObject
 	BasePlayer* m_owner;
 };
 
+
 #endif  // _base_object_h_

@@ -3,7 +3,7 @@
 #include "base_player.h"
 
 BaseObject::BaseObject( BasePlayer* owner, int dir ) :
-	deleteMe(false), m_owner(owner), m_dir(dir)
+	deleteMe(false), m_dir(dir), m_owner(owner)
 {
 }
 

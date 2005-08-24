@@ -3,6 +3,8 @@
 #include "game.h"
 #include "particle.h"
 #include "part_type.h"
+#include "explosion.h"
+#include "exp_type.h"
 #include "sound.h"
 #include "sprite_set.h"
 #include "text.h"
@@ -19,6 +21,7 @@ using namespace std;
 void registerGameActions()
 {
 	game.actionList["shoot_particles"] = shootParticles;
+	game.actionList["create_explosion"] = createExplosion;
 	game.actionList["remove"] = remove;
 	game.actionList["play_sound"] = playSound;
 	game.actionList["play_random_sound"] = playRandomSound;
@@ -108,6 +111,36 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 }
 
 ShootParticles::~ShootParticles()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* createExplosion( const vector< string >& params )
+{
+	return new CreateExplosion(params);
+}
+
+CreateExplosion::CreateExplosion( const vector< string >& params )
+{
+	type = NULL;
+	if ( params.size() >= 1 )
+	{
+		type = expTypeList.load(params[0]);
+	}
+}
+
+void CreateExplosion::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+{
+	if (type != NULL)
+	{
+		game.objects.insert( 1, type->renderLayer, new Explosion( type, object->getPos(), object->getOwner() ) );
+	}
+}
+
+CreateExplosion::~CreateExplosion()
 {
 }
 
@@ -256,7 +289,7 @@ PlayRandomSound::PlayRandomSound( const vector< string >& params )
 	pitch = 1;
 	pitchVariation = 0;
 
-	int i = 0;
+	size_t i = 0;
 	if( params.size() > i )
 	{
 		loudness = cast<float>(params[i]);
@@ -283,7 +316,7 @@ void PlayRandomSound::run( BaseObject* object, BaseObject *object2, BaseWorm *wo
 {
 	if ( !sounds.empty() )
 	{
-		int sound = rnd() * sounds.size();
+		int sound = rnd() * sounds.size(); // TODO: Make an integer version of rnd()
 		if ( sounds[sound] != NULL )
 		{
 			sounds[sound]->play2D(object,loudness,pitch,pitchVariation);

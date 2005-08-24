@@ -6,6 +6,7 @@
 #include <vector>
 
 class PartType;
+class ExpType;
 class Sound;
 class SpriteSet;
 class BaseObject;
@@ -36,6 +37,22 @@ class ShootParticles : public BaseAction
 	float distribution;
 	float angleOffset;
 	float distanceOffset;
+};
+
+BaseAction* createExplosion( const std::vector< std::string >& params );
+
+class CreateExplosion : public BaseAction
+{
+	public:
+
+		CreateExplosion( const std::vector< std::string >& params );
+		~CreateExplosion();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+
+		ExpType *type;
 };
 
 BaseAction* push( const std::vector< std::string >& params );

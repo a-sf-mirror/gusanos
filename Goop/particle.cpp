@@ -11,7 +11,6 @@
 #include "sprite_set.h"
 #include "base_animator.h"
 #include "animators.h"
-#include "vec.h"
 
 #include <vector>
 
@@ -42,6 +41,9 @@ Particle::Particle(PartType *type, Vec _pos, Vec _spd, int dir, BasePlayer* owne
 			
 			case PartType::ANIM_LOOPRIGHT : 
 				m_animator = new AnimLoopRight(m_sprite,m_type->animDuration); break;
+				
+			case PartType::ANIM_RIGHTONCE : 
+				m_animator = new AnimRightOnce(m_sprite,m_type->animDuration); break;
 		}
 	}
 	

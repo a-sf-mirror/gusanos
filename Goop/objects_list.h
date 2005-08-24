@@ -77,7 +77,7 @@ class ObjectsList
 	void insert(int colLayer, int renderLayer, BaseObject* object);
 	void erase(const Iterator& location);
 	void clear();
-	int size();
+	size_t size();
 	ColLayerIterator colLayerBegin(int layer);
 	RenderLayerIterator renderLayerBegin(int layer);
 	Iterator begin();

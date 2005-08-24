@@ -1,5 +1,6 @@
 #include "player_ai.h"
 #include "player_options.h"
+#include "base_player.h"
 #include "worm.h"
 #include "game.h"
 #include "weapon.h"
@@ -7,18 +8,15 @@
 #include <list>
 #include <cmath>
 
-// DONT USE THIS NYM, USE Vec::length() ! ;D
-inline float distance(float x1, float y1, float x2, float y2)
-{
-	return sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
-}
-
-const float cAimAccuracy = 2.0;
-
 PlayerAI::PlayerAI()
-	: m_pathSteps(100)
+	: m_pathSteps(100), m_thinkTime(0)
 {
 	m_options = new PlayerOptions;
+	m_target = NULL;
+	
+	m_movingRight = false;
+	m_movingLeft = false;
+	m_shooting = false;
 }
 
 PlayerAI::~PlayerAI()
@@ -26,35 +24,24 @@ PlayerAI::~PlayerAI()
 	delete m_options;
 }
 
+
+// getTarget assumes that a m_worm is a valid pointer, please dont call this if m_worm is null or sth
 void PlayerAI::getTarget()
 {
-	// Added random to make it not be instant
-	// I also wonder why is this here and not in the think function
-	if ( !m_worm->isActive() && rnd()*100 < 1)
-		baseActionStart(RESPAWN);
-
-	//iterate through players
-	Vec pos = m_worm->getPos();
-	int x = static_cast<int>(pos.x);
-	int y = static_cast<int>(pos.y);
-	float tmpDist = 0;
-	BasePlayer* tmpTarget = NULL;
-	for (std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+	m_target = NULL;
+	float tmpDist = -1;
+	ObjectsList::ColLayerIterator worm;
+	for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
 	{
-		//(*iter)->think();
-		Vec tmpPos = (*iter)->getPos(); // WARNING: There can be players without worms! "spectators".
-		int tmpX = static_cast<int>(tmpPos.x);
-		int tmpY = static_cast<int>(tmpPos.y);
-		if (distance(x, y, tmpX, tmpY) < tmpDist || tmpTarget == NULL)
+		BaseWorm *tmpWorm;
+		if ( (*worm)->getOwner() != this )
+		if ( ( tmpWorm = dynamic_cast<BaseWorm*>(*worm) ) && tmpWorm->isActive() )
+		if ( ( m_worm->getPos() - (*worm)->getPos() ).length() < tmpDist || tmpDist < 0 )
 		{
-			if (*iter != this)
-			{
-				tmpTarget = *iter;
-				tmpDist = distance(x, y, tmpX, tmpY);
-			}
+			m_target = *worm;
+			tmpDist = ( m_worm->getPos() - (*worm)->getPos() ).length();
 		}
 	}
-	m_target = tmpTarget;
 }
 
 void PlayerAI::getPath()
@@ -75,96 +62,84 @@ void PlayerAI::getPath()
 
 void PlayerAI::subThink()
 {
-	getTarget();
-	if (!m_target)
-		return;
-	
-	//movement
-	Vec pos = m_worm->getPos();		//AI position
-	Vec target = m_target->getPos();	//Target position
-	
-	float dist = distance(pos.x, pos.y, target.x, target.y); 
-	// nym!! change this ^^^ to (pos - target).length() !!!
-	if (dist > 48.f)
-	{ 
-		if (pos.x < target.x)
-			baseActionStart(RIGHT);
-		else
-			baseActionStop(RIGHT);
-		if (pos.x > target.x)
-			baseActionStart(LEFT);
-		else
-			baseActionStop(LEFT);
-	} else
+	if ( m_thinkTime > 0) --m_thinkTime;
+	else if ( m_worm )
 	{
-		baseActionStop(LEFT);
-		baseActionStop(RIGHT);
+		m_thinkTime = thinkDelay;
+		
+		if ( !m_worm->isActive() )
+			baseActionStart(RESPAWN);
+		
+		getTarget();
+		if (!m_target)
+			return;
+		
+		Vec pos = m_worm->getPos();		//AI position
+		Vec target = m_target->getPos();	//Target position
+		
+		if ( m_worm->isActive() )
+		if ( pos.x < target.x )
+		{
+			if ( m_movingLeft ) baseActionStop( LEFT );
+			if ( !m_movingRight ) baseActionStart( RIGHT );
+			m_movingLeft = false;
+			m_movingRight = true;
+		}else
+		{
+			if ( m_movingRight ) baseActionStop( RIGHT );
+			if ( !m_movingLeft ) baseActionStart( LEFT );
+			m_movingRight = false;
+			m_movingLeft = true;
+		}
+		
+		randomError = maxAimErrorOffset * midrnd();
+		
+		Vec tmpVec = ( target - pos );
+		if ( tmpVec.x < 0 ) tmpVec.x *= -1;
+		float angle2Target = tmpVec.getAngle();
+		float wormAimAngle = m_worm->aimAngle + randomError;
+		
+		
+		if ( wormAimAngle - maxInaccuracy < angle2Target && wormAimAngle + maxInaccuracy > angle2Target )
+		{
+			baseActionStart(FIRE);
+		} else
+			baseActionStop(FIRE);
+	
+	
+		if ( ( m_worm->getCurrentWeapon()->reloading && ( rand() % 8 == 0 ) ) || rand() % 15 == 0)
+		{
+			m_worm->changeWeaponTo(m_worm->getWeaponIndexOffset( rand() % 50 ) );
+		}
+	
+		// TODO: Make decent behaviour
+		//jump
+		if (rand() % 6 == 0)
+			baseActionStart(JUMP);
+	
+		//rope
+		if (rand() % 10 == 0)
+			baseActionStart(NINJAROPE);
+		else if (rand() % 96 == 0)
+			baseActionStop(NINJAROPE);
 
-		// The ai player shouldnt modify the dir like this
-		// Use the baseActions to move the player, or else it will not
-		// work over network games :<
-		//face
-		if (target.x > pos.x)
-			;//m_worm->setDir(1);
-		else
-			;//m_worm->setDir(-1);
 	}
-	
-	
-	//aiming
-	float curAngle = m_worm->getAngle() / m_worm->getDir();
-	float targetAngle = atan2(target.y - pos.y, target.x - pos.x); // use Vec::getAngle()
-	
-	//convert to gusanos angle system
-	targetAngle -= deg2rad(90);
-	targetAngle = deg2rad(180) + targetAngle;
-	if (m_worm->getDir() == -1)
-	targetAngle = deg2rad(180) - (targetAngle - deg2rad(180));
-	
-	while (curAngle < 0)
-		curAngle += 360;
-	while (curAngle >= 360)
-		curAngle -= 360;
-	
-	while (rad2deg(targetAngle) < 0)
-		targetAngle += deg2rad(360);
-	while (rad2deg(targetAngle) >= 360)
-		targetAngle -= deg2rad(360);
-	
-	if ( rnd()*100 < 1 )
-	randomError = midrnd()*30;
-	//aim
-	if (curAngle - cAimAccuracy > rad2deg(targetAngle)+randomError)
-                m_worm->aimSpeed = -0.68;
-	
-	if (curAngle + cAimAccuracy < rad2deg(targetAngle)+randomError)
-                m_worm->aimSpeed = 0.68;
-
-	//shooting
-	if (curAngle - cAimAccuracy < rad2deg(targetAngle) && curAngle + cAimAccuracy > rad2deg(targetAngle))
+	if ( m_worm )
+	if ( m_target )
 	{
-		//aimed accuratley
-		baseActionStart(FIRE);
-	} else
-		baseActionStop(FIRE);
-
-
-	if ( ( m_worm->getCurrentWeapon()->reloading && rand() % 50 == 0 ) || rand() % 1000 == 0 )
+		Vec pos = m_worm->getPos();		//AI position
+		Vec target = m_target->getPos();	//Target position
+		
+		Vec tmpVec = ( target - pos );
+		if ( tmpVec.x < 0 ) tmpVec.x *= -1;
+		float angle2Target = tmpVec.getAngle();
+		float wormAimAngle = m_worm->aimAngle + randomError;
+		
+		if ( wormAimAngle < angle2Target ) m_worm->aimSpeed = 0.7;
+		if ( wormAimAngle > angle2Target ) m_worm->aimSpeed = -0.7;
+	}else
 	{
-		m_worm->actionStart(Worm::CHANGERIGHT);
+		m_worm->aimSpeed = 0;
 	}
-
-	// TODO: Make decent behaviour
-	//jump
-	if (rand() % 32 == 0)
-		baseActionStart(JUMP);
-
-        //rope
-	if (rand() % 128 == 0)
-		baseActionStart(NINJAROPE);
-	else if (rand() % 96 == 0)
-		baseActionStop(NINJAROPE);
-
-	
 }
 

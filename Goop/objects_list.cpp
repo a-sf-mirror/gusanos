@@ -67,16 +67,16 @@ ObjectsList::Iterator ObjectsList::begin()
 
 void ObjectsList::clear()
 {
-	for ( int i = 0; i < m_objects.size(); ++i )
+	for ( size_t i = 0; i < m_objects.size(); ++i )
 	{
 		m_objects[i].clear();
 	}
 }
 
-int ObjectsList::size()
+size_t ObjectsList::size()
 {
-	int totalSize = 0;
-	for ( int i = 0; i < m_objects.size(); ++i )
+	size_t totalSize = 0;
+	for ( size_t i = 0; i < m_objects.size(); ++i )
 	{
 		totalSize += m_objects[i].size();
 	}

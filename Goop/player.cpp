@@ -87,7 +87,7 @@ void Player::actionStart ( Actions action )
 			{
 				if(changing)
 				{
-					m_worm -> actionStart(Worm::CHANGELEFT);
+					m_worm->changeWeaponTo( m_worm->getWeaponIndexOffset(-1) );
 				}
 				else
 					BasePlayer::baseActionStart(BasePlayer::LEFT);
@@ -101,7 +101,7 @@ void Player::actionStart ( Actions action )
 			{
 				if(changing)
 				{
-					m_worm -> actionStart(Worm::CHANGERIGHT);
+					m_worm->changeWeaponTo( m_worm->getWeaponIndexOffset(1) );
 				}
 				else
 					BasePlayer::baseActionStart(BasePlayer::RIGHT);

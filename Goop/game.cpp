@@ -4,6 +4,7 @@
 #include "base_worm.h"
 #include "worm.h"
 #include "part_type.h"
+#include "exp_type.h"
 #include "weapon_type.h"
 #include "sound.h"
 #include "sprite_set.h"
@@ -296,6 +297,7 @@ void Game::unload()
 	weaponList.clear();
 	
 	partTypeList.clear();
+	expTypeList.clear();
 	soundList.clear();
 	spriteList.clear();
 	//fontList.clear();

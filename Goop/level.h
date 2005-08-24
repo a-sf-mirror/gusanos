@@ -4,6 +4,8 @@
 #include "material.h"
 #include "resource_locator.h"
 #include "vec.h"
+#include "sprite.h"
+
 #include "encoding.h"
 
 #include <allegro.h>
@@ -35,7 +37,7 @@ class Level
 	
 	Material const& getMaterial(unsigned int x, unsigned int y)
 	{
-		if(x < material->w && y < material->h)
+		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
 			return m_materialList[material->line[y][x] + 1];
 		else
 			return m_materialList[0];
@@ -45,6 +47,8 @@ class Level
 	{
 		return m_materialList[material->line[y][x] + 1];
 	}
+	
+	void specialDrawSprite(Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos );
 	
 	void loaderSucceeded();
 	

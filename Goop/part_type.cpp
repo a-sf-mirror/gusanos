@@ -143,6 +143,7 @@ bool PartType::load(const string &filename)
 					{
 						if ( val == "ping_pong" ) animType = ANIM_PINGPONG;
 						else if ( val == "loop_right" ) animType = ANIM_LOOPRIGHT;
+						else if ( val == "right_once" ) animType = ANIM_RIGHTONCE;
 					}
 					else if ( var == "render_layer" ) renderLayer = cast<int>(val);
 					else if ( var == "alpha" ) alpha = cast<int>(val);
@@ -257,7 +258,6 @@ bool PartType::load(const string &filename)
 		return true;
 	} else
 	{
-		std::cout << "ERROR: Loading " << filename << std::endl;
 		return false;
 	}
 }

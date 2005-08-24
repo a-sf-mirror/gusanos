@@ -83,6 +83,7 @@ void Gfx::registerInConsole()
 		insert(videoFilters) // These neat boost::assign functions actually make it smaller than!
 			("NOFILTER", NO_FILTER)
 			("SCANLINES", SCANLINES)
+			("SCANLINES2", SCANLINES2)
 			//("2XSAI", AA2XSAI) // To be included later.
 		;
 
@@ -124,7 +125,7 @@ void Gfx::updateScreen()
 				{
 					case 32:
 						acquire_screen();
-						
+
 						bmp_select(screen);
 
 						for(int y = 0; y < 240; ++y)
@@ -159,14 +160,36 @@ void Gfx::updateScreen()
 			break;
 			
 			case SCANLINES: 
-				stretch_blit(buffer, m_doubleResBuffer, 0, 0, buffer->w, buffer->h, 0, 0, m_doubleResBuffer->w, m_doubleResBuffer->h);
+				acquire_screen();
+				for ( int i = 0; i < buffer->h; ++i )
+				{
+					stretch_blit(buffer, screen, 0, i, buffer->w, 1, 0, i*2, screen->w, 1);
+					hline(screen, 0, i*2+1, screen->w, 0);
+				}
+				release_screen();
+				blitFromBuffer = false;
+			break;
+			
+			case SCANLINES2: 
+				//blit(buffer, m_doubleResBuffer, 0, 0, 0, 0, buffer->w, buffer->h);
+				acquire_screen();
+				for ( int i = 0; i < buffer->h; ++i )
+				{
+					stretch_blit(buffer, screen, 0, i, buffer->w, 1, 0, i*2, screen->w, 1);
+					//stretch_blit(m_doubleResBuffer, screen, 0, i+1, buffer->w, 1, 0, i*2+1, screen->w, 1);
+				}
 				drawing_mode(DRAW_MODE_TRANS, 0, 0, 0);
 				set_trans_blender(0, 0, 0, 128);
-				for ( int i = 0; i < m_doubleResBuffer->h; ++++i )
-				{
-					hline(m_doubleResBuffer, 0, i, m_doubleResBuffer->w, 0);
-				}
+				rectfill( buffer, 0, 0, buffer->w, buffer->h, 0 );
 				solid_mode();
+				//acquire_screen();
+				for ( int i = 0; i < buffer->h; ++i )
+				{
+					//stretch_blit(buffer, screen, 0, i, buffer->w, 1, 0, i*2, screen->w, 1);
+					stretch_blit(buffer, screen, 0, i, buffer->w, 1, 0, i*2+1, screen->w, 1);
+				}
+				release_screen();
+				blitFromBuffer = false;
 			break;
 		}
 		if(blitFromBuffer)

@@ -70,7 +70,8 @@ class PartType
 	enum
 	{
 		ANIM_PINGPONG = 0,
-		ANIM_LOOPRIGHT
+		ANIM_LOOPRIGHT,
+		ANIM_RIGHTONCE
 	};
 	
 };

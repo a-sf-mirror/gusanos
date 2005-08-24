@@ -26,8 +26,6 @@ public:
 		DIG,
 		NINJAROPE,
 		CHANGEWEAPON,
-		CHANGELEFT,
-		CHANGERIGHT,
 		RESPAWN
 	};
 	
@@ -67,12 +65,19 @@ public:
 	float getHealth();
 	
 	void damage( float amount, BasePlayer* damager );
+	
+	// This are virtual so that NetWorm can know about them and tell others over the network.
 	virtual void respawn();
 	void respawn(const Vec& newPos);
 	virtual void die();
+	virtual void changeWeaponTo( unsigned int weapIndex );
 	
-	Weapon* getCurrentWeapon();
+	Weapon* getCurrentWeapon(); // Where and what for is this used?
 	
+	// getWeaponIndexOffset can be used to get the currentWeapon index or 
+	//to get the one to the right or the left or the one 1000 units to the 
+	//right ( it will wrap the value so that its always inside the worm's weapons size )
+	int getWeaponIndexOffset( int offset );
 	float getAngle();
 	void setDir(char d);
 	bool isCollidingWith( const Vec& point, float radius );
@@ -99,7 +104,7 @@ protected:
 	int reacts[DirMax];
 	bool animate;
 	bool movable; // What do we need this for? // Dunno, did I put this here? :o
-	bool changing;
+	bool changing; // This shouldnt be in the worm class ( its player stuff >:O )
 	float aimRecoilSpeed;
 	float health;
 	//float currentRopeLength; //moved to Ninjarope

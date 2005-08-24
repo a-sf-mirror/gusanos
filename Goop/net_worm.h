@@ -19,6 +19,7 @@ class NetWorm : public BaseWorm
 		PosCorrection,
 		Respawn,
 		Die,
+		ChangeWeapon,
 		SYNC
 	};
 		
@@ -45,6 +46,7 @@ class NetWorm : public BaseWorm
 	
 	void respawn();
 	void die();
+	void changeWeaponTo( unsigned int weapIndex );
 	
 	Vec lastPosUpdate;
 	int timeSinceLastUpdate;

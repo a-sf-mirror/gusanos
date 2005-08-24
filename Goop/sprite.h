@@ -29,8 +29,6 @@ public:
 	int getHeight()
 	{ return m_bitmap->h; }
 	
-private:
-	
 	BITMAP *m_bitmap;
 	BITMAP *m_mirror;
 	int m_xPivot;

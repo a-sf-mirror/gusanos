@@ -20,6 +20,7 @@ public:
 	~Weapon();
 	
 	void think();
+	void focusedThink();
 	
 	void reset();
 	

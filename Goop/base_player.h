@@ -11,6 +11,17 @@ struct PlayerOptions;
 class BaseWorm;
 class BasePlayerInterceptor;
 
+// Note: None of the BaseActions should assume a combination of keys.
+// For example: Activating JUMP and CHANGE does nothing here ( instead 
+// of shooting the Ninja Rope ) So key combinations should be created
+// on the Player class instead. Because of that, all actions in the 
+// BasePlayer class are direct ( they do nothing more and nothing less
+// than what the name tells )
+
+// Note2: All access to the worm class from a derivation of BasePlayer
+// should pass by the BasePlayer class ( This is because the BasePlayer
+// class will be responsible of the network part )
+
 class BasePlayer
 {
 public:
@@ -23,7 +34,7 @@ public:
 		DOWN,
 		FIRE,
 		JUMP,
-		CHANGE,
+		CHANGE, // Probably useless Action
 		NINJAROPE,
 		RESPAWN
 	};
@@ -43,34 +54,38 @@ public:
 		Other
 	};
 
+	// ClassID is Used by zoidcom to identify the class over the network,
+	// do not confuse with the node ID which identifies instances of the class.
 	static ZCom_ClassID  classID;
 	
 	BasePlayer();
 	virtual ~BasePlayer();
 	
 	void think();
+	// subThink() gets called inside think() and its used to give the derivations
+	// the ability to think without replacing the main BasePlayer::think().
 	virtual void subThink() = 0;
 	virtual void render() {};
 
 	void assignNetworkRole( bool authority );
 	void setOwnerId( ZCom_ConnID id );
-	void sendSyncMessage( ZCom_ConnID id );
 
 	void assignWorm(BaseWorm* worm);
 	void removeWorm();
+	
+	void sendSyncMessage( ZCom_ConnID id ); // Its the initializing message that is sent to new clients that recieve the node.
+	
+	void nameChangePetition(); // Asks the server to change the name to the one in the player options.
+	void changeName( const std::string& name ); // Changes the name and if its server it will tell all clients about it.
 	
 	void baseActionStart( BaseActions action );
 	void baseActionStop( BaseActions action );
 	
 	void addKill();
 	void addDeath();
-	
-	void nameChangePetition();
-	void changeName( const std::string& name );
 
 	ZCom_NodeID getNodeID();
 	ZCom_ConnID getConnectionID();
-	
 	PlayerOptions* getOptions();
 	Vec getPos();
 	

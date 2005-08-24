@@ -53,7 +53,7 @@ void KeyHandler::init()
 		capsCharMap[i] = shiftCharMap[i] = toupper(charMap[i]);
 	}
 	
-	keyboard_ucallback = keyMapCallback; // Install key mapping callback
+	//keyboard_ucallback = keyMapCallback; // Install key mapping callback
 }
 
 void KeyHandler::shutDown()

@@ -40,8 +40,6 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 				
 		m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
 		
-		m_node->addReplicationInt ( (zS32*) &currentWeapon, 8, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
-		
 		// Intercepted stuff
 		m_node->setInterceptID( static_cast<ZCom_InterceptID>(PlayerID) );
 		
@@ -120,10 +118,17 @@ void NetWorm::think()
 						BaseWorm::die();
 					}
 					break;
+					case ChangeWeapon:
+					{
+						int weapIndex = data->getInt(16);
+						changeWeaponTo( weapIndex );
+					}
+					break;
 					case SYNC:
 					{
 						m_isActive = data->getBool();
 						m_ninjaRope->active = data->getBool();
+						currentWeapon = data->getInt(16);
 					}
 					break;
 				}
@@ -167,6 +172,7 @@ void NetWorm::sendSyncMessage( ZCom_ConnID id )
 	data->addInt(static_cast<int>(SYNC),8 );
 	data->addBool(m_isActive);
 	data->addBool(m_ninjaRope->active);
+	data->addInt( currentWeapon, 16 );
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 
@@ -213,6 +219,19 @@ void NetWorm::die()
 	}
 }
 
+void NetWorm::changeWeaponTo( unsigned int weapIndex )
+{
+	if ( m_node )
+	{
+		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+		data->addInt( static_cast<int>( ChangeWeapon ),8 );
+		// TODO: Optimize this to the smallest number possible depending on weapons amount
+		data->addInt( weapIndex, 16 );
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH | ZCOM_REPRULE_AUTH_2_PROXY, data);
+		BaseWorm::changeWeaponTo( weapIndex );
+	}
+}
+
 NetWormInterceptor::NetWormInterceptor( NetWorm* parent )
 {
 	m_parent = parent;
@@ -225,7 +244,7 @@ bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, e
 	{
 		case NetWorm::PlayerID:
 		{
-			int recievedID = *static_cast<zU32*>(_replicator->peekData());
+			ZCom_NodeID recievedID = *static_cast<zU32*>(_replicator->peekData());
 			list<BasePlayer*>::iterator playerIter;
 			for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
 			{

@@ -56,6 +56,10 @@ void AnimPingPong::reset()
 	m_currentDir = 1;
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
 AnimLoopRight::AnimLoopRight( SpriteSet* sprite, int duration ) : BaseAnimator()
 {
 	m_totalFrames = sprite->getFramesWidth();
@@ -88,6 +92,45 @@ void AnimLoopRight::tick()
 }
 
 void AnimLoopRight::reset()
+{
+	m_animPos = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+AnimRightOnce::AnimRightOnce( SpriteSet* sprite, int duration ) : BaseAnimator()
+{
+	m_totalFrames = sprite->getFramesWidth();
+	m_duration = duration;
+	m_animPos = 0;
+}
+
+AnimRightOnce::~AnimRightOnce()
+{
+}
+
+int AnimRightOnce::getFrame()
+{
+	return (m_animPos * m_totalFrames) / m_duration;
+}
+
+void AnimRightOnce::tick()
+{
+	if ( freezeTicks <= 0)
+	{
+		if( m_animPos < m_duration )
+		{
+			m_animPos++;
+		}
+	}else
+	{
+		--freezeTicks;
+	}
+}
+
+void AnimRightOnce::reset()
 {
 	m_animPos = 0;
 }

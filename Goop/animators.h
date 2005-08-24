@@ -42,5 +42,23 @@ class AnimLoopRight : public BaseAnimator
 	int m_duration;
 };
 
+class AnimRightOnce : public BaseAnimator
+{
+	public:
+
+		AnimRightOnce( SpriteSet* sprite, int duration );
+		~AnimRightOnce();
+	
+		virtual int getFrame();
+		virtual void tick();
+		virtual void reset();
+	
+	private:
+
+		int m_totalFrames;
+		int m_animPos;
+		int m_duration;
+};
+
 #endif // _ANIMATORS_
 

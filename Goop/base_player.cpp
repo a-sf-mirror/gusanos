@@ -31,8 +31,8 @@ BasePlayer::BasePlayer()
 
 BasePlayer::~BasePlayer()
 {
-	if (m_node) delete m_node;
-	if (m_interceptor) delete m_interceptor;
+	delete m_node;
+	delete m_interceptor;
 }
 
 void BasePlayer::removeWorm()
@@ -71,8 +71,9 @@ void BasePlayer::think()
 							if ( ( action == FIRE ) && m_worm)
 							{
 								m_worm->aimAngle = data->getFloat(32);
+								baseActionStart(action);
 							}
-							baseActionStart(action);
+							else baseActionStart(action);
 						}
 						break;
 						case ACTION_STOP:
@@ -215,8 +216,8 @@ void BasePlayer::sendSyncMessage( ZCom_ConnID id )
 {
 	ZCom_BitStream *data = new ZCom_BitStream;
 	data->addInt(static_cast<int>(SYNC),8 );
-	data->addInt(deaths,32);
 	data->addInt(kills,32);
+	data->addInt(deaths,32);
 	data->addString( m_name.c_str() );
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
@@ -250,7 +251,7 @@ bool BasePlayerInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from
 	{
 		case BasePlayer::WormID:
 		{
-			int recievedID = *static_cast<zU32*>(_replicator->peekData());
+			ZCom_NodeID recievedID = *static_cast<zU32*>(_replicator->peekData());
 			ObjectsList::Iterator objIter;
 			for ( objIter = game.objects.begin(); (bool)objIter; ++objIter)
 			{

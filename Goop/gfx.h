@@ -71,7 +71,8 @@ class Gfx
 	enum Filters
 	{
 		NO_FILTER,
-		SCANLINES
+		SCANLINES,
+		SCANLINES2
 	};
 
 };

@@ -3,6 +3,8 @@
 #include "gfx.h"
 #include "material.h"
 #include "liero.h"
+#include "sprite.h"
+
 #include <allegro.h>
 #include <string>
 #include <vector>
@@ -26,6 +28,7 @@ Level::Level()
 	
 	m_materialList[1].worm_pass = false;
 	m_materialList[1].particle_pass = false;
+	m_materialList[1].draw_exps = false;
 }
 
 Level::~Level()
@@ -148,6 +151,27 @@ void Level::draw(BITMAP* where, int x, int y)
 	if (image)
 	{
 		blit(image,where,x,y,0,0,where->w,where->h);
+	}
+}
+
+// TODO: optimize this
+void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos )
+{
+	int transCol = makecol(255,0,255); // TODO: make a gfx.getTransCol() function
+
+	int xMatStart = (int)matPos.x - sprite->m_xPivot;
+	int yMatStart = (int)matPos.y - sprite->m_yPivot;
+	int xDrawStart = (int)pos.x - sprite->m_xPivot;
+	int yDrawStart = (int)pos.y - sprite->m_yPivot;
+	for ( int x = 0; x < sprite->m_bitmap->w ; ++x )
+	for ( int y = 0; y < sprite->m_bitmap->h ; ++y )
+	{
+		if ( getMaterial ( xMatStart + x , yMatStart + y ).draw_exps )
+		{
+			//int c = sprite->m_bitmap->line[y][x];
+			int c = getpixel( sprite->m_bitmap, x, y );
+			if ( c != transCol ) putpixel( where, xDrawStart + x, yDrawStart + y, c );
+		}
 	}
 }
 
