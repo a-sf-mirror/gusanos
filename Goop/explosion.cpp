@@ -6,6 +6,8 @@
 #include "base_worm.h"
 #include "base_player.h"
 #include "exp_type.h"
+#include "events.h"
+#include "distortion.h"
 #include "gfx.h"
 #include "sprite.h"
 #include "sprite_set.h"
@@ -93,6 +95,7 @@ void Explosion::think()
 void Explosion::draw(BITMAP* where,int xOff, int yOff)
 {
 	if (!m_sprite)
+	{
 		if ( m_type->blender != NONE )
 		{
 			gfx.setBlender( m_type->blender, (int)m_alpha );
@@ -100,15 +103,17 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 			solid_mode();
 		}
 		else putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
+	}
 	else
 	{	
 		if ( false )
 		{
-		if ( m_type->blender == NONE )
-			m_sprite->getSprite(m_animator->getFrame(), 0)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
+			if ( m_type->blender == NONE )
+				m_sprite->getSprite(m_animator->getFrame(), 0)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
+			else
+				m_sprite->getSprite(m_animator->getFrame(), 0)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, false, 0, m_type->blender);
+		}
 		else
-			m_sprite->getSprite(m_animator->getFrame(), 0)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, false, 0, m_type->blender);
-		}else
 		{
 			if ( m_type->blender != NONE )
 				gfx.setBlender( m_type->blender, (int)m_alpha );

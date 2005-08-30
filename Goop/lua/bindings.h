@@ -6,6 +6,10 @@
 #include <string>
 #include <list>
 
+class BasePlayer;
+class BaseWorm;
+class Viewport;
+
 namespace LuaBindings
 {
 	void init();
@@ -15,6 +19,9 @@ namespace LuaBindings
 	std::string runLua(int ref, std::list<std::string> const& args);
 	void addGUIWndFunctions(LuaContext& context);
 	void addGUIListFunctions(LuaContext& context);
+	void pushPlayer(BasePlayer* player);
+	void pushWorm(BaseWorm* worm);
+	void pushViewport(Viewport* worm);
 	
 	extern int playerIterator;
 	extern int playerMetaTable;

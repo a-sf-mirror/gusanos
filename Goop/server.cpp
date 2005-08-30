@@ -46,9 +46,9 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 			player->assignNetworkRole(true);
 			player->setOwnerId(_id);
 			player->assignWorm(worm);
-		};
-	};
-};
+		}
+	}
+}
 
 bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
 {

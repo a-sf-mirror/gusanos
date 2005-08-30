@@ -9,10 +9,22 @@
 #include "base_animator.h"
 #include "animators.h"
 #include "vec.h"
+#include "part_type.h"
 
 #include <vector>
 
 using namespace std;
+
+NRTimer::NRTimer( TimerEvent* tEvent)
+{
+	m_tEvent = tEvent;
+	count = m_tEvent->delay + (int)(rnd() * m_tEvent->delayVariation);
+}
+
+void NRTimer::reset()
+{
+	count = m_tEvent->delay + (int)(rnd() * m_tEvent->delayVariation);
+}
 
 NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 : m_worm(worm)

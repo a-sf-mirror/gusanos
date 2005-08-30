@@ -1,12 +1,14 @@
 #ifndef OBJECTS_LIST
 #define OBJECTS_LIST
 
-#include "base_object.h"
+//#include "base_object.h"
 #include <list>
 #include <vector>
 
 static const int RENDER_LAYERS_AMMOUNT = 9;
 static const int COLLISION_LAYERS_AMMOUNT = 2;
+
+class BaseObject;
 
 class ObjectsList
 {
@@ -20,7 +22,7 @@ class ObjectsList
 			ColLayerIterator();
 			~ColLayerIterator();
 	
-			ColLayerIterator operator ++ ();
+			ColLayerIterator& operator ++ ();
 			BaseObject* operator * ();
 			operator bool ();
 	
@@ -40,7 +42,7 @@ class ObjectsList
 			RenderLayerIterator();
 			~RenderLayerIterator();
 	
-			RenderLayerIterator operator ++ ();
+			RenderLayerIterator& operator ++ ();
 			BaseObject* operator * ();
 			operator bool ();
 	
@@ -60,7 +62,7 @@ class ObjectsList
 			Iterator();
 			~Iterator();
 
-			Iterator operator ++ ();
+			Iterator& operator ++ ();
 			BaseObject* operator * ();
 			operator bool ();
 	

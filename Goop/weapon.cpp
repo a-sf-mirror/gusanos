@@ -1,7 +1,9 @@
 #include "weapon.h"
 #include "weapon_type.h"
+#include "events.h"
 
-#include "base_worm.h"
+//#include "base_worm.h"
+class BaseObject;
 
 Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 {

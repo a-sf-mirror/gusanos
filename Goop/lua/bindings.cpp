@@ -1,15 +1,20 @@
 #include "bindings.h"
 
 #include "../base_player.h"
+#include "../base_worm.h"
 #include "../gconsole.h"
+#include "../game.h"
 #include "../vec.h"
 #include "../sprite_set.h"
 #include "../sprite.h"
+#include "../script.h"
 #include "../font.h"
 #include "../gfx.h"
+#include "../viewport.h"
 #include "../menu.h"
 #include "../network.h"
 #include "omfggui.h"
+#include "omfggui_windows.h"
 #include <cmath>
 #include <string>
 #include <list>
@@ -29,6 +34,8 @@ namespace LuaBindings
 int playerIterator = 0;
 int playerMetaTable = 0;
 int fontMetaTable = 0;
+int wormMetaTable = 0;
+int viewportMetaTable = 0;
 std::vector<int> guiWndMetaTable;
 
 template<class T>
@@ -36,6 +43,18 @@ inline void pushFullReference(T& x)
 {
 	T** i = (T **)lua_newuserdata (game.lua, sizeof(T*));
 	*i = &x;
+}
+
+template<class T>
+inline void pushFullReference(T& x, int metatable)
+{
+	T** i = (T **)lua_newuserdata (game.lua, sizeof(T*));
+	*i = &x;
+	game.lua.pushReference(metatable);
+	if(!lua_istable(game.lua, -1))
+		cerr << "Metatable is not a table!" << endl;
+	if(!lua_setmetatable(game.lua, -2))
+		cerr << "Couldn't set metatable!" << endl;
 }
 
 template<class T>
@@ -63,10 +82,19 @@ int print(lua_State* L)
 
 int l_bind(lua_State* L)
 {
+/*
 	const char* callback = lua_tostring(L, 1);
 	const char* file = lua_tostring(L, 2);
 	const char* function = lua_tostring(L, 3);
-	game.luaCallbacks.bind(callback, file, function);
+	game.luaCallbacks.bind(callback, file, function);*/
+	
+	char const* s = lua_tostring(L, 2);
+	if(!s)
+		return 0;
+		
+	lua_pushvalue(L, 3);
+	int ref = game.lua.createReference();
+	game.luaCallbacks.bind(s, ref);
 
 	return 0;
 }
@@ -163,14 +191,16 @@ int l_sprites_load(lua_State* L)
 
 int l_sprites_render(lua_State* L)
 {
-	SpriteSet *s = (SpriteSet *)lua_touserdata(L, 1);
+	SpriteSet* s = (SpriteSet *)lua_touserdata(L, 1);
 	if(!s)
 		return 0;
 		
-	int frame = (int)lua_tonumber(L, 2);
-	int x = (int)lua_tonumber(L, 3);
-	int y = (int)lua_tonumber(L, 4);
-	s->getSprite(frame)->draw(gfx.buffer, x, y);
+	BITMAP* b = (BITMAP *)lua_touserdata(L, 2);
+		
+	int frame = (int)lua_tonumber(L, 3);
+	int x = (int)lua_tonumber(L, 4);
+	int y = (int)lua_tonumber(L, 5);
+	s->getSprite(frame)->draw(b, x, y);
 
 	return 0;
 }
@@ -198,22 +228,27 @@ int l_font_load(lua_State* L)
 int l_font_render(lua_State* L)
 {
 	Font *f = *(Font **)lua_touserdata(L, 1);
-	if(!f && lua_gettop(L) >= 4)
+	if(!f || lua_gettop(L) < 5)
 		return 0;
+		
+	BITMAP* b = (BITMAP *)lua_touserdata(L, 2);
 	
-	char const* s = lua_tostring(L, 2);
-	int x = static_cast<int>(lua_tonumber(L, 3));
-	int y = static_cast<int>(lua_tonumber(L, 4));
+	char const* s = lua_tostring(L, 3);
+	if(!s)
+		return 0;
+		
+	int x = static_cast<int>(lua_tonumber(L, 4));
+	int y = static_cast<int>(lua_tonumber(L, 5));
 	
-	if(lua_gettop(L) >= 7)
+	if(lua_gettop(L) >= 8)
 	{
-		int cr = static_cast<int>(lua_tonumber(L, 5));
-		int cg = static_cast<int>(lua_tonumber(L, 6));
-		int cb = static_cast<int>(lua_tonumber(L, 7));
-		f->draw(gfx.buffer, s, x, y, 0, cr, cg, cb);
+		int cr = static_cast<int>(lua_tonumber(L, 6));
+		int cg = static_cast<int>(lua_tonumber(L, 7));
+		int cb = static_cast<int>(lua_tonumber(L, 8));
+		f->draw(b, s, x, y, 0, cr, cg, cb);
 	}
 	else
-		f->draw(gfx.buffer, s, x, y, 0);
+		f->draw(b, s, x, y, 0);
 	
 	return 0;
 }
@@ -266,6 +301,46 @@ int l_player_name(lua_State* L)
 	return 1;
 }
 
+void pushPlayer(BasePlayer* player)
+{
+	pushFullReference(*player, LuaBindings::playerMetaTable);
+}
+
+int l_worm_getPlayer(lua_State* L)
+{
+	BaseWorm* p = *static_cast<BaseWorm **>(lua_touserdata (L, 1));
+	if(!p->getOwner())
+		return 0;
+	game.lua.pushReference(p->getOwner()->luaReference);
+	return 1;
+}
+
+
+int l_worm_getHealth(lua_State* L)
+{
+	BaseWorm* p = *static_cast<BaseWorm **>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->getHealth());
+	return 1;
+}
+
+void pushWorm(BaseWorm* worm)
+{
+	pushFullReference(*worm, LuaBindings::wormMetaTable);
+}
+
+int l_viewport_getBitmap(lua_State* L)
+{
+	Viewport* p = *static_cast<Viewport **>(lua_touserdata (L, 1));
+
+	lua_pushlightuserdata(L, (void *)p->getBitmap());
+	return 1;
+}
+
+void pushViewport(Viewport* viewport)
+{
+	pushFullReference(*viewport, LuaBindings::viewportMetaTable);
+}
+
 int l_game_playerIterator(lua_State* L)
 {
 	typedef std::list<BasePlayer*>::iterator iter;
@@ -275,13 +350,15 @@ int l_game_playerIterator(lua_State* L)
 	else
 	{
 		//lua_pushlightuserdata(L, *i);
+		game.lua.pushReference((*i)->luaReference);
+		/*
 		BasePlayer** p = (BasePlayer **)lua_newuserdata(L, sizeof(BasePlayer *));
 		*p = *i;
 		game.lua.pushReference(LuaBindings::playerMetaTable);
 		if(!lua_istable(L, -1))
 			cerr << "Metatable is not a table!" << endl;
 		if(!lua_setmetatable(L, -2))
-			cerr << "Couldn't set player metatable!" << endl;
+			cerr << "Couldn't set player metatable!" << endl;*/
 		++i;
 	}
 	
@@ -420,6 +497,54 @@ int l_console_register_command(lua_State* L)
 	return 0;
 }
 
+int l_load_script(lua_State* L)
+{
+	char const* s = lua_tostring(L, 2);
+	if(!s)
+		return 0;
+	Script* script = scriptLocator.load(s);
+	
+	if(!script)
+		return 0;
+	
+	// Return the allocated table
+	lua_pushvalue(L, 2);
+	lua_rawget(L, LUA_GLOBALSINDEX);
+	return 1;
+}
+
+int l_gfx_draw_box(lua_State* L)
+{
+	BITMAP* b = (BITMAP *)lua_touserdata(L, 1);
+	
+	int x1 = (int)lua_tonumber(L, 2);
+	int y1 = (int)lua_tonumber(L, 3);
+	int x2 = (int)lua_tonumber(L, 4);
+	int y2 = (int)lua_tonumber(L, 5);
+	int cr = static_cast<int>(lua_tonumber(L, 6));
+	int cg = static_cast<int>(lua_tonumber(L, 7));
+	int cb = static_cast<int>(lua_tonumber(L, 8));
+	
+	rectfill(b, x1, y1, x2, y2, makecol(cr, cg, cb));
+	
+	return 0;
+}
+
+int l_gfx_set_alpha(lua_State* L)
+{
+	int alpha = (int)lua_tonumber(L, 1);
+	gfx.setBlender(ALPHA, alpha);
+	
+	return 0;
+}
+
+int l_gfx_reset_blending(lua_State* L)
+{
+	solid_mode();
+	
+	return 0;
+}
+
 std::string runLua(int ref, std::list<std::string> const& args)
 {
 	game.lua.pushReference(ref);
@@ -486,6 +611,7 @@ void addGUIListFunctions(LuaContext& context)
 	lua_rawset(context, -3);
 }
 
+
 void init()
 {
 	LuaContext& context = game.lua;
@@ -521,7 +647,11 @@ void init()
 	//context.function("player_name", l_player_name);
 	
 	context.function("gui_find", l_gui_find);
-
+	
+	context.function("gfx_draw_box", l_gfx_draw_box);
+	context.function("gfx_set_alpha", l_gfx_set_alpha);
+	context.function("gfx_reset_blending", l_gfx_reset_blending);
+	
 	context.function("bind", l_bind);
 	
 	context.function("connect", l_connect);
@@ -556,6 +686,38 @@ void init()
 	lua_rawset(context, -3);
 	playerMetaTable = context.createReference();
 	
+	// Worm method and metatable
+	
+	lua_newtable(context); 
+	lua_pushstring(context, "__index");
+	
+	lua_newtable(context);
+	
+	lua_pushstring(context, "get_player");
+	lua_pushcfunction(context, l_worm_getPlayer);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "get_health");
+	lua_pushcfunction(context, l_worm_getHealth);
+	lua_rawset(context, -3);
+		
+	lua_rawset(context, -3);
+	wormMetaTable = context.createReference();
+	
+	// Viewport method and metatable
+	
+	lua_newtable(context); 
+	lua_pushstring(context, "__index");
+	
+	lua_newtable(context);
+	
+	lua_pushstring(context, "get_bitmap");
+	lua_pushcfunction(context, l_viewport_getBitmap);
+	lua_rawset(context, -3);
+	
+	lua_rawset(context, -3);
+	viewportMetaTable = context.createReference();
+
 	// Font method and metatable
 	
 	lua_newtable(context); 
@@ -590,7 +752,7 @@ void init()
 	
 	// GUI List method and metatable
 	
-	lua_newtable(context); 
+	lua_newtable(context);
 	lua_pushstring(context, "__index");
 	
 	lua_newtable(context);
@@ -600,6 +762,32 @@ void init()
 
 	lua_rawset(context, -3);
 	guiWndMetaTable[OmfgGUI::Context::List] = context.createReference();
+	
+	// Global metatable
+	
+	lua_pushvalue(context, LUA_GLOBALSINDEX);
+	
+	lua_newtable(context);
+	lua_pushstring(context, "__index");
+	lua_pushcfunction(context, l_load_script);
+	lua_rawset(context, -3);
+	
+	lua_setmetatable(context, -2);
+	
+	// Bindings table and metatable
+	lua_pushstring(context, "bindings");
+	lua_newtable(context); // Bindings table
+	
+	lua_newtable(context); // Bindings metatable
+	lua_pushstring(context, "__newindex");
+	lua_pushcfunction(context, l_bind);
+	lua_rawset(context, -3);
+	
+	lua_setmetatable(context, -2);
+
+	lua_rawset(context, LUA_GLOBALSINDEX);
+	
+	cerr << "LuaBindings::init() done." << endl;
 }
 
 }

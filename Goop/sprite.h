@@ -2,7 +2,9 @@
 #define SPRITE_H
 
 #include "gfx.h"
-#include <allegro.h>
+//#include <allegro.h>
+
+struct BITMAP;
 
 enum
 {

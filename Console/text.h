@@ -57,4 +57,37 @@ struct IStrCompare
 	}
 };
 
+template<class InputT>
+bool portable_getline(InputT& str, std::string& s)
+{
+	std::string l;
+	
+	for(int len = 0; ; ++len)
+	{
+		int c = str.get();
+		if(c == InputT::traits_type::eof())
+		{
+			if(len == 0)
+				return false;
+			s = l;
+			return true;
+		}
+		
+		if(c == '\r' || c == '\n')
+		{
+			if(len == 0) // Skip zero length lines
+			{
+				--len;
+			}
+			else
+			{
+				s = l;
+				return true;
+			}
+		}
+		else
+			l += (char)c;
+	}
+}
+
 #endif  // _TEXT_H_

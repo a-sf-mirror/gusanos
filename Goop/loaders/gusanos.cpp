@@ -29,6 +29,7 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 	set_color_depth(8);
 	std::string materialPath = (path / "material").native_file_string();
 	
+	level->path = path.native_directory_string();
 	level->material = gfx.loadBitmap(materialPath.c_str(), 0);
 	set_color_depth(vdepth);
 	if (level->material)

@@ -6,6 +6,8 @@
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <boost/filesystem/path.hpp>
+namespace fs = boost::filesystem;
 
 class Sprite;
 	
@@ -16,7 +18,7 @@ public:
 	SpriteSet();
 	~SpriteSet();
 
-	bool load(const std::string &filename);
+	bool load(fs::path const& filename);
 	
 	Sprite* getSprite( int frame, float angle );
 	Sprite* getSprite( int frame = 0 );

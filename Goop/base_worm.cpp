@@ -17,6 +17,8 @@
 #include "font.h"
 #include "gfx.h"
 
+#include "lua/bindings.h"
+
 #include <math.h>
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -56,10 +58,14 @@ BaseWorm::BaseWorm()
 	movingLeft = false;
 	movingRight = false;
 	jumping = false;
+	
+	LuaBindings::pushWorm(this);
+	luaReference = game.lua.createReference();
 }
 
 BaseWorm::~BaseWorm()
 {
+	game.lua.destroyReference(luaReference);
 	if ( m_animator ) delete m_animator;
 	if ( m_fireconeAnimator ) delete m_fireconeAnimator;
 	//m_ninjaRope->deleteMe = true;
@@ -782,8 +788,6 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 								
 				game.infoFont->draw(where, playerName, wx, wy, 0);
 			}
-			
-			
 		}
 		
 #ifdef DEBUG_WORM_REACTS
@@ -797,6 +801,8 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 		}
 #endif
 	}
+	
+	
 }
 
 void BaseWorm::respawn()

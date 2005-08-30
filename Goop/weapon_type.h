@@ -1,12 +1,13 @@
 #ifndef WEAPON_TYPE_H
 #define WEAPON_TYPE_H
 
-#include "events.h"
+//#include "events.h"
 
 #include <string>
 #include <vector>
 
 class SpriteSet;
+class Event;
 
 class WeaponType
 {

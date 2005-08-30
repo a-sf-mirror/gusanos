@@ -3,15 +3,18 @@
 
 #include "resource_list.h"
 #include "gfx.h"
-#include "events.h"
-#include "distortion.h"
+//#include "events.h"
+//#include "distortion.h"
 
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <boost/filesystem/path.hpp>
+namespace fs = boost::filesystem;
 
 class SpriteSet;
-//struct Distortion;
+class Distortion;
+class Event;
 
 struct DetectEvent
 {
@@ -29,7 +32,7 @@ class ExpType
 		ExpType();
 		~ExpType();
 	
-		bool load(const std::string &filename);
+		bool load(fs::path const& filename);
 		
 		int timeout;
 		int timeoutVariation;

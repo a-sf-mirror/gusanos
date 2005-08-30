@@ -40,7 +40,12 @@
 #include <iostream>
 #include <sstream> //TEMP
 
-using namespace std;
+//using namespace std; // Conflicting
+using std::string;
+using std::list;
+using std::vector;
+using std::cerr;
+using std::endl;
 
 ZCom_ClassID Game::classID = ZCom_Invalid_ID;
 
@@ -270,9 +275,6 @@ void Game::unload()
 	
 	console.clearTemporaries();
 
-	lua.reset();
-	luaCallbacks = LuaCallbacks(); // Reset callbacks
-
 	sfx.clear();
 	// Delete all objects
 	for ( ObjectsList::Iterator iter = objects.begin(); (bool)iter; ++iter)
@@ -300,12 +302,14 @@ void Game::unload()
 	expTypeList.clear();
 	soundList.clear();
 	spriteList.clear();
-	//fontList.clear();
 	
 	fontLocator.clear();
 	xmlLocator.clear();
 	gssLocator.clear();
 	scriptLocator.clear();
+	
+	lua.reset();
+	luaCallbacks = LuaCallbacks(); // Reset callbacks
 }
 
 bool Game::isLoaded()
@@ -330,6 +334,24 @@ void Game::refreshResources()
 	scriptLocator.addPath(fs::path("default/scripts"));
 	scriptLocator.addPath(fs::path(nextMod) / "scripts");
 	scriptLocator.refresh();
+	
+	// These are added in reverse order compared to
+	// the resource locator paths! Fix maybe?
+	partTypeList.addPath(fs::path(level.getPath()) / "objects");
+	partTypeList.addPath(fs::path(nextMod) / "objects");
+	partTypeList.addPath(fs::path("default/objects"));
+	
+	expTypeList.addPath(fs::path(level.getPath()) / "objects");
+	expTypeList.addPath(fs::path(nextMod) / "objects");
+	expTypeList.addPath(fs::path("default/objects"));
+	
+	soundList.addPath(fs::path(level.getPath()) / "sounds");
+	soundList.addPath(fs::path(nextMod) / "sounds");
+	soundList.addPath(fs::path("default/sounds"));
+	
+	spriteList.addPath(fs::path(level.getPath()) / "sprites");
+	spriteList.addPath(fs::path(nextMod) / "sprites");
+	spriteList.addPath(fs::path("default/sprites"));
 }
 
 void Game::changeLevel(const std::string& levelName )
@@ -487,6 +509,24 @@ void Game::addBot()
 	}
 }
 
+unsigned long Game::stringToIndex(std::string const& str)
+{
+	HashTable<std::string, unsigned long>::iterator i = stringToIndexMap.find(str);
+	if(i != stringToIndexMap.end())
+		return i->second;
+	i = stringToIndexMap.insert(str);
+	int idx = indexToStringMap.size();
+	i->second = idx;
+	indexToStringMap.push_back(str);
+	return idx;
+}
+
+std::string const& Game::indexToString(unsigned long idx)
+{
+	return indexToStringMap[idx];
+}
+
+
 void Game::LuaCallbacks::bind(std::string callback, std::string file, std::string function)
 {
 	Script* s = scriptLocator.load(file);
@@ -495,4 +535,16 @@ void Game::LuaCallbacks::bind(std::string callback, std::string file, std::strin
 		afterRender.push_back(ref);
 	else if(callback == "afterUpdate")
 		afterUpdate.push_back(ref);
+}
+
+void Game::LuaCallbacks::bind(std::string callback, int ref)
+{
+	if(callback == "afterRender")
+		afterRender.push_back(ref);
+	else if(callback == "afterUpdate")
+		afterUpdate.push_back(ref);
+	else if(callback == "wormRender")
+		wormRender.push_back(ref);
+	else if(callback == "viewportRender")
+		viewportRender.push_back(ref);
 }

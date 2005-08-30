@@ -100,10 +100,11 @@ struct VectorEncoding
 	
 	Rect area;
 	unsigned long total;
-	unsigned long bitsX;
-	unsigned long bitsY;
 	unsigned long width;
 	unsigned long height;
+	unsigned long bitsX;
+	unsigned long bitsY;
+	
 	unsigned int subPixelAcc;
 	double isubPixelAcc;
 };

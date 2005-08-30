@@ -2,10 +2,11 @@
 #define GAME_H
 
 #include "level.h"
-#include "base_object.h"
-#include "base_action.h"
+//#include "base_object.h"
+//#include "base_action.h"
 #include "objects_list.h"
 #include "lua/context.h"
+#include "hash_table.h"
 
 #include <allegro.h>
 #include <string>
@@ -14,8 +15,9 @@
 #include <map>
 #include <zoidcom.h>
 
-class BasePlayer; 
+class BasePlayer;
 class BaseWorm;
+class BaseAction;
 class PlayerOptions;
 class WeaponType;
 class PartType;
@@ -25,6 +27,9 @@ static const int MAX_LOCAL_PLAYERS = 2;
 static const int WORMS_COLLISION_LAYER = 0;
 static const int WORMS_RENDER_LAYER = 4;
 
+#define EACH_CALLBACK(i_, type_) for(std::vector<int>::iterator i_ = game.luaCallbacks.type_.begin(); \
+			i_ != game.luaCallbacks.type_.end(); ++i_)
+			
 class Player;
 
 struct Options
@@ -105,6 +110,7 @@ public:
 	const std::string& getModPath();
 	const std::string& getDefaultPath();
 	
+/*	//Not used anymore
 	template <typename T1>
 	bool specialLoad(const std::string& name, T1 &resource)
 	{
@@ -113,7 +119,7 @@ public:
 		if ( resource.load(m_defaultPath + name) ) return true;
 		
 		return false;
-	}
+	}*/
 	
 	Font *infoFont;
 	LuaContext lua;
@@ -121,10 +127,20 @@ public:
 	struct LuaCallbacks
 	{
 		void bind(std::string callback, std::string file, std::string function);
+		void bind(std::string callback, int ref);
 		std::vector<int> atGameStart;
 		std::vector<int> afterRender;
 		std::vector<int> afterUpdate;
+		std::vector<int> wormRender;
+		std::vector<int> viewportRender;
 	} luaCallbacks;
+	
+	HashTable<std::string, unsigned long> stringToIndexMap;
+	std::vector<std::string> indexToStringMap;
+
+	unsigned long stringToIndex(std::string const& str);
+	
+	std::string const& indexToString(unsigned long idx);
 	
 private:
 

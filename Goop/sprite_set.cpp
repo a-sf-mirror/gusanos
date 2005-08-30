@@ -2,11 +2,14 @@
 
 #include "resource_list.h"
 #include "gfx.h"
+#include "sprite.h"
 
 #include <allegro.h>
 #include <string>
 #include <vector>
-#include "sprite.h"
+#include <iostream> //TEMP
+#include <boost/filesystem/path.hpp>
+namespace fs = boost::filesystem;
 
 using namespace std;
 
@@ -28,11 +31,13 @@ SpriteSet::~SpriteSet()
 	}
 }
 
-bool SpriteSet::load(const string &filename)
+bool SpriteSet::load(fs::path const& filename)
 {	
 	bool returnValue = false;
 	
-	BITMAP *tempBitmap = gfx.loadBitmap(filename.c_str(),0);
+	//cerr << "Loading sprite set: " << filename.native_file_string() << endl;
+	
+	BITMAP *tempBitmap = gfx.loadBitmap(filename.native_file_string().c_str(),0);
 	
 	if (tempBitmap)
 	{

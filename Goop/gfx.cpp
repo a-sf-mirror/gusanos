@@ -160,13 +160,54 @@ void Gfx::updateScreen()
 			break;
 			
 			case SCANLINES: 
+			/*
 				acquire_screen();
 				for ( int i = 0; i < buffer->h; ++i )
 				{
 					stretch_blit(buffer, screen, 0, i, buffer->w, 1, 0, i*2, screen->w, 1);
 					hline(screen, 0, i*2+1, screen->w, 0);
 				}
-				release_screen();
+				release_screen();*/
+				switch(bitmap_color_depth(screen))
+				{
+					case 32:
+						acquire_screen();
+
+						bmp_select(screen);
+
+						for(int y = 0; y < 240; ++y)
+						{
+							unsigned long* src = (unsigned long *)buffer->line[y];
+
+							unsigned long dest1 = bmp_write_line(screen, y*2);
+							unsigned long dest2 = bmp_write_line(screen, y*2 + 1);
+														
+							for(int x = 0; x < 320; ++x)
+							{
+								unsigned long p = *src++;
+
+								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
+								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
+								bmp_write32(dest2, 0); dest2 += sizeof(unsigned long);
+								bmp_write32(dest2, 0); dest2 += sizeof(unsigned long);
+							}
+						}
+						
+						bmp_unwrite_line(screen);
+						
+						release_screen();
+					break;
+					
+					default:
+						acquire_screen();
+						for ( int i = 0; i < buffer->h; ++i )
+						{
+							stretch_blit(buffer, screen, 0, i, buffer->w, 1, 0, i*2, screen->w, 1);
+							hline(screen, 0, i*2+1, screen->w, 0);
+						}
+						release_screen();
+					break;
+				}
 				blitFromBuffer = false;
 			break;
 			

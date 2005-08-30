@@ -1,5 +1,6 @@
 #include "weapon_type.h"
 
+#include "events.h"
 #include "sprite_set.h"
 #include "text.h"
 #include "parser.h"
@@ -7,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -28,42 +30,30 @@ WeaponType::WeaponType()
 
 WeaponType::~WeaponType()
 {
-	// <GLIP> There's no need to test for a zero-pointer before deleting
-	if(primaryShoot) delete primaryShoot;
-	if(primaryPressed) delete primaryPressed;
-	if(primaryReleased) delete primaryReleased;
-	if(outOfAmmo) delete outOfAmmo;
-	if(reloadEnd) delete reloadEnd;
+	delete primaryShoot;
+	delete primaryPressed;
+	delete primaryReleased;
+	delete outOfAmmo;
+	delete reloadEnd;
 }
 
 bool WeaponType::load(const string &filename)
 {
-
+	//cerr << "Loading weapon: " << filename << endl;
 	fileName = filename;
-	ifstream fileStream;
+	ifstream fileStream(filename.c_str());
 	
-	fileStream.open( filename.c_str() );
-	
-	if ( fileStream.is_open() )
+	if ( fileStream )
 	{
 		string parseLine;
 		Event *currEvent = NULL;
-		while ( !fileStream.eof() )
+		while ( portable_getline( fileStream, parseLine ) )
 		{
-			getline( fileStream, parseLine );
-			if ( !parseLine.empty() )
+			//if ( !parseLine.empty() )
 			{
 				string var;
 				string val;
 
-#ifndef WINDOWS
-				//Check for windows formatting on files
-				if (parseLine[parseLine.length()-1] == '\r')
-				{
-					parseLine.erase(parseLine.length()-1);
-				}
-#endif
-				
 				vector<string> tokens;
 				tokens = Parser::tokenize ( parseLine );
 				int lineID = Parser::identifyLine( tokens );

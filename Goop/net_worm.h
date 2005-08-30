@@ -4,7 +4,7 @@
 #include "vec.h"
 #include "base_object.h"
 #include "base_worm.h"
-#include "sprite.h"
+//#include "sprite.h"
 
 #include <zoidcom.h>
 

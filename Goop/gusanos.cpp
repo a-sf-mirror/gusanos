@@ -68,11 +68,7 @@ void startGame(const std::string&)
 int main(int argc, char **argv)
 {
 	game.init(argc, argv);
-/*
-	IoState* state = IoState_new();
-	IoObject* result = IoState_doCString_(state, "10 * 10");
-	IoState_free(state);
-	*/
+	
 #ifdef POSIX
 	
 #endif
@@ -258,9 +254,8 @@ int main(int argc, char **argv)
 
 		OmfgGUI::menu.render(&renderer);
 		console.render(gfx.buffer);
-		for(std::vector<int>::iterator i = game.luaCallbacks.afterRender.begin();
-			i != game.luaCallbacks.afterRender.end();
-			++i)
+
+		EACH_CALLBACK(i, afterRender)
 		{
 			game.lua.callReference(*i);
 		}

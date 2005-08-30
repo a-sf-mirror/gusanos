@@ -5,6 +5,7 @@
 #include "sprite_set.h"
 #include "sprite.h"
 #include "script.h"
+#include "game.h"
 
 #include <allegro.h>
 #include <boost/bind.hpp>

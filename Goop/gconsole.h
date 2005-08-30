@@ -2,7 +2,7 @@
 #define gconsole_h
 
 #include <console.h>
-#include "font.h"
+//#include "font.h"
 
 #include <allegro.h>
 
@@ -12,6 +12,7 @@
 #include <map>
 
 class SpriteSet;
+class Font;
 
 class GConsole : public Console
 {
@@ -33,7 +34,7 @@ class GConsole : public Console
 	
 	void varCbFont( std::string oldValue );
 
-	private:
+private:
 	
 	float m_pos;
 	float speed;
@@ -42,7 +43,7 @@ class GConsole : public Console
 	
 	//KeyHandler keyHandler;
 
-	Font *m_font;
+	Font* m_font;
 	std::string m_fontName;
 	int m_consoleKey;
 	std::string m_inputBuff;

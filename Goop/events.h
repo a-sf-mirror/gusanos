@@ -1,7 +1,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "base_action.h"
+//#include "base_action.h"
 
 #include <string>
 #include <vector>
@@ -9,6 +9,7 @@
 class Weapon;
 class BaseWorm;
 class BaseObject;
+class BaseAction;
 
 struct Event
 {

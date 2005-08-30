@@ -1,5 +1,6 @@
 #include "worm.h"
 
+/* Why were all this junk here?
 #include "vec.h"
 #include "game.h"
 #include "base_object.h"
@@ -12,7 +13,7 @@
 #include "ninjarope.h"
 
 #include <math.h>
-#include <zoidcom.h>
+#include <zoidcom.h>*/
 
 Worm::Worm() : BaseWorm()
 {

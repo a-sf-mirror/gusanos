@@ -222,8 +222,8 @@ protected:
 			}
 			
 			RGB color;
-			BaseSpriteSet *skin;
 			BaseSpriteSet *spriteSet;
+			BaseSpriteSet *skin;
 		} background;
 		
 		int         width;

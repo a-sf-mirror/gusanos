@@ -3,7 +3,6 @@
 
 #include <string>
 #include "vec.h"
-#include "lua/context.h"
 
 #include <zoidcom.h>
 
@@ -88,6 +87,7 @@ public:
 	ZCom_ConnID getConnectionID();
 	PlayerOptions* getOptions();
 	Vec getPos();
+	BaseWorm* getWorm() { return m_worm; }
 	
 	int deaths;
 	int kills;
@@ -95,6 +95,8 @@ public:
 	bool deleteMe;
 	
 	std::string m_name;
+	
+	int luaReference;
 	
 protected:
 

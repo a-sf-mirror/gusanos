@@ -90,6 +90,7 @@ public:
 	
 	float aimSpeed; // Useless to add setters and getters for this
 	float aimAngle;
+	int luaReference;
 	
 protected:
 

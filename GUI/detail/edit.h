@@ -57,9 +57,9 @@ public:
 	
 protected:
 
+	bool        m_select;
 	ulong		m_caretPos;
 	ulong		m_selTo;
-	bool        m_select;
 	
 /*
 	bool		m_OnlyNumbers;

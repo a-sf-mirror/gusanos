@@ -1,5 +1,7 @@
 #include "context.h"
 
+#define FREELIST_REF 0
+
 LuaContext::LuaContext()
 : m_FirstFreeRef(1)
 {
@@ -124,7 +126,7 @@ int LuaContext::call(int params, int returns)
 	return returns;
 }
 
-void LuaContext::push(double v)
+void LuaContext::push(lua_Number v)
 {
 	lua_pushnumber(m_State, v);
 }
@@ -132,6 +134,11 @@ void LuaContext::push(double v)
 void LuaContext::push(const char* v)
 {
 	lua_pushstring(m_State, v);
+}
+
+void LuaContext::push(int v)
+{
+	pushReference(v);
 }
 
 int LuaContext::callReference(int ref)
@@ -151,11 +158,44 @@ void LuaContext::function(char const* name, lua_CFunction func)
 
 int LuaContext::createReference()
 {
+	/*
 	int ref = m_FirstFreeRef;
 	//lua_pushvalue(m_State, idx);
 	lua_rawseti(m_State, LUA_REGISTRYINDEX, ref);
 	++m_FirstFreeRef;
+	return ref;*/
+	
+	int ref;
+	int t = LUA_REGISTRYINDEX;
+	lua_rawgeti(m_State, t, FREELIST_REF);
+	ref = (int)lua_tonumber(m_State, -1);
+	lua_settop(m_State, -2);
+	if(ref != 0)
+	{
+		cerr << "Assigning reused reference " << ref << endl;
+		lua_rawgeti(m_State, t, ref);
+		lua_rawseti(m_State, t, FREELIST_REF);
+	}
+	else
+	{
+		ref = m_FirstFreeRef++;
+		cerr << "Assigning reference " << ref << endl;
+	}
+	
+	lua_rawseti(m_State, t, ref);
 	return ref;
+}
+
+void LuaContext::destroyReference(int ref)
+{
+	if (ref >= 0)
+	{
+    	int t = LUA_REGISTRYINDEX;
+		lua_rawgeti(m_State, t, FREELIST_REF);
+		lua_rawseti(m_State, t, ref);  /* t[ref] = t[FREELIST_REF] */
+		lua_pushnumber(m_State, (lua_Number)ref);
+		lua_rawseti(m_State, t, FREELIST_REF);  /* t[FREELIST_REF] = ref */
+	}
 }
 
 void LuaContext::pushReference(int ref)

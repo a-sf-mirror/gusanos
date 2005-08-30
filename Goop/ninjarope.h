@@ -2,26 +2,22 @@
 #define NINJAROPE_H
 
 #include "base_object.h"
-#include "part_type.h"
+#include "events.h"
+//#include "part_type.h"
 #include "vec.h"
 #include <vector>
 
 class SpriteSet;
 class BaseAnimator;
+class PartType;
+class TimerEvent;
 //class BaseWorm;
 
 struct NRTimer
 {
-	inline NRTimer( TimerEvent* tEvent)
-	{
-		m_tEvent = tEvent;
-		count = m_tEvent->delay + (int)(rnd() * m_tEvent->delayVariation);
-	}
+	NRTimer( TimerEvent* tEvent);
 	
-	inline void reset()
-	{
-		count = m_tEvent->delay + (int)(rnd() * m_tEvent->delayVariation);
-	}
+	void reset();
 	
 	int count;
 	TimerEvent* m_tEvent;

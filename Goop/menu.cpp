@@ -5,6 +5,8 @@
 #include "sprite_set.h"
 #include "sprite.h"
 #include "script.h"
+#include "lua/context.h"
+#include "omfggui_windows.h"
 #include "gconsole.h"
 #include <boost/bind.hpp>
 #include <iostream>

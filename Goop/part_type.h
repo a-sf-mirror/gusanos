@@ -9,6 +9,8 @@
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <boost/filesystem/path.hpp>
+namespace fs = boost::filesystem;
 
 class SpriteSet;
 //struct Distortion;
@@ -39,7 +41,7 @@ class PartType
 	PartType();
 	~PartType();
 	
-	bool load(const std::string &filename);
+	bool load(fs::path const& filename);
 
 	float gravity;
 	float bounceFactor;

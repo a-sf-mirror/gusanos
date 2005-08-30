@@ -101,7 +101,7 @@ ObjectsList::ColLayerIterator::~ColLayerIterator()
 	
 }
 
-ObjectsList::ColLayerIterator ObjectsList::ColLayerIterator::operator ++()
+ObjectsList::ColLayerIterator& ObjectsList::ColLayerIterator::operator ++()
 {
 	if ( m_position < RENDER_LAYERS_AMMOUNT )
 	{
@@ -146,7 +146,7 @@ ObjectsList::RenderLayerIterator::~RenderLayerIterator()
 	
 }
 
-ObjectsList::RenderLayerIterator ObjectsList::RenderLayerIterator::operator ++()
+ObjectsList::RenderLayerIterator& ObjectsList::RenderLayerIterator::operator ++()
 {
 	if ( m_position < COLLISION_LAYERS_AMMOUNT )
 	{
@@ -160,6 +160,8 @@ ObjectsList::RenderLayerIterator ObjectsList::RenderLayerIterator::operator ++()
 				currentObject = (*m_list)[m_position*RENDER_LAYERS_AMMOUNT+m_layer].begin();
 		}
 	}
+	
+	return *this;
 }
 
 BaseObject* ObjectsList::RenderLayerIterator::operator *()
@@ -188,7 +190,7 @@ ObjectsList::Iterator::~Iterator()
 	
 }
 
-ObjectsList::Iterator ObjectsList::Iterator::operator ++()
+ObjectsList::Iterator& ObjectsList::Iterator::operator ++()
 {
 	if ( currentList != m_list->end() )
 	{

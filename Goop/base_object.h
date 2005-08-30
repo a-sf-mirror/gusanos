@@ -3,7 +3,8 @@
 
 #include "vec.h"
 
-#include <allegro.h>
+//#include <allegro.h>
+struct BITMAP;
 
 class BasePlayer;
 

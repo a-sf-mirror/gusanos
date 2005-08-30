@@ -2,16 +2,24 @@
 
 #include "resource_list.h"
 
+#include "events.h"
+#include "distortion.h"
 #include "sprite_set.h"
 #include "gfx.h"
 #include "distortion.h"
 #include "text.h"
 #include "parser.h"
 
+
+
 #include <allegro.h>
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iostream>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
+namespace fs = boost::filesystem;
 
 using namespace std;
 
@@ -57,25 +65,23 @@ ExpType::~ExpType()
 	}
 }
 
-bool ExpType::load(const string &filename)
+bool ExpType::load(fs::path const& filename)
 {
+	//cerr << "Loading explosion: " << filename.native_file_string() << endl;
+	fs::ifstream fileStream(filename);
 
-	ifstream fileStream;
-	
-	fileStream.open( filename.c_str() );
-
-	if ( fileStream.is_open() )
+	if ( fileStream )
 	{
 		string parseLine;
 		Event *currEvent = NULL;
-		while ( !fileStream.eof() )
+		while ( portable_getline( fileStream, parseLine ) )
 		{
-			getline( fileStream, parseLine ); // <GLIP> A getline() working with \n, \r, and \r\n is needed
-			if ( !parseLine.empty() )
+			//if ( !parseLine.empty() ) //portable_getline never returns empty lines
 			{
 				string var;
 				string val;
-				
+		
+/* Unnecessary with portable_getline	
 #ifndef WINDOWS
 				//Check for windows formatting on files
 				if (parseLine[parseLine.length()-1] == '\r')
@@ -83,6 +89,7 @@ bool ExpType::load(const string &filename)
 					parseLine.erase(parseLine.length()-1);
 				}
 #endif
+*/
 			
 				vector<string> tokens;
 				tokens = Parser::tokenize ( parseLine );
@@ -185,7 +192,7 @@ bool ExpType::load(const string &filename)
 				
 			}
 		}
-		fileStream.close();
+		//fileStream.close(); // Use RAII ffs >:o
 		return true;
 	} else
 	{

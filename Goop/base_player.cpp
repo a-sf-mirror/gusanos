@@ -6,6 +6,10 @@
 #include "objects_list.h"
 #include "gconsole.h"
 
+#include "lua/bindings.h"
+#include "lua/context.h"
+#include "game.h"
+
 #include <zoidcom.h>
 #include "network.h"
 #include <allegro.h>
@@ -27,10 +31,14 @@ BasePlayer::BasePlayer()
 	m_node = NULL;
 	m_interceptor = NULL;
 	m_isAuthority = false;
+	
+	LuaBindings::pushPlayer(this);
+	luaReference = game.lua.createReference();
 }
 
 BasePlayer::~BasePlayer()
 {
+	game.lua.destroyReference(luaReference);
 	delete m_node;
 	delete m_interceptor;
 }

@@ -4,13 +4,15 @@
 #include "material.h"
 #include "resource_locator.h"
 #include "vec.h"
-#include "sprite.h"
+//#include "sprite.h"
 
 #include "encoding.h"
 
 #include <allegro.h>
 #include <string>
 #include <vector>
+
+class Sprite;
 
 class Level
 {

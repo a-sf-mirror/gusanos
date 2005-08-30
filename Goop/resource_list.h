@@ -1,24 +1,25 @@
 #ifndef RESOURCE_LIST_H
 #define RESOURCE_LIST_H
 
-#include "game.h"
-
 #include <map>
 #include <string>
-
+#include <list>
+#include <boost/filesystem/path.hpp>
+namespace fs = boost::filesystem;
 
 template<typename T1>
 class ResourceList
 {
-	public:
+public:
 
 	ResourceList( const std::string& subFolder)
 	{
 		m_subFolder = subFolder;
-	};
+	}
 	
 	void clear()
 	{
+		m_paths.clear();
 		typename std::map<std::string, T1*>::iterator item = m_resItems.begin();
 		while (item != m_resItems.end())
 		{
@@ -26,7 +27,24 @@ class ResourceList
 			++item;
 		}
 		m_resItems.clear();
-	};
+	}
+	
+	void addPath(fs::path const& path)
+	{
+		if(std::find(m_paths.begin(), m_paths.end(), path) == m_paths.end())
+			m_paths.push_back(path);
+	}
+	
+	bool load(std::string name, T1& resource)
+	{
+		std::list<fs::path>::iterator i = m_paths.begin();
+		for(; i != m_paths.end(); ++i)
+		{
+			if(resource.load(*i / name))
+				return true;
+		}
+		return false;
+	}
 		
 	T1* load( std::string filename )
 	{
@@ -40,7 +58,7 @@ class ResourceList
 			T1 *i = new T1;
 			m_resItems[filename] = i;
 
-			if ( game.specialLoad(m_subFolder + filename, *i) )
+			if(load(filename, *i))
 			{
 				return i;
 			}
@@ -52,12 +70,13 @@ class ResourceList
 				return NULL;
 			}
 		}
-	};
+	}
 	
-	private:
+private:
 	
 	std::string m_subFolder;
 	std::map<std::string, T1*> m_resItems;
+	std::list<fs::path>     m_paths; // Paths to scan
 };
 
 #endif // _RESOURCE_LIST_H_

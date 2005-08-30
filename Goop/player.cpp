@@ -4,7 +4,7 @@
 #include "viewport.h"
 #include "ninjarope.h"
 
-#include <allegro.h>
+//#include <allegro.h>
 
 using namespace std;
 
@@ -74,7 +74,10 @@ void Player::subThink()
 
 void Player::render()
 {
-	if ( m_viewport ) m_viewport->render();
+	if ( m_viewport )
+	{
+		m_viewport->render(this);
+	}
 }
 
 void Player::actionStart ( Actions action )

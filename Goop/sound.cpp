@@ -6,6 +6,9 @@
 #include "base_object.h"
 
 #include <string>
+#include <iostream>
+#include <boost/filesystem/path.hpp>
+namespace fs = boost::filesystem;
 
 #include <allegro.h>
 #include "text.h"
@@ -26,9 +29,10 @@ Sound::~Sound()
 	if ( m_sound )  FSOUND_Sample_Free( m_sound );
 }
 
-bool Sound::load(const string &filename)
+bool Sound::load(fs::path const& filename)
 {	
-	m_sound = FSOUND_Sample_Load( FSOUND_FREE, filename.c_str(), FSOUND_HW3D | FSOUND_FORCEMONO, 0, 0 );
+	//cerr << "Loading sound: " << filename.native_file_string() << endl;
+	m_sound = FSOUND_Sample_Load( FSOUND_FREE, filename.native_file_string().c_str(), FSOUND_HW3D | FSOUND_FORCEMONO, 0, 0 );
 	if ( m_sound )
 	{
 		return true;

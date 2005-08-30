@@ -12,6 +12,10 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iostream>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
+namespace fs = boost::filesystem;
 
 using namespace std;
 
@@ -84,32 +88,31 @@ PartType::~PartType()
 	}
 }
 
-bool PartType::load(const string &filename)
+bool PartType::load(fs::path const& filename)
 {
-
-	ifstream fileStream;
+	//cerr << "Loading particle: " << filename.native_file_string() << endl;
 	
-	fileStream.open( filename.c_str() );
-
-	if ( fileStream.is_open() )
+	fs::ifstream fileStream(filename);
+	
+	if ( fileStream )
 	{
 		string parseLine;
 		Event *currEvent = NULL;
-		while ( !fileStream.eof() )
+		while ( portable_getline( fileStream, parseLine ) )
 		{
-			getline( fileStream, parseLine ); // <GLIP> A getline() working with \n, \r, and \r\n is needed
-			if ( !parseLine.empty() )
+			//if ( !parseLine.empty() ) //Unnecessary
 			{
 				string var;
 				string val;
-				
+
+/* //Unnecessary
 #ifndef WINDOWS
 				//Check for windows formatting on files
 				if (parseLine[parseLine.length()-1] == '\r')
 				{
 					parseLine.erase(parseLine.length()-1);
 				}
-#endif
+#endif*/
 
 				vector<string> tokens;
 				tokens = Parser::tokenize ( parseLine );
@@ -254,7 +257,7 @@ bool PartType::load(const string &filename)
 				
 			}
 		}
-		fileStream.close();
+		//fileStream.close(); //RAII ffs
 		return true;
 	} else
 	{

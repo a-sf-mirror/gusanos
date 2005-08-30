@@ -30,9 +30,11 @@ public:
 	
 	int call(int params = 0, int returns = 0);
 	
-	void push(double v);
+	void push(lua_Number v);
 	
 	void push(const char* v);
+	
+	void push(int v);
 	
 	int callReference(int ref);
 	
@@ -46,11 +48,49 @@ public:
 		return result;
 	}
 	
+	template<class T1, class T2>
+	int callReference(int ref, T1 const& p1, T2 const& p2)
+	{
+		pushReference(ref);
+		push(p1);
+		push(p2);
+		int result = call(2, 0);
+		
+		return result;
+	}
+	
+	template<class T1, class T2, class T3>
+	int callReference(int ref, T1 const& p1, T2 const& p2, T3 const& p3)
+	{
+		pushReference(ref);
+		push(p1);
+		push(p2);
+		push(p3);
+		int result = call(3, 0);
+		
+		return result;
+	}
+	
+	template<class T1, class T2, class T3, class T4>
+	int callReference(int ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4)
+	{
+		pushReference(ref);
+		push(p1);
+		push(p2);
+		push(p3);
+		push(p4);
+		int result = call(4, 0);
+		
+		return result;
+	}
+	
 	// Add more when needed...
 	
 	void function(char const* name, lua_CFunction func);
 	
 	int createReference();
+	
+	void destroyReference(int ref);
 	
 	void pushReference(int ref);
 	

@@ -2,19 +2,28 @@
 
 #include "game.h"
 #include "sfx.h"
+#include "base_worm.h"
+#include "base_player.h"
+#include "lua/bindings.h"
 //#include "culling.h"
 #include <list>
 #include <allegro.h>
+
+#include <iostream>
 
 using namespace std;
 
 Viewport::Viewport()
 {
 	m_dest = NULL;
+	
+	LuaBindings::pushViewport(this);
+	luaReference = game.lua.createReference();
 }
 
 Viewport::~Viewport()
 {
+	game.lua.destroyReference(luaReference);
 	destroy_bitmap(m_dest);
 	sfx.freeListener(m_listener);
 }
@@ -78,9 +87,11 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	m_listener = sfx.newListener();
 }
 
-void Viewport::render()
+void Viewport::render(BasePlayer* player)
 {
-	game.level.draw(m_dest,static_cast<int>(m_pos.x), static_cast<int>(m_pos.y));
+	int offX = static_cast<int>(m_pos.x);
+	int offY = static_cast<int>(m_pos.y);
+	game.level.draw(m_dest, offX, offY);
 	
 /*
 	static bool flag = false;
@@ -102,8 +113,29 @@ void Viewport::render()
 		ObjectsList::RenderLayerIterator iter;
 		for ( iter = game.objects.renderLayerBegin(i); (bool)iter; ++iter)
 		{
-			(*iter)->draw(m_dest, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y) );
+			(*iter)->draw(m_dest, offX, offY);
 		}
+	}
+
+	EACH_CALLBACK(i, wormRender)
+	{
+		for(list<BasePlayer*>::iterator playerIter = game.players.begin(); playerIter != game.players.end(); ++playerIter)
+		{
+			BaseWorm* worm = (*playerIter)->getWorm();
+			if(worm->isActive())
+			{
+				Vec renderPos = worm->getRenderPos();
+				int x = (int)renderPos.x - offX;
+				int y = (int)renderPos.y - offY;
+				game.lua.callReference(*i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference);
+			}
+		}
+		
+	}
+	
+	EACH_CALLBACK(i, viewportRender)
+	{
+		game.lua.callReference(*i, luaReference, player->getWorm()->luaReference);
 	}
 }
 
