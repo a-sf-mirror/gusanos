@@ -8,6 +8,84 @@
 #include <list>
 #include <cmath>
 
+// Code stolen from allegro line to check if the straight line towards target is all clear.
+// returns true if the line was blocked somewhere
+bool check_materials( int x1, int y1, int x2, int y2 ) 
+{
+	int dx = x2-x1;
+	int dy = y2-y1;
+	int i1, i2;
+	int x, y;
+	int dd;
+
+	/* worker macro */
+#define DO_COL(pri_sign, pri_c, pri_cond, sec_sign, sec_c, sec_cond)		\
+{										\
+	if (d##pri_c == 0) {							\
+		return game.level.getMaterial(x1, y1).particle_pass;		\
+	}									\
+										\
+	i1 = 2 * d##sec_c;							\
+	dd = i1 - (sec_sign (pri_sign d##pri_c));				\
+	i2 = dd - (sec_sign (pri_sign d##pri_c));				\
+										\
+	x = x1;									\
+	y = y1;									\
+										\
+	while (pri_c pri_cond pri_c##2) {					\
+		if ( !game.level.getMaterial(x, y).particle_pass )		\
+			return true;						\
+										\
+		if (dd sec_cond 0) {						\
+			sec_c sec_sign##= 1;					\
+			dd += i2;						\
+		}								\
+		else								\
+			dd += i1;						\
+										\
+		pri_c pri_sign##= 1;						\
+	}									\
+	return false;								\
+}
+
+   if (dx >= 0) {
+	if (dy >= 0) {
+		if (dx >= dy) {
+			DO_COL(+, x, <=, +, y, >=);
+		}
+		else {
+			DO_COL(+, y, <=, +, x, >=);
+		}
+	}
+	else {
+		if (dx >= -dy) {
+			DO_COL(+, x, <=, -, y, <=);
+		}
+		else {
+			DO_COL(-, y, >=, +, x, >=);
+		}
+	}
+   }
+   else {
+	   if (dy >= 0) {
+		   if (-dx >= dy) {
+			   DO_COL(-, x, >=, +, y, >=);
+		   }
+		   else {
+			   DO_COL(+, y, <=, -, x, <=);
+		   }
+	   }
+	   else {
+		   if (-dx >= -dy) {
+			   DO_COL(-, x, >=, -, y, <=);
+		   }
+		   else {
+			   DO_COL(-, y, >=, -, x, <=);
+		   }
+	   }
+   }
+}
+
 PlayerAI::PlayerAI()
 	: m_pathSteps(100), m_thinkTime(0)
 {
@@ -24,11 +102,16 @@ PlayerAI::~PlayerAI()
 	delete m_options;
 }
 
+bool PlayerAI::checkMaterialsTo( const Vec& pos )
+{
+	return check_materials( m_worm->getPos().x, m_worm->getPos().y, pos.x, pos.y );
+}
 
 // getTarget assumes that a m_worm is a valid pointer, please dont call this if m_worm is null or sth
 void PlayerAI::getTarget()
 {
 	m_target = NULL;
+	m_targetBlocked = true;
 	float tmpDist = -1;
 	ObjectsList::ColLayerIterator worm;
 	for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
@@ -36,10 +119,15 @@ void PlayerAI::getTarget()
 		BaseWorm *tmpWorm;
 		if ( (*worm)->getOwner() != this )
 		if ( ( tmpWorm = dynamic_cast<BaseWorm*>(*worm) ) && tmpWorm->isActive() )
-		if ( ( m_worm->getPos() - (*worm)->getPos() ).length() < tmpDist || tmpDist < 0 )
 		{
-			m_target = *worm;
-			tmpDist = ( m_worm->getPos() - (*worm)->getPos() ).length();
+			bool blocked = checkMaterialsTo( (*worm)->getPos() );
+			bool distIsShorter = ( m_worm->getPos() - (*worm)->getPos() ).length() < tmpDist;
+			if ( ( !blocked && ( m_targetBlocked || distIsShorter ) ) || ( blocked && m_targetBlocked && distIsShorter ) || tmpDist < 0 )
+			{
+				m_targetBlocked = blocked;
+				m_target = *worm;
+				tmpDist = ( m_worm->getPos() - (*worm)->getPos() ).length();
+			}
 		}
 	}
 }
@@ -99,12 +187,25 @@ void PlayerAI::subThink()
 		float angle2Target = tmpVec.getAngle();
 		float wormAimAngle = m_worm->aimAngle + randomError;
 		
-		
-		if ( wormAimAngle - maxInaccuracy < angle2Target && wormAimAngle + maxInaccuracy > angle2Target )
+		if ( !m_targetBlocked )
 		{
-			baseActionStart(FIRE);
-		} else
-			baseActionStop(FIRE);
+			if ( wormAimAngle - maxInaccuracy < angle2Target && wormAimAngle + maxInaccuracy > angle2Target )
+			{
+				baseActionStart(FIRE);
+				m_shooting = true;
+			} else
+			{
+				baseActionStop(FIRE);
+				m_shooting = false;
+			}
+		}else
+		{
+			if ( m_shooting ) 
+			{
+				baseActionStop(FIRE);
+				m_shooting = false;
+			}
+		}
 	
 	
 		if ( ( m_worm->getCurrentWeapon()->reloading && ( rand() % 8 == 0 ) ) || rand() % 15 == 0)
@@ -135,8 +236,8 @@ void PlayerAI::subThink()
 		float angle2Target = tmpVec.getAngle();
 		float wormAimAngle = m_worm->aimAngle + randomError;
 		
-		if ( wormAimAngle < angle2Target ) m_worm->aimSpeed = 0.7;
-		if ( wormAimAngle > angle2Target ) m_worm->aimSpeed = -0.7;
+		if ( wormAimAngle < angle2Target ) m_worm->aimSpeed = aimSpeed;
+		if ( wormAimAngle > angle2Target ) m_worm->aimSpeed = -aimSpeed;
 	}else
 	{
 		m_worm->aimSpeed = 0;

@@ -25,10 +25,9 @@ using namespace std;
 
 ResourceList<ExpType> expTypeList("objects/");
 
-DetectEvent::DetectEvent( float range, bool detectOwner )
+DetectEvent::DetectEvent( float range, bool detectOwner, int detectFilter)
+	: m_detectFilter(detectFilter), m_range(range), m_detectOwner(detectOwner)
 {
-	m_range = range;
-	m_detectOwner = detectOwner;
 	event = new Event;
 }
 
@@ -160,6 +159,7 @@ bool ExpType::load(fs::path const& filename)
 					{
 						float range = 0;
 						bool detectOwner = true;
+						int detectFilter = 1;
 						iter++;
 						if( iter != tokens.end())
 						{
@@ -171,7 +171,17 @@ bool ExpType::load(fs::path const& filename)
 							detectOwner = (bool)cast<int>(*iter);
 							++iter;
 						}
-						detectRanges.push_back( new DetectEvent(range, detectOwner));
+						while ( iter != tokens.end() )
+						{
+							detectFilter = 0;
+							if ( *iter == "worms" ) detectFilter |= 1;
+							else
+							{
+								detectFilter |= (int)pow( 2.f, cast<int>(*iter) );
+							}
+							++iter;
+						}
+						detectRanges.push_back( new DetectEvent(range, detectOwner, detectFilter));
 						currEvent = detectRanges.back()->event;
 					}
 					else

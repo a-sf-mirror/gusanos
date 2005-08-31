@@ -51,6 +51,7 @@ class PartType
 	float maxSpeed;
 	int repeat;
 	float angularFriction;
+	int colLayer;
 	
 	Distortion* distortion;
 	float distortMagnitude;
@@ -66,6 +67,7 @@ class PartType
 	
 	std::vector< TimerEvent* > timer;
 	std::vector< WormDetectEvent* > detectRanges;
+	std::vector< Event* > customEvents;
 	Event *groundCollision;
 	Event *creation;
 	

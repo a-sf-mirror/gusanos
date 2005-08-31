@@ -12,6 +12,9 @@
 #include "player.h"
 #include "player_input.h"
 #include "player_options.h"
+#include "particle.h"
+#include "explosion.h"
+#include "exp_type.h"
 #include "level.h"
 #include "font.h"
 #include "gconsole.h"
@@ -452,6 +455,16 @@ BasePlayer* Game::findPlayerWithID( ZCom_NodeID ID )
 		}
 	}
 	return NULL;
+}
+
+void Game::insertParticle( Particle* particle )
+{
+	game.objects.insert( CUSTOM_COL_LAYER_START + particle->getType()->colLayer, particle->getType()->renderLayer, particle );
+}
+
+void Game::insertExplosion( Explosion* explosion )
+{
+	game.objects.insert( NO_COLLISION_LAYER, explosion->getType()->renderLayer, explosion );
 }
 
 BasePlayer* Game::addPlayer( PLAYER_TYPE type )

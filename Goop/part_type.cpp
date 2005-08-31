@@ -61,6 +61,7 @@ PartType::PartType()
 	damping = 1;
 	acceleration = 0;
 	maxSpeed = -1;
+	colLayer = 0;
 	
 	renderLayer = 1;
 	sprite = NULL;
@@ -71,6 +72,11 @@ PartType::PartType()
 	
 	groundCollision = NULL;
 	creation = NULL;
+	
+	for ( int i = 0; i < 16; ++i )
+	{
+		customEvents.push_back(NULL);
+	}
 }
 
 PartType::~PartType()
@@ -139,6 +145,7 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "acceleration" ) acceleration = cast<float>(val);
 					else if ( var == "max_speed" ) maxSpeed = cast<float>(val);
 					else if ( var == "angular_friction" ) angularFriction = cast<float>(val);
+					else if ( var == "col_layer" ) colLayer = cast<int>(val);
 					else if ( var == "sprite" ) sprite = spriteList.load(val);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
 					else if ( var == "anim_on_ground" ) animOnGround = cast<int>(val);
@@ -238,6 +245,16 @@ bool PartType::load(fs::path const& filename)
 						}
 						detectRanges.push_back( new WormDetectEvent(range, detectOwner));
 						currEvent = detectRanges.back()->event;
+					}
+					else if ( eventName == "custom_event" && iter!= tokens.end() )
+					{
+						iter++;
+						size_t eventIndex = cast<size_t>(*iter);
+						if ( eventIndex < customEvents.size() )
+						{
+							currEvent = new Event;
+							customEvents[eventIndex] = currEvent;
+						}
 					}
 					else
 					{

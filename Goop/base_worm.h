@@ -1,6 +1,7 @@
 #ifndef BASE_WORM_H
 #define BASE_WORM_H
 
+#include "zoidcom.h"
 #include "vec.h"
 #include "base_object.h"
 
@@ -91,6 +92,8 @@ public:
 	float aimSpeed; // Useless to add setters and getters for this
 	float aimAngle;
 	int luaReference;
+	
+	virtual void sendWeaponMessage( int index, ZCom_BitStream* data ) {};
 	
 protected:
 

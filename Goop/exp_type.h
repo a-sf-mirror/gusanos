@@ -18,11 +18,12 @@ class Event;
 
 struct DetectEvent
 {
-	DetectEvent( float range, bool detectOwner );
+	DetectEvent( float range, bool detectOwner, int detectFilter );
 	~DetectEvent();
 	Event* event;
 	float m_range;
 	bool m_detectOwner;
+	unsigned int m_detectFilter; // detect filters ored together, 1 is worms filter, 2^n for the custom filters with n > 0
 };
 
 class ExpType

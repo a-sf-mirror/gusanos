@@ -15,6 +15,9 @@ class PlayerAI : public BasePlayer
 	void getPath();		//Create path for AI worm to follow (to get to target)
 	void subThink();	//AI processing
 	
+	// Check if materials from my worm to the position are clear of particle_pass = false;
+	bool checkMaterialsTo( const Vec& pos ); 
+	
 	private:
 	unsigned int m_pathSteps;	//"steps" to take in A* pathfinding
 	int m_nodes[128][128];	//A* nodes
@@ -26,6 +29,9 @@ class PlayerAI : public BasePlayer
 	
 	static const int maxInaccuracy = 10;
 	static const int maxAimErrorOffset = 20;
+	static const int aimSpeed = 1;
+	
+	bool m_targetBlocked;
 	
 	bool m_movingRight;
 	bool m_movingLeft;

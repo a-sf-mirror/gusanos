@@ -32,6 +32,7 @@ void registerGameActions()
 	game.actionList["damage"] = damage;
 	game.actionList["set_alpha_fade"] = setAlphaFade;
 	game.actionList["show_firecone"] = showFirecone;
+	game.actionList["custom_event"] = runCustomEvent;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -104,7 +105,7 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 			tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
 			spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
 			spd += object->getSpd() * motionInheritance;
-			game.objects.insert(1,type->renderLayer,new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getDir(), object->getOwner() ));
+			game.insertParticle( new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getDir(), object->getOwner() ));
 		}
 
 	}
@@ -136,7 +137,7 @@ void CreateExplosion::run( BaseObject* object, BaseObject *object2, BaseWorm *wo
 {
 	if (type != NULL)
 	{
-		game.objects.insert( 1, type->renderLayer, new Explosion( type, object->getPos(), object->getOwner() ) );
+		game.insertExplosion( new Explosion( type, object->getPos(), object->getOwner() ) );
 	}
 }
 
@@ -517,5 +518,35 @@ void SetAlphaFade::run( BaseObject* object, BaseObject *object2, BaseWorm *worm,
 }
 
 SetAlphaFade::~SetAlphaFade()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* runCustomEvent( const vector< string >& params )
+{
+	return new RunCustomEvent(params);
+}
+
+RunCustomEvent::RunCustomEvent( const vector< string >& params )
+{
+	index = 0;
+	if ( params.size() > 0 )
+	{
+		index = cast<int>(params[0]);
+	}
+}
+
+void RunCustomEvent::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+{
+	if (object2)
+	{
+		object2->customEvent( index );
+	}
+}
+
+RunCustomEvent::~RunCustomEvent()
 {
 }

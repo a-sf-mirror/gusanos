@@ -1,6 +1,9 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
+#include <zoidcom.h>
+#include <stddef.h>
+
 class BaseWorm;
 class WeaponType;
 
@@ -15,17 +18,24 @@ public:
 		PRIMARY_TRIGGER,
 		SECONDARY_TRIGGER
 	};
+	
+	enum Events
+	{
+		RELOADED,
+		SHOOT,
+		OUTOFAMMO
+	};
 		
 	Weapon(WeaponType* type, BaseWorm* owner);
 	~Weapon();
 	
-	void think();
-	void focusedThink();
+	void think( bool isFocused, size_t index );
 	
 	void reset();
 	
 	void actionStart( Actions action );
 	void actionStop( Actions action );
+	void recieveMessage( ZCom_BitStream* data );
 	
 	void delay( int time );
 	BaseWorm* getOwner();
@@ -34,6 +44,9 @@ public:
 	bool reloading;
 
 private:
+	
+	void reload();
+	void outOfAmmo();
 		
 	bool primaryShooting;
 	int ammo;

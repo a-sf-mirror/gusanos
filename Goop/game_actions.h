@@ -230,4 +230,20 @@ class SetAlphaFade : public BaseAction
 		int dest;
 };
 
+BaseAction* runCustomEvent( const std::vector< std::string >& params );
+
+class RunCustomEvent : public BaseAction
+{
+	public:
+
+		RunCustomEvent( const std::vector< std::string >& params );
+		~RunCustomEvent();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+	
+		size_t index;
+};
+
 #endif  // _GAME_ACTIONS_H_

@@ -20,11 +20,15 @@ class BaseWorm;
 class BaseAction;
 class PlayerOptions;
 class WeaponType;
+class Particle;
 class PartType;
+class Explosion;
 class Font;
 
 static const int MAX_LOCAL_PLAYERS = 2;
 static const int WORMS_COLLISION_LAYER = 0;
+static const int NO_COLLISION_LAYER = 1;
+static const int CUSTOM_COL_LAYER_START = 2;
 static const int WORMS_RENDER_LAYER = 4;
 
 #define EACH_CALLBACK(i_, type_) for(std::vector<int>::iterator i_ = game.luaCallbacks.type_.begin(); \
@@ -100,6 +104,8 @@ public:
 	std::list<BasePlayer*> players;
 	
 	ObjectsList objects;
+	void insertParticle( Particle* particle );
+	void insertExplosion( Explosion* explosion );
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
 	

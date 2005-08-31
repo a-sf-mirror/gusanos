@@ -215,17 +215,22 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 	}
 	
 	//TODO: Dirt
+	//<basara> materials 0 to 64 will probably be fixed, why not use them instead of renaming what they already do?
 	level->m_materialList[1].worm_pass = true;
 	level->m_materialList[1].particle_pass = true;
+	level->m_materialList[1].draw_exps = true; // I added this coz its cute :P
 	
 	level->m_materialList[2].worm_pass = false;
 	level->m_materialList[2].particle_pass = false;
+	level->m_materialList[2].draw_exps = false;
 	
 	level->m_materialList[3].worm_pass = true;
 	level->m_materialList[3].particle_pass = false;
+	level->m_materialList[3].draw_exps = false;
 	
 	level->m_materialList[4].worm_pass = false;
 	level->m_materialList[4].particle_pass = true;
+	level->m_materialList[4].draw_exps = false;
 
 	level->loaderSucceeded();
 	return true;

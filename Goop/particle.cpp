@@ -165,6 +165,14 @@ void Particle::setAlphaFade(int frames, int dest)
 	m_alphaDest = dest;
 }
 
+void Particle::customEvent( size_t index )
+{
+	if ( index < m_type->customEvents.size() && m_type->customEvents[index] )
+	{
+		m_type->customEvents[index]->run(this);
+	}
+}
+
 void Particle::draw(BITMAP* where,int xOff, int yOff)
 {
 	if (!m_sprite)

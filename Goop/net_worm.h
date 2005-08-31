@@ -20,6 +20,7 @@ class NetWorm : public BaseWorm
 		Respawn,
 		Die,
 		ChangeWeapon,
+		WeaponMessage,
 		SYNC
 	};
 		
@@ -42,6 +43,8 @@ class NetWorm : public BaseWorm
 	void assignOwner( BasePlayer* owner);
 	void setOwnerId( ZCom_ConnID _id );
 	void sendSyncMessage( ZCom_ConnID id );
+	void sendWeaponMessage( int index, ZCom_BitStream* data );
+	
 	ZCom_NodeID getNodeID();
 	
 	void respawn();

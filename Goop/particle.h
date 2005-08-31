@@ -55,6 +55,12 @@ class Particle : public BaseObject
 	float getAngle();
 	void addAngleSpeed(float);
 	void setAlphaFade(int frames, int dest);
+	void customEvent( size_t index );
+	
+	PartType* getType()
+	{
+		return m_type;
+	}
 	
 	private:
 	

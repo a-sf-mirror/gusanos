@@ -2,6 +2,8 @@
 
 #include "vec.h"
 #include "game.h"
+#include "weapon.h"
+#include "base_worm.h"
 #include "base_object.h"
 #include "base_player.h"
 #include "player_options.h"
@@ -74,13 +76,13 @@ NetWorm::~NetWorm()
 void NetWorm::think()
 {
 	BaseWorm::think();
-	/*if ( !m_isAuthority ) */renderPos += (pos - renderPos)*0.2;
-// 	else renderPos = pos;
-	
+	renderPos += (pos - renderPos)*0.2;
+
 	++timeSinceLastUpdate;
 	
 	if ( m_node )
 	{
+	
 		while ( m_node->checkEventWaiting() )
 		{
 			ZCom_Node::eEvent type;
@@ -122,6 +124,13 @@ void NetWorm::think()
 					{
 						int weapIndex = data->getInt(16);
 						changeWeaponTo( weapIndex );
+					}
+					break;
+					case WeaponMessage:
+					{
+						size_t weapIndex = data->getInt(8);
+						if ( weapIndex < m_weapons.size() )
+							m_weapons[weapIndex]->recieveMessage( data );
 					}
 					break;
 					case SYNC:
@@ -168,12 +177,21 @@ void NetWorm::setOwnerId( ZCom_ConnID _id )
 
 void NetWorm::sendSyncMessage( ZCom_ConnID id )
 {
-	ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+	ZCom_BitStream *data = new ZCom_BitStream;
 	data->addInt(static_cast<int>(SYNC),8 );
 	data->addBool(m_isActive);
 	data->addBool(m_ninjaRope->active);
 	data->addInt( currentWeapon, 16 );
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
+}
+
+void NetWorm::sendWeaponMessage( int index, ZCom_BitStream* weaponData )
+{
+	ZCom_BitStream *data = new ZCom_BitStream;
+	data->addInt(static_cast<int>(WeaponMessage),8 );
+	data->addInt( index, 8 ); // TODO: optimize this to the smallest number possible
+	data->addBitStream( weaponData );
+	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 }
 
 ZCom_NodeID NetWorm::getNodeID()

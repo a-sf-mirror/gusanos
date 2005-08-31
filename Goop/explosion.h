@@ -18,6 +18,11 @@ class Explosion : public BaseObject
 
 		void draw(BITMAP* where,int xOff, int yOff);
 		void think();
+		
+		ExpType* getType()
+		{
+			return m_type;
+		}
 	
 	private:
 	

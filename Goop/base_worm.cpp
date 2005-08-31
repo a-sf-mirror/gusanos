@@ -467,10 +467,8 @@ void BaseWorm::think()
 		
 		for ( size_t i = 0; i < m_weapons.size(); ++i )
 		{
-			m_weapons[i]->think();
+			m_weapons[i]->think( i == currentWeapon, i );
 		}
-		
-		m_weapons[currentWeapon]->focusedThink();
 
 		if(animate)
 			m_animator->tick();
@@ -837,7 +835,7 @@ void BaseWorm::die()
 	m_timeSinceDeath = 0;
 	if ( game.deathObject )
 	{
-		game.objects.insert(1,1, new Particle( game.deathObject, pos, spd, m_dir, m_owner ));
+		game.insertParticle( new Particle( game.deathObject, pos, spd, m_dir, m_owner ) );
 	}
 }
 
