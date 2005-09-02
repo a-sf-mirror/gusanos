@@ -6,6 +6,7 @@
 #include "sprite.h"
 #include "script.h"
 #include "game.h"
+#include "glua.h"
 
 #include <allegro.h>
 #include <boost/bind.hpp>
@@ -192,8 +193,13 @@ string execScript(list<string> const& args)
 	if (args.size() >= 2)
 	{
 		list<string>::const_iterator i = args.begin();
-		Script* s = scriptLocator.load(*i++);
-		s->pushFunction(*i++);
+		string const& file = *i++;
+		string const& function = *i++;
+		Script* s = scriptLocator.load(file);
+		if(!s)
+			return "SCRIPT FILE \"" + file + "\" COULDN'T BE LOADED";
+			
+		s->pushFunction(function);
 		int params = 0;
 		for(; i != args.end(); ++i)
 		{
@@ -205,9 +211,6 @@ string execScript(list<string> const& args)
 		
 		if(result < 0)
 		{
-			i = args.begin();
-			string const& file = *i++;
-			string const& function = *i++;
 			return ( "COULDN'T EXECUTE " + file + " " + function );
 		}
 		else

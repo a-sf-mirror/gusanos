@@ -6,8 +6,8 @@
 #include "objects_list.h"
 #include "gconsole.h"
 
+#include "glua.h"
 #include "lua/bindings.h"
-#include "lua/context.h"
 #include "game.h"
 
 #include <zoidcom.h>
@@ -32,13 +32,13 @@ BasePlayer::BasePlayer()
 	m_interceptor = NULL;
 	m_isAuthority = false;
 	
-	LuaBindings::pushPlayer(this);
-	luaReference = game.lua.createReference();
+	lua.pushFullReference(*this, LuaBindings::playerMetaTable);
+	luaReference = lua.createReference();
 }
 
 BasePlayer::~BasePlayer()
 {
-	game.lua.destroyReference(luaReference);
+	lua.destroyReference(luaReference);
 	delete m_node;
 	delete m_interceptor;
 }
@@ -78,7 +78,8 @@ void BasePlayer::think()
 							BaseActions action = (BaseActions)data->getInt(8);
 							if ( ( action == FIRE ) && m_worm)
 							{
-								m_worm->aimAngle = data->getFloat(32);
+								// TODO: Pass as fixed point
+								m_worm->aimAngle = Angle((double)data->getFloat(32));
 								baseActionStart(action);
 							}
 							else baseActionStart(action);

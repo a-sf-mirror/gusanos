@@ -17,6 +17,7 @@
 #include "font.h"
 #include "gfx.h"
 
+#include "glua.h"
 #include "lua/bindings.h"
 
 #include <math.h>
@@ -25,7 +26,8 @@
 using boost::lexical_cast;
 
 BaseWorm::BaseWorm()
-	: BaseObject(), animate(false), movable(false), changing(false)
+: BaseObject(), animate(false), movable(false), changing(false)
+, aimAngle(90.0), aimSpeed(0.0)
 {
 	skin = spriteList.load("skin");
 	m_animator = new AnimLoopRight(skin,35);
@@ -41,8 +43,6 @@ BaseWorm::BaseWorm()
 	m_isActive = false;
 
 	health = 0;
-	aimAngle = 90;
-	aimSpeed = 0;
 	aimRecoilSpeed = 0;
 	
 	currentWeapon = 0;
@@ -59,13 +59,13 @@ BaseWorm::BaseWorm()
 	movingRight = false;
 	jumping = false;
 	
-	LuaBindings::pushWorm(this);
-	luaReference = game.lua.createReference();
+	lua.pushFullReference(*this, LuaBindings::wormMetaTable);
+	luaReference = lua.createReference();
 }
 
 BaseWorm::~BaseWorm()
 {
-	game.lua.destroyReference(luaReference);
+	lua.destroyReference(luaReference);
 	if ( m_animator ) delete m_animator;
 	if ( m_fireconeAnimator ) delete m_fireconeAnimator;
 	//m_ninjaRope->deleteMe = true;
@@ -400,7 +400,7 @@ void BaseWorm::processMoveAndDig(void)
 			
 			if(m_dir > 0)
 			{
-				aimSpeed = 0.f;
+				aimSpeed = 0;
 				m_dir = -1;
 			}
 			
@@ -416,7 +416,7 @@ void BaseWorm::processMoveAndDig(void)
 			
 			if(m_dir < 0)
 			{
-				aimSpeed = 0.f;
+				aimSpeed = 0;
 				m_dir = 1;
 			}
 			
@@ -447,15 +447,15 @@ void BaseWorm::think()
 		calculateAllReactionForces(next, inext);
 		
 		aimAngle += aimSpeed;
-		if(aimAngle < 0.f)
+		if(aimAngle < Angle(0.0))
 		{
-			aimAngle = 0.f;
-			aimSpeed = 0.f;
+			aimAngle = Angle(0.0);
+			aimSpeed = 0;
 		}
-		if(aimAngle > 180.f)
+		if(aimAngle > Angle(180.0))
 		{
-			aimAngle = 180.f;
-			aimSpeed = 0.f;
+			aimAngle = Angle(180.0);
+			aimSpeed = 0;
 		}
 		
 		processJumpingAndNinjaropeControls();
@@ -656,9 +656,9 @@ float BaseWorm::getHealth()
 	return health;
 }
 
-float BaseWorm::getAngle()
+Angle BaseWorm::getAngle()
 {
-	return aimAngle*m_dir;
+	return m_dir > 0 ? aimAngle : -aimAngle ;
 }
 
 int BaseWorm::getWeaponIndexOffset( int offset )
@@ -744,13 +744,13 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			if ( m_weapons[currentWeapon]->reloading )
 			{
-				Vec crosshair = angleVec(aimAngle*m_dir, 25) + renderPos - Vec(xOff, yOff);
+				Vec crosshair = Vec(getAngle(), 25.0) + renderPos - Vec(xOff, yOff);
 				float radius = m_weapons[currentWeapon]->reloadTime / (float)m_weapons[currentWeapon]->m_type->reloadTime;
 				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(255*static_cast<int>(radius), 255*(1-static_cast<int>(radius)),0));
 			}
 			else for(int i = 0; i < 10; i++)
 			{
-				Vec crosshair = angleVec(aimAngle*m_dir, rnd()*10+20) + renderPos - Vec(xOff, yOff);
+				Vec crosshair = Vec(getAngle(), rnd()*10.0+20.0) + renderPos - Vec(xOff, yOff);
 				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
 			
@@ -762,7 +762,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			if ( m_currentFirecone )
 			{
-				Vec distance = angleVec(aimAngle,m_fireconeDistance);
+				Vec distance = Vec(aimAngle, (double)m_fireconeDistance);
 				m_currentFirecone->getSprite(m_fireconeAnimator->getFrame(),aimAngle)->
 						draw(where, renderX+static_cast<int>(distance.x)*m_dir, renderY+static_cast<int>(distance.y), flipped);
 			}
@@ -814,7 +814,7 @@ void BaseWorm::respawn( const Vec& newPos)
 {
 	m_isActive = true;
 	health = 100;
-	aimAngle = 90;
+	aimAngle = Angle(90.0);
 	spd = Vec ( 0, 0 );
 	pos = newPos;
 	m_dir = 1;
@@ -856,7 +856,7 @@ void BaseWorm::damage( float amount, BasePlayer* damager )
 		health = 0;
 }
 
-void BaseWorm::addAimSpeed( float speed )
+void BaseWorm::addAimSpeed( AngleDiff speed )
 {
 	if ( m_owner )
 	if ( fabs( aimSpeed ) < m_owner->getOptions()->aimMaxSpeed )
@@ -901,7 +901,7 @@ void BaseWorm::actionStart( Actions action )
 			
 		case NINJAROPE:
 			if ( m_isActive )
-			m_ninjaRope->shoot(getWeaponPos(), angleVec(aimAngle*m_dir, game.options.ninja_rope_shootSpeed));
+			m_ninjaRope->shoot(getWeaponPos(), Vec(getAngle(), (double)game.options.ninja_rope_shootSpeed));
 		break;
 		
 		case CHANGEWEAPON:
@@ -944,4 +944,7 @@ void BaseWorm::actionStop( Actions action )
 	}
 }
 
-
+void BaseWorm::pushLuaReference()
+{
+	lua.pushReference(luaReference);
+}

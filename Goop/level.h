@@ -11,6 +11,7 @@
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <cmath>
 
 class Sprite;
 
@@ -50,6 +51,17 @@ class Level
 		return m_materialList[material->line[y][x] + 1];
 	}
 	
+	bool isInside(unsigned int x, unsigned int y)
+	{
+		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
+			return true;
+		else
+			return false;
+	}
+	
+	template<class PredT>
+	bool trace(long srcx, long srcy, long destx, long desty, PredT predicate);
+	
 	void specialDrawSprite(Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos );
 	
 	void loaderSucceeded();
@@ -66,7 +78,66 @@ class Level
 	std::vector<Material> m_materialList;
 	Encoding::VectorEncoding vectorEncoding;
 	
+	struct ParticleBlockPredicate
+	{
+		bool operator()(Material const& m)
+		{
+			return !m.particle_pass;
+		}
+	};
 };
+
+#define SIGN(x_) ((x_) < 0 ? -1 : (x_) > 0 ? 1 : 0)
+
+template<class PredT>
+bool Level::trace(long x, long y, long destx, long desty, PredT predicate)
+{
+	if(!isInside(x, y))
+	{
+		if(predicate(m_materialList[0]))
+			return true;
+		else
+		{
+			return true; //TODO: Clip the beginning of the line instead of returning
+		}
+	}
+	if(!isInside(destx, desty))
+	{
+		if(predicate(m_materialList[0]))
+			return true;
+		else
+		{
+			return true; //TODO: Clip the end of the line instead of returning
+		}
+	}
+		
+	long xdiff = destx - x;
+	long ydiff = desty - y;
+	
+	long sx = SIGN(xdiff);
+	long sy = SIGN(ydiff);
+
+	xdiff = labs(xdiff);
+	ydiff = labs(ydiff);
+	
+	#define WORK(a, b) { \
+		long i = a##diff >> 1; \
+		long c = a##diff; \
+		while(c-- >= 0) { \
+			if(predicate(unsafeGetMaterial(x, y))) return true; \
+			i -= b##diff; \
+			a += s##a; \
+			if(i < 0) b += s##b, i += a##diff; } }
+	
+	if(xdiff > ydiff)
+		WORK(x, y)
+	else
+		WORK(y, x)
+
+	#undef WORK
+
+	return false;
+}
 
 extern ResourceLocator<Level> levelLocator;
 

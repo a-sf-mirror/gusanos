@@ -4,6 +4,7 @@
 #include "zoidcom.h"
 #include "vec.h"
 #include "base_object.h"
+#include "angle.h"
 
 class BaseAnimator;
 class BasePlayer;
@@ -56,7 +57,7 @@ public:
 	virtual void think();
 	void actionStart( Actions action );
 	void actionStop( Actions action );
-	void addAimSpeed(float speed);
+	void addAimSpeed(AngleDiff speed);
 	void addRopeLength(float distance);
 	
 	Vec getPos();
@@ -79,7 +80,7 @@ public:
 	//to get the one to the right or the left or the one 1000 units to the 
 	//right ( it will wrap the value so that its always inside the worm's weapons size )
 	int getWeaponIndexOffset( int offset );
-	float getAngle();
+	Angle getAngle();
 	void setDir(char d);
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();
@@ -89,11 +90,12 @@ public:
 	
 	NinjaRope* getNinjaRopeObj();
 	
-	float aimSpeed; // Useless to add setters and getters for this
-	float aimAngle;
+	AngleDiff aimSpeed; // Useless to add setters and getters for this
+	Angle aimAngle;
 	int luaReference;
 	
-	virtual void sendWeaponMessage( int index, ZCom_BitStream* data ) {};
+	virtual void sendWeaponMessage( int index, ZCom_BitStream* data ) {}
+	virtual void pushLuaReference();
 	
 protected:
 

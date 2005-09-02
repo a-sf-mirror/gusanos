@@ -4,6 +4,7 @@
 #include "base_player.h"
 #include "worm.h"
 #include "base_object.h"
+#include "angle.h"
 
 //AI Worm Player
 class PlayerAI : public BasePlayer
@@ -22,14 +23,14 @@ class PlayerAI : public BasePlayer
 	unsigned int m_pathSteps;	//"steps" to take in A* pathfinding
 	int m_nodes[128][128];	//A* nodes
 	BaseObject* m_target;	//Target worm
-	float randomError; // I temporally use this to make it aim worse or sth.
+	Angle randomError; // I temporally use this to make it aim worse or sth.
 	
 	int m_thinkTime; // A timer to limit the amount of events it spams ( it was bad for network )
 	static const int thinkDelay = 30; // How often it will think the events part
 	
-	static const int maxInaccuracy = 10;
-	static const int maxAimErrorOffset = 20;
-	static const int aimSpeed = 1;
+	static const Angle maxInaccuracy;;
+	static const Angle maxAimErrorOffset;
+	static const Angle aimSpeed;
 	
 	bool m_targetBlocked;
 	

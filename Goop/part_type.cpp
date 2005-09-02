@@ -135,8 +135,10 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "damping" ) damping = cast<float>(val);
 					else if ( var == "acceleration" ) acceleration = cast<float>(val);
 					else if ( var == "max_speed" ) maxSpeed = cast<float>(val);
-					else if ( var == "angular_friction" ) angularFriction = cast<float>(val);
+
+					else if ( var == "angular_friction" ) angularFriction = cast<Angle>(val);
 					else if ( var == "health" ) health = cast<float>(val);
+
 					else if ( var == "col_layer" ) colLayer = cast<int>(val);
 					else if ( var == "sprite" ) sprite = spriteList.load(val);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);

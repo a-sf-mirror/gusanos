@@ -2,7 +2,7 @@
 #define VEC_H
 
 #include <cmath>
-
+#include "angle.h"
 #include <boost/random.hpp>
 
 extern boost::mt19937 rndgen;
@@ -29,6 +29,20 @@ struct BaseVec
 	: x(0), y(0)
 	{
 		
+	}
+	
+	BaseVec(Angle angle, double length)
+	{
+		double radians = angle.toRad();
+		x = sin(radians) * length;
+		y = -cos(radians) * length;
+	}
+	
+	BaseVec(Angle angle)
+	{
+		double radians = angle.toRad();
+		x = sin(radians);
+		y = -cos(radians);
 	}
 	
 	template<class T2>
@@ -132,9 +146,10 @@ struct BaseVec
 		return x*x + y*y;
 	}
 	
-	float getAngle() const
+	Angle getAngle() const
 	{
-		return rad2deg( atan2(double(x), double(-y)) );
+		// TODO: Optimize this
+		return Angle( rad2deg( atan2(double(x), double(-y)) ) );
 	}
 	
 	T x;
@@ -245,9 +260,10 @@ struct Vec
 
 typedef BaseVec<float> Vec;
 
+/*
 inline Vec angleVec( float angle, float m )
 {
 	return Vec( sin( deg2rad(angle) ) * m, -cos( deg2rad(angle) ) * m );
-}
+}*/
 
 #endif // _VEC_H_

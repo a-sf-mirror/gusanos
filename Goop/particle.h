@@ -4,6 +4,7 @@
 #include "base_object.h"
 #include "part_type.h"
 #include "vec.h"
+#include "angle.h"
 #include <vector>
 
 class Sprite;
@@ -41,21 +42,23 @@ struct PartTimer
 	
 	int count;
 	int triggerCount;
-	TimerEvent* m_tEvent;
+	TimerEvent* m_tEvent; // This could be got easily from the type
 };
 
 class Particle : public BaseObject
 {
-	public:
+public:
 		
 	Particle(PartType* type, Vec _pos = Vec(0,0), Vec _spd = Vec(0,0), int dir = 1, BasePlayer* owner = NULL);
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
-	float getAngle();
-	void addAngleSpeed(float);
+	Angle getAngle();
+	void setAngle(Angle v) { m_angle = v; }
+	void addAngleSpeed(AngleDiff);
 	void setAlphaFade(int frames, int dest);
 	void customEvent( size_t index );
+	virtual void pushLuaReference();
 	void damage(float amount, BasePlayer* damager );
 	
 	PartType* getType()
@@ -63,13 +66,13 @@ class Particle : public BaseObject
 		return m_type;
 	}
 	
-	private:
+private:
 	
-	std::vector< PartTimer > timer;
+	std::vector< PartTimer > timer; // This could cause a penalty
 	PartType* m_type;
 	float m_health;
-	float m_angle;
-	float m_angleSpeed;
+	Angle m_angle;
+	AngleDiff m_angleSpeed;
 	float m_fadeSpeed;
 	float m_alpha;
 	int m_alphaDest;

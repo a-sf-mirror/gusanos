@@ -11,6 +11,10 @@
 #include "base_object.h"
 #include "weapon.h"
 #include "worm.h"
+#include "angle.h"
+
+#include "glua.h"
+#include "script.h"
 
 #include <allegro.h>
 
@@ -33,6 +37,7 @@ void registerGameActions()
 	game.actionList["set_alpha_fade"] = setAlphaFade;
 	game.actionList["show_firecone"] = showFirecone;
 	game.actionList["custom_event"] = runCustomEvent;
+	game.actionList["run_script"] = runScript;
 	game.actionList["repel"] = repel;
 	game.actionList["damp"] = damp;
 }
@@ -47,6 +52,7 @@ BaseAction* shootParticles( const vector< string >& params )
 }
 
 ShootParticles::ShootParticles( const vector< string >& params )
+: distribution(360.0), angleOffset(0.0)
 {
 	type = NULL;
 	amount = 0;
@@ -54,8 +60,6 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	speed = 0;
 	speedVariation = 0;
 	motionInheritance = 0;
-	distribution = 360;
-	angleOffset = 0;
 	distanceOffset = 0;
 	if ( params.size() >= 1 )
 	{
@@ -83,11 +87,13 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	}
 	if( params.size() >= 7 )
 	{
-		distribution = cast<float>(params[6]);
+		//distribution = cast<float>(params[6]);
+		distribution = cast<Angle>(params[6]);
 	}
 	if( params.size() >= 8 )
 	{
-		angleOffset = cast<float>(params[7]);
+		//angleOffset = cast<float>(params[7]);
+		angleOffset = cast<AngleDiff>(params[7]);
 	}
 	if( params.size() >= 9 )
 	{
@@ -100,14 +106,16 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 	if (type != NULL)
 	{
 		Vec spd;
-		float tmpAngle;
+		Angle tmpAngle;
 		char dir = object->getDir();
-		for ( int i = 0; i < amount + rnd()*amountVariation; i++)
+		//for ( int i = 0; i < amount + rnd()*amountVariation; i++) //WTF??
+		int realAmount = amount + int(rnd()*amountVariation);
+		for ( int i = 0; i < realAmount; i++)
 		{
-			tmpAngle = object->getAngle() + angleOffset * dir + midrnd()*distribution;
-			spd = angleVec( tmpAngle, speed + midrnd()*speedVariation );
+			tmpAngle = object->getAngle() + angleOffset * dir + distribution * midrnd();
+			spd = Vec( tmpAngle, speed + midrnd()*speedVariation );
 			spd += object->getSpd() * motionInheritance;
-			game.insertParticle( new Particle( type, object->getPos() + angleVec( tmpAngle,distanceOffset) , spd, object->getDir(), object->getOwner() ));
+			game.insertParticle( new Particle( type, object->getPos() + Vec( tmpAngle, (double)distanceOffset) , spd, object->getDir(), object->getOwner() ));
 		}
 
 	}
@@ -538,11 +546,11 @@ AddAngleSpeed::AddAngleSpeed( const vector< string >& params )
 	speedVariation = 0;
 	if ( params.size() >= 1 )
 	{
-		speed = cast<float>(params[0]);
+		speed = cast<AngleDiff>(params[0]);
 	}
 	if( params.size() >= 2 )
 	{
-		speedVariation = cast<float>(params[1]);
+		speedVariation = cast<AngleDiff>(params[1]);
 	}
 }
 
@@ -550,7 +558,7 @@ void AddAngleSpeed::run( BaseObject* object, BaseObject *object2, BaseWorm *worm
 {
 	if (object)
 	{
-		object->addAngleSpeed( object->getDir()*speed + rnd()*speedVariation );
+		object->addAngleSpeed( speed*object->getDir() + speedVariation*rnd() );
 	}
 }
 
@@ -620,5 +628,54 @@ void RunCustomEvent::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 }
 
 RunCustomEvent::~RunCustomEvent()
+{
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* runScript( vector< string > const& params )
+{
+	return new RunScript(params);
+}
+
+RunScript::RunScript( vector< string > const& params )
+: function(0)
+{
+	if ( params.size() > 0 )
+	{
+		std::string const& scriptName = params[0];
+		std::string::size_type p = scriptName.find('.');
+		if(p != std::string::npos)
+		{
+			Script* s = scriptLocator.load(scriptName.substr(0, p));
+			if(s)
+			{
+				function = s->createFunctionRef(scriptName.substr(p + 1, scriptName.size() - p - 1));
+			}
+		}
+	}
+}
+
+void RunScript::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+{
+	lua.pushReference(function);
+	
+	if(object)
+		object->pushLuaReference();
+	else
+		lua_pushnil(lua);
+		
+	if(object2)
+		object2->pushLuaReference();
+	else
+		lua_pushnil(lua);
+		
+	lua.call(2, 0);
+}
+
+RunScript::~RunScript()
 {
 }

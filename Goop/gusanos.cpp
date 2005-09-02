@@ -23,11 +23,8 @@
 #include "keyboard.h"
 
 #include "script.h"
+#include "glua.h"
 
-//TEST
-/*
-#include "IoState.h"
-#include "IoObject.h"*/
 
 #if 1
 #include "menu.h"
@@ -257,7 +254,7 @@ int main(int argc, char **argv)
 
 		EACH_CALLBACK(i, afterRender)
 		{
-			game.lua.callReference(*i);
+			lua.callReference(*i);
 		}
 		
 		gfx.updateScreen();

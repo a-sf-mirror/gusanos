@@ -206,12 +206,12 @@ void NinjaRope::think()
 	}
 }
 
-float NinjaRope::getAngle()
+Angle NinjaRope::getAngle()
 {
 	return m_angle;
 }
 
-void NinjaRope::addAngleSpeed( float speed )
+void NinjaRope::addAngleSpeed( AngleDiff speed )
 {
 	m_angleSpeed += speed;
 }
@@ -234,12 +234,13 @@ void NinjaRope::draw(BITMAP* where,int xOff, int yOff)
 			putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
 		else
 		{
-			if ( m_angle < 180 )
+			if ( m_angle < Angle(180.0) )
 			{
-				m_sprite->getSprite(m_animator->getFrame(),m_angle)->draw(where,static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
-			}else
+				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where,static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
+			}
+			else
 			{
-				m_sprite->getSprite(m_animator->getFrame(),360-m_angle)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), true);
+				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), true);
 			}
 		}
 		if (m_type->distortion)

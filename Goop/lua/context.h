@@ -20,6 +20,10 @@ public:
 	
 	LuaContext(istream& stream);
 	
+	LuaContext(lua_State* state_);
+	
+	void init();
+	
 	void reset();
 	
 	static const char * istreamChunkReader(lua_State *L, void *data, size_t *size);
@@ -35,6 +39,18 @@ public:
 	void push(const char* v);
 	
 	void push(int v);
+	
+	void push(bool v);
+	
+	template<class T>
+	void pushFullReference(T& x, int metatable)
+	{
+		T** i = (T **)lua_newuserdata (m_State, sizeof(T *));
+		*i = &x;
+		pushReference(metatable);
+		
+		lua_setmetatable(m_State, -2);
+	}
 	
 	int callReference(int ref);
 	
@@ -103,7 +119,7 @@ public:
 	
 private:
 	lua_State *m_State;
-	int        m_FirstFreeRef;
+	bool m_borrowed;
 };
 
 #endif //LUA_CONTEXT_H

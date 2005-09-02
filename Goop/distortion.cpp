@@ -81,7 +81,7 @@ DistortionMap* spinMap(int radius)
 			{
 				factor = 1 - delta.length() / radius;
 				
-				Vec newPos = angleVec( delta.getAngle() + 180 * factor, delta.length());
+				Vec newPos = Vec( delta.getAngle() + Angle(180.0 * factor), delta.length());
 				
 				spin->map.push_back( newPos - delta );
 			}else
@@ -127,7 +127,7 @@ DistortionMap* randomMap(int radius)
 	for ( int y = 0; y < radius*2; ++y )
 	for ( int x = 0; x < radius*2; ++x )
 	{
-		lens->map.push_back( angleVec(rnd()*360, rnd() * 2 ) );
+		lens->map.push_back( Vec(Angle(rnd()*360.0), rnd() * 2.0 ) );
 	}
 	lens->width = radius*2;
 	return lens;

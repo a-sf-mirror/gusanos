@@ -4,6 +4,7 @@
 #include "sfx.h"
 #include "base_worm.h"
 #include "base_player.h"
+#include "glua.h"
 #include "lua/bindings.h"
 //#include "culling.h"
 #include <list>
@@ -17,13 +18,13 @@ Viewport::Viewport()
 {
 	m_dest = NULL;
 	
-	LuaBindings::pushViewport(this);
-	luaReference = game.lua.createReference();
+	lua.pushFullReference(*this, LuaBindings::viewportMetaTable);
+	luaReference = lua.createReference();
 }
 
 Viewport::~Viewport()
 {
-	game.lua.destroyReference(luaReference);
+	lua.destroyReference(luaReference);
 	destroy_bitmap(m_dest);
 	sfx.freeListener(m_listener);
 }
@@ -127,7 +128,8 @@ void Viewport::render(BasePlayer* player)
 				Vec renderPos = worm->getRenderPos();
 				int x = (int)renderPos.x - offX;
 				int y = (int)renderPos.y - offY;
-				game.lua.callReference(*i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference);
+				bool ownViewport = (*playerIter == player);
+				lua.callReference(*i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference);
 			}
 		}
 		
@@ -135,7 +137,7 @@ void Viewport::render(BasePlayer* player)
 	
 	EACH_CALLBACK(i, viewportRender)
 	{
-		game.lua.callReference(*i, luaReference, player->getWorm()->luaReference);
+		lua.callReference(*i, luaReference, player->getWorm()->luaReference);
 	}
 }
 

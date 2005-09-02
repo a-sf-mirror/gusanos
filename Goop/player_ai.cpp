@@ -8,6 +8,10 @@
 #include <list>
 #include <cmath>
 
+const Angle PlayerAI::maxInaccuracy(10.0);
+const Angle PlayerAI::maxAimErrorOffset(20.0);
+const Angle PlayerAI::aimSpeed(1.0);
+
 // Code stolen from allegro line to check if the straight line towards target is all clear.
 // returns true if the line was blocked somewhere
 bool check_materials( int x1, int y1, int x2, int y2 ) 
@@ -114,7 +118,7 @@ void PlayerAI::getTarget()
 	m_targetBlocked = true;
 	float tmpDist = -1;
 	ObjectsList::ColLayerIterator worm;
-	for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
+	for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); worm; ++worm)
 	{
 		BaseWorm *tmpWorm;
 		if ( (*worm)->getOwner() != this )
@@ -183,13 +187,16 @@ void PlayerAI::subThink()
 		randomError = maxAimErrorOffset * midrnd();
 		
 		Vec tmpVec = ( target - pos );
-		if ( tmpVec.x < 0 ) tmpVec.x *= -1;
-		float angle2Target = tmpVec.getAngle();
-		float wormAimAngle = m_worm->aimAngle + randomError;
+		if ( tmpVec.x < 0 ) tmpVec.x = -tmpVec.x;
+		Angle angle2Target = tmpVec.getAngle();
+		Angle wormAimAngle = m_worm->aimAngle + randomError;
+		
+		AngleDiff targetAngleDiff = wormAimAngle.relative(angle2Target);
 		
 		if ( !m_targetBlocked )
 		{
-			if ( wormAimAngle - maxInaccuracy < angle2Target && wormAimAngle + maxInaccuracy > angle2Target )
+			//if ( wormAimAngle - maxInaccuracy < angle2Target && wormAimAngle + maxInaccuracy > angle2Target )
+			if( abs(targetAngleDiff) < maxInaccuracy )
 			{
 				baseActionStart(FIRE);
 				m_shooting = true;
@@ -226,21 +233,26 @@ void PlayerAI::subThink()
 
 	}
 	if ( m_worm )
-	if ( m_target )
 	{
-		Vec pos = m_worm->getPos();		//AI position
-		Vec target = m_target->getPos();	//Target position
-		
-		Vec tmpVec = ( target - pos );
-		if ( tmpVec.x < 0 ) tmpVec.x *= -1;
-		float angle2Target = tmpVec.getAngle();
-		float wormAimAngle = m_worm->aimAngle + randomError;
-		
-		if ( wormAimAngle < angle2Target ) m_worm->aimSpeed = aimSpeed;
-		if ( wormAimAngle > angle2Target ) m_worm->aimSpeed = -aimSpeed;
-	}else
-	{
-		m_worm->aimSpeed = 0;
+		if ( m_target )
+		{
+			Vec pos = m_worm->getPos();		//AI position
+			Vec target = m_target->getPos();	//Target position
+			
+			Vec tmpVec = ( target - pos );
+			if ( tmpVec.x < 0 ) tmpVec.x = -tmpVec.x;
+			Angle angle2Target = tmpVec.getAngle();
+			Angle wormAimAngle = m_worm->aimAngle + randomError;
+			
+			AngleDiff targetAngleDiff = wormAimAngle.relative(angle2Target);
+			
+			if ( targetAngleDiff > 0 ) m_worm->aimSpeed = aimSpeed;
+			if ( targetAngleDiff < 0 ) m_worm->aimSpeed = -aimSpeed;
+		}
+		else
+		{
+			m_worm->aimSpeed = 0;
+		}
 	}
 }
 

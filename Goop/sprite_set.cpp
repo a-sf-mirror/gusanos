@@ -103,15 +103,21 @@ Sprite* SpriteSet::getSprite( int frame )
 	return m_frame[0][frame];
 }
 
-Sprite* SpriteSet::getSprite( int frame, float angle )
+Sprite* SpriteSet::getSprite( int frame, Angle angle )
 {
+	angle.clamp();
 	if ( frame > static_cast<int>(m_frame[0].size()) )
 	{
 		frame = 0;
 	}
-	float angleDivisionSize = 180 / m_frame.size();
-	size_t angleFrame = static_cast<size_t>((angle + angleDivisionSize / 2) * (m_frame.size()-1) / 180);
-	if ( angleFrame > m_frame.size() )
+	/*
+	float angleDivisionSize = Angle(180.0) / m_frame.size();
+	size_t angleFrame = static_cast<size_t>((angle + angleDivisionSize / 2) * (m_frame.size()-1) / 180);*/
+	
+	double angleDivisionSize = double(Angle(180.0)) / m_frame.size();
+	size_t angleFrame = static_cast<size_t>((m_frame.size() - 1) * (double(angle) + angleDivisionSize / 2) / double(Angle(180.0)));
+
+	if ( angleFrame >= m_frame.size() )
 	{
 		angleFrame = m_frame.size()-1;
 	}

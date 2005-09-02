@@ -1,26 +1,42 @@
 #include "context.h"
 
 #define FREELIST_REF 0
+#define ARRAY_SIZE   1
 
 LuaContext::LuaContext()
-: m_FirstFreeRef(1)
+: m_borrowed(false)
 {
-	m_State = lua_open();
+	init();
 }
 
 LuaContext::LuaContext(istream& stream)
-: m_FirstFreeRef(1)
+: m_borrowed(false)
+{
+	init();
+	load(stream);
+}
+
+LuaContext::LuaContext(lua_State* state_)
+: m_borrowed(true), m_State(state_)
+{
+
+}
+
+void LuaContext::init()
 {
 	m_State = lua_open();
-	load(stream);
+	lua_pushnumber(m_State, 2);
+	lua_rawseti(m_State, LUA_REGISTRYINDEX, ARRAY_SIZE);
 }
 
 void LuaContext::reset()
 {
+	if(m_borrowed)
+		return;
+		
 	if(m_State)
 		lua_close(m_State);
-	m_State = lua_open();
-	m_FirstFreeRef = 1;
+	init();
 }
 
 const char * LuaContext::istreamChunkReader(lua_State *L, void *data, size_t *size)
@@ -141,6 +157,11 @@ void LuaContext::push(int v)
 	pushReference(v);
 }
 
+void LuaContext::push(bool v)
+{
+	lua_pushboolean(m_State, v);
+}
+
 int LuaContext::callReference(int ref)
 {
 	pushReference(ref);
@@ -158,13 +179,6 @@ void LuaContext::function(char const* name, lua_CFunction func)
 
 int LuaContext::createReference()
 {
-	/*
-	int ref = m_FirstFreeRef;
-	//lua_pushvalue(m_State, idx);
-	lua_rawseti(m_State, LUA_REGISTRYINDEX, ref);
-	++m_FirstFreeRef;
-	return ref;*/
-	
 	int ref;
 	int t = LUA_REGISTRYINDEX;
 	lua_rawgeti(m_State, t, FREELIST_REF);
@@ -172,14 +186,16 @@ int LuaContext::createReference()
 	lua_settop(m_State, -2);
 	if(ref != 0)
 	{
-		cerr << "Assigning reused reference " << ref << endl;
 		lua_rawgeti(m_State, t, ref);
 		lua_rawseti(m_State, t, FREELIST_REF);
 	}
 	else
 	{
-		ref = m_FirstFreeRef++;
-		cerr << "Assigning reference " << ref << endl;
+		lua_rawgeti(m_State, t, ARRAY_SIZE);
+		ref = (int)lua_tonumber(m_State, -1);
+		lua_pushnumber(m_State, ref + 1);
+		lua_rawseti(m_State, t, ARRAY_SIZE);
+		lua_settop(m_State, -2);
 	}
 	
 	lua_rawseti(m_State, t, ref);
@@ -206,6 +222,6 @@ void LuaContext::pushReference(int ref)
 
 LuaContext::~LuaContext()
 {
-	if(m_State)
+	if(m_State && !m_borrowed)
 		lua_close(m_State);
 }

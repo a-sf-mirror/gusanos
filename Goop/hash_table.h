@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <string>
+#include <cstddef>
 
 typedef unsigned long Hash;
 
@@ -11,7 +12,7 @@ struct hash
 {
 	Hash operator()(T const& key) const
 	{
-		return key;
+		return Hash(key);
 	}
 };
 
@@ -67,6 +68,8 @@ struct HashIndex : public std::pair<const KeyT, ValueT>
 	HashIndex* next;
 };
 
+extern unsigned long tableSizes[18];
+
 template<class KeyT, class ValueT, class HashFunc = hash<KeyT> >
 class HashTable
 {
@@ -104,14 +107,30 @@ public:
 		IndexT* slot;
 	};
 	
-	HashTable(unsigned long initialSize = 13)
-	: indexCount(initialSize)
+	HashTable(size_t initialSizeOrder = 3)
+	: count(0), sizeOrder(initialSizeOrder)
 	{
+		if(sizeOrder > 17)
+			sizeOrder = 17;
+
+		indexCount = tableSizes[sizeOrder];
 		index = new IndexT*[indexCount];
+		
+		for(size_t i = 0; i < indexCount; ++i)
+			index[i] = 0;
 	}
 	
 	~HashTable()
 	{
+		for(size_t i = 0; i < indexCount; ++i)
+		{
+			for(IndexT* slot = index[i]; slot;)
+			{
+				IndexT* next = slot->next;
+				delete slot;
+				slot = next;
+			}
+		}
 		delete [] index;
 	}
 	
@@ -149,6 +168,9 @@ public:
 	
 	iterator insert(KeyT const& key)
 	{
+		if(++count > indexCount)
+			enlarge();
+			
 		size_t idx = hashFunc(key) % indexCount;
 		IndexT* slot = index[idx];
 		
@@ -172,13 +194,47 @@ public:
 	}
 	
 private:
+	void enlarge()
+	{
+		if(sizeOrder >= 17)
+			return; // Max size already
+			
+		IndexT** oldTable = index;
+		Hash     oldCount = indexCount;
+		
+		indexCount = tableSizes[++sizeOrder];
+		index = new IndexT*[indexCount];
+		
+		for(size_t i = 0; i < indexCount; ++i)
+			index[i] = 0;
+		
+		// Move old entries to the new table
+		for(size_t i = 0; i < oldCount; ++i)
+		{
+			for(IndexT* slot = oldTable[i]; slot;)
+			{
+				IndexT* next = slot->next;
+				size_t idx = hashFunc(slot->first) % indexCount;
+				IndexT* dest = index[idx];
+				slot->next = dest;
+				index[idx] = slot;
+				
+				slot = next;
+			}
+		}
+		
+		delete [] oldTable;
+	}
+	
 	IndexT* getIndex(KeyT const& key) const
 	{
 		return index[hashFunc(key) % indexCount];
 	}
 	
 	IndexT**   index;
+	size_t     count;
 	Hash       indexCount;
+	size_t     sizeOrder;
 	hash<KeyT> hashFunc;
 };
 

@@ -5,6 +5,7 @@
 #include "gfx.h"
 #include "events.h"
 #include "distortion.h"
+#include "angle.h"
 
 #include <allegro.h>
 #include <string>
@@ -42,7 +43,7 @@ class PartType
 	float acceleration;
 	float maxSpeed;
 	int repeat;
-	float angularFriction;
+	AngleDiff angularFriction;
 	int colLayer;
 	float health;
 	

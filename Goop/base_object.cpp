@@ -1,14 +1,18 @@
 #include "base_object.h"
 #include "vec.h"
 #include "base_player.h"
+#include "glua.h"
+#include "lua/bindings.h"
 
 BaseObject::BaseObject( BasePlayer* owner, int dir ) :
-	deleteMe(false), m_dir(dir), m_owner(owner)
+	deleteMe(false), luaData(0), m_dir(dir), m_owner(owner)
 {
 }
 
 BaseObject::~BaseObject()
 {
+	if(luaData)
+		lua.destroyReference(luaData);
 }
 
 Vec BaseObject::getPos()
@@ -26,9 +30,9 @@ Vec BaseObject::getSpd()
 	return spd;
 }
 
-float BaseObject::getAngle()
+Angle BaseObject::getAngle()
 {
-	return 0;
+	return Angle(0);
 }
 
 int BaseObject::getDir()
@@ -55,4 +59,9 @@ void BaseObject::removeRefsToPlayer(BasePlayer* player)
 {
 	if ( m_owner == player )
 		m_owner = NULL;
+}
+
+void BaseObject::pushLuaReference()
+{
+	lua.pushFullReference(*this, LuaBindings::baseObjectMetaTable);
 }

@@ -2,6 +2,7 @@
 #define base_object_h
 
 #include "vec.h"
+#include "angle.h"
 
 //#include <allegro.h>
 struct BITMAP;
@@ -10,7 +11,7 @@ class BasePlayer;
 
 class BaseObject 
 {
-	public:
+public:
 		
 	BaseObject( BasePlayer* owner = NULL, int dir = 1 );
 	virtual ~BaseObject();
@@ -22,15 +23,17 @@ class BaseObject
 	virtual Vec getRenderPos();
 	virtual Vec getSpd();
 	virtual BasePlayer* getOwner();
-	virtual float getAngle();
+	virtual Angle getAngle();
 	virtual int getDir();
-	virtual void addAngleSpeed( float speed ) {}
+	virtual void addAngleSpeed( AngleDiff speed ) {}
 	virtual void remove();
 	virtual bool isCollidingWith( const Vec& point, float radius );
 	virtual void removeRefsToPlayer( BasePlayer* player );
-	virtual void setAlphaFade( int frames, int dest ) {};
-	virtual void customEvent ( size_t index ) {};
-	virtual void damage(float amount, BasePlayer* damager ) {};
+	virtual void setAlphaFade( int frames, int dest ) {}
+	virtual void customEvent ( size_t index ) {}
+	virtual void pushLuaReference();
+	virtual void damage(float amount, BasePlayer* damager ) {}
+
 	
 	void addSpeed( Vec spd_ )
 	{ spd += spd_; }
@@ -40,7 +43,9 @@ class BaseObject
 	Vec pos;
 	Vec spd;
 	
-	protected:
+	int luaData;
+	
+protected:
 	
 	int m_dir;
 	BasePlayer* m_owner;

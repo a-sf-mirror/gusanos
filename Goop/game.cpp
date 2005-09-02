@@ -34,6 +34,7 @@
 #include "loaders/lierox.h"
 #include "loaders/liero.h"
 #include "loaders/losp.h"
+#include "glua.h"
 #include "lua/bindings.h"
 
 #include <allegro.h>
@@ -537,27 +538,4 @@ unsigned long Game::stringToIndex(std::string const& str)
 std::string const& Game::indexToString(unsigned long idx)
 {
 	return indexToStringMap[idx];
-}
-
-
-void Game::LuaCallbacks::bind(std::string callback, std::string file, std::string function)
-{
-	Script* s = scriptLocator.load(file);
-	int ref = s->createFunctionRef(function);
-	if(callback == "afterRender")
-		afterRender.push_back(ref);
-	else if(callback == "afterUpdate")
-		afterUpdate.push_back(ref);
-}
-
-void Game::LuaCallbacks::bind(std::string callback, int ref)
-{
-	if(callback == "afterRender")
-		afterRender.push_back(ref);
-	else if(callback == "afterUpdate")
-		afterUpdate.push_back(ref);
-	else if(callback == "wormRender")
-		wormRender.push_back(ref);
-	else if(callback == "viewportRender")
-		viewportRender.push_back(ref);
 }

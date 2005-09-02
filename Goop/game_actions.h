@@ -2,6 +2,7 @@
 #define GAME_ACTIONS_H
 
 #include "base_action.h"
+#include "angle.h"
 #include <string>
 #include <vector>
 
@@ -34,8 +35,8 @@ class ShootParticles : public BaseAction
 	float motionInheritance;
 	float speed;
 	float speedVariation;
-	float distribution;
-	float angleOffset;
+	Angle distribution;
+	AngleDiff angleOffset;
 	float distanceOffset;
 };
 
@@ -241,8 +242,8 @@ class AddAngleSpeed : public BaseAction
 
 	private:
 	
-	float speed;
-	float speedVariation;
+	AngleDiff speed;
+	AngleDiff speedVariation;
 };
 
 BaseAction* setAlphaFade( const std::vector< std::string >& params );
@@ -276,6 +277,22 @@ class RunCustomEvent : public BaseAction
 	private:
 	
 		size_t index;
+};
+
+BaseAction* runScript( std::vector< std::string > const& params );
+
+class RunScript : public BaseAction
+{
+public:
+
+	RunScript( std::vector< std::string > const& params );
+	~RunScript();
+
+	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+private:
+
+	int function;
 };
 
 #endif  // _GAME_ACTIONS_H_

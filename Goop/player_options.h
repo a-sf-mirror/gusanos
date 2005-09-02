@@ -2,15 +2,16 @@
 #define PLAYER_OPTIONS_H
 
 #include <string>
+#include "angle.h"
 
 struct PlayerOptions
 {
 	PlayerOptions();
 	void registerInConsole(int index);
 	
-	float aimAcceleration;
+	AngleDiff aimAcceleration;
 	float aimFriction;
-	float aimMaxSpeed;
+	AngleDiff aimMaxSpeed;
 	float viewportFollowFactor;
 	float ropeAdjustSpeed;
 	int colour;

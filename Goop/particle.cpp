@@ -11,6 +11,8 @@
 #include "sprite_set.h"
 #include "base_animator.h"
 #include "animators.h"
+#include "glua.h"
+#include "lua/bindings.h"
 #include "detect_event.h"
 
 #include <vector>
@@ -66,37 +68,41 @@ void Particle::think()
 			if ( deleteMe ) break;
 		}
 	
-		spd.y+=m_type->gravity;
+		spd.y += m_type->gravity;
 		
 		if ( m_type->acceleration )
 		{
-			if ( spd.dotProduct(angleVec(m_angle,1)) < m_type->maxSpeed || m_type->maxSpeed < 0)
-				spd+= angleVec(m_angle,m_type->acceleration);
+			// TODO: Cache the angle vector?
+			if ( spd.dotProduct(Vec(m_angle)) < m_type->maxSpeed || m_type->maxSpeed < 0)
+				spd += Vec(m_angle, (double)m_type->acceleration); //angleVec(m_angle, m_type->acceleration);
 		}
-		
-		spd*=m_type->damping;
+				
+		spd *= m_type->damping;
 		
 		bool collision = false;
-		if ( !game.level.getMaterial( (int)(pos.x+spd.x), (int)pos.y ).particle_pass)
+		if ( !game.level.getMaterial( (int)(pos.x + spd.x), (int)pos.y ).particle_pass)
 		{
-			spd.x *= -m_type->bounceFactor;
+			spd.x *= -m_type->bounceFactor; // TODO: Precompute the negative of this
 			spd.y *= m_type->groundFriction;
 			collision = true;
 		}
-		if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y+spd.y) ).particle_pass)
+		if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y) ).particle_pass)
 		{
-			spd.y*=-m_type->bounceFactor;
-			spd.x*=m_type->groundFriction;
+			spd.y *= -m_type->bounceFactor; // TODO: Precompute the negative of this
+			spd.x *= m_type->groundFriction;
 			collision = true;
 		}
 		if( collision )
 		{
-			if ( m_type->groundCollision != NULL )
-					m_type->groundCollision->run(this);
+			if ( m_type->groundCollision )
+			{
+				m_type->groundCollision->run(this);
+				if ( deleteMe ) break;
+			}
 			if ( !m_type->animOnGround && m_animator )
 				m_animator->freeze(5); //I GOT DEFEATED!
 		}
-		if ( deleteMe ) break;
+		// "if ( deleteMe ) break;" moved from here because the flag can only be set if an event is ran
 		
 		for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
 		{
@@ -106,29 +112,32 @@ void Particle::think()
 		
 		for ( vector< PartTimer >::iterator t = timer.begin(); t != timer.end(); t++)
 		{
-			if ( (*t).tick() )
+			if ( t->tick() )
 			{
-				(*t).m_tEvent->event->run(this);
+				t->m_tEvent->event->run(this);
 			}
 			if ( deleteMe ) break;
 		}
-		if ( deleteMe ) break;
+		//if ( deleteMe ) break; // Useless
 		
 		if ( justCreated && m_type->creation )
 		{
 			m_type->creation->run(this);
 			justCreated = false;
+			if ( deleteMe ) break;
 		}
-		if ( deleteMe ) break;
+		//if ( deleteMe ) break; // Useless
 
 		
-		if ( abs(m_angleSpeed) < m_type->angularFriction ) m_angleSpeed = 0;
-		else if ( m_angleSpeed < 0 ) m_angleSpeed += m_type->angularFriction;
-		else m_angleSpeed -= m_type->angularFriction;
+		if(m_type->angularFriction)
+		{
+			if ( abs(m_angleSpeed) < m_type->angularFriction ) m_angleSpeed = 0;
+			else if ( m_angleSpeed < 0 ) m_angleSpeed += m_type->angularFriction;
+			else m_angleSpeed -= m_type->angularFriction;
+		}
 		
 		m_angle += m_angleSpeed;
-		while ( m_angle > 360 ) m_angle -= 360;
-		while ( m_angle < 0 ) m_angle += 360;
+		m_angle.clamp();
 		
 		//Position update
 		pos = pos + spd;
@@ -139,22 +148,23 @@ void Particle::think()
 		// Alpha Fade
 		if ( m_type->blender != NONE && m_fadeSpeed )
 		{
-			if ( fabs(m_alphaDest-m_alpha) < fabs(m_fadeSpeed) )
+			if ( fabs(m_alphaDest - m_alpha) < fabs(m_fadeSpeed) )
 			{
 				m_fadeSpeed = 0;
 				m_alpha = m_alphaDest;
-			}else
+			}
+			else
 				m_alpha += m_fadeSpeed;
 		}
 	}
 }
 
-float Particle::getAngle()
+Angle Particle::getAngle()
 {
 	return m_angle;
 }
 
-void Particle::addAngleSpeed( float speed )
+void Particle::addAngleSpeed( AngleDiff speed )
 {
 	m_angleSpeed += speed;
 }
@@ -190,7 +200,7 @@ void Particle::draw(BITMAP* where,int xOff, int yOff)
 		else putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
 	else
 	{
-		if ( m_angle < 180 )
+		if ( m_angle < Angle(180.0) )
 		{
 			if ( m_type->blender == NONE )
 				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
@@ -199,13 +209,18 @@ void Particle::draw(BITMAP* where,int xOff, int yOff)
 		}else
 		{
 			if ( m_type->blender == NONE )
-				m_sprite->getSprite(m_animator->getFrame(), 360-m_angle)->draw(where, (int)pos.x-xOff, (int)pos.y-yOff, true);
+				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, (int)pos.x-xOff, (int)pos.y-yOff, true);
 			else
-				m_sprite->getSprite(m_animator->getFrame(), 360-m_angle)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, true, 0, m_type->blender);
+				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, true, 0, m_type->blender);
 		}
 	}
 	if (m_type->distortion)
 	{
 		m_type->distortion->apply( where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_type->distortMagnitude );
 	}
+}
+
+void Particle::pushLuaReference()
+{
+	lua.pushFullReference(*this, LuaBindings::particleMetaTable);
 }

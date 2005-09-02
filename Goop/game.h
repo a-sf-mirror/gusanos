@@ -5,7 +5,6 @@
 //#include "base_object.h"
 //#include "base_action.h"
 #include "objects_list.h"
-#include "lua/context.h"
 #include "hash_table.h"
 
 #include <allegro.h>
@@ -31,9 +30,7 @@ static const int NO_COLLISION_LAYER = 1;
 static const int CUSTOM_COL_LAYER_START = 2;
 static const int WORMS_RENDER_LAYER = 4;
 
-#define EACH_CALLBACK(i_, type_) for(std::vector<int>::iterator i_ = game.luaCallbacks.type_.begin(); \
-			i_ != game.luaCallbacks.type_.end(); ++i_)
-			
+		
 class Player;
 
 struct Options
@@ -128,18 +125,6 @@ public:
 	}*/
 	
 	Font *infoFont;
-	LuaContext lua;
-	
-	struct LuaCallbacks
-	{
-		void bind(std::string callback, std::string file, std::string function);
-		void bind(std::string callback, int ref);
-		std::vector<int> atGameStart;
-		std::vector<int> afterRender;
-		std::vector<int> afterUpdate;
-		std::vector<int> wormRender;
-		std::vector<int> viewportRender;
-	} luaCallbacks;
 	
 	HashTable<std::string, unsigned long> stringToIndexMap;
 	std::vector<std::string> indexToStringMap;

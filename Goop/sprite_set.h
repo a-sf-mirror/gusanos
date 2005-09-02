@@ -2,7 +2,7 @@
 #define SPRITE_SET_H
 
 #include "resource_list.h"
-
+#include "angle.h"
 #include <allegro.h>
 #include <string>
 #include <vector>
@@ -20,7 +20,7 @@ public:
 
 	bool load(fs::path const& filename);
 	
-	Sprite* getSprite( int frame, float angle );
+	Sprite* getSprite( int frame, Angle angle );
 	Sprite* getSprite( int frame = 0 );
 
 	inline int getFramesWidth()

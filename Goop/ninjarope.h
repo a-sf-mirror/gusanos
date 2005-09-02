@@ -5,6 +5,7 @@
 #include "events.h"
 //#include "part_type.h"
 #include "vec.h"
+#include "angle.h"
 #include <vector>
 
 class SpriteSet;
@@ -34,8 +35,8 @@ public:
 
 	void draw(BITMAP* where, int xOff, int yOff);
 	void think();
-	float getAngle();
-	void addAngleSpeed(float);
+	Angle getAngle();
+	void addAngleSpeed(AngleDiff);
 	
 	void addLength(float length_)
 	{
@@ -54,8 +55,8 @@ private:
 	
 	std::vector< NRTimer > timer;
 	PartType* m_type;
-	float m_angle;
-	float m_angleSpeed;
+	Angle m_angle;
+	AngleDiff m_angleSpeed;
 	float m_length;
 	SpriteSet* m_sprite;
 	BaseObject* m_worm;

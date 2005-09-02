@@ -2,6 +2,7 @@
 
 #include "../base_player.h"
 #include "../base_worm.h"
+#include "../particle.h"
 #include "../gconsole.h"
 #include "../game.h"
 #include "../vec.h"
@@ -13,6 +14,7 @@
 #include "../viewport.h"
 #include "../menu.h"
 #include "../network.h"
+#include "../glua.h"
 #include "omfggui.h"
 #include "omfggui_windows.h"
 #include <cmath>
@@ -35,32 +37,23 @@ int playerIterator = 0;
 int playerMetaTable = 0;
 int fontMetaTable = 0;
 int wormMetaTable = 0;
+int baseObjectMetaTable = 0;
+int particleMetaTable = 0;
 int viewportMetaTable = 0;
+int partTypeMetaTable = 0;
 std::vector<int> guiWndMetaTable;
 
 template<class T>
 inline void pushFullReference(T& x)
 {
-	T** i = (T **)lua_newuserdata (game.lua, sizeof(T*));
+	T** i = (T **)lua_newuserdata (lua, sizeof(T*));
 	*i = &x;
-}
-
-template<class T>
-inline void pushFullReference(T& x, int metatable)
-{
-	T** i = (T **)lua_newuserdata (game.lua, sizeof(T*));
-	*i = &x;
-	game.lua.pushReference(metatable);
-	if(!lua_istable(game.lua, -1))
-		cerr << "Metatable is not a table!" << endl;
-	if(!lua_setmetatable(game.lua, -2))
-		cerr << "Couldn't set metatable!" << endl;
 }
 
 template<class T>
 inline void pushObject(T const& x)
 {
-	T* i = (T *)lua_newuserdata (game.lua, sizeof(T));
+	T* i = (T *)lua_newuserdata (lua, sizeof(T));
 	*i = x;
 }
 
@@ -75,7 +68,8 @@ inline lua_Number luaL_checknumber(lua_State *L, int narg)
 int print(lua_State* L)
 {
 	const char* s = lua_tostring(L, 1);
-	console.addLogMsg(s);
+	//console.addLogMsg(s);
+	cerr << "LUA: " << s << endl;
 	
 	return 0;
 }
@@ -86,15 +80,15 @@ int l_bind(lua_State* L)
 	const char* callback = lua_tostring(L, 1);
 	const char* file = lua_tostring(L, 2);
 	const char* function = lua_tostring(L, 3);
-	game.luaCallbacks.bind(callback, file, function);*/
+	luaCallbacks.bind(callback, file, function);*/
 	
 	char const* s = lua_tostring(L, 2);
 	if(!s)
 		return 0;
 		
 	lua_pushvalue(L, 3);
-	int ref = game.lua.createReference();
-	game.luaCallbacks.bind(s, ref);
+	int ref = lua.createReference();
+	luaCallbacks.bind(s, ref);
 
 	return 0;
 }
@@ -130,7 +124,7 @@ int l_randomfloat(lua_State* L)
 	
 	return 1;
 }
-
+/*
 int l_vector(lua_State* L)
 {
 	Vec& vec = *(Vec *)lua_newuserdata (L, sizeof(Vec));
@@ -178,6 +172,117 @@ int l_vector_length(lua_State* L)
 
 	return 1;
 }
+*/
+
+int l_vector_diff(lua_State* L)
+{
+	lua_pushnumber(L, lua_tonumber(L, 3) - lua_tonumber(L, 1));
+	lua_pushnumber(L, lua_tonumber(L, 4) - lua_tonumber(L, 2));
+	
+	return 2;
+}
+
+int l_vector_distance(lua_State* L)
+{
+	lua_Number vx = lua_tonumber(L, 3) - lua_tonumber(L, 1);
+	lua_Number vy = lua_tonumber(L, 4) - lua_tonumber(L, 2);
+	vx *= vx;
+	vy *= vy;
+	lua_pushnumber(L, sqrt(vx + vy));
+	
+	return 1;
+}
+
+int l_vector_direction(lua_State* L)
+{
+	lua_Number vx = lua_tonumber(L, 3) - lua_tonumber(L, 1);
+	lua_Number vy = lua_tonumber(L, 4) - lua_tonumber(L, 2);
+
+	lua_pushnumber(L, rad2deg(atan2(vx, -vy)) );
+	
+	return 1;
+}
+
+int l_vector_add(lua_State* L)
+{
+	lua_pushnumber(L, lua_tonumber(L, 1) + lua_tonumber(L, 3));
+	lua_pushnumber(L, lua_tonumber(L, 2) + lua_tonumber(L, 4));
+	
+	return 2;
+}
+
+
+
+int l_angle_diff(lua_State* L)
+{
+	//lua_Number ang = lua_tonumber(L, 2) - lua_tonumber(L, 1);
+	AngleDiff diff(AngleDiff((int)lua_tonumber(L, 2)) - AngleDiff((int)lua_tonumber(L, 1)));
+	
+	/*
+	if(ang < -180.0)
+	{
+		do
+		{
+			ang += 360.0;
+		}
+		while(ang < -180.0);
+	}
+	else if(ang > 180.0)
+	{
+		do
+		{
+			ang -= 360.0;
+		}
+		while(ang > 180.0);
+	}*/
+
+	lua_pushnumber(L, diff.toDeg());
+	
+	return 1;
+}
+
+int l_angle_clamp(lua_State* L)
+{
+	//lua_Number ang = lua_tonumber(L, 1);
+	Angle ang((double)lua_tonumber(L, 1));
+	
+	/*
+	if(ang < 0.0)
+	{
+		do
+		{
+			ang += 360.0;
+		}
+		while(ang < 0.0);
+	}
+	else if(ang > 360.0)
+	{
+		do
+		{
+			ang -= 360.0;
+		}
+		while(ang > 360.0);
+	}*/
+	
+	lua_pushnumber(L, ang.toDeg());
+	
+	return 1;
+}
+
+int l_angle_vector(lua_State* L)
+{
+	Angle ang((double)lua_tonumber(L, 1));
+	lua_Number len = 1.0;
+	
+	if(lua_gettop(L) >= 2)
+		len = lua_tonumber(L, 2);
+	
+	Vec vec(ang, len);
+	lua_pushnumber(L, vec.x);
+	lua_pushnumber(L, vec.y);
+	
+	return 2;
+}
 
 int l_sprites_load(lua_State* L)
 {
@@ -216,7 +321,7 @@ int l_font_load(lua_State* L)
 		return 1;
 	}
 	pushFullReference(*f);
-	game.lua.pushReference(LuaBindings::fontMetaTable);
+	lua.pushReference(LuaBindings::fontMetaTable);
 	if(!lua_istable(L, -1))
 		cerr << "Metatable is not a table!" << endl;
 	if(!lua_setmetatable(L, -2))
@@ -268,7 +373,7 @@ int l_quit(lua_State* L)
 
 int l_game_players(lua_State* L)
 {
-	game.lua.pushReference(LuaBindings::playerIterator);
+	lua.pushReference(LuaBindings::playerIterator);
 	typedef std::list<BasePlayer*>::iterator iter;
 	iter& i = *(iter *)lua_newuserdata (L, sizeof(iter));
 	i = game.players.begin();
@@ -301,17 +406,18 @@ int l_player_name(lua_State* L)
 	return 1;
 }
 
+/*
 void pushPlayer(BasePlayer* player)
 {
 	pushFullReference(*player, LuaBindings::playerMetaTable);
-}
+}*/
 
 int l_worm_getPlayer(lua_State* L)
 {
 	BaseWorm* p = *static_cast<BaseWorm **>(lua_touserdata (L, 1));
 	if(!p->getOwner())
 		return 0;
-	game.lua.pushReference(p->getOwner()->luaReference);
+	lua.pushReference(p->getOwner()->luaReference);
 	return 1;
 }
 
@@ -323,10 +429,11 @@ int l_worm_getHealth(lua_State* L)
 	return 1;
 }
 
+/*
 void pushWorm(BaseWorm* worm)
 {
 	pushFullReference(*worm, LuaBindings::wormMetaTable);
-}
+}*/
 
 int l_viewport_getBitmap(lua_State* L)
 {
@@ -336,9 +443,126 @@ int l_viewport_getBitmap(lua_State* L)
 	return 1;
 }
 
+/*
 void pushViewport(Viewport* viewport)
 {
 	pushFullReference(*viewport, LuaBindings::viewportMetaTable);
+}
+
+void push(BaseObject* obj)
+{
+	pushFullReference(*obj, LuaBindings::baseObjectMetaTable);
+}*/
+
+int l_baseObject_remove(lua_State* L)
+{
+	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	p->deleteMe = true;
+	return 0;
+}
+
+int l_baseObject_pos(lua_State* L)
+{
+	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->pos.x);
+	lua_pushnumber(L, p->pos.y);
+	return 2;
+}
+
+int l_baseObject_data(lua_State* L)
+{
+	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	if(p->luaData)
+	{
+		lua.pushReference(p->luaData);
+	}
+	else
+	{
+		lua_newtable(L);
+		lua_pushvalue(L, -1);
+		p->luaData = lua.createReference();
+	}
+	
+	return 1;
+}
+
+int l_baseObject_getClosestWorm(lua_State* L)
+{
+	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	
+	Vec from = p->pos;
+	
+	BaseWorm* minWorm = 0;
+	float minDistSqr = 10000000.f;
+	
+	for(std::list<BasePlayer*>::iterator playerIter = game.players.begin(); playerIter != game.players.end(); ++playerIter)
+	{
+		if(p->getOwner() != *playerIter)
+		{
+			BaseWorm* worm = (*playerIter)->getWorm();
+		
+			if(worm->isActive())
+			//if(worm->isActive())
+			{
+				float distSqr = (worm->pos - from).lengthSqr();
+				if(distSqr < minDistSqr && !game.level.trace(from.x, from.y, worm->pos.x, worm->pos.y, Level::ParticleBlockPredicate()))
+				{
+					minDistSqr = distSqr;
+					minWorm = worm;
+				}
+			}
+		}
+	}
+	
+	if(!minWorm)
+		return 0;
+		
+	minWorm->pushLuaReference();
+
+	return 1;
+}
+
+int l_particle_setAngle(lua_State* L)
+{
+	Particle* p = *static_cast<Particle **>(lua_touserdata (L, 1));
+	p->setAngle(Angle((double)lua_tonumber(L, 2)));
+	return 0;
+}
+
+int l_particle_getAngle(lua_State* L)
+{
+	Particle* p = *static_cast<Particle **>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->getAngle().toDeg());
+	return 1;
+}
+
+int l_game_getClosestWorm(lua_State* L)
+{
+	Vec from((float)lua_tonumber(L, 1), (float)lua_tonumber(L, 2));
+	
+	BaseWorm* minWorm = 0;
+	float minDistSqr = 10000000.f;
+	
+	for(std::list<BasePlayer*>::iterator playerIter = game.players.begin(); playerIter != game.players.end(); ++playerIter)
+	{
+		BaseWorm* worm = (*playerIter)->getWorm();
+		
+		if(worm->isActive())
+		{
+			float distSqr = (worm->pos - from).lengthSqr();
+			if(distSqr < minDistSqr)
+			{
+				minDistSqr = distSqr;
+				minWorm = worm;
+			}
+		}
+	}
+	
+	if(!minWorm)
+		return 0;
+		
+	minWorm->pushLuaReference();
+	return 1;
 }
 
 int l_game_playerIterator(lua_State* L)
@@ -349,19 +573,29 @@ int l_game_playerIterator(lua_State* L)
 		lua_pushnil(L);
 	else
 	{
-		//lua_pushlightuserdata(L, *i);
-		game.lua.pushReference((*i)->luaReference);
-		/*
-		BasePlayer** p = (BasePlayer **)lua_newuserdata(L, sizeof(BasePlayer *));
-		*p = *i;
-		game.lua.pushReference(LuaBindings::playerMetaTable);
-		if(!lua_istable(L, -1))
-			cerr << "Metatable is not a table!" << endl;
-		if(!lua_setmetatable(L, -2))
-			cerr << "Couldn't set player metatable!" << endl;*/
+		lua.pushReference((*i)->luaReference);
 		++i;
 	}
 	
+	return 1;
+}
+
+int l_map_isBlocked(lua_State* L)
+{
+	int x1 = (int)lua_tonumber(L, 1);
+	int y1 = (int)lua_tonumber(L, 2);
+	int x2 = (int)lua_tonumber(L, 3);
+	int y2 = (int)lua_tonumber(L, 4);
+	lua_pushboolean(L, game.level.trace(x1, y1, x2, y2, Level::ParticleBlockPredicate()));
+	return 1;
+}
+
+int l_map_isParticlePass(lua_State* L)
+{
+	int x = (int)lua_tonumber(L, 1);
+	int y = (int)lua_tonumber(L, 2);
+
+	lua_pushboolean(L, game.level.getMaterial(x, y).particle_pass);
 	return 1;
 }
 
@@ -379,7 +613,7 @@ int l_gui_find(lua_State* L)
 	
 	OmfgGUI::Wnd** wp = (OmfgGUI::Wnd **)lua_newuserdata(L, sizeof(OmfgGUI::Wnd *));
 	*wp = w;
-	game.lua.pushReference(LuaBindings::guiWndMetaTable[w->classID()]);
+	lua.pushReference(LuaBindings::guiWndMetaTable[w->classID()]);
 	if(!lua_setmetatable(L, -2))
 	{
 		cerr << "Failed to set metatable for window " << s << "!" << endl;
@@ -489,7 +723,7 @@ int l_console_register_command(lua_State* L)
 {
 	char const* name = lua_tostring(L, 1);
 	lua_pushvalue(L, 2);
-	int ref = game.lua.createReference();
+	int ref = lua.createReference();
 	
 	console.registerCommands()
 			(name, boost::bind(LuaBindings::runLua, ref, _1), true);
@@ -512,6 +746,69 @@ int l_load_script(lua_State* L)
 	lua_rawget(L, LUA_GLOBALSINDEX);
 	return 1;
 }
+
+int l_load_particle(lua_State* L)
+{
+	char const* s = lua_tostring(L, 1);
+	if(!s)
+		return 0;
+		
+	PartType* type = partTypeList.load(s);
+	if(!type)
+		return 0;
+	
+	LuaContext context(L);
+	
+	context.pushFullReference(*type, partTypeMetaTable);
+	return 1;
+}
+
+int l_partType_shoot(lua_State* L)
+{
+	PartType* p = *static_cast<PartType **>(lua_touserdata (L, 1));
+	void* objectP = lua_touserdata (L, 2);
+	if(!objectP)
+		return 0;
+	BaseObject* object = *static_cast<BaseObject **>(objectP);
+	// TODO: Check that object is really an object
+
+	int amount = 0;
+	int amountVariation = 0;
+	lua_Number speed = 0;
+	lua_Number speedVariation = 0;
+	lua_Number motionInheritance = 0;
+	lua_Number distanceOffset = 0;
+	AngleDiff distribution(360.0);
+	AngleDiff angleOffset(0.0);
+	
+	switch(lua_gettop(L))
+	{
+		case 10: distanceOffset = lua_tonumber(L, 10);
+		case 9:  angleOffset = AngleDiff(lua_tonumber(L, 9));
+		case 8:  distribution = AngleDiff(lua_tonumber(L, 8));
+		case 7:  amountVariation = (int)lua_tonumber(L, 7);
+		case 6:  motionInheritance = lua_tonumber(L, 6);
+		case 5:  speedVariation = lua_tonumber(L, 5);
+		case 4:  speed = lua_tonumber(L, 4);
+		case 3:  amount = (int)lua_tonumber(L, 3);
+	}
+	
+	char dir = object->getDir();
+	Angle baseAngle(object->getAngle() + angleOffset * dir);
+	
+	int realAmount = amount + rnd()*amountVariation;
+	for(int i = 0; i < realAmount; ++i)
+	{
+		Angle angle = baseAngle + distribution * midrnd();
+		Vec direction(angle);
+		Vec spd(direction * (speed + midrnd()*speedVariation));
+		spd += object->getSpd() * motionInheritance;
+		game.insertParticle( new Particle( p, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner() ));
+	}
+	
+	return 0;
+}
+
 
 int l_gfx_draw_box(lua_State* L)
 {
@@ -547,29 +844,29 @@ int l_gfx_reset_blending(lua_State* L)
 
 std::string runLua(int ref, std::list<std::string> const& args)
 {
-	game.lua.pushReference(ref);
+	lua.pushReference(ref);
 	int params = 0;
 	for(std::list<std::string>::const_iterator i = args.begin();
 		i != args.end();
 		++i)
 	{
-		lua_pushstring(game.lua, i->c_str());
+		lua_pushstring(lua, i->c_str());
 		++params;
 	}
 	
-	int r = game.lua.call(params, 1);
+	int r = lua.call(params, 1);
 	if(r != 1)
 		return "";
 		
-	char const* s = lua_tostring(game.lua, -1);
+	char const* s = lua_tostring(lua, -1);
 	if(s)
 	{
 		std::string ret(s);
-		lua_settop(game.lua, -2);
+		lua_settop(lua, -2);
 		return ret;
 	}
 	
-	lua_settop(game.lua, -2);
+	lua_settop(lua, -2);
 	return "";
 }
 
@@ -611,10 +908,28 @@ void addGUIListFunctions(LuaContext& context)
 	lua_rawset(context, -3);
 }
 
+void addBaseObjectFunctions(LuaContext& context)
+{
+	lua_pushstring(context, "remove");
+	lua_pushcfunction(context, l_baseObject_remove);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "pos");
+	lua_pushcfunction(context, l_baseObject_pos);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "get_closest_worm");
+	lua_pushcfunction(context, l_baseObject_getClosestWorm);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "data");
+	lua_pushcfunction(context, l_baseObject_data);
+	lua_rawset(context, -3);
+}
 
 void init()
 {
-	LuaContext& context = game.lua;
+	LuaContext& context = lua;
 	
 	context.function("print", print);
 	context.function("sqrt", l_sqrt);
@@ -623,14 +938,26 @@ void init()
 	context.function("randomint", l_randomint);
 	context.function("randomfloat", l_randomfloat);
 	
+/*
 	context.function("vector", l_vector);
 	context.function("vector_add", l_vector_add);
 	context.function("vector_tostring", l_vector_tostring);
 	context.function("vector_lengthSqr", l_vector_lengthSqr);
-	context.function("vector_length", l_vector_length);
+	context.function("vector_length", l_vector_length);*/
+	
+	context.function("vector_diff", l_vector_diff);
+	context.function("vector_distance", l_vector_distance);
+	context.function("vector_direction", l_vector_direction);
+	context.function("vector_add", l_vector_add);
+	
+	context.function("angle_clamp", l_angle_clamp);
+	context.function("angle_diff", l_angle_diff);
+	context.function("angle_vector", l_angle_vector);
 	
 	context.function("sprites_load", l_sprites_load);
 	context.function("sprites_render", l_sprites_render);
+	
+	context.function("load_particle", l_load_particle);
 	
 	context.function("font_load", l_font_load);
 	
@@ -640,6 +967,11 @@ void init()
 	context.function("game_players", l_game_players);
 	lua_pushcfunction(context, l_game_playerIterator);
 	playerIterator = context.createReference();
+
+	context.function("game_get_closest_worm", l_game_getClosestWorm);
+	
+	context.function("map_is_blocked", l_map_isBlocked);
+	context.function("map_is_particle_pass", l_map_isParticlePass);
 	
 	context.function("quit", l_quit);
 	
@@ -686,12 +1018,61 @@ void init()
 	lua_rawset(context, -3);
 	playerMetaTable = context.createReference();
 	
+	// BaseObject method and metatable
+	lua_newtable(context); 
+	lua_pushstring(context, "__index");
+	
+	lua_newtable(context);
+	
+	addBaseObjectFunctions(context);
+	
+	lua_rawset(context, -3);
+	baseObjectMetaTable = context.createReference();
+	
+	// Particle type method and metatable
+	
+	lua_newtable(context); 
+	lua_pushstring(context, "__index");
+	
+	lua_newtable(context);
+	
+	addBaseObjectFunctions(context);
+	
+	lua_pushstring(context, "shoot");
+	lua_pushcfunction(context, l_partType_shoot);
+	lua_rawset(context, -3);
+
+	lua_rawset(context, -3);
+	partTypeMetaTable = context.createReference();
+	
+	// Particle method and metatable
+	
+	lua_newtable(context); 
+	lua_pushstring(context, "__index");
+	
+	lua_newtable(context);
+	
+	addBaseObjectFunctions(context);
+	
+	lua_pushstring(context, "set_angle");
+	lua_pushcfunction(context, l_particle_setAngle);
+	lua_rawset(context, -3);
+
+	lua_pushstring(context, "get_angle");
+	lua_pushcfunction(context, l_particle_getAngle);
+	lua_rawset(context, -3);	
+
+	lua_rawset(context, -3);
+	particleMetaTable = context.createReference();
+	
 	// Worm method and metatable
 	
 	lua_newtable(context); 
 	lua_pushstring(context, "__index");
 	
 	lua_newtable(context);
+	
+	addBaseObjectFunctions(context); // BaseWorm inherits from BaseObject
 	
 	lua_pushstring(context, "get_player");
 	lua_pushcfunction(context, l_worm_getPlayer);

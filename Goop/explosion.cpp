@@ -102,15 +102,15 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 		if ( false )
 		{
 			if ( m_type->blender == NONE )
-				m_sprite->getSprite(m_animator->getFrame(), 0)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
+				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
 			else
-				m_sprite->getSprite(m_animator->getFrame(), 0)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, false, 0, m_type->blender);
+				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, false, 0, m_type->blender);
 		}
 		else
 		{
 			if ( m_type->blender != NONE )
 				gfx.setBlender( m_type->blender, (int)m_alpha );
-			game.level.specialDrawSprite( m_sprite->getSprite(m_animator->getFrame(), 0), where, pos - Vec(xOff, yOff), pos );
+			game.level.specialDrawSprite( m_sprite->getSprite(m_animator->getFrame(), Angle(0)), where, pos - Vec(xOff, yOff), pos );
 			solid_mode();
 		}
 	}
