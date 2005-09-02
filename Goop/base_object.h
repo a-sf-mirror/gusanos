@@ -30,6 +30,7 @@ class BaseObject
 	virtual void removeRefsToPlayer( BasePlayer* player );
 	virtual void setAlphaFade( int frames, int dest ) {};
 	virtual void customEvent ( size_t index ) {};
+	virtual void damage(float amount, BasePlayer* damager ) {};
 	
 	void addSpeed( Vec spd_ )
 	{ spd += spd_; }

@@ -13,6 +13,7 @@
 namespace fs = boost::filesystem;
 
 class SpriteSet;
+class DetectEvent;
 //struct Distortion;
 
 struct TimerEvent
@@ -23,15 +24,6 @@ struct TimerEvent
 	int delay;
 	int delayVariation;
 	int triggerTimes;
-};
-
-struct WormDetectEvent
-{
-	WormDetectEvent( float range, bool detectOwner );
-	~WormDetectEvent();
-	Event* event;
-	float m_range;
-	bool m_detectOwner;
 };
 
 class PartType
@@ -52,6 +44,7 @@ class PartType
 	int repeat;
 	float angularFriction;
 	int colLayer;
+	float health;
 	
 	Distortion* distortion;
 	float distortMagnitude;
@@ -66,10 +59,11 @@ class PartType
 	Blenders blender;
 	
 	std::vector< TimerEvent* > timer;
-	std::vector< WormDetectEvent* > detectRanges;
+	std::vector< DetectEvent* > detectRanges;
 	std::vector< Event* > customEvents;
 	Event *groundCollision;
 	Event *creation;
+	Event *death;
 	
 	enum
 	{

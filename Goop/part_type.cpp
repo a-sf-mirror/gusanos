@@ -7,6 +7,7 @@
 #include "distortion.h"
 #include "text.h"
 #include "parser.h"
+#include "detect_event.h"
 
 #include <allegro.h>
 #include <string>
@@ -34,18 +35,6 @@ TimerEvent::~TimerEvent()
 	delete event;
 }
 
-WormDetectEvent::WormDetectEvent( float range, bool detectOwner )
-{
-	m_range = range;
-	m_detectOwner = detectOwner;
-	event = new Event;
-}
-
-WormDetectEvent::~WormDetectEvent()
-{
-	delete event;
-}
-
 PartType::PartType()
 {
 	gravity = 0;
@@ -62,6 +51,7 @@ PartType::PartType()
 	acceleration = 0;
 	maxSpeed = -1;
 	colLayer = 0;
+	health = 100;
 	
 	renderLayer = 1;
 	sprite = NULL;
@@ -72,6 +62,7 @@ PartType::PartType()
 	
 	groundCollision = NULL;
 	creation = NULL;
+	death = NULL;
 	
 	for ( int i = 0; i < 16; ++i )
 	{
@@ -88,7 +79,7 @@ PartType::~PartType()
 	{
 		delete *i;
 	}
-	for ( vector<WormDetectEvent*>::iterator i = detectRanges.begin(); i != detectRanges.end(); i++)
+	for ( vector<DetectEvent*>::iterator i = detectRanges.begin(); i != detectRanges.end(); i++)
 	{
 		delete *i;
 	}
@@ -145,6 +136,7 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "acceleration" ) acceleration = cast<float>(val);
 					else if ( var == "max_speed" ) maxSpeed = cast<float>(val);
 					else if ( var == "angular_friction" ) angularFriction = cast<float>(val);
+					else if ( var == "health" ) health = cast<float>(val);
 					else if ( var == "col_layer" ) colLayer = cast<int>(val);
 					else if ( var == "sprite" ) sprite = spriteList.load(val);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
@@ -204,6 +196,11 @@ bool PartType::load(fs::path const& filename)
 						currEvent = new Event;
 						creation = currEvent;
 					}
+					else if ( eventName == "death" )
+					{
+						currEvent = new Event;
+						death = currEvent;
+					}
 					else if ( eventName == "timer" )
 					{
 						int delay = 100;
@@ -230,8 +227,9 @@ bool PartType::load(fs::path const& filename)
 					}
 					else if ( eventName == "detect_range" )
 					{
-						float range = 0;
+						float range = 10;
 						bool detectOwner = true;
+						int detectFilter = 0;
 						iter++;
 						if( iter != tokens.end())
 						{
@@ -243,8 +241,18 @@ bool PartType::load(fs::path const& filename)
 							detectOwner = (bool)cast<int>(*iter);
 							++iter;
 						}
-						detectRanges.push_back( new WormDetectEvent(range, detectOwner));
-						currEvent = detectRanges.back()->event;
+						while ( iter != tokens.end() )
+						{
+							if ( *iter == "worms" ) detectFilter |= 1;
+							else
+							{
+								detectFilter |= 1 << ( cast<int>(*iter)+1 );
+							}
+							++iter;
+						}
+						if ( !detectFilter ) detectFilter = 1;
+						detectRanges.push_back( new DetectEvent(range, detectOwner, detectFilter));
+						currEvent = detectRanges.back()->m_event;
 					}
 					else if ( eventName == "custom_event" && iter!= tokens.end() )
 					{

@@ -56,6 +56,7 @@ class Particle : public BaseObject
 	void addAngleSpeed(float);
 	void setAlphaFade(int frames, int dest);
 	void customEvent( size_t index );
+	void damage(float amount, BasePlayer* damager );
 	
 	PartType* getType()
 	{
@@ -66,6 +67,7 @@ class Particle : public BaseObject
 	
 	std::vector< PartTimer > timer;
 	PartType* m_type;
+	float m_health;
 	float m_angle;
 	float m_angleSpeed;
 	float m_fadeSpeed;

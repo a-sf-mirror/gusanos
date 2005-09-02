@@ -9,6 +9,7 @@
 #include "distortion.h"
 #include "text.h"
 #include "parser.h"
+#include "detect_event.h"
 
 
 
@@ -24,17 +25,6 @@ namespace fs = boost::filesystem;
 using namespace std;
 
 ResourceList<ExpType> expTypeList("objects/");
-
-DetectEvent::DetectEvent( float range, bool detectOwner, int detectFilter)
-	: m_detectFilter(detectFilter), m_range(range), m_detectOwner(detectOwner)
-{
-	event = new Event;
-}
-
-DetectEvent::~DetectEvent()
-{
-	delete event;
-}
 
 ExpType::ExpType()
 {
@@ -159,7 +149,7 @@ bool ExpType::load(fs::path const& filename)
 					{
 						float range = 0;
 						bool detectOwner = true;
-						int detectFilter = 1;
+						int detectFilter = 0;
 						iter++;
 						if( iter != tokens.end())
 						{
@@ -173,16 +163,16 @@ bool ExpType::load(fs::path const& filename)
 						}
 						while ( iter != tokens.end() )
 						{
-							detectFilter = 0;
 							if ( *iter == "worms" ) detectFilter |= 1;
 							else
 							{
-								detectFilter |= (int)pow( 2.f, cast<int>(*iter) );
+								detectFilter |= 1 << (cast<int>(*iter) + 1);
 							}
 							++iter;
 						}
+						if ( !detectFilter ) detectFilter = 1;
 						detectRanges.push_back( new DetectEvent(range, detectOwner, detectFilter));
-						currEvent = detectRanges.back()->event;
+						currEvent = detectRanges.back()->m_event;
 					}
 					else
 					{

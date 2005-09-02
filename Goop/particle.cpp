@@ -11,6 +11,7 @@
 #include "sprite_set.h"
 #include "base_animator.h"
 #include "animators.h"
+#include "detect_event.h"
 
 #include <vector>
 
@@ -21,6 +22,7 @@ Particle::Particle(PartType *type, Vec _pos, Vec _spd, int dir, BasePlayer* owne
 	justCreated = true;
 	m_type = type;
 	
+	m_health = type->health;
 	pos = _pos;
 	spd = _spd;
 	m_angle = spd.getAngle();
@@ -57,6 +59,12 @@ void Particle::think()
 {
 	for ( int i = 0; i < m_type->repeat; ++i)
 	{
+		if ( m_health <= 0 && m_type->death )
+		{
+			m_type->death->run(this);
+			m_health = m_type->health;
+			if ( deleteMe ) break;
+		}
 	
 		spd.y+=m_type->gravity;
 		
@@ -90,17 +98,9 @@ void Particle::think()
 		}
 		if ( deleteMe ) break;
 		
-		for ( vector< WormDetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
+		for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
 		{
-			ObjectsList::ColLayerIterator worm;
-			for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
-			{
-				if ( (*t)->m_detectOwner || (*worm)->getOwner() != m_owner )
-				if ( (*worm)->isCollidingWith(pos, (*t)->m_range) )
-				{
-					(*t)->event->run( this,(*worm), dynamic_cast<BaseWorm*>( (*worm) ));
-				}
-			}
+			(*t)->check(this);
 		}
 		if ( deleteMe ) break;
 		
@@ -171,6 +171,11 @@ void Particle::customEvent( size_t index )
 	{
 		m_type->customEvents[index]->run(this);
 	}
+}
+
+void Particle::damage( float amount, BasePlayer* damager )
+{
+	m_health -= amount;
 }
 
 void Particle::draw(BITMAP* where,int xOff, int yOff)

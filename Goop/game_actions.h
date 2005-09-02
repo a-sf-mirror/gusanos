@@ -70,6 +70,38 @@ class Push : public BaseAction
 		float factor;
 };
 
+BaseAction* repel( const std::vector< std::string >& params );
+
+class Repel : public BaseAction
+{
+	public:
+
+		Repel( const std::vector< std::string >& params );
+		~Repel();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+		float maxForce;
+		float minForce;
+		float maxDistance;
+};
+
+BaseAction* damp( const std::vector< std::string >& params );
+
+class Damp : public BaseAction
+{
+	public:
+
+		Damp( const std::vector< std::string >& params );
+		~Damp();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+		float factor;
+};
+
 BaseAction* damage( const std::vector< std::string >& params );
 
 class Damage : public BaseAction

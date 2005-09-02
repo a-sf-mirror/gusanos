@@ -13,6 +13,7 @@
 #include "sprite_set.h"
 #include "base_animator.h"
 #include "animators.h"
+#include "detect_event.h"
 
 #include <vector>
 
@@ -59,33 +60,7 @@ void Explosion::think()
 	
 		for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
 		{
-			if ( (*t)->m_detectFilter & 1 )
-			{
-				ObjectsList::ColLayerIterator worm;
-				for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
-				{
-					if ( (*t)->m_detectOwner || (*worm)->getOwner() != m_owner )
-						if ( (*worm)->isCollidingWith(pos, (*t)->m_range) )
-					{
-						(*t)->event->run( this,(*worm), dynamic_cast<BaseWorm*>( (*worm) ));
-					}
-				}
-			}
-			for ( int customFilter = CUSTOM_COL_LAYER_START, filterFlag = 1; customFilter < COLLISION_LAYERS_AMMOUNT; ++customFilter, filterFlag*=2 )
-			{
-				if ( (*t)->m_detectFilter & filterFlag )
-				{
-					ObjectsList::ColLayerIterator object;
-					for ( object = game.objects.colLayerBegin(customFilter); (bool)object; ++object)
-					{
-						if ( !(*object)->deleteMe && ((*t)->m_detectOwner || (*object)->getOwner() != m_owner ) )
-						if ( (*object)->isCollidingWith(pos, (*t)->m_range) )
-						{
-							(*t)->event->run( this,(*object) );
-						}
-					}
-				}
-			}
+			(*t)->check(this);
 		}
 	}
 	

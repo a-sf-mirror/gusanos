@@ -33,6 +33,8 @@ void registerGameActions()
 	game.actionList["set_alpha_fade"] = setAlphaFade;
 	game.actionList["show_firecone"] = showFirecone;
 	game.actionList["custom_event"] = runCustomEvent;
+	game.actionList["repel"] = repel;
+	game.actionList["damp"] = damp;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -177,6 +179,76 @@ Push::~Push()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
+BaseAction* repel( const vector< string >& params )
+{
+	return new Repel(params);
+}
+
+Repel::Repel( const vector< string >& params )
+{
+	maxForce = 0;
+	minForce = 0;
+	maxDistance = 0;
+
+	if ( params.size() > 0 )
+	{
+		maxForce = cast<float>(params[0]);
+	}
+	if ( params.size() > 1 )
+	{
+		maxDistance = cast<float>(params[1]);
+	}
+	if ( params.size() > 2 )
+	{
+		minForce = cast<float>(params[2]);
+	}
+}
+
+void Repel::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+{
+	float distance = ( object2->pos - object->pos ).length();
+	if ( ( distance > 0 ) && ( distance < maxDistance ) )
+	{
+		object2->spd += ( object2->pos - object->pos ).normal() * ( maxForce + distance * ( minForce - maxForce ) / maxDistance );
+	}
+}
+
+Repel::~Repel()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* damp( const vector< string >& params )
+{
+	return new Damp(params);
+}
+
+Damp::Damp( const vector< string >& params )
+{
+	factor = 0;
+
+	if ( params.size() > 0 )
+	{
+		factor = cast<float>(params[0]);
+	}
+}
+
+void Damp::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+{
+	object2->spd *= factor;
+}
+
+Damp::~Damp()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
 BaseAction* damage( const vector< string >& params )
 {
 	return new Damage(params);
@@ -199,8 +271,8 @@ Damage::Damage( const vector< string >& params )
 
 void Damage::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
 {
-	if ( worm )
-		worm->damage( m_damage + rnd() * m_damageVariation, object->getOwner() );
+	if ( object2 )
+		object2->damage( m_damage + rnd() * m_damageVariation, object->getOwner() );
 }
 
 Damage::~Damage()
