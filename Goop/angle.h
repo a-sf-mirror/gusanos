@@ -3,6 +3,7 @@
 
 #include <climits>
 #include <iostream>
+#include <zoidcom.h>
 //#include "vec.h"
 
 template<class T>
@@ -18,6 +19,11 @@ public:
 	static const int relPosMask = (1 << (prec - 1)) - 1;
 	static const int relNegBits = ~relPosMask;
 	static const int relShiftSteps = bitsInType - prec;
+	
+	static BasicAngle fromRad(double rad)
+	{
+		return BasicAngle( T(rad * (double(count) / (2 * 3.14159265358979323846))) );
+	}
 
 	BasicAngle()
 	: data(0)
@@ -30,7 +36,7 @@ public:
 	}
 	
 	explicit BasicAngle(double degrees)
-	: data((unsigned int)(degrees * (double(count) / 360.0)))
+	: data(T(degrees * (double(count) / 360.0)))
 	{
 		
 	}
@@ -159,5 +165,71 @@ public:
 
 typedef BasicAngle<int> Angle;
 typedef BasicAngle<int> AngleDiff;
+
+template<class T>
+class BasicAngleReplicator : public ZCom_ReplicatorBasic
+{
+private:
+	typedef BasicAngle<T> Type;
+	Type* m_ptr;
+	Type  m_old;
+	
+public:
+
+	BasicAngleReplicator(ZCom_ReplicatorSetup* setup, Type* data)
+	: ZCom_ReplicatorBasic(cZCom_RType_boolp, setup),
+	m_ptr(data)
+	{
+		m_flags |= ZCOM_REPLICATOR_INITIALIZED;
+	}
+	
+	// TODO: Implement this for safeness sake
+	ZCom_Replicator* Duplicate(ZCom_Replicator *_dest) { return 0; } 
+	
+	bool checkState()
+	{
+		return m_old != *m_ptr;
+	}
+	
+	bool checkInitialState() { return true; }
+	
+	zU32 packData(ZCom_BitStream *stream)
+	{
+		stream->addInt(*m_ptr, Type::prec);
+		return 1;
+	}
+	
+	zU32 unpackData(ZCom_BitStream* stream, bool store, zU32 estimated_time_sent)
+	{
+		Type angle(T(stream->getInt(Type::prec)));
+		if(store)
+			*m_ptr = angle;
+		return 1;
+	}
+	
+	void Process(eZCom_NodeRole localrole, zU32 simulation_time_passed) {}
+	
+	void* peekData()
+	{
+		ZCom_BitStream* stream = getPeekStream();
+		assert(stream);
+		
+		Type* ret = new Type(T(stream->getInt(Type::prec)));
+	
+		peekDataStore(ret);
+		
+		return (void *)ret;
+	}
+	
+	void clearPeekData()
+	{
+		Type* buf = (Type *)peekDataRetrieve();
+		delete buf;
+	}
+};
+
+typedef BasicAngleReplicator<int> AngleReplicator;
+typedef BasicAngleReplicator<int> AngleDiffReplicator;
+
 
 #endif //GUSANOS_ANGLE_H

@@ -74,7 +74,8 @@ void Explosion::think()
 		{
 			m_fadeSpeed = 0;
 			m_alpha = m_type->destAlpha;
-		}else
+		}
+		else
 			m_alpha += m_fadeSpeed;
 	}
 	

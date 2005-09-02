@@ -26,7 +26,7 @@ struct BaseVec
 {
 	
 	BaseVec()
-	: x(0), y(0)
+	: x(T(0)), y(T(0))
 	{
 		
 	}
@@ -149,7 +149,7 @@ struct BaseVec
 	Angle getAngle() const
 	{
 		// TODO: Optimize this
-		return Angle( rad2deg( atan2(double(x), double(-y)) ) );
+		return Angle::fromRad( atan2(double(x), double(-y)) );
 	}
 	
 	T x;

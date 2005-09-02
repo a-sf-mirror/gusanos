@@ -4,8 +4,9 @@
 #include "glua.h"
 #include "lua/bindings.h"
 
-BaseObject::BaseObject( BasePlayer* owner, int dir ) :
-	deleteMe(false), luaData(0), m_dir(dir), m_owner(owner)
+BaseObject::BaseObject( BasePlayer* owner, int dir, Vec pos_, Vec spd_ )
+: deleteMe(false), luaData(0), m_dir(dir), m_owner(owner)
+, pos(pos_), spd(spd_)
 {
 }
 

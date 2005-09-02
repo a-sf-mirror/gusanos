@@ -781,8 +781,10 @@ int l_partType_shoot(lua_State* L)
 	AngleDiff distribution(360.0);
 	AngleDiff angleOffset(0.0);
 	
-	switch(lua_gettop(L))
+	int params = lua_gettop(L);
+	switch(params)
 	{
+		default: if(params < 3) return 0;
 		case 10: distanceOffset = lua_tonumber(L, 10);
 		case 9:  angleOffset = AngleDiff(lua_tonumber(L, 9));
 		case 8:  distribution = AngleDiff(lua_tonumber(L, 8));
@@ -802,8 +804,12 @@ int l_partType_shoot(lua_State* L)
 		Angle angle = baseAngle + distribution * midrnd();
 		Vec direction(angle);
 		Vec spd(direction * (speed + midrnd()*speedVariation));
-		spd += object->getSpd() * motionInheritance;
-		game.insertParticle( new Particle( p, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner() ));
+		if(motionInheritance)
+		{
+			spd += object->getSpd() * motionInheritance;
+			angle = spd.getAngle(); // Need to recompute angle
+		}
+		game.insertParticle( new Particle( p, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
 	}
 	
 	return 0;

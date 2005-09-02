@@ -835,7 +835,7 @@ void BaseWorm::die()
 	m_timeSinceDeath = 0;
 	if ( game.deathObject )
 	{
-		game.insertParticle( new Particle( game.deathObject, pos, spd, m_dir, m_owner ) );
+		game.insertParticle( new Particle( game.deathObject, pos, spd, m_dir, m_owner, spd.getAngle() ) );
 	}
 }
 

@@ -49,7 +49,7 @@ class Particle : public BaseObject
 {
 public:
 		
-	Particle(PartType* type, Vec _pos = Vec(0,0), Vec _spd = Vec(0,0), int dir = 1, BasePlayer* owner = NULL);
+	Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0));
 
 	void draw(BITMAP* where,int xOff, int yOff);
 	void think();
@@ -65,6 +65,10 @@ public:
 	{
 		return m_type;
 	}
+	
+	void* operator new(size_t count);
+	
+	void operator delete(void* block);
 	
 private:
 	

@@ -169,10 +169,10 @@ void GContext::init()
 bool GContext::eventKeyDown(int k)
 {
 	Wnd* focus = getFocus();
-	if(focus && focus->keyDown(k))
+	if(focus && focus->keyDown(k) && focus->isVisibile())
 	{
 		Wnd* parent = focus->getParent();
-		if(parent)
+		if(parent && parent->isVisibile())
 		{
 			switch(k)
 			{
@@ -237,7 +237,7 @@ bool GContext::eventKeyDown(int k)
 bool GContext::eventKeyUp(int k)
 {
 	Wnd* focus = getFocus();
-	if(focus && focus->keyUp(k))
+	if(focus && focus->keyUp(k) && focus->isVisibile())
 	{
 		// Do sth?
 		switch(k)

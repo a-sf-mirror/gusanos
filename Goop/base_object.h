@@ -13,7 +13,7 @@ class BaseObject
 {
 public:
 		
-	BaseObject( BasePlayer* owner = NULL, int dir = 1 );
+	BaseObject( BasePlayer* owner = NULL, int dir = 1, Vec pos_ = Vec(), Vec spd_ = Vec() );
 	virtual ~BaseObject();
 
 	virtual void draw(BITMAP* where,int xOff, int yOff) = 0;

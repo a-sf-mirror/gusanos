@@ -16,11 +16,31 @@
 #include "detect_event.h"
 
 #include <vector>
+#define BOOST_NO_MT
+#include <boost/pool/pool.hpp>
 
 using namespace std;
 
-Particle::Particle(PartType *type, Vec _pos, Vec _spd, int dir, BasePlayer* owner) : BaseObject(owner,dir)
+boost::pool<> particlePool(sizeof(Particle));
+
+void* Particle::operator new(size_t count)
 {
+	assert(count <= sizeof(Particle));
+	return particlePool.malloc();
+}
+
+void Particle::operator delete(void* block)
+{
+	particlePool.free(block);
+}
+
+Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle)
+: BaseObject(owner, dir, pos_, spd_), justCreated(true), m_type(type)
+, m_health(type->health), m_angle(angle), m_angleSpeed(0)
+, m_alpha(m_type->alpha), m_fadeSpeed(0), m_animator(0)
+, m_alphaDest(255), m_sprite(m_type->sprite)
+{
+/*
 	justCreated = true;
 	m_type = type;
 	
@@ -35,9 +55,11 @@ Particle::Particle(PartType *type, Vec _pos, Vec _spd, int dir, BasePlayer* owne
 	m_fadeSpeed = 0;
 	m_alphaDest = 255;
 	
-	m_sprite = m_type->sprite;
+	m_sprite = m_type->sprite;*/
+	
 	if ( m_sprite )
 	{
+		// TODO: This is overheadish, use some kind of union?
 		switch ( m_type->animType )
 		{
 			case PartType::ANIM_PINGPONG : 
@@ -51,6 +73,7 @@ Particle::Particle(PartType *type, Vec _pos, Vec _spd, int dir, BasePlayer* owne
 		}
 	}
 	
+	// TODO: This is also overheadish
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
 	{
 		timer.push_back( PartTimer(*i) );
@@ -73,7 +96,7 @@ void Particle::think()
 		if ( m_type->acceleration )
 		{
 			// TODO: Cache the angle vector?
-			if ( spd.dotProduct(Vec(m_angle)) < m_type->maxSpeed || m_type->maxSpeed < 0)
+			if ( m_type->maxSpeed < 0 || spd.dotProduct(Vec(m_angle)) < m_type->maxSpeed )
 				spd += Vec(m_angle, (double)m_type->acceleration); //angleVec(m_angle, m_type->acceleration);
 		}
 				
@@ -120,7 +143,7 @@ void Particle::think()
 		}
 		//if ( deleteMe ) break; // Useless
 		
-		if ( justCreated && m_type->creation )
+		if ( justCreated && m_type->creation ) // TODO: 
 		{
 			m_type->creation->run(this);
 			justCreated = false;
@@ -188,35 +211,41 @@ void Particle::damage( float amount, BasePlayer* damager )
 	m_health -= amount;
 }
 
-void Particle::draw(BITMAP* where,int xOff, int yOff)
+void Particle::draw(BITMAP* where, int xOff, int yOff)
 {
+	int x = static_cast<int>(pos.x - xOff);
+	int y = static_cast<int>(pos.y - yOff);
+	
 	if (!m_sprite)
+	{
 		if ( m_type->blender != NONE )
 		{
-			gfx.setBlender( m_type->blender, (int)m_alpha );
-			putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
+			gfx.setBlender( m_type->blender, (int)m_alpha ); // TODO: why isn't alpha int from the beginning
+			putpixel(where, x, y, m_type->colour);
 			solid_mode();
 		}
-		else putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
+		else putpixel(where, x, y, m_type->colour); //TODO: Use something faster than putpixel ?
+	}
 	else
 	{
 		if ( m_angle < Angle(180.0) )
 		{
 			if ( m_type->blender == NONE )
-				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
+				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y);
 			else
-				m_sprite->getSprite(m_animator->getFrame(), m_angle)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, false, 0, m_type->blender);
-		}else
+				m_sprite->getSprite(m_animator->getFrame(), m_angle)->drawBlended(where, x, y, (int)m_alpha, false, 0, m_type->blender);
+		}
+		else
 		{
 			if ( m_type->blender == NONE )
-				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, (int)pos.x-xOff, (int)pos.y-yOff, true);
+				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, x, y, true);
 			else
-				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, true, 0, m_type->blender);
+				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->drawBlended(where, x, y, (int)m_alpha, true, 0, m_type->blender);
 		}
 	}
 	if (m_type->distortion)
 	{
-		m_type->distortion->apply( where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_type->distortMagnitude );
+		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
 	}
 }
 

@@ -103,8 +103,9 @@ ShootParticles::ShootParticles( const vector< string >& params )
 
 void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
 {
-	if (type != NULL)
+	if (type)
 	{
+/*
 		Vec spd;
 		Angle tmpAngle;
 		char dir = object->getDir();
@@ -117,7 +118,24 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 			spd += object->getSpd() * motionInheritance;
 			game.insertParticle( new Particle( type, object->getPos() + Vec( tmpAngle, (double)distanceOffset) , spd, object->getDir(), object->getOwner() ));
 		}
-
+*/
+		int dir = object->getDir();
+		Angle baseAngle(object->getAngle() + angleOffset * dir);
+		
+		int realAmount = amount + int(rnd()*amountVariation);
+		for(int i = 0; i < realAmount; ++i)
+		{
+			Angle angle = baseAngle;
+			if(distribution) angle += distribution * midrnd();
+			Vec direction(angle);
+			Vec spd(direction * (speed + midrnd()*speedVariation));
+			if(motionInheritance)
+			{
+				spd += object->getSpd() * motionInheritance;
+				angle = spd.getAngle(); // Need to recompute angle
+			}
+			game.insertParticle( new Particle( type, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
+		}
 	}
 }
 

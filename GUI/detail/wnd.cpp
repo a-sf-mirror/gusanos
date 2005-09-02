@@ -727,4 +727,17 @@ int Wnd::classID()
 	return Context::Unknown;
 }
 
+bool Wnd::isVisibile()
+{
+	Wnd* p = this;
+	while(p)
+	{
+		if(!p->m_visible)
+			return false;
+		p = p->getParent();
+	}
+	
+	return true;
+}
+
 }

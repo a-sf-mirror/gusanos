@@ -135,6 +135,8 @@ public:
 	void setVisibility(bool v)
 	{ m_visible = v; }
 	
+	bool isVisibile();
+	
 	std::string const& getText() const;
 	
 	bool                 m_focusable;
