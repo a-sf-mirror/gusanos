@@ -460,7 +460,9 @@ BasePlayer* Game::findPlayerWithID( ZCom_NodeID ID )
 
 void Game::insertParticle( Particle* particle )
 {
-	game.objects.insert( CUSTOM_COL_LAYER_START + particle->getType()->colLayer, particle->getType()->renderLayer, particle );
+	int colLayer = NO_COLLISION_LAYER;
+	if( particle->getType()->colLayer >= 0 ) colLayer = CUSTOM_COL_LAYER_START + particle->getType()->colLayer;
+	game.objects.insert( colLayer, particle->getType()->renderLayer, particle );
 }
 
 void Game::insertExplosion( Explosion* explosion )

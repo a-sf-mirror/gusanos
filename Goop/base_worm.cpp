@@ -927,6 +927,7 @@ void BaseWorm::actionStop( Actions action )
 		break;
 		
 		case FIRE:
+			if ( m_isActive )
 			m_weapons[currentWeapon]->actionStop( Weapon::PRIMARY_TRIGGER );
 		break;
 		

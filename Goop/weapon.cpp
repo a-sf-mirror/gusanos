@@ -131,7 +131,7 @@ void Weapon::actionStop( Actions action )
 	switch ( action )
 	{
 		case PRIMARY_TRIGGER:
-			if ( !inactiveTime && m_type->primaryReleased )
+			if ( primaryShooting && m_type->primaryReleased )
 			{
 				m_type->primaryReleased->run( (BaseObject*)m_owner, NULL, NULL, this);
 			}
