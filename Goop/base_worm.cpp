@@ -759,10 +759,9 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(static_cast<int>(255*radius), static_cast<int>(255*(1-radius)),0));
 			}
 			else for(int i = 0; i < 10; i++)
-			{
-				Vec crosshair = Vec(getAngle(), rnd()*10.0+20.0) + Vec(x,y);
-
-				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
+			{¡
+				Vec crosshair = Vec(getAngle(), rnd()*10.0+20.0);
+				putpixel(where, x+static_cast<int>( crosshair.x ), y+static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
 			
 			

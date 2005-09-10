@@ -94,7 +94,7 @@ void Weapon::drawBottom(BITMAP* where, int x, int y )
 		
 		if ( m_type->laserSightRange > 0 )
 		{
-			intensityInc = - m_type->laserSightIntensity / m_type->laserSightRange;
+			intensityInc = - (m_type->laserSightIntensity / m_type->laserSightRange) * inc.length();
 		}
 		Vec posDiff;
 		float intensity = m_type->laserSightIntensity;

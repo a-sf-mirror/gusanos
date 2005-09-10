@@ -208,17 +208,17 @@ void Particle::damage( float amount, BasePlayer* damager )
 
 void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff)
 {
-	int x = static_cast<int>(m_origin.x - xOff);
-	int y = static_cast<int>(m_origin.y - yOff);
-	int x2 = static_cast<int>(pos.x - xOff);
-	int y2 = static_cast<int>(pos.y - yOff);
+	int x = static_cast<int>(m_origin.x) - xOff;
+	int y = static_cast<int>(m_origin.y) - yOff;
+	int x2 = static_cast<int>(pos.x) - xOff;
+	int y2 = static_cast<int>(pos.y) - yOff;
 	line(where, x,y,x2,y2,m_type->colour);
 }
 
 void Particle::draw(BITMAP* where, int xOff, int yOff)
 {
-	int x = static_cast<int>(pos.x - xOff);
-	int y = static_cast<int>(pos.y - yOff);
+	int x = static_cast<int>(pos.x) - xOff;
+	int y = static_cast<int>(pos.y) - yOff;
 	
 	if (!m_sprite)
 	{
