@@ -86,7 +86,6 @@ public:
 	ZCom_NodeID getNodeID();
 	ZCom_ConnID getConnectionID();
 	PlayerOptions* getOptions();
-	Vec getPos();
 	BaseWorm* getWorm() { return m_worm; }
 	
 	int deaths;

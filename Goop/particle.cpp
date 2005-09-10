@@ -35,10 +35,11 @@ void Particle::operator delete(void* block)
 }
 
 Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle)
-: BaseObject(owner, dir, pos_, spd_), justCreated(true), m_type(type)
+: BaseObject(owner, pos_, spd_), justCreated(true), m_type(type)
 , m_health(type->health), m_angle(angle), m_angleSpeed(0)
 , m_alpha(m_type->alpha), m_fadeSpeed(0), m_animator(0)
-, m_alphaDest(255), m_sprite(m_type->sprite)
+, m_alphaDest(255), m_sprite(m_type->sprite), m_origin(pos_)
+, m_dir(dir)
 {
 /*
 	justCreated = true;
@@ -211,6 +212,15 @@ void Particle::damage( float amount, BasePlayer* damager )
 	m_health -= amount;
 }
 
+void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff)
+{
+	int x = static_cast<int>(m_origin.x - xOff);
+	int y = static_cast<int>(m_origin.y - yOff);
+	int x2 = static_cast<int>(pos.x - xOff);
+	int y2 = static_cast<int>(pos.y - yOff);
+	line(where, x,y,x2,y2,m_type->colour);
+}
+
 void Particle::draw(BITMAP* where, int xOff, int yOff)
 {
 	int x = static_cast<int>(pos.x - xOff);
@@ -222,9 +232,14 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 		{
 			gfx.setBlender( m_type->blender, (int)m_alpha ); // TODO: why isn't alpha int from the beginning
 			putpixel(where, x, y, m_type->colour);
+			if ( m_type->line2Origin ) drawLine2Origin( where, xOff, yOff );
 			solid_mode();
 		}
-		else putpixel(where, x, y, m_type->colour); //TODO: Use something faster than putpixel ?
+		else
+		{
+			putpixel(where, x, y, m_type->colour); //TODO: Use something faster than putpixel ?
+			if ( m_type->line2Origin ) drawLine2Origin( where, xOff, yOff );
+		}
 	}
 	else
 	{

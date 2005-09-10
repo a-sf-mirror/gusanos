@@ -103,7 +103,7 @@ void NinjaRope::think()
 		
 		// TODO: Try to attach to worms/objects
 				
-		Vec diff(m_worm->getPos(), pos);
+		Vec diff(m_worm->pos, pos);
 		float curLen = diff.length();
 		Vec force(diff * game.options.ninja_rope_pullForce);
 		

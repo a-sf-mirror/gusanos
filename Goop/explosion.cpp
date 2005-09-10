@@ -19,7 +19,7 @@
 
 using namespace std;
 
-Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseObject(owner,1)
+Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseObject(owner)
 {
 	justCreated = true;
 	m_type = type;
@@ -41,7 +41,7 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 	
 	if ( m_sprite = m_type->sprite )
 	{
-		m_animator = new AnimLoopRight( m_sprite, m_timeout+1);
+		m_animator = new AnimRightOnce( m_sprite, m_timeout+2);
 	}
 	else m_animator = NULL;
 	

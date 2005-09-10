@@ -81,7 +81,8 @@ public:
 	//right ( it will wrap the value so that its always inside the worm's weapons size )
 	int getWeaponIndexOffset( int offset );
 	Angle getAngle();
-	void setDir(char d);
+	void setDir(char d); // Made by nym, may be evil, I think its not used and it can be removed
+	int getDir() { return m_dir; }
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();
 	void removeRefsToPlayer( BasePlayer* player );
@@ -106,6 +107,8 @@ protected:
 	bool movingLeft;
 	bool movingRight;
 	bool jumping;
+	
+	int m_dir;
 
 	int reacts[DirMax];
 	bool animate;

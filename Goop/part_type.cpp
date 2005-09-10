@@ -60,6 +60,8 @@ PartType::PartType()
 	
 	blender = NONE;
 	
+	line2Origin = false;
+	
 	groundCollision = NULL;
 	creation = NULL;
 	death = NULL;
@@ -139,6 +141,8 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "angular_friction" ) angularFriction = cast<Angle>(val);
 					else if ( var == "health" ) health = cast<float>(val);
 
+					else if ( var == "line_to_origin" ) 
+						line2Origin = ( cast<int>(val) == 1 );
 					else if ( var == "col_layer" ) colLayer = cast<int>(val);
 					else if ( var == "sprite" ) sprite = spriteList.load(val);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);

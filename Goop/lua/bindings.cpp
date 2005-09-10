@@ -806,10 +806,10 @@ int l_partType_shoot(lua_State* L)
 		Vec spd(direction * (speed + midrnd()*speedVariation));
 		if(motionInheritance)
 		{
-			spd += object->getSpd() * motionInheritance;
+ 			spd += object->spd * motionInheritance;
 			angle = spd.getAngle(); // Need to recompute angle
 		}
-		game.insertParticle( new Particle( p, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
+		game.insertParticle( new Particle( p, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
 	}
 	
 	return 0;

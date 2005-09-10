@@ -4,6 +4,7 @@
 #include <zoidcom.h>
 #include <stddef.h>
 
+class BITMAP;
 class BaseWorm;
 class WeaponType;
 
@@ -32,6 +33,9 @@ public:
 	void think( bool isFocused, size_t index );
 	
 	void reset();
+	
+	void drawBottom(BITMAP* where,int x, int y);
+	void drawTop(BITMAP* where,int x, int y){};
 	
 	void actionStart( Actions action );
 	void actionStop( Actions action );

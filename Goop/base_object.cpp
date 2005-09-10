@@ -4,8 +4,8 @@
 #include "glua.h"
 #include "lua/bindings.h"
 
-BaseObject::BaseObject( BasePlayer* owner, int dir, Vec pos_, Vec spd_ )
-: deleteMe(false), luaData(0), m_dir(dir), m_owner(owner)
+BaseObject::BaseObject( BasePlayer* owner, Vec pos_, Vec spd_ )
+: deleteMe(false), luaData(0), m_owner(owner)
 , pos(pos_), spd(spd_)
 {
 }
@@ -16,19 +16,9 @@ BaseObject::~BaseObject()
 		lua.destroyReference(luaData);
 }
 
-Vec BaseObject::getPos()
-{
-	return pos;
-}
-
 Vec BaseObject::getRenderPos()
 {
 	return pos;
-}
-
-Vec BaseObject::getSpd()
-{
-	return spd;
 }
 
 Angle BaseObject::getAngle()
@@ -38,7 +28,7 @@ Angle BaseObject::getAngle()
 
 int BaseObject::getDir()
 {
-	return m_dir;
+	return 1;
 }
 
 BasePlayer* BaseObject::getOwner()

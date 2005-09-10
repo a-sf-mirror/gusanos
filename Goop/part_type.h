@@ -58,6 +58,7 @@ class PartType
 	int animType;
 	int animOnGround;
 	Blenders blender;
+	bool line2Origin;
 	
 	std::vector< TimerEvent* > timer;
 	std::vector< DetectEvent* > detectRanges;

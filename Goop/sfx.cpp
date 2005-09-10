@@ -119,7 +119,7 @@ void Sfx::think()
 	{
 		if ( obj->second )
 		{
-			float pos[3] = { obj->second->getPos().x, obj->second->getPos().y, 0 };
+			float pos[3] = { obj->second->pos.x, obj->second->pos.y, 0 };
 			FSOUND_3D_SetAttributes(obj->first, pos, NULL);
 		}
 	}

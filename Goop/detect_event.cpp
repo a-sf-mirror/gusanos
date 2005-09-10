@@ -23,7 +23,7 @@ void DetectEvent::check( BaseObject* ownerObject )
 		for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); (bool)worm; ++worm)
 		{
 			if ( m_detectOwner || (*worm)->getOwner() != ownerObject->getOwner() )
-				if ( (*worm)->isCollidingWith( ownerObject->getPos(), m_range) )
+				if ( (*worm)->isCollidingWith( ownerObject->pos, m_range) )
 			{
 				m_event->run( ownerObject, (*worm) );
 			}
@@ -37,8 +37,9 @@ void DetectEvent::check( BaseObject* ownerObject )
 			ObjectsList::ColLayerIterator object;
 			for ( object = game.objects.colLayerBegin(customFilter); (bool)object; ++object)
 			{
+				if ( (*object) != ownerObject )
 				if ( !(*object)->deleteMe && (m_detectOwner || (*object)->getOwner() != ownerObject->getOwner() ) )
-				if ( (*object)->isCollidingWith( ownerObject->getPos(), m_range) )
+				if ( (*object)->isCollidingWith( ownerObject->pos, m_range) )
 				{
 					m_event->run( ownerObject,(*object) );
 				}

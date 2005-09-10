@@ -2,6 +2,7 @@
 #include "weapon_type.h"
 #include "events.h"
 #include "base_worm.h"
+#include "game.h"
 
 #include "network.h"
 
@@ -71,6 +72,42 @@ void Weapon::think( bool isFocused, size_t index )
 					delete data;
 				}
 			}
+		}
+	}
+}
+
+void Weapon::drawBottom(BITMAP* where, int x, int y )
+{
+	if ( m_type->laserSightIntensity > 0 )
+	{
+		Vec direction( m_owner->getAngle() );
+		Vec inc;
+		float intensityInc = 0;
+		if ( fabs(direction.x) > fabs(direction.y) )
+		{
+			inc = direction / fabs(direction.x);
+		}else
+		{
+			inc = direction / fabs(direction.y);
+		}
+		
+		if ( m_type->laserSightRange > 0 )
+		{
+			intensityInc = - m_type->laserSightIntensity / m_type->laserSightRange;
+		}
+		Vec posDiff;
+		float intensity = m_type->laserSightIntensity;
+		while ( game.level.getMaterial( (int)(m_owner->pos.x+posDiff.x), (int)(m_owner->pos.y+posDiff.y) ).particle_pass )
+		{
+			if ( rnd() < intensity )
+			{
+				if ( m_type->laserSightBlender != NONE )
+					gfx.setBlender( m_type->laserSightBlender, m_type->laserSightAlpha );
+				putpixel(where, (int)(posDiff.x)+x,(int)(posDiff.y)+y, m_type->laserSightColour);
+				solid_mode();
+			}
+			posDiff+= inc;
+			intensity+= intensityInc;
 		}
 	}
 }

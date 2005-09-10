@@ -40,6 +40,32 @@ class ShootParticles : public BaseAction
 	float distanceOffset;
 };
 
+BaseAction* uniformShootParticles( const std::vector< std::string >& params );
+
+class UniformShootParticles : public BaseAction
+{
+	public:
+
+		UniformShootParticles( const std::vector< std::string >& params );
+		~UniformShootParticles();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+
+		PartType *type;
+	
+		int amount;
+		int amountVariation;
+	
+		float motionInheritance;
+		float speed;
+		float speedVariation;
+		Angle distribution;
+		AngleDiff angleOffset;
+		float distanceOffset;
+};
+
 BaseAction* createExplosion( const std::vector< std::string >& params );
 
 class CreateExplosion : public BaseAction

@@ -1,7 +1,7 @@
 #ifndef WEAPON_TYPE_H
 #define WEAPON_TYPE_H
 
-//#include "events.h"
+#include "gfx.h"
 
 #include <string>
 #include <vector>
@@ -20,10 +20,14 @@ class WeaponType
 	
 	int ammo;
 	int reloadTime;
+	
+	int laserSightColour;
+	int laserSightRange;
 	float laserSightIntensity;
-	float laserSightRange;
-
- 	SpriteSet *firecone;
+	int laserSightAlpha;
+	Blenders laserSightBlender;
+	
+	SpriteSet *firecone;
 	std::string name;
 	std::string fileName;
 

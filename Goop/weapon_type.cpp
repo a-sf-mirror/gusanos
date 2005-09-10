@@ -16,10 +16,13 @@ WeaponType::WeaponType()
 {
 	ammo = 1;
 	reloadTime = 0;
-	laserSightIntensity = 0;
-	laserSightRange = 0;
-
 	firecone = NULL;
+	
+	laserSightColour = makecol(255,0,0);
+	laserSightRange = -1;
+	laserSightIntensity = 0;
+	laserSightAlpha = 255;
+	laserSightBlender = NONE;
 
 	primaryShoot = NULL;
 	primaryPressed = NULL;
@@ -75,7 +78,18 @@ bool WeaponType::load(const string &filename)
 					else if ( var == "name" ) name = val;
 					else if ( var == "reload_time" ) reloadTime = cast<int>(val);
 					else if ( var == "laser_sight_intensity" ) laserSightIntensity = cast<float>(val);
-					else if ( var == "laser_sight_range" ) laserSightRange = cast<float>(val);
+					else if ( var == "laser_sight_range" ) laserSightRange = cast<int>(val);
+					else if ( var == "laser_sight_alpha" ) laserSightAlpha = cast<int>(val);
+					else if ( var == "laser_sight_blender" )
+					{
+						if ( val == "add" ) laserSightBlender = ADD;
+						else if ( val == "alpha" ) laserSightBlender = ALPHA;
+					}
+					else if ( var == "laser_sight_colour" || var == "laser_sight_color" )
+					{
+						if ( tokens.size() >= 5 )
+							laserSightColour = makecol( cast<int>(tokens[2]), cast<int>(tokens[3]), cast<int>(tokens[4]) );
+					}
 					else if ( var == "firecone" ) firecone = spriteList.load(val);
 					else
 					{

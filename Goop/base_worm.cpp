@@ -501,9 +501,9 @@ void BaseWorm::think()
 /* OLD CODE
 	spd.y+=game.options.worm_gravity;
 	
-	if ( m_ninjaRope->attached && (m_ninjaRope->getPos() - pos).length() > currentRopeLength)
+	if ( m_ninjaRope->attached && (m_ninjaRope->pos - pos).length() > currentRopeLength)
 	{
-		spd += (m_ninjaRope->getPos() - pos).normal() * game.options.ninja_rope_pullForce;
+		spd += (m_ninjaRope->pos - pos).normal() * game.options.ninja_rope_pullForce;
 	}
 
 	if ( movingRight ) 
@@ -630,12 +630,6 @@ void BaseWorm::think()
 */
 }
 
-Vec BaseWorm::getPos()
-{
-	//return pos - Vec(0,game.options.worm_weaponHeight+0.5);
-	return pos;
-}
-
 Vec BaseWorm::getWeaponPos()
 {
 	return pos;
@@ -746,17 +740,19 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			{
 				Vec crosshair = Vec(getAngle(), 25.0) + renderPos - Vec(xOff, yOff);
 				float radius = m_weapons[currentWeapon]->reloadTime / (float)m_weapons[currentWeapon]->m_type->reloadTime;
-				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(255*static_cast<int>(radius), 255*(1-static_cast<int>(radius)),0));
+				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(static_cast<int>(255*radius), static_cast<int>(255*(1-radius)),0));
 			}
 			else for(int i = 0; i < 10; i++)
 			{
-				Vec crosshair = Vec(getAngle(), rnd()*10.0+20.0) + renderPos - Vec(xOff, yOff);
+				Vec crosshair = Vec(getAngle(), rnd()*10.0+20.0) + Vec(x,y);
 				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
 			
 			
 			if (m_ninjaRope->active)
-				line(where, x, y, static_cast<int>(m_ninjaRope->getPos().x) - xOff, static_cast<int>(m_ninjaRope->getPos().y) - yOff, m_ninjaRope->getColour());
+				line(where, x, y, static_cast<int>(m_ninjaRope->pos.x) - xOff, static_cast<int>(m_ninjaRope->pos.y) - yOff, m_ninjaRope->getColour());
+			
+			m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
 			
 			skin->getSprite(m_animator->getFrame(),aimAngle)->draw(where, renderX, renderY, flipped);
 			

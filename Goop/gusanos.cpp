@@ -158,6 +158,18 @@ int main(int argc, char **argv)
 
 		while ( logicLast+1 <= _timer )
 		{
+			
+			for ( ObjectsList::Iterator iter = game.objects.begin();  (bool)iter; )
+			{
+				if ( (*iter)->deleteMe )
+				{
+					ObjectsList::Iterator tmp = iter;
+					++iter;
+					delete *tmp;
+					game.objects.erase(tmp);
+				}else	++iter;
+			}
+			
 			if ( game.isLoaded() && game.level.isLoaded() )
 			{
 				for ( ObjectsList::Iterator iter = game.objects.begin(); (bool)iter; ++iter)
@@ -188,17 +200,6 @@ int main(int argc, char **argv)
 					game.players.erase(tmp);
 				}else
 					++iter;
-			}
-
-			for ( ObjectsList::Iterator iter = game.objects.begin();  (bool)iter; )
-			{
-				if ( (*iter)->deleteMe )
-				{
-					ObjectsList::Iterator tmp = iter;
-					++iter;
-					delete *tmp;
-					game.objects.erase(tmp);
-				}else	++iter;
 			}
 			
 #ifndef DISABLE_ZOIDCOM

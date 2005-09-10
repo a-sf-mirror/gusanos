@@ -120,7 +120,7 @@ void AnimRightOnce::tick()
 {
 	if ( freezeTicks <= 0)
 	{
-		if( m_animPos < m_duration )
+		if( m_animPos < m_duration-1 )
 		{
 			m_animPos++;
 		}

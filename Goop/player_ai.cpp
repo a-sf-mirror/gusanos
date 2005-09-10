@@ -108,7 +108,7 @@ PlayerAI::~PlayerAI()
 
 bool PlayerAI::checkMaterialsTo( const Vec& pos )
 {
-	return check_materials( m_worm->getPos().x, m_worm->getPos().y, pos.x, pos.y );
+	return check_materials( m_worm->pos.x, m_worm->pos.y, pos.x, pos.y );
 }
 
 // getTarget assumes that a m_worm is a valid pointer, please dont call this if m_worm is null or sth
@@ -124,13 +124,13 @@ void PlayerAI::getTarget()
 		if ( (*worm)->getOwner() != this )
 		if ( ( tmpWorm = dynamic_cast<BaseWorm*>(*worm) ) && tmpWorm->isActive() )
 		{
-			bool blocked = checkMaterialsTo( (*worm)->getPos() );
-			bool distIsShorter = ( m_worm->getPos() - (*worm)->getPos() ).length() < tmpDist;
+			bool blocked = checkMaterialsTo( (*worm)->pos );
+			bool distIsShorter = ( m_worm->pos - (*worm)->pos ).length() < tmpDist;
 			if ( ( !blocked && ( m_targetBlocked || distIsShorter ) ) || ( blocked && m_targetBlocked && distIsShorter ) || tmpDist < 0 )
 			{
 				m_targetBlocked = blocked;
 				m_target = *worm;
-				tmpDist = ( m_worm->getPos() - (*worm)->getPos() ).length();
+				tmpDist = ( m_worm->pos - (*worm)->pos ).length();
 			}
 		}
 	}
@@ -138,8 +138,8 @@ void PlayerAI::getTarget()
 
 void PlayerAI::getPath()
 {
-	Vec pos = m_worm->getPos();		//AI position
-	Vec target = m_worm->getPos();		//Target position
+	Vec pos = m_worm->pos;		//AI position
+	Vec target = m_worm->pos;		//Target position
 	
 	//create "nodes" array
 	for (int y = 0; y < 128; y++)
@@ -166,8 +166,8 @@ void PlayerAI::subThink()
 		if (!m_target)
 			return;
 		
-		Vec pos = m_worm->getPos();		//AI position
-		Vec target = m_target->getPos();	//Target position
+		Vec pos = m_worm->pos;		//AI position
+		Vec target = m_target->pos;	//Target position
 		
 		if ( m_worm->isActive() )
 		if ( pos.x < target.x )
@@ -236,8 +236,8 @@ void PlayerAI::subThink()
 	{
 		if ( m_target )
 		{
-			Vec pos = m_worm->getPos();		//AI position
-			Vec target = m_target->getPos();	//Target position
+			Vec pos = m_worm->pos;		//AI position
+			Vec target = m_target->pos;	//Target position
 			
 			Vec tmpVec = ( target - pos );
 			if ( tmpVec.x < 0 ) tmpVec.x = -tmpVec.x;

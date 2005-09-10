@@ -243,11 +243,6 @@ ZCom_NodeID BasePlayer::getConnectionID()
 	return m_id;
 }
 
-Vec BasePlayer::getPos()
-{
-	return m_worm->getPos(); // WARNING: The player could not own a worm if he is a spectator.
-}
-
 BasePlayerInterceptor::BasePlayerInterceptor( BasePlayer* parent )
 {
 	m_parent = parent;

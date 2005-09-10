@@ -25,6 +25,7 @@ using namespace std;
 void registerGameActions()
 {
 	game.actionList["shoot_particles"] = shootParticles;
+	game.actionList["uniform_shoot_particles"] = uniformShootParticles;
 	game.actionList["create_explosion"] = createExplosion;
 	game.actionList["remove"] = remove;
 	game.actionList["play_sound"] = playSound;
@@ -115,8 +116,8 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 		{
 			tmpAngle = object->getAngle() + angleOffset * dir + distribution * midrnd();
 			spd = Vec( tmpAngle, speed + midrnd()*speedVariation );
-			spd += object->getSpd() * motionInheritance;
-			game.insertParticle( new Particle( type, object->getPos() + Vec( tmpAngle, (double)distanceOffset) , spd, object->getDir(), object->getOwner() ));
+			spd += object->spd * motionInheritance;
+			game.insertParticle( new Particle( type, object->pos + Vec( tmpAngle, (double)distanceOffset) , spd, object->getDir(), object->getOwner() ));
 		}
 */
 		int dir = object->getDir();
@@ -131,15 +132,104 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 			Vec spd(direction * (speed + midrnd()*speedVariation));
 			if(motionInheritance)
 			{
-				spd += object->getSpd() * motionInheritance;
+				spd += object->spd * motionInheritance;
 				angle = spd.getAngle(); // Need to recompute angle
 			}
-			game.insertParticle( new Particle( type, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
+			game.insertParticle( new Particle( type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
 		}
 	}
 }
 
 ShootParticles::~ShootParticles()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* uniformShootParticles( const vector< string >& params )
+{
+	return new UniformShootParticles(params);
+}
+
+UniformShootParticles::UniformShootParticles( const vector< string >& params )
+: distribution(360.0), angleOffset(0.0)
+{
+	type = NULL;
+	amount = 0;
+	amountVariation = 0;
+	speed = 0;
+	speedVariation = 0;
+	motionInheritance = 0;
+	distanceOffset = 0;
+	if ( params.size() >= 1 )
+	{
+		type = partTypeList.load(params[0]);
+	}
+	if( params.size() >= 2 )
+	{
+		amount = cast<int>(params[1]);
+	}
+	if( params.size() >= 3 )
+	{
+		speed = cast<float>(params[2]);
+	}
+	if( params.size() >= 4 )
+	{
+		speedVariation = cast<float>(params[3]);
+	}
+	if( params.size() >= 5 )
+	{
+		motionInheritance = cast<float>(params[4]);
+	}
+	if( params.size() >= 6 )
+	{
+		amountVariation = cast<int>(params[5]);
+	}
+	if( params.size() >= 7 )
+	{
+		//distribution = cast<float>(params[6]);
+		distribution = cast<Angle>(params[6]);
+	}
+	if( params.size() >= 8 )
+	{
+		//angleOffset = cast<float>(params[7]);
+		angleOffset = cast<AngleDiff>(params[7]);
+	}
+	if( params.size() >= 9 )
+	{
+		distanceOffset = cast<float>(params[8]);
+	}
+}
+
+void UniformShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+{
+	if (type)
+	{
+		int dir = object->getDir();
+		Angle angle(object->getAngle() + (angleOffset * dir) - ( distribution * 0.5f ) );
+		
+		
+		int realAmount = amount + int(rnd()*amountVariation);
+		
+		AngleDiff angleIncrease( distribution / realAmount );
+				
+		for(int i = 0; i < realAmount; ++i, angle += angleIncrease )
+		{
+			Vec direction(angle);
+			Vec spd(direction * (speed + midrnd()*speedVariation));
+			if(motionInheritance)
+			{
+				spd += object->spd * motionInheritance;
+				angle = spd.getAngle(); // Need to recompute angle
+			}
+			game.insertParticle( new Particle( type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
+		}
+	}
+}
+
+UniformShootParticles::~UniformShootParticles()
 {
 }
 
@@ -165,7 +255,7 @@ void CreateExplosion::run( BaseObject* object, BaseObject *object2, BaseWorm *wo
 {
 	if (type != NULL)
 	{
-		game.insertExplosion( new Explosion( type, object->getPos(), object->getOwner() ) );
+		game.insertExplosion( new Explosion( type, object->pos, object->getOwner() ) );
 	}
 }
 
@@ -465,7 +555,7 @@ void PlaySoundStatic::run( BaseObject* object, BaseObject *object2, BaseWorm *wo
 {
 	if (sound != NULL)
 	{
-		sound->play2D(object->getPos(),loudness,pitch,pitchVariation);
+		sound->play2D(object->pos,loudness,pitch,pitchVariation);
 	}
 }
 

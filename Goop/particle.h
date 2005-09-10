@@ -61,6 +61,8 @@ public:
 	virtual void pushLuaReference();
 	void damage(float amount, BasePlayer* damager );
 	
+	int getDir() { return m_dir; }
+	
 	PartType* getType()
 	{
 		return m_type;
@@ -72,6 +74,9 @@ public:
 	
 private:
 	
+	void drawLine2Origin(BITMAP* where, int xOff, int yOff);
+	
+	int m_dir;
 	std::vector< PartTimer > timer; // This could cause a penalty
 	PartType* m_type;
 	float m_health;
@@ -82,6 +87,7 @@ private:
 	int m_alphaDest;
 	SpriteSet* m_sprite;
 	BaseAnimator* m_animator;
+	Vec m_origin;
 	
 	bool justCreated;
 };
