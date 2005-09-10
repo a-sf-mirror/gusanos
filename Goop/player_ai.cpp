@@ -4,6 +4,7 @@
 #include "worm.h"
 #include "game.h"
 #include "weapon.h"
+#include "math_func.h"
 #include <vector>
 #include <list>
 #include <cmath>
@@ -117,8 +118,27 @@ void PlayerAI::getTarget()
 	m_target = NULL;
 	m_targetBlocked = true;
 	float tmpDist = -1;
+#ifdef USE_GRID
+	for ( Grid::iterator worm = game.objects.beginColLayer(Grid::WormColLayer); worm; ++worm)
+	{
+		if ( worm->getOwner() != this )
+		if ( BaseWorm * tmpWorm = dynamic_cast<BaseWorm*>(&*worm) )
+		if ( tmpWorm->isActive() )
+		{
+			bool blocked = checkMaterialsTo( worm->pos );
+			float dist = ( m_worm->pos - worm->pos ).length();
+			bool distIsShorter = dist < tmpDist;
+			if ( ( !blocked && ( m_targetBlocked || distIsShorter ) ) || ( blocked && m_targetBlocked && distIsShorter ) || tmpDist < 0 )
+			{
+				m_targetBlocked = blocked;
+				m_target = &*worm;
+				tmpDist = dist;
+			}
+		}
+	}
+#else
 	ObjectsList::ColLayerIterator worm;
-	for ( worm = game.objects.colLayerBegin(WORMS_COLLISION_LAYER); worm; ++worm)
+	for ( worm = game.objects.colLayerBegin(Game::WORMS_COLLISION_LAYER); worm; ++worm)
 	{
 		BaseWorm *tmpWorm;
 		if ( (*worm)->getOwner() != this )
@@ -134,6 +154,7 @@ void PlayerAI::getTarget()
 			}
 		}
 	}
+#endif
 }
 
 void PlayerAI::getPath()

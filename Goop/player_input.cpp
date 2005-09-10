@@ -13,24 +13,24 @@ using namespace std;
 
 void registerPlayerInput()
 {
-	for ( int i = 0; i < MAX_LOCAL_PLAYERS; ++i)
+	for ( int i = 0; i < Game::MAX_LOCAL_PLAYERS; ++i)
 	{
 		console.registerCommands()
-			("+P" + cast<string>(i) + "_LEFT", boost::bind(leftStart, i, _1));
-		//console.registerSpecialCommand("+P" + cast<string>(i) + "_LEFT", i, leftStart);
-		console.registerSpecialCommand("-P" + cast<string>(i) + "_LEFT", i, leftStop);
-		console.registerSpecialCommand("+P" + cast<string>(i) + "_RIGHT", i, rightStart);
-		console.registerSpecialCommand("-P" + cast<string>(i) + "_RIGHT", i, rightStop);
-		console.registerSpecialCommand("+P" + cast<string>(i) + "_UP", i, upStart);
-		console.registerSpecialCommand("-P" + cast<string>(i) + "_UP", i, upStop);
-		console.registerSpecialCommand("+P" + cast<string>(i) + "_DOWN", i, downStart);
-		console.registerSpecialCommand("-P" + cast<string>(i) + "_DOWN", i, downStop);
-		console.registerSpecialCommand("+P" + cast<string>(i) + "_CHANGE", i, changeStart);
-		console.registerSpecialCommand("-P" + cast<string>(i) + "_CHANGE", i, changeStop);
-		console.registerSpecialCommand("+P" + cast<string>(i) + "_JUMP", i, jumpStart);
-		console.registerSpecialCommand("-P" + cast<string>(i) + "_JUMP", i, jumpStop);
-		console.registerSpecialCommand("+P" + cast<string>(i) + "_FIRE", i, fireStart);
-		console.registerSpecialCommand("-P" + cast<string>(i) + "_FIRE", i, fireStop);
+			("+P" + cast<string>(i) + "_LEFT", boost::bind(leftStart, i, _1))
+			("-P" + cast<string>(i) + "_LEFT", boost::bind(leftStop, i, _1))
+			("+P" + cast<string>(i) + "_RIGHT", boost::bind(rightStart, i, _1))
+			("-P" + cast<string>(i) + "_RIGHT", boost::bind(rightStop, i, _1))
+			("+P" + cast<string>(i) + "_UP", boost::bind(upStart, i, _1))
+			("-P" + cast<string>(i) + "_UP", boost::bind(upStop, i, _1))
+			("+P" + cast<string>(i) + "_DOWN", boost::bind(downStart, i, _1))
+			("-P" + cast<string>(i) + "_DOWN", boost::bind(downStop, i, _1))
+			("+P" + cast<string>(i) + "_CHANGE", boost::bind(changeStart, i, _1))
+			("-P" + cast<string>(i) + "_CHANGE", boost::bind(changeStop, i, _1))
+			("+P" + cast<string>(i) + "_JUMP", boost::bind(jumpStart, i, _1))
+			("-P" + cast<string>(i) + "_JUMP", boost::bind(jumpStop, i, _1))
+			("+P" + cast<string>(i) + "_FIRE", boost::bind(fireStart, i, _1))
+			("-P" + cast<string>(i) + "_FIRE", boost::bind(fireStop, i, _1))
+		;
 	}
 }
 

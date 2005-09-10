@@ -8,7 +8,7 @@
 #include <utility>
 
 
-//#define COMPACT_FLOATS
+#define COMPACT_FLOATS
 
 class VectorReplicator : public ZCom_ReplicatorBasic
 {

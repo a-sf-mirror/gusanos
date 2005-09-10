@@ -4,6 +4,7 @@
 #include "material.h"
 #include "liero.h"
 #include "sprite.h"
+#include "math_func.h"
 
 #include <allegro.h>
 #include <string>
@@ -20,15 +21,35 @@ Level::Level()
 	image = NULL;
 	material = NULL;
 	background = NULL;
-	
-	m_materialList.insert( m_materialList.begin(), 257, Material() );
 
+	// Rock
 	m_materialList[0].worm_pass = false;
 	m_materialList[0].particle_pass = false;
+	m_materialList[0].draw_exps = false;
 	
-	m_materialList[1].worm_pass = false;
-	m_materialList[1].particle_pass = false;
-	m_materialList[1].draw_exps = false;
+	// Background
+	m_materialList[1].worm_pass = true;
+	m_materialList[1].particle_pass = true;
+	m_materialList[1].draw_exps = true; // I added this coz its cute :P
+	
+	// Dirt
+	m_materialList[2].worm_pass = false;
+	m_materialList[2].particle_pass = false;
+	m_materialList[2].draw_exps = false;
+	
+	// Special dirt
+	m_materialList[3].worm_pass = true;
+	m_materialList[3].particle_pass = false;
+	m_materialList[3].draw_exps = false;
+	
+	// Special rock
+	m_materialList[4].worm_pass = false;
+	m_materialList[4].particle_pass = true;
+	m_materialList[4].draw_exps = false;
+
+	// W00t was this supposed to be? It can't be background, that borks the stairs in map poo
+	m_materialList[7].worm_pass = false;
+	m_materialList[7].particle_pass = false;
 }
 
 Level::~Level()

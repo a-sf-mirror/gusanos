@@ -91,6 +91,26 @@ public:
 		return *this;
 	}
 	
+	BasicAngle operator/(T b)
+	{
+		return BasicAngle(data) /= b;
+	}
+	
+	BasicAngle& operator/=(T b)
+	{
+		data /= b;
+		return *this;
+	}
+	
+	template<int bits>
+	T adjust()
+	{
+		if(bits > prec)
+			return data << (bits - prec);
+		else
+			return data >> (prec - bits);
+	}
+	
 	BasicAngle muldiv(T mul, T div)
 	{
 		long long d = data;

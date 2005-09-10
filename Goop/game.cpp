@@ -281,11 +281,15 @@ void Game::unload()
 
 	sfx.clear();
 	// Delete all objects
+#ifdef USE_GRID
+	objects.clear();
+#else
 	for ( ObjectsList::Iterator iter = objects.begin(); (bool)iter; ++iter)
 	{
 		delete (*iter);
 	}
 	objects.clear();
+#endif
 	
 	// Delete all players
 	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
@@ -376,6 +380,9 @@ void Game::changeLevel(const std::string& levelName )
 	refreshResources();
 	//cerr << "Loading level" << endl;
 	levelLocator.load(&level, levelName);
+#ifdef USE_GRID
+	objects.resize(0, 0, level.width(), level.height());
+#endif
 	//cerr << "Loading mod" << endl;
 	loadMod();
 	
@@ -458,16 +465,13 @@ BasePlayer* Game::findPlayerWithID( ZCom_NodeID ID )
 	return NULL;
 }
 
-void Game::insertParticle( Particle* particle )
-{
-	int colLayer = NO_COLLISION_LAYER;
-	if( particle->getType()->colLayer >= 0 ) colLayer = CUSTOM_COL_LAYER_START + particle->getType()->colLayer;
-	game.objects.insert( colLayer, particle->getType()->renderLayer, particle );
-}
-
 void Game::insertExplosion( Explosion* explosion )
 {
+#ifdef USE_GRID
+	game.objects.insert( explosion, Grid::NoColLayer, explosion->getType()->renderLayer);
+#else
 	game.objects.insert( NO_COLLISION_LAYER, explosion->getType()->renderLayer, explosion );
+#endif
 }
 
 BasePlayer* Game::addPlayer( PLAYER_TYPE type )
@@ -509,8 +513,14 @@ BaseWorm* Game::addWorm(bool isAuthority)
 		Worm* worm = new Worm();
 		returnWorm = worm;
 	}
+#ifdef USE_GRID
+	objects.insert(returnWorm, Grid::WormColLayer, Grid::WormRenderLayer);
+	objects.insert((BaseObject *)returnWorm->getNinjaRopeObj(), 1, 1);
+#else
 	objects.insert(WORMS_COLLISION_LAYER,WORMS_RENDER_LAYER, returnWorm);
 	objects.insert( 1,1, (BaseObject*)returnWorm->getNinjaRopeObj() );
+#endif
+	// WARNING: :OOOO, the BaseObject* cast is evil, include "ninjarope.h" instead?
 	return returnWorm;
 }
 

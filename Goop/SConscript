@@ -1,7 +1,8 @@
 Import('env getObjects platform getBinName getLibName')
 
 if platform == 'posix':
-	env = env.Copy(LIBS = Split("""
+	env = env.Copy()
+	env.Append(LIBS = Split("""
 	        omfggui omfgconsole omfgloaders omfglua glua
 	        png12 z fmod
 	        alleg-4.1.15 m

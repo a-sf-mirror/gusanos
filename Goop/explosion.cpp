@@ -21,7 +21,10 @@ using namespace std;
 
 Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseObject(owner)
 {
-	justCreated = true;
+	justCreated = false;
+	
+	
+	
 	m_type = type;
 	
 	pos = _pos;
@@ -43,8 +46,17 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 	{
 		m_animator = new AnimRightOnce( m_sprite, m_timeout+2);
 	}
-	else m_animator = NULL;
+	else m_animator = 0;
 	
+	if ( m_type->creation )
+	{
+		m_type->creation->run(this);
+	}
+
+	for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
+	{
+		(*t)->check(this);
+	}
 }
 
 void Explosion::think()

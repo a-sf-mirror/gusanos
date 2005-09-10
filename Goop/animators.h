@@ -7,57 +7,60 @@ class SpriteSet;
 
 class AnimPingPong : public BaseAnimator
 {
-	public:
-
+public:
 	AnimPingPong( SpriteSet* sprite, int duration );
-	~AnimPingPong();
+	//~AnimPingPong();
 	
-	virtual int getFrame();
+	//virtual int getFrame() const;
 	virtual void tick();
 	virtual void reset();
 	
-	private:
+private:
 
-	int m_totalFrames;
+	//int m_totalFrames;
 	int m_animPos;
-	int m_duration;
+	//int m_duration;
+	int m_step;
+	int m_max;
 	char m_currentDir;
 };
 
 class AnimLoopRight : public BaseAnimator
 {
-	public:
-
+public:
 	AnimLoopRight( SpriteSet* sprite, int duration );
-	~AnimLoopRight();
+	//~AnimLoopRight();
 	
-	virtual int getFrame();
+	//virtual int getFrame() const;
 	virtual void tick();
 	virtual void reset();
 	
-	private:
+private:
 
-	int m_totalFrames;
+	//int m_totalFrames;
 	int m_animPos;
-	int m_duration;
+	//int m_duration;
+	int m_step;
+	int m_max;
 };
 
 class AnimRightOnce : public BaseAnimator
 {
-	public:
+public:
+	AnimRightOnce( SpriteSet* sprite, int duration );
+	//~AnimRightOnce();
 
-		AnimRightOnce( SpriteSet* sprite, int duration );
-		~AnimRightOnce();
-	
-		virtual int getFrame();
-		virtual void tick();
-		virtual void reset();
-	
-	private:
+	//virtual int getFrame() const;
+	virtual void tick();
+	virtual void reset();
 
-		int m_totalFrames;
-		int m_animPos;
-		int m_duration;
+private:
+
+	//int m_totalFrames;
+	int m_animPos;
+	//int m_duration;
+	int m_step;
+	int m_max;
 };
 
 #endif // _ANIMATORS_

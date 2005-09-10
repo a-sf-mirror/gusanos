@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <boost/array.hpp>
+using boost::array;
 
 class Sprite;
 
@@ -41,14 +43,14 @@ class Level
 	Material const& getMaterial(unsigned int x, unsigned int y)
 	{
 		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
-			return m_materialList[material->line[y][x] + 1];
+			return m_materialList[(unsigned char)material->line[y][x]];
 		else
 			return m_materialList[0];
 	}
 	
 	Material const& unsafeGetMaterial(unsigned int x, unsigned int y)
 	{
-		return m_materialList[material->line[y][x] + 1];
+		return m_materialList[(unsigned char)material->line[y][x]];
 	}
 	
 	bool isInside(unsigned int x, unsigned int y)
@@ -75,7 +77,7 @@ class Level
 	BITMAP* background;
 	std::string name;
 	std::string path;
-	std::vector<Material> m_materialList;
+	array<Material, 256> m_materialList;
 	Encoding::VectorEncoding vectorEncoding;
 	
 	struct ParticleBlockPredicate

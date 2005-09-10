@@ -135,6 +135,14 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 			}
 				
 			putpixel(level->background, x, y, backgroundc);
+			
+			switch(m)
+			{
+				default: m = 1; break; // Background
+				case 2:  m = 0; break; // Rock
+				case 4:  m = 2; break; // Dirt
+			}
+			
 			putpixel(level->material, x, y, m);
 			
 			pimage += 3;
@@ -142,16 +150,6 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 			++pmaterial;
 		}
 	}
-	
-	//TODO
-	level->m_materialList[2].worm_pass = true;
-	level->m_materialList[2].particle_pass = true;
-	
-	level->m_materialList[3].worm_pass = false;
-	level->m_materialList[3].particle_pass = false;
-	
-	level->m_materialList[5].worm_pass = false;
-	level->m_materialList[5].particle_pass = false;
 	
 	level->loaderSucceeded();
 	return true;

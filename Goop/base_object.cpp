@@ -7,6 +7,7 @@
 BaseObject::BaseObject( BasePlayer* owner, Vec pos_, Vec spd_ )
 : deleteMe(false), luaData(0), m_owner(owner)
 , pos(pos_), spd(spd_)
+, nextS_(0), nextD_(0), prevD_(0), cellIndex_(-1)
 {
 }
 

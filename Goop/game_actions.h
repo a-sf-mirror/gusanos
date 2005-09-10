@@ -112,6 +112,10 @@ class Repel : public BaseAction
 		float maxForce;
 		float minForce;
 		float maxDistance;
+		
+		// Precomputed constants
+		float maxDistanceSqr;
+		float forceDiffScaled;
 };
 
 BaseAction* damp( const std::vector< std::string >& params );

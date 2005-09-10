@@ -14,6 +14,8 @@ using namespace boost::assign;
 
 using namespace std;
 
+const int bitDepth = 32;
+
 Gfx gfx;
 
 string fullscreenCmd(const list<string> &args)
@@ -45,7 +47,7 @@ void Gfx::init()
 {
 	register_png_file_type();
 	
-	set_color_depth(32); //Ugh
+	set_color_depth(bitDepth); //Ugh
 
 	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
 
@@ -143,6 +145,46 @@ void Gfx::updateScreen()
 								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
 								bmp_write32(dest2, p); dest2 += sizeof(unsigned long);
 								bmp_write32(dest2, p); dest2 += sizeof(unsigned long);
+							}
+						}
+						
+						bmp_unwrite_line(screen);
+						
+						release_screen();
+					break;
+					
+					case 16:
+						acquire_screen();
+
+						bmp_select(screen);
+
+						for(int y = 0; y < 240; ++y)
+						{
+							// This is done in two loops to avoid shearing
+							unsigned short* src = (unsigned short *)buffer->line[y];
+							
+							unsigned long dest1 = bmp_write_line(screen, y*2);
+														
+							for(int x = 0; x < 320; ++x)
+							{
+								unsigned long p = (unsigned long)*src++;
+								
+								p = p | (p << 16);
+
+								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
+							}
+							
+							src = (unsigned short *)buffer->line[y];
+							
+							dest1 = bmp_write_line(screen, y*2 + 1);
+							
+							for(int x = 0; x < 320; ++x)
+							{
+								unsigned long p = (unsigned long)*src++;
+								
+								p = p | (p << 16);
+
+								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
 							}
 						}
 						
@@ -280,7 +322,7 @@ int Gfx::getGraphicsDriver()
 
 void Gfx::fullscreenChange()
 {
-	set_color_depth(32);
+	set_color_depth(bitDepth);
 	
 	// TODO: I suppose that changing graphics driver will clear out bitmaps and such
 
@@ -304,7 +346,7 @@ void Gfx::fullscreenChange()
 
 void Gfx::doubleResChange()
 {
-	if ( m_doubleResBuffer ) destroy_bitmap( m_doubleResBuffer );
+	destroy_bitmap( m_doubleResBuffer );
 	if ( m_doubleRes )
 	{
 		m_vwidth = 640;
@@ -378,4 +420,3 @@ string screenShot(const list<string> &args)
 	else 
 		return "UNABLE TO SAVE SCREENSHOT";
 }
-

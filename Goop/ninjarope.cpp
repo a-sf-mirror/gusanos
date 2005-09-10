@@ -12,6 +12,7 @@
 #include "part_type.h"
 
 #include <vector>
+#include <boost/variant/apply_visitor.hpp>
 
 using namespace std;
 
@@ -36,9 +37,10 @@ NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 	
 	m_angle = 0;
 	m_angleSpeed = 0;
-	m_animator = NULL;
+	//m_animator = NULL;
 	
 	m_sprite = m_type->sprite;
+	/*
 	if ( m_sprite )
 	{
 		switch ( m_type->animType )
@@ -49,8 +51,9 @@ NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 			case PartType::ANIM_LOOPRIGHT : 
 				m_animator = new AnimLoopRight(m_sprite,m_type->animDuration); break;
 		}
-	}
-	
+	}*/
+	m_animator = m_type->allocateAnimator();
+		
 	// Why this?? :OO // Re: Modders may want to make the rope leave trails or sth :o
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
 	{
@@ -82,7 +85,7 @@ void NinjaRope::remove()
 	active = false;
 	justCreated = false;
 	attached = false;
-};
+}
 
 void NinjaRope::think()
 {
@@ -144,9 +147,12 @@ void NinjaRope::think()
 				spd -= force / curLen;
 			}
 		}
-
+		
+/*
 		if ( m_animator )
 			m_animator->tick();
+		*/
+		m_animator->tick();
 		
 		/* OLD CODE
 		if ( justCreated && m_type->creation )

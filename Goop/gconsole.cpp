@@ -7,6 +7,7 @@
 #include "script.h"
 #include "game.h"
 #include "glua.h"
+#include "math_func.h" // for rndgen
 
 #include <allegro.h>
 #include <boost/bind.hpp>
@@ -219,6 +220,18 @@ string execScript(list<string> const& args)
 	return "EXECSCRIPT <FILE> <FUNCTION> : EXECUTE A SCRIPT FILE";
 }
 
+string rndSeedCmd(list<string> const& args)
+{
+	if(args.size() > 0)
+	{
+		std::list<string>::const_iterator i = args.begin();
+
+		rndgen.seed(cast<boost::mt19937::result_type>(*i));
+		return "";
+	}
+	
+	return "RND_SEED <SEED> : SEEDS THE RANDOM GENERATOR WITH <SEED>";
+}
 /////////////////////////////// Console //////////////////////////////////////
 
 //============================= LIFECYCLE ====================================
@@ -272,6 +285,7 @@ void GConsole::init()
 		(string("EXECSCRIPT"), execScript)
 		(string("ALIAS"), aliasCmd)
 		(string("ECHO"), echoCmd)
+		(string("RND_SEED"), rndSeedCmd)
 	;
 	
 	currentCommand = commandsLog.end(); //To workaround a crashbug with uninitialized iterator

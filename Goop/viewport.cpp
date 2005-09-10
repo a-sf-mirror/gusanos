@@ -31,48 +31,39 @@ Viewport::~Viewport()
 
 struct TestCuller
 {
-	TestCuller(BITMAP* dest_, int x_, int y_, int scrOffX_, int scrOffY_, int limitX_)
-	: dest(dest_), x(x_), y(y_), scrOffX(scrOffX_), scrOffY(scrOffY_), limitX(limitX_)
+	TestCuller(BITMAP* dest_, int scrOffX_, int scrOffY_)
+	: dest(dest_), scrOffX(scrOffX_), scrOffY(scrOffY_)
 	{
 		
 	}
 	
-	int beginH()
-	{
-		return y;
-	}
-	
-	int beginV()
-	{
-		return x;
-	}
-	
-	int limitV()
-	{
-		return limitX;
-	}
-	
-	void incrementV(int& vp)
-	{
-		++vp;
-	}
-	
-	bool block(int y, int x)
+	bool block(int x, int y)
 	{
 		return !game.level.getMaterial(x, y).worm_pass;
 	}
 	
-	void line(int x, int y1, int y2)
+	int lowerLimitH()
 	{
-		vline(dest, x + scrOffX, y1 + scrOffY, y2 + scrOffY, 0);
+		return 0;
+	}
+	
+	int upperLimitH()
+	{
+		return 200;
+	}
+	
+	void line(int y, int x1, int x2)
+	{
+		hline(dest, x1 + scrOffX, y + scrOffY, x2 + scrOffY, 0);
 	}
 	
 	BITMAP* dest;
+/*
 	int x;
-	int y;
+	int y;*/
 	int scrOffX;
 	int scrOffY;
-	int limitX;
+	//int limitX;
 };
 
 void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height)
@@ -99,16 +90,35 @@ void Viewport::render(BasePlayer* player)
 	
 	if(!flag)
 	{
-		list<BaseObject*>::iterator iter = game.objects.begin();
+		list<BasePlayer*>::iterator iter = game.players.begin();
 		//++iter; ++iter;
-		int x = (int)(*iter)->getPos().x;
-		int y = (int)(*iter)->getPos().y;
-		Culler<TestCuller> testCuller(TestCuller(m_dest, x, y, -(int)m_pos.x, -(int)m_pos.y, x + 200));
-		testCuller.cull();
+		BaseWorm* worm = (*iter)->getWorm();
+		int x = (int)worm->getPos().x;
+		int y = (int)worm->getPos().y;
+		Culler<TestCuller, 1> testCuller(TestCuller(m_dest, -(int)m_pos.x, -(int)m_pos.y));
+		//testCuller.cull();
+
+		testCuller.cullRows(
+			0,
+			0,
+			Culler<TestCuller, 1>::fix(0),
+			Culler<TestCuller, 1>::fix(200),
+			0,
+			200,
+			0,
+			x,
+			y
+			);
 		//flag = true;
 	}
-	*/
-
+*/
+#ifdef USE_GRID
+	for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
+	{
+		assert(!iter->deleteMe);
+		iter->draw(m_dest, offX, offY);
+	}
+#else
 	for ( int i = 0; i < RENDER_LAYERS_AMMOUNT ; ++i)
 	{
 		ObjectsList::RenderLayerIterator iter;
@@ -117,6 +127,7 @@ void Viewport::render(BasePlayer* player)
 			(*iter)->draw(m_dest, offX, offY);
 		}
 	}
+#endif
 
 	EACH_CALLBACK(i, wormRender)
 	{

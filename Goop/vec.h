@@ -3,23 +3,7 @@
 
 #include <cmath>
 #include "angle.h"
-#include <boost/random.hpp>
 
-extern boost::mt19937 rndgen;
-extern boost::variate_generator<boost::mt19937, boost::uniform_real<> > rnd;
-extern boost::variate_generator<boost::mt19937, boost::uniform_real<> > midrnd;
-
-float const PI = float(3.14159265358979323846);
-
-inline float deg2rad( float Degrees )
-{
-	return (Degrees * PI) / 180;
-}
-
-inline float rad2deg( float Radians )
-{
-	return (Radians * 180) / PI;
-}
 
 template<class T>
 struct BaseVec
@@ -115,6 +99,13 @@ struct BaseVec
 		return *this;
 	}
 	
+	BaseVec& operator /= (T const& A)
+	{
+		x /= A;
+		y /= A;
+		return *this;
+	}
+	
 	T dotProduct(BaseVec const& A) const
 	{
 		return x * A.x + y * A.y;
@@ -148,7 +139,6 @@ struct BaseVec
 	
 	Angle getAngle() const
 	{
-		// TODO: Optimize this
 		return Angle::fromRad( atan2(double(x), double(-y)) );
 	}
 	

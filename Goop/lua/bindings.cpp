@@ -101,7 +101,7 @@ int l_sqrt(lua_State* L)
 
 int l_abs(lua_State* L)
 {
-	lua_pushnumber(L, abs(luaL_checknumber(L, 1)));
+	lua_pushnumber(L, fabs(luaL_checknumber(L, 1)));
 	return 1;
 }
 
@@ -384,7 +384,7 @@ int l_game_players(lua_State* L)
 
 int l_player_kills(lua_State* L)
 {
-	BasePlayer* p = *static_cast<BasePlayer **>(lua_touserdata (L, 1));
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
 	lua_pushnumber(L, p->kills);
 
 	return 1;
@@ -392,7 +392,7 @@ int l_player_kills(lua_State* L)
 
 int l_player_deaths(lua_State* L)
 {
-	BasePlayer* p = *static_cast<BasePlayer **>(lua_touserdata (L, 1));
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
 	lua_pushnumber(L, p->deaths);
 
 	return 1;
@@ -400,7 +400,7 @@ int l_player_deaths(lua_State* L)
 
 int l_player_name(lua_State* L)
 {
-	BasePlayer* p = *static_cast<BasePlayer **>(lua_touserdata (L, 1));
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
 	lua_pushstring(L, p->m_name.c_str());
 
 	return 1;
@@ -412,9 +412,60 @@ void pushPlayer(BasePlayer* player)
 	pushFullReference(*player, LuaBindings::playerMetaTable);
 }*/
 
+int shootFromObject(lua_State* L, BaseObject* object)
+{
+	void* typeP = lua_touserdata (L, 2);
+	if(!typeP)
+		return 0;
+	PartType* p = *static_cast<PartType **>(typeP);
+	
+	int amount = 0;
+	int amountVariation = 0;
+	lua_Number speed = 0;
+	lua_Number speedVariation = 0;
+	lua_Number motionInheritance = 0;
+	lua_Number distanceOffset = 0;
+	AngleDiff distribution(360.0);
+	AngleDiff angleOffset(0.0);
+	
+	int params = lua_gettop(L);
+	switch(params)
+	{
+		default: if(params < 3) return 0;
+		case 10: distanceOffset = lua_tonumber(L, 10);
+		case 9:  angleOffset = AngleDiff(lua_tonumber(L, 9));
+		case 8:  distribution = AngleDiff(lua_tonumber(L, 8));
+		case 7:  amountVariation = (int)lua_tonumber(L, 7);
+		case 6:  motionInheritance = lua_tonumber(L, 6);
+		case 5:  speedVariation = lua_tonumber(L, 5);
+		case 4:  speed = lua_tonumber(L, 4);
+		case 3:  amount = (int)lua_tonumber(L, 3);
+	}
+
+	char dir = object->getDir();
+	Angle baseAngle(object->getAngle() + angleOffset * dir);
+	
+	int realAmount = amount + int(rnd()*amountVariation);
+	for(int i = 0; i < realAmount; ++i)
+	{
+		Angle angle = baseAngle + distribution * midrnd();
+		Vec direction(angle);
+		Vec spd(direction * (speed + midrnd()*speedVariation));
+		if(motionInheritance)
+		{
+			spd += object->spd * motionInheritance;
+			angle = spd.getAngle(); // Need to recompute angle
+		}
+		//game.insertParticle( new Particle( p, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
+		p->newParticle(p, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle);
+	}
+	
+	return 0;
+}
+
 int l_worm_getPlayer(lua_State* L)
 {
-	BaseWorm* p = *static_cast<BaseWorm **>(lua_touserdata (L, 1));
+	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
 	if(!p->getOwner())
 		return 0;
 	lua.pushReference(p->getOwner()->luaReference);
@@ -424,7 +475,7 @@ int l_worm_getPlayer(lua_State* L)
 
 int l_worm_getHealth(lua_State* L)
 {
-	BaseWorm* p = *static_cast<BaseWorm **>(lua_touserdata (L, 1));
+	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
 	lua_pushnumber(L, p->getHealth());
 	return 1;
 }
@@ -454,6 +505,61 @@ void push(BaseObject* obj)
 	pushFullReference(*obj, LuaBindings::baseObjectMetaTable);
 }*/
 
+int l_worm_remove(lua_State* L)
+{
+	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
+	p->deleteMe = true;
+	return 0;
+}
+
+int l_worm_pos(lua_State* L)
+{
+	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->pos.x);
+	lua_pushnumber(L, p->pos.y);
+	return 2;
+}
+
+int l_worm_spd(lua_State* L) //
+{
+	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->spd.x);
+	lua_pushnumber(L, p->spd.y);
+	return 2;
+}
+
+int l_worm_push(lua_State* L) //
+{
+	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
+	p->spd.x += lua_tonumber(L, 2);
+	p->spd.y += lua_tonumber(L, 3);
+	return 0;
+}
+
+int l_worm_data(lua_State* L)
+{
+	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
+	if(p->luaData)
+	{
+		lua.pushReference(p->luaData);
+	}
+	else
+	{
+		lua_newtable(L);
+		lua_pushvalue(L, -1);
+		p->luaData = lua.createReference();
+	}
+	
+	return 1;
+}
+
+int l_worm_shoot(lua_State* L)
+{
+	BaseWorm* object = static_cast<BaseWorm *>(lua_touserdata (L, 1));
+	
+	return shootFromObject(L, object);
+}
+
 int l_baseObject_remove(lua_State* L)
 {
 	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
@@ -467,6 +573,22 @@ int l_baseObject_pos(lua_State* L)
 	lua_pushnumber(L, p->pos.x);
 	lua_pushnumber(L, p->pos.y);
 	return 2;
+}
+
+int l_baseObject_spd(lua_State* L) //
+{
+	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->spd.x);
+	lua_pushnumber(L, p->spd.y);
+	return 2;
+}
+
+int l_baseObject_push(lua_State* L) //
+{
+	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	p->spd.x += lua_tonumber(L, 2);
+	p->spd.y += lua_tonumber(L, 3);
+	return 0;
 }
 
 int l_baseObject_data(lua_State* L)
@@ -492,6 +614,9 @@ int l_baseObject_getClosestWorm(lua_State* L)
 	
 	Vec from = p->pos;
 	
+	int fromx = int(from.x);
+	int fromy = int(from.y);
+	
 	BaseWorm* minWorm = 0;
 	float minDistSqr = 10000000.f;
 	
@@ -505,7 +630,7 @@ int l_baseObject_getClosestWorm(lua_State* L)
 			//if(worm->isActive())
 			{
 				float distSqr = (worm->pos - from).lengthSqr();
-				if(distSqr < minDistSqr && !game.level.trace(from.x, from.y, worm->pos.x, worm->pos.y, Level::ParticleBlockPredicate()))
+				if(distSqr < minDistSqr && !game.level.trace(fromx, fromy, int(worm->pos.x), int(worm->pos.y), Level::ParticleBlockPredicate()))
 				{
 					minDistSqr = distSqr;
 					minWorm = worm;
@@ -520,6 +645,13 @@ int l_baseObject_getClosestWorm(lua_State* L)
 	minWorm->pushLuaReference();
 
 	return 1;
+}
+
+int l_baseObject_shoot(lua_State* L)
+{
+	BaseObject* object = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	
+	return shootFromObject(L, object);
 }
 
 int l_particle_setAngle(lua_State* L)
@@ -763,59 +895,6 @@ int l_load_particle(lua_State* L)
 	return 1;
 }
 
-int l_partType_shoot(lua_State* L)
-{
-	PartType* p = *static_cast<PartType **>(lua_touserdata (L, 1));
-	void* objectP = lua_touserdata (L, 2);
-	if(!objectP)
-		return 0;
-	BaseObject* object = *static_cast<BaseObject **>(objectP);
-	// TODO: Check that object is really an object
-
-	int amount = 0;
-	int amountVariation = 0;
-	lua_Number speed = 0;
-	lua_Number speedVariation = 0;
-	lua_Number motionInheritance = 0;
-	lua_Number distanceOffset = 0;
-	AngleDiff distribution(360.0);
-	AngleDiff angleOffset(0.0);
-	
-	int params = lua_gettop(L);
-	switch(params)
-	{
-		default: if(params < 3) return 0;
-		case 10: distanceOffset = lua_tonumber(L, 10);
-		case 9:  angleOffset = AngleDiff(lua_tonumber(L, 9));
-		case 8:  distribution = AngleDiff(lua_tonumber(L, 8));
-		case 7:  amountVariation = (int)lua_tonumber(L, 7);
-		case 6:  motionInheritance = lua_tonumber(L, 6);
-		case 5:  speedVariation = lua_tonumber(L, 5);
-		case 4:  speed = lua_tonumber(L, 4);
-		case 3:  amount = (int)lua_tonumber(L, 3);
-	}
-	
-	char dir = object->getDir();
-	Angle baseAngle(object->getAngle() + angleOffset * dir);
-	
-	int realAmount = amount + rnd()*amountVariation;
-	for(int i = 0; i < realAmount; ++i)
-	{
-		Angle angle = baseAngle + distribution * midrnd();
-		Vec direction(angle);
-		Vec spd(direction * (speed + midrnd()*speedVariation));
-		if(motionInheritance)
-		{
- 			spd += object->spd * motionInheritance;
-			angle = spd.getAngle(); // Need to recompute angle
-		}
-		game.insertParticle( new Particle( p, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
-	}
-	
-	return 0;
-}
-
-
 int l_gfx_draw_box(lua_State* L)
 {
 	BITMAP* b = (BITMAP *)lua_touserdata(L, 1);
@@ -924,12 +1003,24 @@ void addBaseObjectFunctions(LuaContext& context)
 	lua_pushcfunction(context, l_baseObject_pos);
 	lua_rawset(context, -3);
 	
+	lua_pushstring(context, "spd");
+	lua_pushcfunction(context, l_baseObject_spd);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "push");
+	lua_pushcfunction(context, l_baseObject_push);
+	lua_rawset(context, -3);
+	
 	lua_pushstring(context, "get_closest_worm");
 	lua_pushcfunction(context, l_baseObject_getClosestWorm);
 	lua_rawset(context, -3);
 	
 	lua_pushstring(context, "data");
 	lua_pushcfunction(context, l_baseObject_data);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "shoot");
+	lua_pushcfunction(context, l_baseObject_shoot);
 	lua_rawset(context, -3);
 }
 
@@ -1042,11 +1133,8 @@ void init()
 	
 	lua_newtable(context);
 	
-	addBaseObjectFunctions(context);
+	//addBaseObjectFunctions(context);
 	
-	lua_pushstring(context, "shoot");
-	lua_pushcfunction(context, l_partType_shoot);
-	lua_rawset(context, -3);
 
 	lua_rawset(context, -3);
 	partTypeMetaTable = context.createReference();
@@ -1078,7 +1166,27 @@ void init()
 	
 	lua_newtable(context);
 	
-	addBaseObjectFunctions(context); // BaseWorm inherits from BaseObject
+	//NOT COMPATIBLE: addBaseObjectFunctions(context); // BaseWorm inherits from BaseObject
+	
+	lua_pushstring(context, "remove");
+	lua_pushcfunction(context, l_worm_remove);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "pos");
+	lua_pushcfunction(context, l_worm_pos);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "spd");
+	lua_pushcfunction(context, l_worm_spd);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "push");
+	lua_pushcfunction(context, l_worm_push);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "data");
+	lua_pushcfunction(context, l_worm_data);
+	lua_rawset(context, -3);
 	
 	lua_pushstring(context, "get_player");
 	lua_pushcfunction(context, l_worm_getPlayer);
@@ -1086,6 +1194,10 @@ void init()
 	
 	lua_pushstring(context, "get_health");
 	lua_pushcfunction(context, l_worm_getHealth);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "shoot");
+	lua_pushcfunction(context, l_worm_shoot);
 	lua_rawset(context, -3);
 		
 	lua_rawset(context, -3);

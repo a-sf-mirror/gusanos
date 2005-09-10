@@ -28,8 +28,10 @@ if platform == 'posix':
 	env = Environment(
 		CPPPATH = ['.', '#loadpng', '#lua', '/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_32', '#Console', '#GUI'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib', os.path.join('#lib/', platform)],
-		CPPFLAGS = '-O3 -Wall -DNDEBUG',
-		#CPPFLAGS = '-O0 -g -Wall -DDEBUG',
+		CPPFLAGS = '-O3 -g -pipe -Wall -DNDEBUG',
+		#CPPFLAGS = '-O0 -g -pipe -Wall -DDEBUG',
+		#CPPFLAGS = '-O3 -pg -g -pipe -Wall -DDEBUG',
+		#LINKFLAGS = '-pg',
 		CXX='g++-3.4',
 		#CXX='g++-4.0',
 		#CXX='gcc -lstdc++.so.6',

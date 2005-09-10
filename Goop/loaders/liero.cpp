@@ -1,6 +1,7 @@
 #include "liero.h"
 #include "../gfx.h"
 #include "../vec.h"
+#include "../math_func.h"
 #include <string>
 #include <vector>
 #include <cstring>
@@ -156,19 +157,20 @@ void initMaterialMappings()
 		if(dirt || dirt2)
 		{
 			if(back)
-				mapTo = 2; // Special dirt
+				mapTo = 3; // Special dirt
 			else
-				mapTo = 1; // TODO: Change to real dirt
+				mapTo = 2; // TODO: Change to real dirt
 		}
 		else if(rock)
 		{
-			if(back)
-				mapTo = 3; // Special rock
-			else
-				mapTo = 1; // Rock
+			mapTo = 0; // Rock
+		}
+		else if(back)
+		{
+			mapTo = 1; // Background
 		}
 		else
-			mapTo = 0; // Background
+			mapTo = 4; // Special rock
 			
 		materialMappings[i] = mapTo;
 	}
@@ -213,24 +215,6 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 			putpixel(level->material, x, y, materialMappings[c]); //TODO
 		}
 	}
-	
-	//TODO: Dirt
-	//<basara> materials 0 to 64 will probably be fixed, why not use them instead of renaming what they already do?
-	level->m_materialList[1].worm_pass = true;
-	level->m_materialList[1].particle_pass = true;
-	level->m_materialList[1].draw_exps = true; // I added this coz its cute :P
-	
-	level->m_materialList[2].worm_pass = false;
-	level->m_materialList[2].particle_pass = false;
-	level->m_materialList[2].draw_exps = false;
-	
-	level->m_materialList[3].worm_pass = true;
-	level->m_materialList[3].particle_pass = false;
-	level->m_materialList[3].draw_exps = false;
-	
-	level->m_materialList[4].worm_pass = false;
-	level->m_materialList[4].particle_pass = true;
-	level->m_materialList[4].draw_exps = false;
 
 	level->loaderSucceeded();
 	return true;

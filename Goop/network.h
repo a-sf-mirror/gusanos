@@ -7,7 +7,8 @@
 #include <zoidcom.h>
 #include <string>
 
-static unsigned int INVALID_NODE_ID = 0;
+//static unsigned int INVALID_NODE_ID = 0; // You can't have statics in headers outside classes >:o
+#define INVALID_NODE_ID 0
 
 class Network
 {

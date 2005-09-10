@@ -21,30 +21,35 @@ class BasePlayerInterceptor;
 // should pass by the BasePlayer class ( This is because the BasePlayer
 // class will be responsible of the network part )
 
+#define COMPACT_EVENTS
+#define COMPACT_ACTIONS
+
 class BasePlayer
 {
 public:
 	
 	enum BaseActions
 	{
-		LEFT,
+		LEFT = 0,
 		RIGHT,
-		UP,
-		DOWN,
+		//UP,
+		//DOWN,
 		FIRE,
 		JUMP,
-		CHANGE, // Probably useless Action
+		//CHANGE, // Probably useless Action
 		NINJAROPE,
-		RESPAWN
+		RESPAWN,
+		ACTION_COUNT,
 	};
 	
 	enum NetEvents
 	{
-		SYNC,
+		SYNC = 0,
 		ACTION_STOP,
 		ACTION_START,
 		NAME_CHANGE,
-		NAME_PETITION
+		NAME_PETITION,
+		EVENT_COUNT,
 	};
 	
 	enum ReplicationItems
@@ -64,7 +69,7 @@ public:
 	// subThink() gets called inside think() and its used to give the derivations
 	// the ability to think without replacing the main BasePlayer::think().
 	virtual void subThink() = 0;
-	virtual void render() {};
+	virtual void render() {}
 
 	void assignNetworkRole( bool authority );
 	void setOwnerId( ZCom_ConnID id );
@@ -87,6 +92,9 @@ public:
 	ZCom_ConnID getConnectionID();
 	PlayerOptions* getOptions();
 	BaseWorm* getWorm() { return m_worm; }
+	
+	void* operator new(size_t count);
+	void operator delete(void* block);
 	
 	int deaths;
 	int kills;
@@ -129,5 +137,6 @@ public:
 private:
 	BasePlayer* m_parent;
 };
+
 
 #endif  // _BASE_PLAYER_H_

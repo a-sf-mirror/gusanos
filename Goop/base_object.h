@@ -17,10 +17,10 @@ public:
 	virtual ~BaseObject();
 
 	// Draw the object in the where bitmap with an offset ( used for camera )
-	virtual void draw(BITMAP* where,int xOff, int yOff) = 0;
+	virtual void draw(BITMAP* where, int xOff, int yOff) {}
 	
 	// All the object logic here
-	virtual void think() = 0;
+	virtual void think() {}
 	
 	// Gets the position on the level where the object wants to be rendered
 	virtual Vec getRenderPos();
@@ -71,6 +71,11 @@ public:
 	Vec spd;
 	
 	int luaData;
+
+	BaseObject* nextS_;
+	BaseObject* nextD_;
+	BaseObject* prevD_;
+	int cellIndex_;
 	
 protected:
 	

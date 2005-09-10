@@ -1,6 +1,7 @@
 #include "base_worm.h"
 
 #include "vec.h"
+#include "math_func.h"
 #include "game.h"
 #include "base_object.h"
 #include "base_player.h"
@@ -25,9 +26,23 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
+void* BaseWorm::operator new(size_t count)
+{
+	//BaseWorm* p = (BaseWorm *)lua_newuserdata (lua, count);
+	BaseWorm* p = (BaseWorm *)lua.pushObject(LuaBindings::wormMetaTable, count);
+	p->luaReference = lua.createReference();
+	return (void *)p;
+}
+
+void BaseWorm::operator delete(void* block)
+{
+	BaseWorm* p = (BaseWorm *)block;
+	lua.destroyReference(p->luaReference);
+}
+
 BaseWorm::BaseWorm()
-: BaseObject(), animate(false), movable(false), changing(false)
-, aimAngle(90.0), aimSpeed(0.0)
+: BaseObject(), aimSpeed(0.0), aimAngle(90.0)
+, m_animator(0), animate(false), movable(false), changing(false), m_dir(1)
 {
 	skin = spriteList.load("skin");
 	m_animator = new AnimLoopRight(skin,35);
@@ -59,15 +74,14 @@ BaseWorm::BaseWorm()
 	movingRight = false;
 	jumping = false;
 	
-	lua.pushFullReference(*this, LuaBindings::wormMetaTable);
-	luaReference = lua.createReference();
+	
 }
 
 BaseWorm::~BaseWorm()
 {
-	lua.destroyReference(luaReference);
-	if ( m_animator ) delete m_animator;
-	if ( m_fireconeAnimator ) delete m_fireconeAnimator;
+	delete m_animator; m_animator = 0;
+	delete m_fireconeAnimator; m_fireconeAnimator = 0;
+
 	//m_ninjaRope->deleteMe = true;
 	for ( size_t i = 0; i < m_weapons.size(); i++)
 	{
@@ -479,8 +493,10 @@ void BaseWorm::think()
 		{
 			if ( m_fireconeTime == 0 ) m_currentFirecone = NULL;
 			--m_fireconeTime;
+			/*
 			if(m_fireconeAnimator)
-				m_fireconeAnimator->tick();
+				m_fireconeAnimator->tick();*/
+			m_fireconeAnimator->tick();
 		}
 		// TODO: Viewport
 	}else
@@ -745,6 +761,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			else for(int i = 0; i < 10; i++)
 			{
 				Vec crosshair = Vec(getAngle(), rnd()*10.0+20.0) + Vec(x,y);
+
 				putpixel(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y), makecol(255,0,0));
 			}
 			
@@ -754,12 +771,12 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
 			
-			skin->getSprite(m_animator->getFrame(),aimAngle)->draw(where, renderX, renderY, flipped);
+			skin->getSprite(m_animator->getFrame(), aimAngle)->draw(where, renderX, renderY, flipped);
 			
 			if ( m_currentFirecone )
 			{
 				Vec distance = Vec(aimAngle, (double)m_fireconeDistance);
-				m_currentFirecone->getSprite(m_fireconeAnimator->getFrame(),aimAngle)->
+				m_currentFirecone->getSprite(m_fireconeAnimator->getFrame(), aimAngle)->
 						draw(where, renderX+static_cast<int>(distance.x)*m_dir, renderY+static_cast<int>(distance.y), flipped);
 			}
 				
@@ -831,7 +848,8 @@ void BaseWorm::die()
 	m_timeSinceDeath = 0;
 	if ( game.deathObject )
 	{
-		game.insertParticle( new Particle( game.deathObject, pos, spd, m_dir, m_owner, spd.getAngle() ) );
+		//game.insertParticle( new Particle( game.deathObject, pos, spd, m_dir, m_owner, spd.getAngle() ) );
+		game.deathObject->newParticle( game.deathObject, pos, spd, m_dir, m_owner, spd.getAngle() );
 	}
 }
 
@@ -868,7 +886,7 @@ void BaseWorm::showFirecone( SpriteSet* sprite, int frames, float distance )
 {
 	m_fireconeTime = frames;
 	m_currentFirecone = sprite;
-	if ( m_fireconeAnimator ) delete m_fireconeAnimator;
+	delete m_fireconeAnimator;
 	m_fireconeAnimator = new AnimLoopRight( sprite, frames );
 	m_fireconeDistance = distance;
 	

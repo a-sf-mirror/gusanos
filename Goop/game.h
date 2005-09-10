@@ -6,6 +6,7 @@
 //#include "base_action.h"
 #include "objects_list.h"
 #include "hash_table.h"
+#include "object_grid.h"
 
 #include <allegro.h>
 #include <string>
@@ -24,13 +25,15 @@ class PartType;
 class Explosion;
 class Font;
 
+/* NOOOO >:O
 static const int MAX_LOCAL_PLAYERS = 2;
 static const int WORMS_COLLISION_LAYER = 0;
 static const int NO_COLLISION_LAYER = 1;
 static const int CUSTOM_COL_LAYER_START = 2;
-static const int WORMS_RENDER_LAYER = 4;
+static const int WORMS_RENDER_LAYER = 4;*/
 
-		
+#define USE_GRID
+
 class Player;
 
 struct Options
@@ -64,6 +67,26 @@ struct Options
 class Game
 {
 public:
+#ifndef USE_GRID
+	enum ColLayer
+	{
+		WORMS_COLLISION_LAYER = 0,
+		NO_COLLISION_LAYER = 1,
+		COLLISION_LAYER_COUNT = 10,
+	};
+	
+	enum RenderLayer
+	{
+		WORMS_RENDER_LAYER = 4,
+		RENDER_LAYER_COUNT = 10,
+	};
+	
+	static const int CUSTOM_COL_LAYER_START = 2;
+#endif
+
+	static const int MAX_LOCAL_PLAYERS = 2;
+	
+	
 		
 	static ZCom_ClassID  classID;
 
@@ -99,9 +122,11 @@ public:
 	
 	std::vector<Player*> localPlayers;
 	std::list<BasePlayer*> players;
-	
+#ifdef USE_GRID
+	Grid objects;
+#else
 	ObjectsList objects;
-	void insertParticle( Particle* particle );
+#endif
 	void insertExplosion( Explosion* explosion );
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;

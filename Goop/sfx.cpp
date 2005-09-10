@@ -7,6 +7,7 @@ using namespace boost::assign;
 
 #include <vector>
 #include <fmod.h>
+#include <boost/utility.hpp>
 
 using namespace std;
 
@@ -114,16 +115,25 @@ void Sfx::think()
 	}
 	
 	//Update 3d channel that follow objects positions
-	list< pair< int, BaseObject* > >::iterator obj;
-	for ( obj = chanObject.begin(); obj != chanObject.end(); obj++ )
+	list< pair< int, BaseObject* > >::iterator obj, next;
+	for ( obj = chanObject.begin(); obj != chanObject.end(); obj = next)
 	{
-		if ( obj->second )
+		next = boost::next(obj);
+		
+		if( !obj->second
+		||  obj->second->deleteMe
+		||  !FSOUND_IsPlaying( obj->first ) )
+		{
+			chanObject.erase(obj);
+		}
+		else
 		{
 			float pos[3] = { obj->second->pos.x, obj->second->pos.y, 0 };
 			FSOUND_3D_SetAttributes(obj->first, pos, NULL);
 		}
 	}
 
+/*
 	//Check for deleted objects
 	for ( obj = chanObject.begin(); obj != chanObject.end(); )
 	{
@@ -135,7 +145,7 @@ void Sfx::think()
 		}
 		else
 			obj++;
-	}
+	}*/
 
 }
 

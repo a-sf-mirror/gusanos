@@ -2,13 +2,21 @@
 #define DISTORTION_H
 
 #include "vec.h"
+#include "math_func.h"
 #include <string>
+#include <utility>
+#include <map>
+#include <vector>
 
 struct BITMAP;
 
 struct DistortionMap
 {
+	typedef std::vector<std::pair<int, int> > CachedMapT;
 	std::vector<Vec> map;
+	CachedMapT quantMap;
+	CachedMapT const& compileMap();
+	
 	int width;
 };
 
@@ -20,6 +28,8 @@ class Distortion
 	~Distortion();
 	
 	void apply( BITMAP* where, int x, int y, float multiply );
+	
+	//void applyFast( BITMAP* where, int x, int y, float multiply );
 	
 	private:
 	

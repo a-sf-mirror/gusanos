@@ -53,16 +53,6 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 				}
 			}
 			
-			//TODO
-			level->m_materialList[0].worm_pass = false;
-			level->m_materialList[0].particle_pass = false;
-			
-			level->m_materialList[1].worm_pass = false;
-			level->m_materialList[1].particle_pass = false;
-			
-			level->m_materialList[8].worm_pass = false;
-			level->m_materialList[8].particle_pass = false;
-			
 			level->loaderSucceeded();
 			return true;
 		}

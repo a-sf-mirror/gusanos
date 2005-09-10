@@ -3,6 +3,7 @@
 #include "events.h"
 #include "base_worm.h"
 #include "game.h"
+#include "math_func.h"
 
 #include "network.h"
 

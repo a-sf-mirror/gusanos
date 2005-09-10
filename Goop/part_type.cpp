@@ -4,10 +4,17 @@
 
 #include "sprite_set.h"
 #include "gfx.h"
+#include "game.h"
 #include "distortion.h"
 #include "text.h"
 #include "parser.h"
 #include "detect_event.h"
+#include "animators.h"
+
+#include "particle.h"
+#include "simple_particle.h"
+#include "game_actions.h"
+#include "math_func.h"
 
 #include <allegro.h>
 #include <string>
@@ -35,7 +42,46 @@ TimerEvent::~TimerEvent()
 	delete event;
 }
 
+void newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
+{
+	BaseObject* particle = new Particle(type, pos_, spd_, dir, owner, angle);
+	
+#ifdef USE_GRID
+	if(type->colLayer != Grid::NoColLayer)
+		game.objects.insert( particle, type->colLayer, type->renderLayer);
+	else
+		game.objects.insert( particle, type->renderLayer);
+#else
+	game.objects.insert( type->colLayer, type->renderLayer, particle );	
+#endif
+}
+
+void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
+{
+	int timeout = type->simpleParticle_timeout + rndInt(type->simpleParticle_timeoutVariation);
+	BaseObject* particle = new SimpleParticle(pos_, spd_, owner, timeout, type->gravity, type->colour);
+	
+#ifdef USE_GRID
+	game.objects.insert( particle, type->colLayer, type->renderLayer);
+#else
+	game.objects.insert( type->colLayer, type->renderLayer, particle );	
+#endif
+}
+
+void newParticle_SimpleParticle32(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
+{
+	int timeout = type->simpleParticle_timeout + rndInt(type->simpleParticle_timeoutVariation);
+	BaseObject* particle = new SimpleParticle32(pos_, spd_, owner, timeout, type->gravity, type->colour);
+	
+#ifdef USE_GRID
+	game.objects.insert( particle, type->colLayer, type->renderLayer);
+#else
+	game.objects.insert( type->colLayer, type->renderLayer, particle );	
+#endif
+}
+
 PartType::PartType()
+: newParticle(0)
 {
 	gravity = 0;
 	bounceFactor = 1;
@@ -85,6 +131,50 @@ PartType::~PartType()
 	{
 		delete *i;
 	}
+}
+
+bool PartType::isSimpleParticleType()
+{
+	if(repeat != 1 || alpha != 255 || sprite || distortion || damping != 1.f
+	|| acceleration != 0.f || blender != NONE || !groundCollision
+	|| death || timer.size() > 1
+	|| detectRanges.size() > 0)
+	{
+		return false;
+	}
+			
+	std::vector<BaseAction*>::const_iterator i = groundCollision->actions.begin();
+	for(; i != groundCollision->actions.end(); ++i)
+	{
+		Remove* event = dynamic_cast<Remove *>(*i);
+		if(!event)
+			return false; // groundCollision contains non-remove actions
+	}
+	
+	if(timer.size() > 0)
+	{
+		// triggerTimes is irrelevant since it will only trigger once anyway
+		
+		if(timer[0]->event->actions.size() == 0)
+			return false;
+			
+		Remove* event = dynamic_cast<Remove *>(timer[0]->event->actions[0]);
+		if(!event)
+			return false; // timer event contains non-remove actions
+		
+		// One timer with one remove acton
+
+		simpleParticle_timeout = timer[0]->delay;
+		simpleParticle_timeoutVariation = timer[0]->delayVariation;
+	}
+	else
+	{
+		simpleParticle_timeout = 0;
+		simpleParticle_timeoutVariation = 0;
+	}
+		
+
+	return true;
 }
 
 bool PartType::load(fs::path const& filename)
@@ -289,11 +379,52 @@ bool PartType::load(fs::path const& filename)
 			}
 		}
 		//fileStream.close(); //RAII ffs
+		
+		// Do optimizations
+				
+		if(isSimpleParticleType())
+		{
+			switch(bitmap_color_depth(screen))
+			{
+				default: newParticle = newParticle_SimpleParticle; break;
+				case 32: newParticle = newParticle_SimpleParticle32; break;
+			}
+			
+			cerr << filename.native_file_string() << ": blood" << endl;
+		}
+		else
+			newParticle = newParticle_Particle;
+			
+		if( colLayer >= 0 )
+			colLayer = Grid::CustomColLayerStart + colLayer;
+		else
+			colLayer = Grid::NoColLayer;
+		
 		return true;
+
 	} else
 	{
 		return false;
 	}
 }
 
+BaseAnimator* PartType::allocateAnimator()
+{
+	switch ( animType )
+	{
+		case PartType::ANIM_PINGPONG : 
+			return new AnimPingPong(sprite, animDuration);
+		break;
+		
+		case PartType::ANIM_LOOPRIGHT : 
+			return new AnimLoopRight(sprite, animDuration);
+		break;
+			
+		case PartType::ANIM_RIGHTONCE : 
+			return new AnimRightOnce(sprite, animDuration);
+		break;
+	}
+	
+	return 0;
+}
 

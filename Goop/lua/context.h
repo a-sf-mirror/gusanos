@@ -52,6 +52,16 @@ public:
 		lua_setmetatable(m_State, -2);
 	}
 	
+	void* pushObject(int metatable, size_t count)
+	{
+		void* p = lua_newuserdata (m_State, count);
+		
+		pushReference(metatable);
+		lua_setmetatable(m_State, -2);
+		
+		return p;
+	}
+	
 	int callReference(int ref);
 	
 	template<class T1>

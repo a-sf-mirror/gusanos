@@ -6,6 +6,7 @@
 #include "events.h"
 #include "distortion.h"
 #include "angle.h"
+#include "vec.h"
 
 #include <allegro.h>
 #include <string>
@@ -15,6 +16,8 @@ namespace fs = boost::filesystem;
 
 class SpriteSet;
 class DetectEvent;
+class BaseAnimator;
+class BasePlayer;
 //struct Distortion;
 
 struct TimerEvent
@@ -27,6 +30,10 @@ struct TimerEvent
 	int triggerTimes;
 };
 
+class PartType;
+
+typedef void (*NewParticleFunc)(PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle);
+
 class PartType
 {
 	public:
@@ -34,7 +41,11 @@ class PartType
 	PartType();
 	~PartType();
 	
+	bool isSimpleParticleType();
 	bool load(fs::path const& filename);
+	
+	BaseAnimator* allocateAnimator();
+	NewParticleFunc newParticle;
 
 	float gravity;
 	float bounceFactor;
@@ -59,6 +70,9 @@ class PartType
 	int animOnGround;
 	Blenders blender;
 	bool line2Origin;
+	
+	int simpleParticle_timeout;
+	int simpleParticle_timeoutVariation;
 	
 	std::vector< TimerEvent* > timer;
 	std::vector< DetectEvent* > detectRanges;

@@ -1,7 +1,7 @@
 #include "game_actions.h"
 
 #include "game.h"
-#include "particle.h"
+//#include "particle.h"
 #include "part_type.h"
 #include "explosion.h"
 #include "exp_type.h"
@@ -135,7 +135,8 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 				spd += object->spd * motionInheritance;
 				angle = spd.getAngle(); // Need to recompute angle
 			}
-			game.insertParticle( new Particle( type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
+
+			type->newParticle(type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle);
 		}
 	}
 }
@@ -224,7 +225,8 @@ void UniformShootParticles::run( BaseObject* object, BaseObject *object2, BaseWo
 				spd += object->spd * motionInheritance;
 				angle = spd.getAngle(); // Need to recompute angle
 			}
-			game.insertParticle( new Particle( type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
+
+			type->newParticle(type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle);
 		}
 	}
 }
@@ -318,14 +320,27 @@ Repel::Repel( const vector< string >& params )
 	{
 		minForce = cast<float>(params[2]);
 	}
+	
+	maxDistanceSqr = maxDistance*maxDistance;
+	forceDiffScaled = (minForce - maxForce) / maxDistance;
 }
 
 void Repel::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
 {
+/*
 	float distance = ( object2->pos - object->pos ).length();
 	if ( ( distance > 0 ) && ( distance < maxDistance ) )
 	{
 		object2->spd += ( object2->pos - object->pos ).normal() * ( maxForce + distance * ( minForce - maxForce ) / maxDistance );
+	}
+*/
+	Vec dir( object2->pos - object->pos );
+	double distanceSqr = dir.lengthSqr();
+	if ( distanceSqr > 0.f && distanceSqr < maxDistanceSqr )
+	{
+		double distance = sqrt(distanceSqr);
+		dir /= distance; // Normalize
+		object2->spd += dir * ( maxForce + distance * forceDiffScaled);
 	}
 }
 
@@ -786,4 +801,5 @@ void RunScript::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, We
 
 RunScript::~RunScript()
 {
+	lua.destroyReference(function);
 }

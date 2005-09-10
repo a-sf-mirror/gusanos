@@ -10,6 +10,7 @@
 #include "ninjarope.h"
 #include "network.h"
 #include "vector_replicator.h"
+#include "encoding.h"
 
 #include <math.h>
 #include <vector>
@@ -72,8 +73,17 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 
 NetWorm::~NetWorm()
 {
-	if ( m_node ) delete m_node;
-	if ( m_interceptor ) delete m_interceptor;
+	delete m_node;
+	delete m_interceptor;
+}
+
+inline void addEvent(ZCom_BitStream* data, int event)
+{
+#ifdef COMPACT_EVENTS
+	data->addInt(event, Encoding::bitsOf(NetWorm::EVENT_COUNT - 1));
+#else
+	data->addInt(static_cast<int>(event),8 );
+#endif
 }
 
 void NetWorm::think()
@@ -83,37 +93,45 @@ void NetWorm::think()
 
 	++timeSinceLastUpdate;
 	
-	if ( m_node )
-	{
+	if ( !m_node )
+		return;
 	
-		while ( m_node->checkEventWaiting() )
+	while ( m_node->checkEventWaiting() )
+	{
+		ZCom_Node::eEvent type;
+		eZCom_NodeRole    remote_role;
+		ZCom_ConnID       conn_id;
+		
+		ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
+		switch(type)
 		{
-			ZCom_Node::eEvent type;
-			eZCom_NodeRole    remote_role;
-			ZCom_ConnID       conn_id;
-			
-			ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
-			switch(type)
-			{
-			case ZCom_Node::eEvent_User:
+		case ZCom_Node::eEvent_User:
 			if ( data )
 			{
+#ifdef COMPACT_EVENTS
+				NetEvents event = (NetEvents)data->getInt(Encoding::bitsOf(EVENT_COUNT - 1));
+#else
 				NetEvents event = (NetEvents)data->getInt(8);
+#endif
 				switch ( event )
 				{
 					case PosCorrection:
 					{
+						/*
 						pos.x = data->getFloat(32);
 						pos.y = data->getFloat(32);
 						spd.x = data->getFloat(32);
-						spd.y = data->getFloat(32);
+						spd.y = data->getFloat(32);*/
+						pos = game.level.vectorEncoding.decode<Vec>(*data);
+						spd = game.level.vectorEncoding.decode<Vec>(*data);
 					}
 					break;
 					case Respawn:
 					{
 						Vec newpos;
-						newpos.x = data->getFloat(32);
-						newpos.y = data->getFloat(32);
+						//newpos.x = data->getFloat(32);
+						//newpos.y = data->getFloat(32);
+						newpos = game.level.vectorEncoding.decode<Vec>(*data);
 						BaseWorm::respawn( newpos );
 					}
 					break;
@@ -125,13 +143,13 @@ void NetWorm::think()
 					break;
 					case ChangeWeapon:
 					{
-						int weapIndex = data->getInt(16);
+						size_t weapIndex = data->getInt(Encoding::bitsOf(game.weaponList.size() - 1));
 						changeWeaponTo( weapIndex );
 					}
 					break;
 					case WeaponMessage:
 					{
-						size_t weapIndex = data->getInt(8);
+						size_t weapIndex = data->getInt(Encoding::bitsOf(game.weaponList.size() - 1));
 						if ( weapIndex < m_weapons.size() )
 							m_weapons[weapIndex]->recieveMessage( data );
 					}
@@ -140,18 +158,20 @@ void NetWorm::think()
 					{
 						m_isActive = data->getBool();
 						m_ninjaRope->active = data->getBool();
-						currentWeapon = data->getInt(16);
+						currentWeapon = data->getInt(Encoding::bitsOf(game.weaponList.size() - 1));
 					}
 					break;
 				}
 			}
 			break;
+			
 			case ZCom_Node::eEvent_Init:
 			{
 				sendSyncMessage( conn_id );
 			}
 			break;
-			}
+			
+			default: break; // Annoying warnings >:O
 		}
 	}
 }
@@ -159,11 +179,14 @@ void NetWorm::think()
 void NetWorm::correctOwnerPosition()
 {
 	ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
-	data->addInt(static_cast<int>(PosCorrection),8 );
+	addEvent(data, PosCorrection);
+	/*
 	data->addFloat(pos.x,32); // Maybe this packet is too heavy...
 	data->addFloat(pos.y,32);
 	data->addFloat(spd.x,32);
-	data->addFloat(spd.y,32);
+	data->addFloat(spd.y,32);*/
+	game.level.vectorEncoding.encode<Vec>(*data, pos); // ...nah ;o
+	game.level.vectorEncoding.encode<Vec>(*data, spd);
 	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_OWNER, data);
 }
 
@@ -178,21 +201,22 @@ void NetWorm::setOwnerId( ZCom_ConnID _id )
 	m_node->setOwner(_id,true);
 }
 
+
 void NetWorm::sendSyncMessage( ZCom_ConnID id )
 {
 	ZCom_BitStream *data = new ZCom_BitStream;
-	data->addInt(static_cast<int>(SYNC),8 );
+	addEvent(data, SYNC);
 	data->addBool(m_isActive);
 	data->addBool(m_ninjaRope->active);
-	data->addInt( currentWeapon, 16 );
+	data->addInt(currentWeapon, Encoding::bitsOf(game.weaponList.size() - 1));
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 
 void NetWorm::sendWeaponMessage( int index, ZCom_BitStream* weaponData )
 {
 	ZCom_BitStream *data = new ZCom_BitStream;
-	data->addInt(static_cast<int>(WeaponMessage),8 );
-	data->addInt( index, 8 ); // TODO: optimize this to the smallest number possible
+	addEvent(data, WeaponMessage);
+	data->addInt(index, Encoding::bitsOf(game.weaponList.size() - 1));
 	data->addBitStream( weaponData );
 	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 }
@@ -213,9 +237,11 @@ void NetWorm::respawn()
 		if ( m_isActive )
 		{
 			ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
-			data->addInt( static_cast<int>( Respawn ),8 );
+			addEvent(data, Respawn);
+			/*
 			data->addFloat(pos.x,32);
-			data->addFloat(pos.y,32);
+			data->addFloat(pos.y,32);*/
+			game.level.vectorEncoding.encode<Vec>(*data, pos);
 			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 		}
 	}
@@ -226,7 +252,7 @@ void NetWorm::die()
 	if ( m_isAuthority && m_node )
 	{
 		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
-		data->addInt( static_cast<int>( Die ),8 );
+		addEvent(data, Die);
 		if ( m_lastHurt )
 		{
 			data->addInt( static_cast<int>( m_lastHurt->getNodeID() ), 32 );
@@ -245,9 +271,8 @@ void NetWorm::changeWeaponTo( unsigned int weapIndex )
 	if ( m_node )
 	{
 		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
-		data->addInt( static_cast<int>( ChangeWeapon ),8 );
-		// TODO: Optimize this to the smallest number possible depending on weapons amount
-		data->addInt( weapIndex, 16 );
+		addEvent(data, ChangeWeapon);
+		data->addInt(weapIndex, Encoding::bitsOf(game.weaponList.size() - 1));
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH | ZCOM_REPRULE_AUTH_2_PROXY, data);
 		BaseWorm::changeWeaponTo( weapIndex );
 	}

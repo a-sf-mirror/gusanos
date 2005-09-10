@@ -235,7 +235,7 @@ private:
 	size_t     count;
 	Hash       indexCount;
 	size_t     sizeOrder;
-	hash<KeyT> hashFunc;
+	HashFunc   hashFunc;
 };
 
 #endif //GUSANOS_HASH_TABLE_H

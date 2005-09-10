@@ -31,6 +31,8 @@ public:
 private:
 		
 	std::vector< std::vector< Sprite* > > m_frame;
+	long m_angleFactor;
+	long m_halfAngleDivisonSize;
 };
 
 extern ResourceList<SpriteSet> spriteList;

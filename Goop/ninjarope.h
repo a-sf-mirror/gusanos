@@ -6,7 +6,9 @@
 //#include "part_type.h"
 #include "vec.h"
 #include "angle.h"
+//#include "animators.h"
 #include <vector>
+//#include <boost/variant.hpp>
 
 class SpriteSet;
 class BaseAnimator;
@@ -61,6 +63,7 @@ private:
 	SpriteSet* m_sprite;
 	BaseObject* m_worm;
 	BaseAnimator* m_animator;
+	//boost::variant< int, AnimPingPong, AnimLoopRight, AnimRightOnce > m_animator;
 	
 	bool justCreated;
 };

@@ -1,7 +1,7 @@
 #include "context.h"
 
-#define FREELIST_REF 0
-#define ARRAY_SIZE   1
+#define FREELIST_REF 1
+#define ARRAY_SIZE   2
 
 LuaContext::LuaContext()
 : m_borrowed(false)
@@ -25,7 +25,7 @@ LuaContext::LuaContext(lua_State* state_)
 void LuaContext::init()
 {
 	m_State = lua_open();
-	lua_pushnumber(m_State, 2);
+	lua_pushnumber(m_State, 3);
 	lua_rawseti(m_State, LUA_REGISTRYINDEX, ARRAY_SIZE);
 }
 

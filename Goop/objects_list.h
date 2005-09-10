@@ -12,8 +12,15 @@ class BaseObject;
 
 class ObjectsList
 {
-	public:
+public:
 	
+#ifdef USE_OBJECT_GRID
+	struct ColLayerIterator
+	{
+	
+	private:
+	};
+#else
 	class ColLayerIterator
 	{
 		friend class ObjectsList;
@@ -72,7 +79,8 @@ class ObjectsList
 			std::list<BaseObject*>::iterator currentObject;
 			std::vector< std::list<BaseObject*> >* m_list;
 	};
-		
+#endif
+
 	ObjectsList();
 	~ObjectsList();
 	

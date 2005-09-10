@@ -41,13 +41,16 @@ class Gfx
 		switch ( blender )
 		{
 			case ALPHA:
-			{
 				set_trans_blender(255, 255, 255, alpha);
-			}break;
+			break;
+			
 			case ADD:
-			{
 				set_add_blender( 255,255,255, alpha);
-			}break;
+			break;
+			
+			case NONE:
+				solid_mode();
+			break;
 		}
 	}
 	

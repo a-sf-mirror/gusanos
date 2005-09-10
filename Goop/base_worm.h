@@ -5,6 +5,9 @@
 #include "vec.h"
 #include "base_object.h"
 #include "angle.h"
+#include <vector>
+//#include "animators.h"
+//#include <boost/variant.hpp>
 
 class BaseAnimator;
 class BasePlayer;
@@ -20,8 +23,8 @@ public:
 	{
 		MOVELEFT,
 		MOVERIGHT,
-		AIMUP,
-		AIMDOWN,
+		//AIMUP,
+		//AIMDOWN,
 		FIRE,
 		FIRE2,
 		JUMP,
@@ -60,7 +63,6 @@ public:
 	void addAimSpeed(AngleDiff speed);
 	void addRopeLength(float distance);
 	
-	Vec getPos();
 	Vec getWeaponPos();
 	Vec getRenderPos();
 
@@ -98,22 +100,15 @@ public:
 	virtual void sendWeaponMessage( int index, ZCom_BitStream* data ) {}
 	virtual void pushLuaReference();
 	
+	void* operator new(size_t count);
+	
+	void operator delete(void* block);
+	
 protected:
 
 	Vec renderPos;
-	
-	bool m_isActive;
-	
-	bool movingLeft;
-	bool movingRight;
-	bool jumping;
-	
-	int m_dir;
-
 	int reacts[DirMax];
-	bool animate;
-	bool movable; // What do we need this for? // Dunno, did I put this here? :o
-	bool changing; // This shouldnt be in the worm class ( its player stuff >:O )
+
 	float aimRecoilSpeed;
 	float health;
 	//float currentRopeLength; //moved to Ninjarope
@@ -133,7 +128,18 @@ protected:
 	SpriteSet *skin;
 	SpriteSet *m_currentFirecone;
 	BaseAnimator* m_fireconeAnimator;
+	
 	BaseAnimator* m_animator;
+	
+	// Smaller vars last to improve alignment and/or decrease structure size
+	bool m_isActive;
+	bool movingLeft;
+	bool movingRight;
+	bool jumping;
+	bool animate;
+	bool movable; // What do we need this for? // Dunno, did I put this here? :o
+	bool changing; // This shouldnt be in the worm class ( its player stuff >:O )
+	int m_dir;
 };
 
 #endif  // _WORM_H_

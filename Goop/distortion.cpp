@@ -6,7 +6,11 @@
 
 #include <string>
 
-using namespace std;
+#include <iostream>
+using std::cerr;
+using std::endl;
+using std::string;
+//using namespace std;
 
 DistortionMap* lensMap(int radius)
 {
@@ -177,21 +181,38 @@ DistortionMap* bitmapMap(const string &filename)
 	return lens;
 }
 
-Distortion::Distortion(DistortionMap* map)
+DistortionMap::CachedMapT const& DistortionMap::compileMap()
 {
-	m_map = map;
-	//m_map = lensMap(40);
-	buffer = create_bitmap( m_map->width, m_map->map.size() / m_map->width);
+	std::vector<Vec>::const_iterator m = map.begin();
+	
+	CachedMapT& c = quantMap;
+	c.clear();
+
+	for(; m != map.end(); ++m)
+	{
+		int x = int(m->x * 256.f);
+		int y = int(m->y * 256.f);
+		c.push_back(std::make_pair(x, y));
+	}
+	
+	return c;
+}
+
+Distortion::Distortion(DistortionMap* map)
+: m_map(map)
+{
+	m_map->compileMap();
 	width = m_map->width;
 	height = m_map->map.size() / m_map->width;
+	buffer = create_bitmap( width, height);
 }
 
 Distortion::~Distortion()
 {
-	if ( buffer ) destroy_bitmap( buffer );
-	if ( m_map ) delete m_map;
+	destroy_bitmap( buffer );
+	delete m_map;
 }
-
+/*
 void Distortion::apply( BITMAP* where, int _x, int _y, float multiply = 1)
 {
 	_x -= width / 2;
@@ -208,5 +229,102 @@ void Distortion::apply( BITMAP* where, int _x, int _y, float multiply = 1)
 		++y;
 	}
 	blit(buffer, where, 0, 0, _x, _y, buffer->w, buffer->h);
+}
+*/
+void Distortion::apply( BITMAP* where, int destx, int desty, float multiply = 1.f)
+{
+	destx -= width / 2;
+	desty -= height / 2;
+
+	DistortionMap::CachedMapT const& map = m_map->quantMap;
+	
+	int fmag = int(multiply * 256);
+	
+	int x1, y1, w, h;
+
+	if(destx < 0)
+	{
+		x1 = -destx;
+		w = width + destx;
+		destx = 0;
+	}
+	else
+	{
+		x1 = 0;
+		w = width;
+	}
+	if(desty < 0)
+	{
+		y1 = -desty;
+		h = height + desty;
+		desty = 0;
+	}
+	else
+	{
+		y1 = 0;
+		h = height;
+	}
+	
+	if(destx + w > where->w)
+		w = where->w - destx;
+
+	if(desty + h > where->h)
+		h = where->h - desty;
+	
+	if(w <= 0 || h <= 0)
+		return;
+
+	std::pair<int, int> const* m = &map[x1 + y1 * width];
+	
+	size_t wrap = (width - w) * sizeof(std::pair<int, int>);
+	
+	int orgW = w;
+	int orgH = h;
+	
+	unsigned char** buffer_line = buffer->line;
+	unsigned char** where_line = where->line;
+	unsigned int where_w = (unsigned int)where->w;
+	unsigned int where_h = (unsigned int)where->h;
+	
+	int orgDestX = destx;
+	int orgDestY = desty;
+
+	#define SET16(v_) *dest++ = v_
+	#define GET16(t_) (((unsigned int)(x_) < where_w && (unsigned int)(y_) < where_h) ? ((t_ *)where_line[y_])[x_] : 0)
+	#define SET32(v_) *dest++ = v_
+	#define GET32(t_) (((unsigned int)(x_) < where_w && (unsigned int)(y_) < where_h) ? ((t_ *)where_line[y_])[x_] : 0)
+	#define WORK(get_, set_, t_) \
+	for ( int y = y1; h-- > 0; ++y, ++desty ) { \
+		w = orgW; \
+		destx = orgDestX; \
+		t_* dest = ((t_ *)buffer_line[y]) + x1; \
+		for ( ; w-- > 0; ++m, ++destx) { \
+			int x_ = destx + ((m->first * fmag) >> 16); \
+			int y_ = desty + ((m->second * fmag) >> 16); \
+			set_(get_(t_)); } \
+		m = (std::pair<int, int> *)(((char *)m) + wrap); }
+		
+	#define WORK_GENERAL() \
+	for ( int y = y1; h-- > 0; ++y, ++desty ) { \
+		w = orgW; \
+		destx = orgDestX; \
+		for ( int x = x1; w-- > 0; ++m, ++destx, ++x) { \
+			int x_ = destx + ((m->first * fmag) >> 16); \
+			int y_ = desty + ((m->second * fmag) >> 16); \
+			putpixel(buffer, x, y, getpixel(where, x_, y_)); } \
+		m = (std::pair<int, int> *)(((char *)m) + wrap); }
+	
+	switch(bitmap_color_depth(buffer))
+	{
+		case 32: WORK(GET32, SET32, unsigned long); break;
+		case 16: WORK(GET16, SET16, unsigned short); break;
+		default: WORK_GENERAL(); break;
+	}
+	
+	#undef WORK
+	#undef GET32
+	#undef SET32
+	
+	blit(buffer, where, x1, y1, orgDestX, orgDestY, orgW, orgH);
 }
 

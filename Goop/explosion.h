@@ -4,6 +4,7 @@
 #include "base_object.h"
 #include "exp_type.h"
 #include "vec.h"
+//#include "animators.h"
 #include <vector>
 
 class Sprite;
@@ -35,6 +36,7 @@ class Explosion : public BaseObject
 		float m_alpha;
 		SpriteSet* m_sprite;
 		BaseAnimator* m_animator;
+		//AnimLoopRight m_animator;
 	
 		bool justCreated;
 };

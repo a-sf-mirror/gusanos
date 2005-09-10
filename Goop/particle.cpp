@@ -10,24 +10,27 @@
 #include "sprite.h"
 #include "sprite_set.h"
 #include "base_animator.h"
-#include "animators.h"
+//#include "animators.h"
 #include "glua.h"
 #include "lua/bindings.h"
 #include "detect_event.h"
 
 #include <vector>
+#include <iostream>
 #define BOOST_NO_MT
 #include <boost/pool/pool.hpp>
 
 using namespace std;
 
-boost::pool<> particlePool(sizeof(Particle));
+static boost::pool<> particlePool(sizeof(Particle));
 
 void* Particle::operator new(size_t count)
 {
+
 	assert(count <= sizeof(Particle));
 	return particlePool.malloc();
 }
+
 
 void Particle::operator delete(void* block)
 {
@@ -35,43 +38,29 @@ void Particle::operator delete(void* block)
 }
 
 Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle)
-: BaseObject(owner, pos_, spd_), justCreated(true), m_type(type)
+: BaseObject(owner, pos_, spd_), justCreated(true), m_dir(dir), m_type(type)
 , m_health(type->health), m_angle(angle), m_angleSpeed(0)
 , m_alpha(m_type->alpha), m_fadeSpeed(0), m_animator(0)
 , m_alphaDest(255), m_sprite(m_type->sprite), m_origin(pos_)
-, m_dir(dir)
 {
-/*
-	justCreated = true;
-	m_type = type;
-	
-	m_health = type->health;
-	pos = _pos;
-	spd = _spd;
-	m_angle = spd.getAngle();
-	m_angleSpeed = 0;
-	m_animator = NULL;
-	
-	m_alpha = m_type->alpha;
-	m_fadeSpeed = 0;
-	m_alphaDest = 255;
-	
-	m_sprite = m_type->sprite;*/
-	
 	if ( m_sprite )
 	{
-		// TODO: This is overheadish, use some kind of union?
+		m_animator = m_type->allocateAnimator();
+/*
 		switch ( m_type->animType )
 		{
 			case PartType::ANIM_PINGPONG : 
-				m_animator = new AnimPingPong(m_sprite,m_type->animDuration); break;
+				m_animator = AnimPingPong(m_sprite,m_type->animDuration);
+			break;
 			
 			case PartType::ANIM_LOOPRIGHT : 
-				m_animator = new AnimLoopRight(m_sprite,m_type->animDuration); break;
+				m_animator = AnimLoopRight(m_sprite,m_type->animDuration);
+			break;
 				
 			case PartType::ANIM_RIGHTONCE : 
-				m_animator = new AnimRightOnce(m_sprite,m_type->animDuration); break;
-		}
+				m_animator = AnimRightOnce(m_sprite,m_type->animDuration);
+			break;
+		}*/
 	}
 	
 	// TODO: This is also overheadish
@@ -79,6 +68,11 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 	{
 		timer.push_back( PartTimer(*i) );
 	}
+}
+
+Particle::~Particle()
+{
+	delete m_animator;
 }
 
 void Particle::think()
@@ -96,9 +90,9 @@ void Particle::think()
 		
 		if ( m_type->acceleration )
 		{
-			// TODO: Cache the angle vector?
-			if ( m_type->maxSpeed < 0 || spd.dotProduct(Vec(m_angle)) < m_type->maxSpeed )
-				spd += Vec(m_angle, (double)m_type->acceleration); //angleVec(m_angle, m_type->acceleration);
+			Vec dir(m_angle);
+			if ( m_type->maxSpeed < 0 || spd.dotProduct(dir) < m_type->maxSpeed )
+				spd += dir * m_type->acceleration;
 		}
 				
 		spd *= m_type->damping;
@@ -230,7 +224,7 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 	{
 		if ( m_type->blender != NONE )
 		{
-			gfx.setBlender( m_type->blender, (int)m_alpha ); // TODO: why isn't alpha int from the beginning
+			gfx.setBlender( m_type->blender, (int)m_alpha );
 			putpixel(where, x, y, m_type->colour);
 			if ( m_type->line2Origin ) drawLine2Origin( where, xOff, yOff );
 			solid_mode();

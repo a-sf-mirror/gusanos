@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 
 	//console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	console.parseLine("BIND F12 SCREENSHOT");
-	console.parseLine("SETCHAR STOP \".\"");
+	//console.parseLine("SETCHAR STOP \".\"");
 	
 	///* <GLIP> Stuff for me ;o
 	//console.parseLine("BIND LEFT +P0_LEFT; BIND RIGHT +P0_RIGHT; BIND 2_PAD +P0_JUMP; BIND UP +P0_UP; BIND DOWN +P0_DOWN; BIND 1_PAD +P0_FIRE; BIND 3_PAD +P0_CHANGE");
@@ -159,7 +159,18 @@ int main(int argc, char **argv)
 		while ( logicLast+1 <= _timer )
 		{
 			
-			for ( ObjectsList::Iterator iter = game.objects.begin();  (bool)iter; )
+#ifdef USE_GRID
+			for ( Grid::iterator iter = game.objects.beginAll(); iter;)
+			{
+				if(iter->deleteMe)
+					iter.erase();
+				else
+					++iter;
+			}
+			
+			game.objects.flush(); // Insert all new objects
+#else
+			for ( ObjectsList::Iterator iter = game.objects.begin();  iter; )
 			{
 				if ( (*iter)->deleteMe )
 				{
@@ -169,13 +180,23 @@ int main(int argc, char **argv)
 					game.objects.erase(tmp);
 				}else	++iter;
 			}
+#endif
 			
 			if ( game.isLoaded() && game.level.isLoaded() )
 			{
+#ifdef USE_GRID
+				
+				for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
+				{
+					iter->think();
+					game.objects.relocateIfNecessary(iter);
+				}
+#else
 				for ( ObjectsList::Iterator iter = game.objects.begin(); (bool)iter; ++iter)
 				{
 					(*iter)->think();
 				}
+#endif
 				
 				for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 				{
@@ -189,10 +210,17 @@ int main(int argc, char **argv)
 			{
 				if ( (*iter)->deleteMe )
 				{
+#ifdef USE_GRID
+					for (Grid::iterator objIter = game.objects.beginAll(); objIter; ++objIter)
+					{
+						objIter->removeRefsToPlayer(*iter);
+					}
+#else
 					for ( ObjectsList::Iterator objIter = game.objects.begin(); (bool)objIter; ++objIter)
 					{
 						(*objIter)->removeRefsToPlayer(*iter);
 					}
+#endif
 					(*iter)->removeWorm();
 					list<BasePlayer*>::iterator tmp = iter;
 					++iter;
@@ -201,6 +229,9 @@ int main(int argc, char **argv)
 				}else
 					++iter;
 			}
+
+
+
 			
 #ifndef DISABLE_ZOIDCOM
 			network.update();
