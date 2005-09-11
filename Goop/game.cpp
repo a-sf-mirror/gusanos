@@ -44,6 +44,12 @@
 #include <iostream>
 #include <sstream> //TEMP
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/convenience.hpp>
+#include <boost/filesystem/path.hpp>
+
+namespace fs = boost::filesystem;
+
 //using namespace std; // Conflicting
 using std::string;
 using std::list;
@@ -231,27 +237,29 @@ void Game::init(int argc, char** argv)
 
 void Game::loadWeapons()
 {
-	string path;
-	struct al_ffblk *file=new struct al_ffblk;
+	fs::path path( m_modPath );
+	path /= "weapons";
 	
-	path = m_modPath;
-	path += "weapons/*.wpn";
-	if ( al_findfirst( path.c_str(), file, FA_ARCH ) == 0 )
+	if ( fs::exists( path ) )
 	{
-		do
+		fs::directory_iterator end_itr;
+		
+		for( fs::directory_iterator iter(path); iter != end_itr; ++iter)
 		{
-			WeaponType* weapon = new WeaponType;
-			weapon->load(m_modPath + "weapons/" + file->name);
-			weaponList.push_back(weapon);
+			if( !is_directory(*iter) )
+			{
+				if ( fs::extension(*iter) == ".wpn")
+				{
+				WeaponType* weapon = new WeaponType;
+				weapon->load(*iter);
+				weaponList.push_back(weapon);
+				}
+			}
 		}
-		while(al_findnext(file)==0);
+		
+		WeaponOrder comp;
+		std::sort(weaponList.begin(), weaponList.end(), comp); 
 	}
-	al_findclose(file);
-	
-	WeaponOrder comp;
-	std::sort(weaponList.begin(), weaponList.end(), comp); 
-	
-	delete file;
 };
 
 void Game::loadMod()

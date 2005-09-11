@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 
+#include <boost/filesystem/path.hpp>
+namespace fs = boost::filesystem;
+
 class SpriteSet;
 class Event;
 
@@ -16,7 +19,7 @@ class WeaponType
 	WeaponType();
 	~WeaponType();
 	
-	bool load(const std::string &filename);
+	bool load(const fs::path &filename);
 	
 	int ammo;
 	int reloadTime;
@@ -29,7 +32,7 @@ class WeaponType
 	
 	SpriteSet *firecone;
 	std::string name;
-	std::string fileName;
+	fs::path fileName;
 
 	Event *primaryShoot;
 	Event *primaryPressed;
@@ -43,7 +46,7 @@ class WeaponOrder
 	public:
 	bool operator () ( WeaponType* weap1, WeaponType* weap2)
 	{
-		if ( weap1->fileName < weap2->fileName )
+		if ( weap1->fileName.string() < weap2->fileName.string() )
 			return true;
 		return false;
 	}

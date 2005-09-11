@@ -115,7 +115,6 @@ void Viewport::render(BasePlayer* player)
 #ifdef USE_GRID
 	for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
 	{
-		assert(!iter->deleteMe);
 		iter->draw(m_dest, offX, offY);
 	}
 #else

@@ -12,7 +12,7 @@ class ResourceList
 {
 public:
 
-	ResourceList( const std::string& subFolder)
+	ResourceList( fs::path const& subFolder)
 	{
 		m_subFolder = subFolder;
 	}
@@ -20,7 +20,7 @@ public:
 	void clear()
 	{
 		m_paths.clear();
-		typename std::map<std::string, T1*>::iterator item = m_resItems.begin();
+		typename std::map<fs::path, T1*>::iterator item = m_resItems.begin();
 		while (item != m_resItems.end())
 		{
 			delete item->second;
@@ -35,7 +35,7 @@ public:
 			m_paths.push_back(path);
 	}
 	
-	bool load(std::string name, T1& resource)
+	bool load(fs::path const& name, T1& resource)
 	{
 		std::list<fs::path>::iterator i = m_paths.begin();
 		for(; i != m_paths.end(); ++i)
@@ -46,9 +46,9 @@ public:
 		return false;
 	}
 		
-	T1* load( std::string filename )
+	T1* load( fs::path const& filename )
 	{
-		typename std::map<std::string, T1*>::iterator item = m_resItems.find(filename);
+		typename std::map<fs::path, T1*>::iterator item = m_resItems.find(filename);
 		if (item != m_resItems.end())
 		{
 			return item->second;
@@ -74,8 +74,8 @@ public:
 	
 private:
 	
-	std::string m_subFolder;
-	std::map<std::string, T1*> m_resItems;
+	fs::path m_subFolder;
+	std::map<fs::path, T1*> m_resItems;
 	std::list<fs::path>     m_paths; // Paths to scan
 };
 

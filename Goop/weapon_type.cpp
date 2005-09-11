@@ -10,6 +10,10 @@
 #include <fstream>
 #include <iostream>
 
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
+namespace fs = boost::filesystem;
+
 using namespace std;
 
 WeaponType::WeaponType()
@@ -40,11 +44,11 @@ WeaponType::~WeaponType()
 	delete reloadEnd;
 }
 
-bool WeaponType::load(const string &filename)
+bool WeaponType::load(const fs::path &filename)
 {
 	//cerr << "Loading weapon: " << filename << endl;
 	fileName = filename;
-	ifstream fileStream(filename.c_str());
+	fs::ifstream fileStream(filename);
 	
 	if ( fileStream )
 	{
@@ -144,8 +148,9 @@ bool WeaponType::load(const string &filename)
 				
 			}
 		}
-		fileStream.close();
+		
 		return true;
+		
 	} else
 	{
 		return false;
