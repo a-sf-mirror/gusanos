@@ -11,6 +11,7 @@ class ExpType;
 class Sound;
 class SpriteSet;
 class BaseObject;
+class LevelEffect;
 
 void registerGameActions();
 
@@ -324,5 +325,22 @@ private:
 
 	int function;
 };
+
+BaseAction* applyMapEffect( const std::vector< std::string >& params );
+
+class ApplyMapEffect : public BaseAction
+{
+	public:
+
+		ApplyMapEffect( const std::vector< std::string >& params );
+		~ApplyMapEffect();
+
+		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+
+	private:
+	
+		LevelEffect* effect;
+};
+
 
 #endif  // _GAME_ACTIONS_H_

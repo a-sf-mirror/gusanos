@@ -133,7 +133,7 @@ void Viewport::render(BasePlayer* player)
 		for(list<BasePlayer*>::iterator playerIter = game.players.begin(); playerIter != game.players.end(); ++playerIter)
 		{
 			BaseWorm* worm = (*playerIter)->getWorm();
-			if(worm->isActive())
+			if( worm && worm->isActive() )
 			{
 				Vec renderPos = worm->getRenderPos();
 				int x = (int)renderPos.x - offX;
@@ -147,7 +147,8 @@ void Viewport::render(BasePlayer* player)
 	
 	EACH_CALLBACK(i, viewportRender)
 	{
-		lua.callReference(*i, luaReference, player->getWorm()->luaReference);
+		if( player->getWorm() )
+			lua.callReference(*i, luaReference, player->getWorm()->luaReference);
 	}
 }
 

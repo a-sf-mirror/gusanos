@@ -12,6 +12,7 @@
 #include "weapon.h"
 #include "worm.h"
 #include "angle.h"
+#include "level_effect.h"
 
 #include "glua.h"
 #include "script.h"
@@ -41,6 +42,7 @@ void registerGameActions()
 	game.actionList["run_script"] = runScript;
 	game.actionList["repel"] = repel;
 	game.actionList["damp"] = damp;
+	game.actionList["apply_map_effect"] = applyMapEffect;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -803,3 +805,32 @@ RunScript::~RunScript()
 {
 	lua.destroyReference(function);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* applyMapEffect( vector< string > const& params )
+{
+	return new ApplyMapEffect(params);
+}
+
+ApplyMapEffect::ApplyMapEffect( vector< string > const& params )
+{
+	effect = NULL;
+	if ( params.size() > 0 )
+	{
+		effect = levelEffectList.load(params[0]);
+	}
+}
+
+void ApplyMapEffect::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+{
+	if ( effect )
+		game.level.applyEffect(effect, (int)object->pos.x, (int)object->pos.y);
+}
+
+ApplyMapEffect::~ApplyMapEffect()
+{
+}
+

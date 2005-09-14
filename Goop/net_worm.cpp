@@ -11,6 +11,7 @@
 #include "network.h"
 #include "vector_replicator.h"
 #include "encoding.h"
+#include "gconsole.h"
 
 #include <math.h>
 #include <vector>
@@ -290,13 +291,16 @@ bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, e
 	{
 		case NetWorm::PlayerID:
 		{
+			console.addLogMsg("* WORM LOOKING FOR PLAYER");
 			ZCom_NodeID recievedID = *static_cast<zU32*>(_replicator->peekData());
 			list<BasePlayer*>::iterator playerIter;
 			for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++)
 			{
+				console.addLogMsg("* TRYING THIS ONE ;O");
 				if ( (*playerIter)->getNodeID() == recievedID )
 				{
 					(*playerIter)->assignWorm(m_parent);
+					console.addLogMsg("* FOUND");
 				}
 			}
 			returnValue = true;

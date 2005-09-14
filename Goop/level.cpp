@@ -5,6 +5,8 @@
 #include "liero.h"
 #include "sprite.h"
 #include "math_func.h"
+#include "level_effect.h"
+#include "sprite_set.h"
 
 #include <allegro.h>
 #include <string>
@@ -36,20 +38,20 @@ Level::Level()
 	m_materialList[2].worm_pass = false;
 	m_materialList[2].particle_pass = false;
 	m_materialList[2].draw_exps = false;
+	m_materialList[2].destroyable = true;
 	
 	// Special dirt
 	m_materialList[3].worm_pass = true;
 	m_materialList[3].particle_pass = false;
 	m_materialList[3].draw_exps = false;
+	m_materialList[3].destroyable = true;
 	
 	// Special rock
 	m_materialList[4].worm_pass = false;
 	m_materialList[4].particle_pass = true;
 	m_materialList[4].draw_exps = false;
 
-	// W00t was this supposed to be? It can't be background, that borks the stairs in map poo
-	m_materialList[7].worm_pass = false;
-	m_materialList[7].particle_pass = false;
+
 }
 
 Level::~Level()
@@ -192,6 +194,27 @@ void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, co
 			//int c = sprite->m_bitmap->line[y][x];
 			int c = getpixel( sprite->m_bitmap, x, y );
 			if ( c != transCol ) putpixel( where, xDrawStart + x, yDrawStart + y, c );
+		}
+	}
+}
+
+void Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
+{
+	if ( effect->mask )
+	{
+		Sprite* tmpMask = effect->mask->getSprite();
+		drawX -= tmpMask->m_xPivot;
+		drawY -= tmpMask->m_yPivot;
+		unsigned int colour = 0;
+		for( int x = 0; x < tmpMask->m_bitmap->w; ++x )
+		for( int y = 0; y < tmpMask->m_bitmap->h; ++y )
+		{
+			colour = getpixel( tmpMask->m_bitmap, x, y);
+			if( ( colour == 0 ) && getMaterial( drawX+x, drawY+y ).destroyable )
+			{
+				material->line[drawY+y][drawX+x] = 1;
+				putpixel(image, drawX+x, drawY+y, 0 );
+			}
 		}
 	}
 }

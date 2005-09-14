@@ -315,14 +315,17 @@ bool BasePlayerInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from
 		{
 			ZCom_NodeID recievedID = *static_cast<zU32*>(_replicator->peekData());
 #ifdef USE_GRID
-			
+			console.addLogMsg("* PLAYER LOOKING FOR WORM");
 			for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
 			{
+				console.addLogMsg("TRYING WITH OBJECT");
 				if ( NetWorm* worm = dynamic_cast<NetWorm*>(&*iter))
 				{
+					console.addLogMsg("OBJECT IS A WORM TRYING FURTHER");
 					if ( worm->getNodeID() == recievedID )
 					{
 						m_parent->assignWorm(worm);
+						console.addLogMsg("* WORM WAS ASSIGNED TO PLAYER");
 					}
 				}
 			}

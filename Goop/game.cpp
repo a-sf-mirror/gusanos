@@ -15,6 +15,7 @@
 #include "particle.h"
 #include "explosion.h"
 #include "exp_type.h"
+#include "level_effect.h"
 #include "level.h"
 #include "font.h"
 #include "gconsole.h"
@@ -318,6 +319,7 @@ void Game::unload()
 	expTypeList.clear();
 	soundList.clear();
 	spriteList.clear();
+	levelEffectList.clear();
 	
 	fontLocator.clear();
 	xmlLocator.clear();
@@ -368,6 +370,10 @@ void Game::refreshResources()
 	spriteList.addPath(fs::path(level.getPath()) / "sprites");
 	spriteList.addPath(fs::path(nextMod) / "sprites");
 	spriteList.addPath(fs::path("default/sprites"));
+	
+	levelEffectList.addPath(fs::path(level.getPath()) / "mapeffects");
+	levelEffectList.addPath(fs::path(nextMod) / "mapeffects");
+	levelEffectList.addPath(fs::path("default/mapeffects"));
 }
 
 void Game::changeLevel(const std::string& levelName )
@@ -529,6 +535,7 @@ BaseWorm* Game::addWorm(bool isAuthority)
 	objects.insert( 1,1, (BaseObject*)returnWorm->getNinjaRopeObj() );
 #endif
 	// WARNING: :OOOO, the BaseObject* cast is evil, include "ninjarope.h" instead?
+	objects.flush();
 	return returnWorm;
 }
 

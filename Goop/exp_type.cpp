@@ -10,6 +10,7 @@
 #include "text.h"
 #include "parser.h"
 #include "detect_event.h"
+#include "object_grid.h"
 
 
 
@@ -34,7 +35,7 @@ ExpType::ExpType()
 	colour = -1;
 	alpha = 255;
 	destAlpha = -1;	
-	renderLayer = 1;
+	renderLayer = Grid::WormRenderLayer;
 	sprite = NULL;
 	distortion = NULL;
 	distortMagnitude = 0.8;

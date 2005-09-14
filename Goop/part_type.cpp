@@ -99,7 +99,7 @@ PartType::PartType()
 	colLayer = 0;
 	health = 100;
 	
-	renderLayer = 1;
+	renderLayer = Grid::WormRenderLayer;
 	sprite = NULL;
 	distortion = NULL;
 	distortMagnitude = 0.8;

@@ -27,10 +27,12 @@ bool GusanosLevelLoader::canLoad(fs::path const& path, std::string& name)
 bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 {
 	int vdepth = get_color_depth();
-	set_color_depth(8);
+	
 	std::string materialPath = (path / "material").native_file_string();
 	
 	level->path = path.native_directory_string();
+	
+	set_color_depth(8);
 	level->material = gfx.loadBitmap(materialPath.c_str(), 0);
 	set_color_depth(vdepth);
 	if (level->material)
@@ -46,11 +48,10 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 			if(!level->background)
 			{
 				level->background = create_bitmap(level->material->w, level->material->h);
-				for (int x = 0; x < level->background->w; x++)
-				for (int y = 0; y < level->background->h; y++)
-				{
-					putpixel(level->background, x, y, getpixel(level->image, x, y));
-				}
+				blit(level->image, level->background, 0,0,0,0,level->material->w, level->material->h);
+				gfx.setBlender(ALPHA,120);
+				rectfill( level->background, 0,0,level->background->w,level->background->h,0);
+				solid_mode();
 			}
 			
 			level->loaderSucceeded();
