@@ -198,9 +198,10 @@ void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, co
 	}
 }
 
-void Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
+bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 {
-	if ( effect->mask )
+	bool returnValue = false;
+	if ( effect && effect->mask )
 	{
 		Sprite* tmpMask = effect->mask->getSprite();
 		drawX -= tmpMask->m_xPivot;
@@ -212,11 +213,13 @@ void Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 			colour = getpixel( tmpMask->m_bitmap, x, y);
 			if( ( colour == 0 ) && getMaterial( drawX+x, drawY+y ).destroyable )
 			{
+				returnValue = true;
 				material->line[drawY+y][drawX+x] = 1;
-				putpixel(image, drawX+x, drawY+y, 0 );
+				putpixel(image, drawX+x, drawY+y, getpixel( background, drawX+x, drawY+y ) );
 			}
 		}
 	}
+	return returnValue;
 }
 
 Vec Level::getSpawnLocation()

@@ -827,7 +827,7 @@ ApplyMapEffect::ApplyMapEffect( vector< string > const& params )
 void ApplyMapEffect::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
 {
 	if ( effect )
-		game.level.applyEffect(effect, (int)object->pos.x, (int)object->pos.y);
+		game.applyLevelEffect(effect, (int)object->pos.x, (int)object->pos.y);
 }
 
 ApplyMapEffect::~ApplyMapEffect()

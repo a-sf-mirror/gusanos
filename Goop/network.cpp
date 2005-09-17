@@ -84,6 +84,7 @@ void Network::host()
 	m_control = new Server(m_serverPort);
 	registerClasses();
 	m_host = true;
+	game.assignNetworkRole( true ); // Gives the game class node authority role
 }
 
 void Network::connect( const std::string &_address )
@@ -95,6 +96,7 @@ void Network::connect( const std::string &_address )
 	address.setAddress( eZCom_AddressUDP, 0, ( _address + ":" + cast<string>(m_serverPort) ).c_str() );
 	m_control->ZCom_Connect( address, NULL );
 	m_client = true;
+	game.assignNetworkRole( false ); // Gives the game class node proxy role
 }
 
 void Network::disconnect()

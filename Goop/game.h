@@ -25,12 +25,6 @@ class PartType;
 class Explosion;
 class Font;
 
-/* NOOOO >:O
-static const int MAX_LOCAL_PLAYERS = 2;
-static const int WORMS_COLLISION_LAYER = 0;
-static const int NO_COLLISION_LAYER = 1;
-static const int CUSTOM_COL_LAYER_START = 2;
-static const int WORMS_RENDER_LAYER = 4;*/
 
 #define USE_GRID
 
@@ -62,7 +56,17 @@ struct Options
 	int maxRespawnTime;
 	int minRespawnTime;
 	int host;
-}; 
+};
+
+struct LevelEffectEvent
+{
+	LevelEffectEvent( int index_, int x_, int y_ ) : index(index_), x(x_), y(y_)
+	{
+	}
+	int index;
+	int x,y;
+	
+};
 
 class Game
 {
@@ -103,6 +107,8 @@ public:
 	void init(int argc, char** argv);
 	void parseCommandLine(int argc, char** argv);
 	
+	void think();
+	
 	void setMod(const std::string& mod);
 	void loadWeapons();
 	void unload();
@@ -114,6 +120,10 @@ public:
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
 	BasePlayer* addPlayer( PLAYER_TYPE player );
 	BaseWorm* addWorm(bool isAuthority); // Creates a worm class depending on the network condition.
+	
+	void assignNetworkRole( bool authority );
+	
+	void applyLevelEffect( LevelEffect* effect, int x, int y );
 	
 	Level level;
 	std::vector<WeaponType*> weaponList;
@@ -159,6 +169,13 @@ public:
 	std::string const& indexToString(unsigned long idx);
 	
 private:
+	
+	enum NetEvents
+	{
+		eHole
+	};
+	
+	std::vector<LevelEffectEvent> appliedLevelEffects;
 
 	std::string nextMod;
 	std::string m_modPath;
@@ -166,6 +183,7 @@ private:
 	std::string m_defaultPath;
 	bool loaded;
 	ZCom_Node *m_node;
+	bool m_isAuthority;
 };
 
 extern Game game;

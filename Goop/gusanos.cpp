@@ -202,6 +202,8 @@ int main(int argc, char **argv)
 				{
 					(*iter)->think();
 				}
+				
+				game.think();
 			}
 			
 			sfx.think(); // WARNING: THIS ¡MUST! BE PLACED BEFORE THE OBJECT DELETE LOOP

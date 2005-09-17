@@ -236,6 +236,81 @@ void Game::init(int argc, char** argv)
 	registerPlayerInput();
 }
 
+inline void addEvent(ZCom_BitStream* data, int event)
+{
+	data->addInt( event, 8 );
+}
+
+void Game::think()
+{
+	if ( !m_node )
+		return;
+	
+	while ( m_node->checkEventWaiting() )
+	{
+		ZCom_Node::eEvent type;
+		eZCom_NodeRole    remote_role;
+		ZCom_ConnID       conn_id;
+		
+		ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
+		switch(type)
+		{
+			case ZCom_Node::eEvent_User:
+			if ( data )
+			{
+				NetEvents event = (NetEvents)data->getInt(8);
+				switch ( event )
+				{
+					case eHole:
+					{
+						int index = data->getInt(8);
+						int x = data->getInt(32);
+						int y = data->getInt(32);
+						level.applyEffect( levelEffectList[index], x, y );
+					}
+					break;
+				}
+			}
+			break;
+			
+			case ZCom_Node::eEvent_Init:
+			{
+				vector<LevelEffectEvent>::iterator iter = appliedLevelEffects.begin();
+				for( ; iter != appliedLevelEffects.end() ; ++iter )
+				{
+					ZCom_BitStream *data = new ZCom_BitStream;
+					addEvent(data, eHole);
+					data->addInt( iter->index, 8);
+					data->addInt( iter->x, 32 );
+					data->addInt( iter->y, 32 );
+					m_node->sendEventDirect(eZCom_ReliableOrdered, data, conn_id );
+				}
+			}
+			break;
+			
+			default: break; // Annoying warnings >:O
+		}
+	}
+}
+
+void Game::applyLevelEffect( LevelEffect* effect, int x, int y )
+{
+	if ( !network.isClient() )
+	{
+		if ( level.applyEffect( effect, x, y ) && network.isHost() )
+		{
+			ZCom_BitStream *data = new ZCom_BitStream;
+			addEvent(data, eHole);
+			data->addInt(effect->getIndex(), 8); // TODO: Gliptic can optimize this if he wants ;O
+			data->addInt( x, 32 ); // this too ;OOO
+			data->addInt( y, 32 );
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+			
+			appliedLevelEffects.push_back( LevelEffectEvent(effect->getIndex(), x, y ) );
+		}
+	}
+}
+
 void Game::loadWeapons()
 {
 	fs::path path( m_modPath );
@@ -271,7 +346,10 @@ void Game::loadMod()
 	deathObject = partTypeList.load("death.obj");
 	infoFont = fontLocator.load("minifont");
 	if (weaponList.size() > 0 )
+	{
 		loaded = true;
+		levelEffectList.indexate();
+	}
 	else
 	{
 		loaded = false;
@@ -299,6 +377,8 @@ void Game::unload()
 	}
 	objects.clear();
 #endif
+
+	appliedLevelEffects.clear();
 	
 	// Delete all players
 	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
@@ -400,7 +480,7 @@ void Game::changeLevel(const std::string& levelName )
 	//cerr << "Loading mod" << endl;
 	loadMod();
 	
-	if ( options.host )
+	if ( options.host && !network.isClient() )
 	{
 #ifndef DISABLE_ZOIDCOM
 		network.host();
@@ -435,6 +515,35 @@ void Game::changeLevel(const std::string& levelName )
 	}
 	//cerr << "changeLevel() done." << endl;
 	
+}
+
+void Game::assignNetworkRole( bool authority )
+{
+	m_node = new ZCom_Node;
+	if (!m_node)
+	{
+		allegro_message("ERROR: Unable to create game node.");
+	}
+
+	m_node->beginReplicationSetup(0);
+		//m_node->addReplicationInt( (zS32*)&deaths, 32, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL , 0);
+	m_node->addReplicationInt( (zS32*)&options.worm_gravity, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_RARELYCHANGED, ZCOM_REPRULE_AUTH_2_ALL );
+	
+	m_node->endReplicationSetup();
+
+	m_isAuthority = authority;
+	if( authority)
+	{
+		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
+		if( !m_node->registerNodeUnique(classID, eZCom_RoleAuthority, network.getZControl() ) )
+			allegro_message("ERROR: Unable to register player authority node.");
+	}else
+	{
+		if( !m_node->registerNodeUnique( classID, eZCom_RoleProxy, network.getZControl() ) )
+			allegro_message("ERROR: Unable to register player requested node.");
+	}
+
+	m_node->applyForZoidLevel(1);
 }
 
 void Game::setMod( const string& modname )

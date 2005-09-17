@@ -2,6 +2,7 @@
 #define LEVEL_EFFECT_H
 
 #include "resource_list.h"
+#include "resource_base.h"
 #include "gfx.h"
 
 #include <allegro.h>
@@ -11,7 +12,7 @@ namespace fs = boost::filesystem;
 
 class SpriteSet;
 
-class LevelEffect
+class LevelEffect : public ResourceBase
 {
 	public:
 		

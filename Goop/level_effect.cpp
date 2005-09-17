@@ -20,7 +20,7 @@ using namespace std;
 
 ResourceList<LevelEffect> levelEffectList("mapeffects/");
 
-LevelEffect::LevelEffect()
+LevelEffect::LevelEffect() : ResourceBase()
 {
 	mask = NULL;
 }

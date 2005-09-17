@@ -66,7 +66,9 @@ class Level
 	bool trace(long srcx, long srcy, long destx, long desty, PredT predicate);
 	
 	void specialDrawSprite(Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos );
-	void applyEffect( LevelEffect* effect, int x, int y);
+	
+	// applies the effect and returns true if it actually changed something on the map
+	bool applyEffect( LevelEffect* effect, int x, int y);
 	
 	void loaderSucceeded();
 	
