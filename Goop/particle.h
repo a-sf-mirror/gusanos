@@ -10,6 +10,7 @@
 class Sprite;
 class BaseAnimator;
 class BasePlayer;
+class BlitterContext;
 
 struct PartTimer
 {
@@ -75,7 +76,7 @@ public:
 	
 private:
 	
-	void drawLine2Origin(BITMAP* where, int xOff, int yOff);
+	void drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext const& blitter);
 	
 	int m_dir;
 	std::vector< PartTimer > timer; // This could cause a penalty
@@ -89,9 +90,6 @@ private:
 	SpriteSet* m_sprite;
 	BaseAnimator* m_animator;
 	Vec m_origin;
-	
-	
-	bool justCreated;
 };
 
 #endif  // _PARTICLE_H_

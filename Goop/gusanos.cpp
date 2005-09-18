@@ -167,8 +167,6 @@ int main(int argc, char **argv)
 				else
 					++iter;
 			}
-			
-			game.objects.flush(); // Insert all new objects
 #else
 			for ( ObjectsList::Iterator iter = game.objects.begin();  iter; )
 			{
@@ -191,6 +189,8 @@ int main(int argc, char **argv)
 					iter->think();
 					game.objects.relocateIfNecessary(iter);
 				}
+				
+				game.objects.flush(); // Insert all new objects
 #else
 				for ( ObjectsList::Iterator iter = game.objects.begin(); (bool)iter; ++iter)
 				{

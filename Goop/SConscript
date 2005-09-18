@@ -1,34 +1,40 @@
-Import('env getObjects platform getBinName getLibName')
+Import('env getObjects conf build subfolder getBinName getLibName')
 
-if platform == 'posix':
-	env = env.Copy()
+env = env.Copy()
+env.Append(LIBS = Split("""
+	omfggui omfgconsole omfgloaders omfglua omfgblitters glua loadpng""")
+	)
+
+if conf == 'posix':
 	env.Append(LIBS = Split("""
-	        omfggui omfgconsole omfgloaders omfglua glua
 	        png12 z fmod
 	        alleg-4.1.15 m
 	        pthread 
 	        Xpm
 	        Xext X11 dl
-	        loadpng zoidcom boost_filesystem-gcc boost_signals-gcc""")
+	        zoidcom boost_filesystem-gcc boost_signals-gcc""")
 		)
-elif platform == 'mingw-cross':
-	env = env.Copy(LIBS = Split("""
-	        omfggui omfgconsole omfgloaders omfglua glua
-	        loadpng png13 z fmod
+elif conf == 'mingw-cross':
+	env.Append(LIBS = Split("""
+	        png13 z fmod
 	        alleg zoidcom_mw boost_filesystem-mgw boost_signals-mgw""")
 		)
-if platform == 'basara':
-	env = env.Copy(LIBS = Split("""
-	        omfggui omfgconsole omfgloaders omfglua glua
+elif conf == 'basara':
+	env.Append(LIBS = Split("""
 	        png12 z fmod
 	        alleg-4.2.0 alleg_unsharable
-	        loadpng zoidcom boost_filesystem-gcc boost_signals-gcc"""),
+	        zoidcom boost_filesystem-gcc boost_signals-gcc"""),
+	        LINKFLAGS = '-Wl,--export-dynamic'
+		)
+elif conf == 'darka':
+	env.Append(LIBS = Split("""
+	        png12 z fmod
+	        alleg-4.2.0 alleg_unsharable
+	        zoidcom boost_filesystem-gcc-mt boost_signals-gcc-mt"""),
 	        LINKFLAGS = '-Wl,--export-dynamic'
 		)
 # add more platforms here
 
-# Xxf86dga Xxf86vm
-
-SConscript(['./loaders/SConscript', './lua/SConscript'], exports = ['env', 'getObjects', 'getLibName', 'platform'])
+SConscript(['./loaders/SConscript', './lua/SConscript', './blitters/SConscript'], exports = ['env', 'getObjects', 'getLibName', 'conf', 'build', 'subfolder'])
 
 env.Program(getBinName('gusanos'), getObjects(env))

@@ -14,6 +14,7 @@
 #include "glua.h"
 #include "lua/bindings.h"
 #include "detect_event.h"
+#include "blitters/blitters.h"
 
 #include <vector>
 #include <iostream>
@@ -38,7 +39,7 @@ void Particle::operator delete(void* block)
 }
 
 Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle)
-: BaseObject(owner, pos_, spd_), justCreated(true), m_dir(dir), m_type(type)
+: BaseObject(owner, pos_, spd_), m_dir(dir), m_type(type)
 , m_health(type->health), m_angle(angle), m_angleSpeed(0)
 , m_alpha(m_type->alpha), m_fadeSpeed(0), m_animator(0)
 , m_alphaDest(255), m_sprite(m_type->sprite), m_origin(pos_)
@@ -63,11 +64,22 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 		}*/
 	}
 	
-	// TODO: This is also overheadish
+	// If it's deleted, we must allocate animator so that we can render it,
+	// but we don't need any timers.
+	
+	if ( m_type->creation )
+	{
+		m_type->creation->run(this);
+		if(deleteMe)
+			return;
+	}
+	
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
 	{
 		timer.push_back( PartTimer(*i) );
 	}
+	
+	
 }
 
 Particle::~Particle()
@@ -120,8 +132,7 @@ void Particle::think()
 			if ( !m_type->animOnGround && m_animator )
 				m_animator->freeze(5); //I GOT DEFEATED!
 		}
-		// "if ( deleteMe ) break;" moved from here because the flag can only be set if an event is ran
-		
+
 		for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
 		{
 			(*t)->check(this);
@@ -136,16 +147,6 @@ void Particle::think()
 			}
 			if ( deleteMe ) break;
 		}
-		//if ( deleteMe ) break; // Useless
-		
-		if ( justCreated && m_type->creation ) // TODO: 
-		{
-			m_type->creation->run(this);
-			justCreated = false;
-			if ( deleteMe ) break;
-		}
-		//if ( deleteMe ) break; // Useless
-
 		
 		if(m_type->angularFriction)
 		{
@@ -164,7 +165,7 @@ void Particle::think()
 		if ( m_animator ) m_animator->tick();
 		
 		// Alpha Fade
-		if ( m_type->blender != NONE && m_fadeSpeed )
+		if ( m_type->blender && m_fadeSpeed )
 		{
 			if ( fabs(m_alphaDest - m_alpha) < fabs(m_fadeSpeed) )
 			{
@@ -206,13 +207,24 @@ void Particle::damage( float amount, BasePlayer* damager )
 	m_health -= amount;
 }
 
-void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff)
+void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext const& blitter)
 {
-	int x = static_cast<int>(m_origin.x) - xOff;
-	int y = static_cast<int>(m_origin.y) - yOff;
-	int x2 = static_cast<int>(pos.x) - xOff;
-	int y2 = static_cast<int>(pos.y) - yOff;
-	line(where, x,y,x2,y2,m_type->colour);
+	if(m_type->wupixels)
+	{
+		float x = m_origin.x - xOff;
+		float y = m_origin.y - yOff;
+		float x2 = pos.x - xOff;
+		float y2 = pos.y - yOff;
+		blitter.linewu(where, x, y, x2, y2, m_type->colour);
+	}
+	else
+	{
+		int x = static_cast<int>(m_origin.x) - xOff;
+		int y = static_cast<int>(m_origin.y) - yOff;
+		int x2 = static_cast<int>(pos.x) - xOff;
+		int y2 = static_cast<int>(pos.y) - yOff;
+		line(where, x,y,x2,y2,m_type->colour); //TODO: Change to use blitter
+	}
 }
 
 void Particle::draw(BITMAP* where, int xOff, int yOff)
@@ -220,36 +232,34 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 	int x = static_cast<int>(pos.x) - xOff;
 	int y = static_cast<int>(pos.y) - yOff;
 	
+	BlitterContext blitter(m_type->blender, (int)m_alpha);
+	
 	if (!m_sprite)
 	{
-		if ( m_type->blender != NONE )
-		{
-			gfx.setBlender( m_type->blender, (int)m_alpha );
-			putpixel(where, x, y, m_type->colour);
-			if ( m_type->line2Origin ) drawLine2Origin( where, xOff, yOff );
-			solid_mode();
-		}
+		
+		if(m_type->wupixels)
+			blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
 		else
-		{
-			putpixel(where, x, y, m_type->colour); //TODO: Use something faster than putpixel ?
-			if ( m_type->line2Origin ) drawLine2Origin( where, xOff, yOff );
-		}
+			blitter.putpixel(where, x, y, m_type->colour);
+			
+		if ( m_type->line2Origin ) drawLine2Origin( where, xOff, yOff, blitter );
 	}
 	else
 	{
+		
 		if ( m_angle < Angle(180.0) )
 		{
-			if ( m_type->blender == NONE )
+			if ( !m_type->blender )
 				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y);
 			else
-				m_sprite->getSprite(m_animator->getFrame(), m_angle)->drawBlended(where, x, y, (int)m_alpha, false, 0, m_type->blender);
+				m_sprite->getSprite(m_animator->getFrame(), m_angle)->drawBlended(where, x, y, blitter, false, 0);
 		}
 		else
 		{
-			if ( m_type->blender == NONE )
+			if ( !m_type->blender )
 				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, x, y, true);
 			else
-				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->drawBlended(where, x, y, (int)m_alpha, true, 0, m_type->blender);
+				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->drawBlended(where, x, y, blitter, true, 0);
 		}
 	}
 	if (m_type->distortion)

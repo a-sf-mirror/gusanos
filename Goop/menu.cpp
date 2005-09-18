@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "keyboard.h"
 #include "gfx.h"
+#include "blitters/blitters.h"
 #include "font.h"
 #include "sprite_set.h"
 #include "sprite.h"
@@ -326,7 +327,8 @@ void AllegroRenderer::drawBox(
 	RGB const& borderRightColor,
 	RGB const& borderBottomColor)
 {
-	rectfill(gfx.buffer, rect.x1, rect.y1, rect.x2, rect.y2, allegroColor(color));
+	blitter.rectfill(gfx.buffer, rect.x1, rect.y1, rect.x2, rect.y2, allegroColor(color));
+	//rectfill(gfx.buffer, rect.x1, rect.y1, rect.x2, rect.y2, allegroColor(color));
 	hline(gfx.buffer, rect.x1, rect.y2, rect.x2, allegroColor(borderBottomColor));
 	vline(gfx.buffer, rect.x2, rect.y1, rect.y2, allegroColor(borderRightColor));
 	vline(gfx.buffer, rect.x1, rect.y1, rect.y2, allegroColor(borderLeftColor));
@@ -338,7 +340,9 @@ void AllegroRenderer::drawBox(
 	Rect const& rect,
 	RGB const& color)
 {
-	rectfill(gfx.buffer, rect.x1, rect.y1, rect.x2, rect.y2, allegroColor(color));
+	blitter.rectfill(gfx.buffer, rect.x1, rect.y1, rect.x2, rect.y2, allegroColor(color));
+	
+	//rectfill(gfx.buffer, rect.x1, rect.y1, rect.x2, rect.y2, allegroColor(color));
 }
 
 void AllegroRenderer::drawVLine(ulong x, ulong y1, ulong y2, RGB const& color)
@@ -409,14 +413,18 @@ Rect const& AllegroRenderer::getViewportRect()
 	return screenRect;
 }
 
-void AllegroRenderer::setBlending(int alpha)
+void AllegroRenderer::setBlending(int alpha_)
 {
-	gfx.setBlender(ALPHA, alpha);
+	//gfx.setBlender(ALPHA, alpha_);
+	//alpha = alpha_;
+	blitter.set(BlitterContext::Alpha, alpha_);
 }
 
 void AllegroRenderer::resetBlending()
 {
-	solid_mode();
+	//solid_mode();
+	//alpha = 255;
+	blitter.set(BlitterContext::none());
 }
 
 }

@@ -52,29 +52,36 @@ struct hash<std::string>
 	}
 };
 
-template<class KeyT, class ValueT>
-struct HashIndex : public std::pair<const KeyT, ValueT>
-{
-	HashIndex(KeyT const& key, ValueT const& value)
-	: std::pair<const KeyT, ValueT>(key, value), next(0)
-	{
-	}
-	
-	HashIndex(KeyT const& key)
-	: std::pair<const KeyT, ValueT>(key, ValueT()), next(0)
-	{
-	}
-	
-	HashIndex* next;
-};
-
 extern unsigned long tableSizes[18];
 
 template<class KeyT, class ValueT, class HashFunc = hash<KeyT> >
 class HashTable
 {
 public:
-	typedef HashIndex<KeyT, ValueT> IndexT;
+	struct Node : public std::pair<const KeyT, ValueT>
+	{
+		Node(KeyT const& key, ValueT const& value)
+		: std::pair<const KeyT, ValueT>(key, value), next(0)
+		{
+		}
+		
+		Node(KeyT const& key)
+		: std::pair<const KeyT, ValueT>(key, ValueT()), next(0)
+		{
+		}
+		
+		Node* next;
+	};
+	
+	struct Index
+	{
+		Index()
+		: first(0)
+		{
+		}
+		
+		Node* first;
+	};
 	
 	friend struct iterator;
 	
@@ -83,50 +90,53 @@ public:
 	{
 		friend class HashTable;
 		
-		std::pair<const KeyT, ValueT>* operator->()
+		std::pair<const KeyT, ValueT>* operator->() const
 		{
 			return slot;
 		}
 		
-		bool operator==(iterator const& b)
+		std::pair<const KeyT, ValueT>& operator*() const
+		{
+			return *slot;
+		}
+		
+		bool operator==(iterator const& b) const
 		{
 			return slot == b.slot;
 		}
 		
-		bool operator!=(iterator const& b)
+		bool operator!=(iterator const& b) const
 		{
 			return slot != b.slot;
 		}
 		
 	private:
-		iterator(IndexT* slot_)
+		iterator(Node* slot_)
 		: slot(slot_)
 		{
 		}
 		
-		IndexT* slot;
+		Node* slot;
 	};
 	
-	HashTable(size_t initialSizeOrder = 3)
+	HashTable(size_t initialSizeOrder = 3, HashFunc hashFunc_ = HashFunc())
 	: count(0), sizeOrder(initialSizeOrder)
+	, hashFunc(hashFunc_)
 	{
 		if(sizeOrder > 17)
 			sizeOrder = 17;
 
 		indexCount = tableSizes[sizeOrder];
-		index = new IndexT*[indexCount];
-		
-		for(size_t i = 0; i < indexCount; ++i)
-			index[i] = 0;
+		index = new Index[indexCount];
 	}
 	
 	~HashTable()
 	{
 		for(size_t i = 0; i < indexCount; ++i)
 		{
-			for(IndexT* slot = index[i]; slot;)
+			for(Node* slot = index[i].first; slot;)
 			{
-				IndexT* next = slot->next;
+				Node* next = slot->next;
 				delete slot;
 				slot = next;
 			}
@@ -136,32 +146,34 @@ public:
 	
 	iterator find(KeyT const& key)
 	{
-		IndexT* index = getIndex(key);
-		if(!index)
+		Index& index = getIndex(key);
+		if(!index.first)
 			return end();
 
+		Node* i = index.first;
 		do
 		{
-			if(index->first == key)
-				return iterator(index);
-			index = index->next;
-		} while(index);
+			if(i->first == key)
+				return iterator(i);
+			i = i->next;
+		} while(i);
 		
 		return end();
 	}
 
 	ValueT& operator[](KeyT const& key)
 	{
-		IndexT* index = getIndex(key);
-		if(!index)
+		Index& index = getIndex(key);
+		if(!index.first)
 			return insert(key)->second;
 
+		Node* i = index.first;
 		do
 		{
-			if(index->first == key)
-				return index->second;
-			index = index->next;
-		} while(index);
+			if(i->first == key)
+				return i->second;
+			i = i->next;
+		} while(i);
 		
 		return insert(key)->second;
 	}
@@ -171,21 +183,19 @@ public:
 		if(++count > indexCount)
 			enlarge();
 			
-		size_t idx = hashFunc(key) % indexCount;
-		IndexT* slot = index[idx];
+		Index& theIndex = getIndex(key);
 		
 		// Check if key already exists
-		for(IndexT* i = slot; i; i = i->next)
+		for(Node* i = theIndex.first; i; i = i->next)
 		{
 			if(i->first == key)
 				return iterator(i); // Return iterator to old key
 		}
 		
 		// Key didn't exist, add it
-		IndexT* newIndex = new IndexT(key);
-		newIndex->next = slot;
-		index[idx] = newIndex;
-		return iterator(newIndex);
+		Node* newNode = new Node(key);
+		insert(theIndex, newNode);
+		return iterator(newNode);
 	}
 	
 	iterator end()
@@ -194,30 +204,31 @@ public:
 	}
 	
 private:
+	void insert(Index& index, Node* node)
+	{
+		node->next = index.first;
+		index.first = node;
+	}
+	
 	void enlarge()
 	{
 		if(sizeOrder >= 17)
 			return; // Max size already
 			
-		IndexT** oldTable = index;
+		Index*   oldTable = index;
 		Hash     oldCount = indexCount;
 		
 		indexCount = tableSizes[++sizeOrder];
-		index = new IndexT*[indexCount];
-		
-		for(size_t i = 0; i < indexCount; ++i)
-			index[i] = 0;
-		
+		index = new Index[indexCount];
+				
 		// Move old entries to the new table
 		for(size_t i = 0; i < oldCount; ++i)
 		{
-			for(IndexT* slot = oldTable[i]; slot;)
+			for(Node* slot = oldTable[i].first; slot;)
 			{
-				IndexT* next = slot->next;
-				size_t idx = hashFunc(slot->first) % indexCount;
-				IndexT* dest = index[idx];
-				slot->next = dest;
-				index[idx] = slot;
+				Node* next = slot->next;
+				
+				insert(getIndex(slot->first), slot);
 				
 				slot = next;
 			}
@@ -226,12 +237,12 @@ private:
 		delete [] oldTable;
 	}
 	
-	IndexT* getIndex(KeyT const& key) const
+	Index& getIndex(KeyT const& key)
 	{
 		return index[hashFunc(key) % indexCount];
 	}
 	
-	IndexT**   index;
+	Index*     index;
 	size_t     count;
 	Hash       indexCount;
 	size_t     sizeOrder;

@@ -110,6 +110,20 @@ public:
 		return result;
 	}
 	
+	template<class T1, class T2, class T3, class T4, class T5>
+	int callReference(int ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4, T5 const& p5)
+	{
+		pushReference(ref);
+		push(p1);
+		push(p2);
+		push(p3);
+		push(p4);
+		push(p5);
+		int result = call(5, 0);
+		
+		return result;
+	}
+	
 	// Add more when needed...
 	
 	void function(char const* name, lua_CFunction func);

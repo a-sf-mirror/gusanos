@@ -54,4 +54,45 @@ public:
 	void draw(BITMAP* where, int xOff, int yOff);
 };
 
+class SimpleParticle16 : public SimpleParticle
+{
+public:
+		
+	SimpleParticle16(Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), BasePlayer* owner = NULL, int timeout_ = 0, float gravity_ = 0.f, int colour_ = 0)
+	: SimpleParticle(pos_, spd_, owner, timeout_, gravity_, colour_)
+	{
+	
+	}
+	
+	void draw(BITMAP* where, int xOff, int yOff);
+};
+
+class SimpleParticle32wu : public SimpleParticle
+{
+public:
+		
+	SimpleParticle32wu(Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), BasePlayer* owner = NULL, int timeout_ = 0, float gravity_ = 0.f, int colour_ = 0)
+	: SimpleParticle(pos_, spd_, owner, timeout_, gravity_, colour_)
+	{
+	
+	}
+	
+	void draw(BITMAP* where, int xOff, int yOff);
+};
+
+class SimpleParticle16wu : public SimpleParticle
+{
+public:
+		
+	SimpleParticle16wu(Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), BasePlayer* owner = NULL, int timeout_ = 0, float gravity_ = 0.f, int colour_ = 0)
+	: SimpleParticle(pos_, spd_, owner, timeout_, gravity_, colour_)
+	{
+	
+	}
+	
+	void draw(BITMAP* where, int xOff, int yOff);
+};
+
+
+
 #endif  // GUSANOS_BLOOD_H

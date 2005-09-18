@@ -28,6 +28,7 @@ using namespace std;
 ResourceList<ExpType> expTypeList("objects/");
 
 ExpType::ExpType()
+: wupixels(1)
 {
 	timeout = 0;
 	timeoutVariation = 0;
@@ -40,7 +41,7 @@ ExpType::ExpType()
 	distortion = NULL;
 	distortMagnitude = 0.8;
 	
-	blender = NONE;
+	blender = BlitterContext::None;
 	
 	creation = NULL;
 }
@@ -106,9 +107,11 @@ bool ExpType::load(fs::path const& filename)
 					else if ( var == "dest_alpha" ) destAlpha = cast<int>(val);
 					else if ( var == "blender" )
 					{
-						if ( val == "add" ) blender = ADD;
-						else if ( val == "alpha" ) blender = ALPHA;
+						if ( val == "add" ) blender = BlitterContext::Add;
+						else if ( val == "alpha" ) blender = BlitterContext::Alpha;
 					}
+					else if ( var == "wu_pixels" ) 
+						wupixels = ( cast<int>(val) != 0 );
 					else if ( var == "colour" || var == "color" )
 					{
 						if ( tokens.size() >= 5 )

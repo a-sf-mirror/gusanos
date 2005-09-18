@@ -195,7 +195,7 @@ protected:
 		
 		Formatting()
 		: width(50), height(50), spacing(5), padding(5), flags(0)
-		, alpha(100), rect(10, 10, 0, 0), fontColor(255, 255, 255)
+		, alpha(255), rect(10, 10, 0, 0), fontColor(255, 255, 255)
 		{
 			
 		}

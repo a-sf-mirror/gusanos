@@ -225,7 +225,7 @@ bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 Vec Level::getSpawnLocation()
 {
 	Vec pos = Vec(rnd() * material->w, rnd()*material->h);
-	while ( !getMaterial( pos.x, pos.y ).worm_pass )
+	while ( !getMaterial( static_cast<int>(pos.x), static_cast<int>(pos.y) ).worm_pass )
 	{
 		pos = Vec(rnd() * material->w, rnd()*material->h);
 	}

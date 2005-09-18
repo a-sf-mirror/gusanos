@@ -722,6 +722,16 @@ public:
 		layer.insertDelayedNoCol(obj);
 	}
 	
+	void insertImmediately(BaseObject* obj, int colLayer, int renderLayer)
+	{
+		int cellIndex = getListIndex(obj->pos);
+		obj->cellIndex_ = cellIndex;
+
+		Layer& layer = layers[colLayer + ColLayerCount*renderLayer];
+		
+		layer.list.insertAfter(layer.grid[cellIndex].guard(), obj);
+	}
+	
 	void flush()
 	{
 		for(std::vector<Layer>::iterator i = layers.begin(); i != layers.end(); ++i)

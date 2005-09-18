@@ -140,6 +140,7 @@ public:
 	void insertExplosion( Explosion* explosion );
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
+	//HashTable< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;
 	
 	PartType* NRPartType;
 	PartType* deathObject;
@@ -161,6 +162,7 @@ public:
 	
 	Font *infoFont;
 	
+
 	HashTable<std::string, unsigned long> stringToIndexMap;
 	std::vector<std::string> indexToStringMap;
 

@@ -17,6 +17,7 @@
 #include "../glua.h"
 #include "omfggui.h"
 #include "omfggui_windows.h"
+#include "../blitters/context.h"
 #include <cmath>
 #include <string>
 #include <list>
@@ -42,6 +43,7 @@ int particleMetaTable = 0;
 int viewportMetaTable = 0;
 int partTypeMetaTable = 0;
 std::vector<int> guiWndMetaTable;
+BlitterContext blitter;
 
 template<class T>
 inline void pushFullReference(T& x)
@@ -907,7 +909,7 @@ int l_gfx_draw_box(lua_State* L)
 	int cg = static_cast<int>(lua_tonumber(L, 7));
 	int cb = static_cast<int>(lua_tonumber(L, 8));
 	
-	rectfill(b, x1, y1, x2, y2, makecol(cr, cg, cb));
+	blitter.rectfill(b, x1, y1, x2, y2, makecol(cr, cg, cb));
 	
 	return 0;
 }
@@ -915,14 +917,14 @@ int l_gfx_draw_box(lua_State* L)
 int l_gfx_set_alpha(lua_State* L)
 {
 	int alpha = (int)lua_tonumber(L, 1);
-	gfx.setBlender(ALPHA, alpha);
+	blitter.set(BlitterContext::alpha(), alpha);
 	
 	return 0;
 }
 
 int l_gfx_reset_blending(lua_State* L)
 {
-	solid_mode();
+	blitter.set(BlitterContext::none());
 	
 	return 0;
 }

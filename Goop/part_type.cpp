@@ -56,32 +56,18 @@ void newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = V
 #endif
 }
 
+template<class T>
 void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
 	int timeout = type->simpleParticle_timeout + rndInt(type->simpleParticle_timeoutVariation);
-	BaseObject* particle = new SimpleParticle(pos_, spd_, owner, timeout, type->gravity, type->colour);
+	BaseObject* particle = new T(pos_, spd_, owner, timeout, type->gravity, type->colour);
 	
-#ifdef USE_GRID
+	USE_GRID // If this errors out, USE_GRID isn't defined, so define it ffs! >:o
 	game.objects.insert( particle, type->colLayer, type->renderLayer);
-#else
-	game.objects.insert( type->colLayer, type->renderLayer, particle );	
-#endif
-}
-
-void newParticle_SimpleParticle32(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
-{
-	int timeout = type->simpleParticle_timeout + rndInt(type->simpleParticle_timeoutVariation);
-	BaseObject* particle = new SimpleParticle32(pos_, spd_, owner, timeout, type->gravity, type->colour);
-	
-#ifdef USE_GRID
-	game.objects.insert( particle, type->colLayer, type->renderLayer);
-#else
-	game.objects.insert( type->colLayer, type->renderLayer, particle );	
-#endif
 }
 
 PartType::PartType()
-: newParticle(0)
+: newParticle(0), wupixels(1)
 {
 	gravity = 0;
 	bounceFactor = 1;
@@ -104,7 +90,7 @@ PartType::PartType()
 	distortion = NULL;
 	distortMagnitude = 0.8;
 	
-	blender = NONE;
+	blender = BlitterContext::None;
 	
 	line2Origin = false;
 	
@@ -136,8 +122,8 @@ PartType::~PartType()
 bool PartType::isSimpleParticleType()
 {
 	if(repeat != 1 || alpha != 255 || sprite || distortion || damping != 1.f
-	|| acceleration != 0.f || blender != NONE || !groundCollision
-	|| death || timer.size() > 1
+	|| acceleration != 0.f || blender || !groundCollision
+	|| death || timer.size() > 1 || line2Origin
 	|| detectRanges.size() > 0)
 	{
 		return false;
@@ -184,7 +170,7 @@ bool PartType::load(fs::path const& filename)
 	fs::ifstream fileStream(filename);
 	
 	if ( fileStream )
-	{
+	{	
 		string parseLine;
 		Event *currEvent = NULL;
 		while ( portable_getline( fileStream, parseLine ) )
@@ -247,9 +233,12 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "alpha" ) alpha = cast<int>(val);
 					else if ( var == "blender" )
 					{
-						if ( val == "add" ) blender = ADD;
-						else if ( val == "alpha" ) blender = ALPHA;
+						if ( val == "add" ) blender = BlitterContext::Add;
+						else if ( val == "alpha" ) blender = BlitterContext::Alpha;
+						else if ( val == "alphach" ) blender = BlitterContext::AlphaChannel;
 					}
+					else if ( var == "wu_pixels" ) 
+						wupixels = ( cast<int>(val) != 0 );
 					else if ( var == "colour" || var == "color" )
 					{
 						if ( tokens.size() >= 5 )
@@ -384,10 +373,23 @@ bool PartType::load(fs::path const& filename)
 				
 		if(isSimpleParticleType())
 		{
-			switch(bitmap_color_depth(screen))
+			if(wupixels)
 			{
-				default: newParticle = newParticle_SimpleParticle; break;
-				case 32: newParticle = newParticle_SimpleParticle32; break;
+				switch(bitmap_color_depth(screen))
+				{
+					default: newParticle = newParticle_SimpleParticle<SimpleParticle>; break;
+					case 32: newParticle = newParticle_SimpleParticle<SimpleParticle32wu>; break;
+					case 16: newParticle = newParticle_SimpleParticle<SimpleParticle16wu>; break;
+				}
+			}
+			else
+			{
+				switch(bitmap_color_depth(screen))
+				{
+					default: newParticle = newParticle_SimpleParticle<SimpleParticle>; break;
+					case 32: newParticle = newParticle_SimpleParticle<SimpleParticle32>; break;
+					case 16: newParticle = newParticle_SimpleParticle<SimpleParticle16>; break;
+				}
 			}
 			
 			cerr << filename.native_file_string() << ": blood" << endl;

@@ -1,6 +1,7 @@
 #include "gfx.h"
 #include "text.h"
 #include "gconsole.h"
+#include "blitters/blitters.h"
 #include <boost/assign/list_inserter.hpp>
 using namespace boost::assign;
 
@@ -13,8 +14,6 @@ using namespace boost::assign;
 #include <list>
 
 using namespace std;
-
-const int bitDepth = 32;
 
 Gfx gfx;
 
@@ -35,7 +34,7 @@ void doubleRes( int oldValue )
 
 Gfx::Gfx()
 : buffer(NULL), m_initialized(false), m_fullscreen(true), m_doubleRes(false)
-, m_vwidth(320), m_vheight(240)
+, m_vwidth(320), m_vheight(240), m_bitdepth(32)
 {
 }
 
@@ -47,7 +46,7 @@ void Gfx::init()
 {
 	register_png_file_type();
 	
-	set_color_depth(bitDepth); //Ugh
+	set_color_depth(m_bitdepth); //Ugh
 
 	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
 
@@ -74,6 +73,8 @@ void Gfx::registerInConsole()
 		("VID_DOUBLERES", &m_doubleRes, 0, doubleRes)
 		("VID_VSYNC", &m_vsync, 0)
 		("VID_CLEAR_BUFFER", &m_clearBuffer, 0)
+		("VID_BITDEPTH", &m_bitdepth, 32)
+		("VID_DISTORTION_AA", &m_distortionAA, 1)
 	;
 	
 	// NOTE: When/if adding a callback to gfx variables, make it do nothing if
@@ -126,28 +127,105 @@ void Gfx::updateScreen()
 				switch(bitmap_color_depth(screen))
 				{
 					case 32:
+
 						acquire_screen();
 
 						bmp_select(screen);
-
-						for(int y = 0; y < 240; ++y)
+						
+						for(int y = 0; y < 239; ++y)
 						{
-							unsigned long* src = (unsigned long *)buffer->line[y];
+							Pixel32* src = (Pixel32 *)buffer->line[y];
 
 							unsigned long dest1 = bmp_write_line(screen, y*2);
 							unsigned long dest2 = bmp_write_line(screen, y*2 + 1);
-														
-							for(int x = 0; x < 320; ++x)
+										
+							for(int x = 0; x < 319; ++x)
 							{
-								unsigned long p = *src++;
-
-								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
-								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
-								bmp_write32(dest2, p); dest2 += sizeof(unsigned long);
-								bmp_write32(dest2, p); dest2 += sizeof(unsigned long);
+								Pixel p = *src++;
+								
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+								bmp_write32(dest2, p); dest2 += sizeof(Pixel32);
+								bmp_write32(dest2, p); dest2 += sizeof(Pixel32);
 							}
 						}
+						/*
+						unsigned long lastRow[640];
 						
+						Pixel32* src = (Pixel32 *)buffer->line[0];
+						
+						unsigned long dest1 = bmp_write_line(screen, 0);
+						
+						Pixel32 p = *src++;
+														
+						for(int x = 0; x < 319; ++x)
+						{
+							Pixel next = *src++;
+							
+							Pixel ur = Blitters::blendColorsHalfCrude_32(p, next);
+
+							bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+							bmp_write32(dest1, ur); dest1 += sizeof(Pixel32);
+							lastRow[x*2] = p;
+							lastRow[x*2 + 1] = ur;
+							
+							p = next;
+						}
+						
+						src = (Pixel32 *)buffer->line[1];
+						
+						dest1 = bmp_write_line(screen, 1);
+						unsigned long dest2 = bmp_write_line(screen, 1);
+						
+						p = *src++;
+														
+						for(int x = 0; x < 319; ++x)
+						{
+							Pixel next = *src++;
+							
+							Pixel ll = Blitters::blendColorsHalfCrude_32(lastRow[x*2], p);
+							Pixel ur = Blitters::blendColorsHalfCrude_32(p, next);
+							Pixel lr = Blitters::blendColorsHalfCrude_32(lastRow[x*2 + 1], ur);
+
+							bmp_write32(dest1, ll); dest1 += sizeof(Pixel32);
+							bmp_write32(dest1, lr); dest1 += sizeof(Pixel32);
+							bmp_write32(dest2, p);  dest2 += sizeof(Pixel32);
+							bmp_write32(dest2, ur); dest2 += sizeof(Pixel32);
+							lastRow[x*2] = p;
+							lastRow[x*2 + 1] = ur;
+							
+							p = next;
+						}
+
+						for(int y = 0; y < 239; ++y)
+						{
+							Pixel32* src = (Pixel32 *)buffer->line[y];
+
+							unsigned long dest1 = bmp_write_line(screen, y*2);
+							unsigned long dest2 = bmp_write_line(screen, y*2 + 1);
+							
+							p = *src++;
+														
+							for(int x = 0; x < 319; ++x)
+							{
+								Pixel next = *src++;
+								
+								Pixel ll = Blitters::blendColorsHalfCrude_32(lastRow[x*2], p);
+								Pixel ur = Blitters::blendColorsHalfCrude_32(p, next);
+								Pixel lr = Blitters::blendColorsHalfCrude_32(lastRow[x*2 + 1], ur);
+								
+	
+								bmp_write32(dest1, ll); dest1 += sizeof(Pixel32);
+								bmp_write32(dest1, lr); dest1 += sizeof(Pixel32);
+								bmp_write32(dest2, p);  dest2 += sizeof(Pixel32);
+								bmp_write32(dest2, ur); dest2 += sizeof(Pixel32);
+								lastRow[x*2] = p;
+								lastRow[x*2 + 1] = ur;
+								
+								p = next;
+							}
+						}
+						*/
 						bmp_unwrite_line(screen);
 						
 						release_screen();
@@ -161,30 +239,30 @@ void Gfx::updateScreen()
 						for(int y = 0; y < 240; ++y)
 						{
 							// This is done in two loops to avoid shearing
-							unsigned short* src = (unsigned short *)buffer->line[y];
+							Pixel16* src = (Pixel16 *)buffer->line[y];
 							
 							unsigned long dest1 = bmp_write_line(screen, y*2);
 														
 							for(int x = 0; x < 320; ++x)
 							{
-								unsigned long p = (unsigned long)*src++;
+								Pixel32 p = (Pixel32)*src++;
 								
 								p = p | (p << 16);
 
-								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
 							}
 							
-							src = (unsigned short *)buffer->line[y];
+							src = (Pixel16 *)buffer->line[y];
 							
 							dest1 = bmp_write_line(screen, y*2 + 1);
 							
 							for(int x = 0; x < 320; ++x)
 							{
-								unsigned long p = (unsigned long)*src++;
+								Pixel32 p = (Pixel32)*src++;
 								
 								p = p | (p << 16);
 
-								bmp_write32(dest1, p); dest1 += sizeof(unsigned long);
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
 							}
 						}
 						
@@ -322,7 +400,7 @@ int Gfx::getGraphicsDriver()
 
 void Gfx::fullscreenChange()
 {
-	set_color_depth(bitDepth);
+	set_color_depth(m_bitdepth);
 	
 	// TODO: I suppose that changing graphics driver will clear out bitmaps and such
 
@@ -365,6 +443,23 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette )
 {
 	BITMAP* returnValue = NULL;
 	
+#ifndef COLORCONV_KEEP_ALPHA
+	const int COLORCONV_KEEP_ALPHA = COLORCONV_EXPAND_256 |
+			COLORCONV_15_TO_8 |
+			COLORCONV_16_TO_8 |
+			COLORCONV_24_TO_8 |
+			COLORCONV_32_TO_8 |
+			COLORCONV_EXPAND_15_TO_16 |
+			COLORCONV_REDUCE_16_TO_15 |
+			COLORCONV_EXPAND_HI_TO_TRUE |
+			COLORCONV_REDUCE_TRUE_TO_HI |
+			COLORCONV_24_EQUALS_32;
+#endif
+	
+	
+	int old = get_color_conversion();
+	set_color_conversion(COLORCONV_KEEP_ALPHA | COLORCONV_DITHER);
+	
 	if ( exists( filename.c_str() ) )
 	{
 		returnValue = load_bitmap(filename.c_str(), palette);
@@ -386,6 +481,8 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette )
 			}
 		}
 	}
+	
+	set_color_conversion(old);
 	
 	return returnValue;
 }

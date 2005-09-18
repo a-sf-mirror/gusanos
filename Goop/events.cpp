@@ -28,6 +28,7 @@ Event::~Event()
 void Event::addAction( const string& name, const vector<string>& params )
 {
 	map<string, BaseAction*(*)( const std::vector< std::string > &) >::iterator tempAction = game.actionList.find(name);
+	//HashTable<string, BaseAction*(*)( const std::vector< std::string > &) >::iterator tempAction = game.actionList.find(name);
 	if ( tempAction != game.actionList.end() )
 	{
 		actions.push_back( tempAction->second(params) );

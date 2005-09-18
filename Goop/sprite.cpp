@@ -1,6 +1,7 @@
 #include "sprite.h"
 
 #include "gfx.h"
+#include "blitters/context.h"
 
 #include <allegro.h>
 #include <iostream>
@@ -22,16 +23,16 @@ Sprite::~Sprite()
 	if (m_mirror) destroy_bitmap( m_mirror );
 }
 
-void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int Alignment )
+void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment )
 {
 	int _x,_y;
 	
-	if ( Alignment & ALIGN_LEFT ) _x = 0;
-	else if ( Alignment & ALIGN_RIGHT ) _x = m_bitmap->w;
+	if ( alignment & ALIGN_LEFT ) _x = 0;
+	else if ( alignment & ALIGN_RIGHT ) _x = m_bitmap->w;
 	else _x = m_xPivot;
 	
-	if ( Alignment & ALIGN_TOP ) _y = 0;
-	else if ( Alignment & ALIGN_BOTTOM ) _y = m_bitmap->h;
+	if ( alignment & ALIGN_TOP ) _y = 0;
+	else if ( alignment & ALIGN_BOTTOM ) _y = m_bitmap->h;
 	else _y = m_yPivot;
 	
 	if ( flipped )
@@ -58,33 +59,32 @@ void Sprite::drawCut(BITMAP *where, int x, int y, int alignment, int left, int t
 
 }
 
-void Sprite::drawBlended(BITMAP *where, int x, int y, int alpha, bool flipped, int Alignment, Blenders blender )
+void Sprite::drawBlended(BITMAP *where, int x, int y, BlitterContext const& blender, bool flipped, int alignment )
 {
-	gfx.setBlender( blender, alpha );
-	
 	int _x,_y;
 	
-	if ( Alignment & ALIGN_LEFT ) _x = 0;
-	else if ( Alignment & ALIGN_RIGHT ) _x = m_bitmap->w;
+	if ( alignment & ALIGN_LEFT ) _x = 0;
+	else if ( alignment & ALIGN_RIGHT ) _x = m_bitmap->w;
 	else _x = m_xPivot;
 	
-	if ( Alignment & ALIGN_TOP ) _y = 0;
-	else if ( Alignment & ALIGN_BOTTOM ) _y = m_bitmap->h;
+	if ( alignment & ALIGN_TOP ) _y = 0;
+	else if ( alignment & ALIGN_BOTTOM ) _y = m_bitmap->h;
 	else _y = m_yPivot;
 	
 	if ( flipped )
 	{
-		if(!m_mirror) //TODO: REMOVE THIS CRAP AND MAKE SOME BETTER FIX >:O
+		if(!m_mirror)
 		{
 			m_mirror = create_bitmap(m_bitmap->w,m_bitmap->h);
 			clear_to_color(m_mirror,makecol(255,0,255));
 			draw_sprite_h_flip(m_mirror, m_bitmap, 0, 0);
 		}
-		draw_trans_sprite(where, m_mirror, x - ( m_bitmap->w - 1 ) + _x, y - _y);
+
+		blender.drawSprite(where, m_mirror, x - ( m_bitmap->w - 1 ) + _x, y - _y);
 	}
 	else
-		draw_trans_sprite( where, m_bitmap, x - _x, y - _y);
-	
-	solid_mode();
+	{
+		blender.drawSprite(where, m_bitmap, x - _x, y - _y);
+	}
 }
 

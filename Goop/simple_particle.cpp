@@ -4,6 +4,7 @@
 #include "game.h"
 #include "base_object.h"
 #include "gfx.h"
+#include "blitters/blitters.h"
 
 #define BOOST_NO_MT
 #include <boost/pool/pool.hpp>
@@ -25,11 +26,12 @@ void SimpleParticle::operator delete(void* block)
 void SimpleParticle::think()
 {
 	spd.y += gravity;
-	if(!game.level.getMaterial(int(pos.x), int(pos.y)).particle_pass
+	Vec nextPos = pos + spd;
+	if(!game.level.getMaterial(int(nextPos.x), int(nextPos.y)).particle_pass
 	|| --timeout == 0)
 		deleteMe = true;
-	
-	pos += spd;
+	else
+		pos = nextPos;
 	
 	/*
 	spdy += gravity;
@@ -53,10 +55,30 @@ void SimpleParticle32::draw(BITMAP* where, int xOff, int yOff)
 {
 	int x = (int)(pos.x)-xOff;
 	int y = (int)(pos.y)-yOff;
-	/*
-	int x = (posx >> 8)-xOff;
-	int y = (posy >> 8)-yOff;*/
+	
+
 	if((unsigned int)x < where->w
 	&& (unsigned int)y < where->h)
-		((unsigned long *)where->line[y])[x] = colour;
+		Blitters::putpixel_solid_32(where, x, y, colour);
+}
+
+void SimpleParticle16::draw(BITMAP* where, int xOff, int yOff)
+{
+	int x = (int)(pos.x)-xOff;
+	int y = (int)(pos.y)-yOff;
+	
+
+	if((unsigned int)x < where->w
+	&& (unsigned int)y < where->h)
+		Blitters::putpixel_solid_16(where, x, y, colour);
+}
+
+void SimpleParticle32wu::draw(BITMAP* where, int xOff, int yOff)
+{
+	Blitters::putpixelwu_blend_32(where, pos.x - xOff, pos.y - yOff, colour, 256);
+}
+
+void SimpleParticle16wu::draw(BITMAP* where, int xOff, int yOff)
+{
+	Blitters::putpixelwu_blend_16(where, pos.x - xOff, pos.y - yOff, colour, 32);
 }

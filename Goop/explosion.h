@@ -29,7 +29,6 @@ class Explosion : public BaseObject
 	
 		ExpType* m_type;
 		
-		int m_time;
 		int m_timeout;
 		
 		float m_fadeSpeed;
@@ -37,8 +36,6 @@ class Explosion : public BaseObject
 		SpriteSet* m_sprite;
 		BaseAnimator* m_animator;
 		//AnimLoopRight m_animator;
-	
-		bool justCreated;
 };
 
 #endif  // _EXPLOSION_H_

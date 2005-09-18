@@ -145,6 +145,8 @@ bool Level::trace(long x, long y, long destx, long desty, PredT predicate)
 	return false;
 }
 
+#undef SIGN
+
 extern ResourceLocator<Level> levelLocator;
 
 #endif // _LEVEL_H_

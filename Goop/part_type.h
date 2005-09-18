@@ -7,6 +7,7 @@
 #include "distortion.h"
 #include "angle.h"
 #include "vec.h"
+#include "blitters/context.h"
 
 #include <allegro.h>
 #include <string>
@@ -68,8 +69,10 @@ class PartType
 	int animDuration;
 	int animType;
 	int animOnGround;
-	Blenders blender;
+	//Blenders blender;
+	BlitterContext::Type blender;
 	bool line2Origin;
+	bool wupixels;
 	
 	int simpleParticle_timeout;
 	int simpleParticle_timeoutVariation;

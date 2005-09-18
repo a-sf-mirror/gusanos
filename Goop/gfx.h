@@ -5,6 +5,7 @@
 
 #include <string>
 #include <list>
+//#include "blitters/vtables.h"
 
 enum Blenders
 {
@@ -15,7 +16,7 @@ enum Blenders
 
 class Gfx
 {
-	public:
+public:
 		
 	Gfx();
 	~Gfx();
@@ -56,7 +57,9 @@ class Gfx
 	
 	BITMAP* buffer;
 	
-	private:
+	int m_distortionAA;
+	
+private:
 	
 	bool m_initialized;
 	
@@ -68,7 +71,8 @@ class Gfx
 	int m_clearBuffer;
 	int m_filter;
 	int m_driver;
-	
+	int m_bitdepth;
+
 	BITMAP* m_doubleResBuffer;
 	
 	enum Filters

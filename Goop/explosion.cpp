@@ -21,15 +21,9 @@ using namespace std;
 
 Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseObject(owner)
 {
-	justCreated = false;
-	
-	
-	
 	m_type = type;
 	
 	pos = _pos;
-	
-	m_time = 0;
 	
 	m_alpha = m_type->alpha;
 	
@@ -61,26 +55,11 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 
 void Explosion::think()
 {
-	if ( justCreated )
-	{	
-		justCreated = false;
-		
-		if ( m_type->creation )
-		{
-			m_type->creation->run(this);
-		}
-	
-		for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
-		{
-			(*t)->check(this);
-		}
-	}
-	
 	// Animation
 	if ( m_animator ) m_animator->tick();
 	
 	// Alpha Fade
-	if ( m_type->blender != NONE && m_fadeSpeed )
+	if ( m_type->blender && m_fadeSpeed )
 	{
 		if ( fabs( m_type->destAlpha - m_alpha ) < fabs(m_fadeSpeed) )
 		{
@@ -91,8 +70,7 @@ void Explosion::think()
 			m_alpha += m_fadeSpeed;
 	}
 	
-	++m_time;
-	if ( m_time > m_timeout )
+	if ( --m_timeout < 0)
 	{
 		deleteMe = true;
 	}
@@ -100,35 +78,36 @@ void Explosion::think()
 
 void Explosion::draw(BITMAP* where,int xOff, int yOff)
 {
+	int x = static_cast<int>(pos.x - xOff);
+	int y = static_cast<int>(pos.y - yOff);
+	
+	BlitterContext blitter(m_type->blender, (int)m_alpha);
+	
 	if (!m_sprite)
 	{
-		if ( m_type->blender != NONE )
-		{
-			gfx.setBlender( m_type->blender, (int)m_alpha );
-			putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
-			solid_mode();
-		}
-		else putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
+		if(m_type->wupixels)
+			blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
+		else
+			blitter.putpixel(where, x, y, m_type->colour);
 	}
 	else
 	{	
 		if ( false )
 		{
-			if ( m_type->blender == NONE )
-				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
+			if ( !m_type->blender )
+				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->draw(where, x, y);
 			else
-				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->drawBlended(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), (int)m_alpha, false, 0, m_type->blender);
+				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->drawBlended(where, x, y, blitter, false, 0);
 		}
 		else
 		{
-			if ( m_type->blender != NONE )
-				gfx.setBlender( m_type->blender, (int)m_alpha );
+			//TODO: Blending
 			game.level.specialDrawSprite( m_sprite->getSprite(m_animator->getFrame(), Angle(0)), where, pos - Vec(xOff, yOff), pos );
-			solid_mode();
+			
 		}
 	}
 	if (m_type->distortion)
 	{
-		m_type->distortion->apply( where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_type->distortMagnitude );
+		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
 	}
 }

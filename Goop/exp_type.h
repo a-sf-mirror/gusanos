@@ -5,6 +5,7 @@
 #include "gfx.h"
 //#include "events.h"
 //#include "distortion.h"
+#include "blitters/context.h"
 
 #include <allegro.h>
 #include <string>
@@ -37,7 +38,9 @@ class ExpType
 		int alpha;
 		int destAlpha;
 		SpriteSet* sprite;
-		Blenders blender;
+		//Blenders blender;
+		BlitterContext::Type blender;
+		bool wupixels;
 	
 		std::vector< DetectEvent* > detectRanges;
 		Event *creation;

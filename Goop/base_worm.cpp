@@ -20,6 +20,7 @@
 
 #include "glua.h"
 #include "lua/bindings.h"
+#include "blitters/blitters.h"
 
 #include <math.h>
 #include <string>
@@ -766,7 +767,15 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			
 			if (m_ninjaRope->active)
-				line(where, x, y, static_cast<int>(m_ninjaRope->pos.x) - xOff, static_cast<int>(m_ninjaRope->pos.y) - yOff, m_ninjaRope->getColour());
+			{
+				//line(where, x, y, static_cast<int>(m_ninjaRope->pos.x) - xOff, static_cast<int>(m_ninjaRope->pos.y) - yOff, m_ninjaRope->getColour());
+				linewu_solid(where
+					, renderPos.x - xOff
+					, renderPos.y - yOff
+					, m_ninjaRope->pos.x - xOff
+					, m_ninjaRope->pos.y - yOff
+					, m_ninjaRope->getColour());
+			}
 			
 			m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
 			
@@ -883,12 +892,14 @@ void BaseWorm::addRopeLength( float distance )
 
 void BaseWorm::showFirecone( SpriteSet* sprite, int frames, float distance )
 {
-	m_fireconeTime = frames;
-	m_currentFirecone = sprite;
-	delete m_fireconeAnimator;
-	m_fireconeAnimator = new AnimLoopRight( sprite, frames );
-	m_fireconeDistance = distance;
-	
+	if(sprite)
+	{
+		m_fireconeTime = frames;
+		m_currentFirecone = sprite;
+		delete m_fireconeAnimator;
+		m_fireconeAnimator = new AnimLoopRight( sprite, frames );
+		m_fireconeDistance = distance;
+	}
 }
 
 void BaseWorm::actionStart( Actions action )

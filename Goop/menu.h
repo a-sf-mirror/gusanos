@@ -3,10 +3,12 @@
 
 #include "omfggui.h"
 #include "resource_locator.h"
+#include "blitters/context.h"
 #include <boost/filesystem/fstream.hpp>
 
 class Font;
 class SpriteSet;
+struct BITMAP;
 
 namespace OmfgGUI
 {
@@ -40,7 +42,10 @@ struct GusanosSpriteSet : public BaseSpriteSet
 
 struct AllegroRenderer : public Renderer
 {
-
+	AllegroRenderer()
+	{
+	}
+	
 	// Draws a box
 	virtual void drawBox(
 		Rect const& rect,
@@ -71,9 +76,14 @@ struct AllegroRenderer : public Renderer
 	virtual void setBlending(int alpha);
 	virtual void resetBlending();
 	
+/*
+	void rectfill32(BITMAP* where, int x1, int y1, int x2, int y2, int colour);
+	void rectfill16(BITMAP* where, int x1, int y1, int x2, int y2, int colour);*/
+	
 private:
 	Rect clipRect;
 	Rect screenRect;
+	BlitterContext blitter;
 };
 
 //extern GusanosFont defaultMenuFont;

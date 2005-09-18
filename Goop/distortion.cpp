@@ -3,6 +3,8 @@
 #include <allegro.h>
 #include <vector>
 #include "vec.h"
+#include "gfx.h"
+#include "blitters/blitters.h"
 
 #include <string>
 
@@ -283,48 +285,142 @@ void Distortion::apply( BITMAP* where, int destx, int desty, float multiply = 1.
 	
 	unsigned char** buffer_line = buffer->line;
 	unsigned char** where_line = where->line;
-	unsigned int where_w = (unsigned int)where->w;
-	unsigned int where_h = (unsigned int)where->h;
+	unsigned int where_w = (unsigned int)where->w - 1;
+	unsigned int where_h = (unsigned int)where->h - 1;
 	
 	int orgDestX = destx;
 	int orgDestY = desty;
 
-	#define SET16(v_) *dest++ = v_
-	#define GET16(t_) (((unsigned int)(x_) < where_w && (unsigned int)(y_) < where_h) ? ((t_ *)where_line[y_])[x_] : 0)
-	#define SET32(v_) *dest++ = v_
-	#define GET32(t_) (((unsigned int)(x_) < where_w && (unsigned int)(y_) < where_h) ? ((t_ *)where_line[y_])[x_] : 0)
-	#define WORK(get_, set_, t_) \
-	for ( int y = y1; h-- > 0; ++y, ++desty ) { \
-		w = orgW; \
-		destx = orgDestX; \
-		t_* dest = ((t_ *)buffer_line[y]) + x1; \
-		for ( ; w-- > 0; ++m, ++destx) { \
-			int x_ = destx + ((m->first * fmag) >> 16); \
-			int y_ = desty + ((m->second * fmag) >> 16); \
-			set_(get_(t_)); } \
-		m = (std::pair<int, int> *)(((char *)m) + wrap); }
-		
-	#define WORK_GENERAL() \
-	for ( int y = y1; h-- > 0; ++y, ++desty ) { \
-		w = orgW; \
-		destx = orgDestX; \
-		for ( int x = x1; w-- > 0; ++m, ++destx, ++x) { \
-			int x_ = destx + ((m->first * fmag) >> 16); \
-			int y_ = desty + ((m->second * fmag) >> 16); \
-			putpixel(buffer, x, y, getpixel(where, x_, y_)); } \
-		m = (std::pair<int, int> *)(((char *)m) + wrap); }
-	
-	switch(bitmap_color_depth(buffer))
+	if(!gfx.m_distortionAA)
 	{
-		case 32: WORK(GET32, SET32, unsigned long); break;
-		case 16: WORK(GET16, SET16, unsigned short); break;
-		default: WORK_GENERAL(); break;
+		#define SET16(v_) *dest++ = v_
+		#define GET16(t_) (((unsigned int)(x_) < where_w && (unsigned int)(y_) < where_h) ? ((t_ *)where_line[y_])[x_] : 0)
+		#define SET32(v_) *dest++ = v_
+		#define GET32(t_) (((unsigned int)(x_) < where_w && (unsigned int)(y_) < where_h) ? ((t_ *)where_line[y_])[x_] : 0)
+		#define WORK(get_, set_, t_) \
+		for ( int y = y1; h-- > 0; ++y, ++desty ) { \
+			w = orgW; \
+			destx = orgDestX; \
+			t_* dest = ((t_ *)buffer_line[y]) + x1; \
+			for ( ; w-- > 0; ++m, ++destx) { \
+				int x_ = destx + ((m->first * fmag) >> 16); \
+				int y_ = desty + ((m->second * fmag) >> 16); \
+				set_(get_(t_)); } \
+			m = (std::pair<int, int> *)(((char *)m) + wrap); }
+			
+		#define WORK_GENERAL() \
+		for ( int y = y1; h-- > 0; ++y, ++desty ) { \
+			w = orgW; \
+			destx = orgDestX; \
+			for ( int x = x1; w-- > 0; ++m, ++destx, ++x) { \
+				int x_ = destx + ((m->first * fmag) >> 16); \
+				int y_ = desty + ((m->second * fmag) >> 16); \
+				putpixel(buffer, x, y, getpixel(where, x_, y_)); } \
+			m = (std::pair<int, int> *)(((char *)m) + wrap); }
+		
+		switch(bitmap_color_depth(buffer))
+		{
+			case 32: WORK(GET32, SET32, Pixel32); break;
+			case 16: WORK(GET16, SET16, Pixel16); break;
+			default: WORK_GENERAL(); break;
+		}
+		
+		#undef WORK
+		#undef GET32
+		#undef SET32
+	}
+	else
+	{
+		switch(bitmap_color_depth(buffer))
+		{
+			case 32:
+			{
+				for ( int y = y1; h-- > 0; ++y, ++desty ) 
+				{
+					w = orgW;
+					destx = orgDestX;
+					Pixel32* dest = ((Pixel32 *)buffer_line[y]) + x1;
+					for ( ; w-- > 0; ++m, ++destx)
+					{
+						int rx = (m->first * fmag);
+						int ry = (m->second * fmag);
+						int px = destx + (rx >> 16);
+						int py = desty + (ry >> 16);
+						
+						if((unsigned int)px < where_w && (unsigned int)py < where_h)
+						{
+							rx = (rx >> 8) & 0xFF;
+							ry = (ry >> 8) & 0xFF;
+							Pixel32* urow = (Pixel32 *)where_line[py];
+							Pixel32* lrow = (Pixel32 *)where_line[py + 1];
+							Pixel ul = urow[px];
+							Pixel ur = urow[px + 1];
+							Pixel ll = lrow[px];
+							Pixel lr = lrow[px + 1];
+							
+							Pixel u = Blitters::blendColorsFact_32(ul, ur, rx);
+							Pixel l = Blitters::blendColorsFact_32(ll, lr, rx);
+							Pixel p = Blitters::blendColorsFact_32(u, l, ry);
+							
+							//p = Blitters::blendColorsFact_32(((Pixel32 *)where_line[desty])[destx], p, 90);
+							*dest++ = p;
+						}
+						else
+						{
+							*dest++ = 0;
+						}
+					}
+					m = (std::pair<int, int> *)(((char *)m) + wrap);
+				}
+			}
+			break;
+			
+			case 16:
+			{
+				for ( int y = y1; h-- > 0; ++y, ++desty ) 
+				{
+					w = orgW;
+					destx = orgDestX;
+					Pixel16* dest = ((Pixel16 *)buffer_line[y]) + x1;
+					for ( ; w-- > 0; ++m, ++destx)
+					{
+						int rx = (m->first * fmag);
+						int ry = (m->second * fmag);
+						int px = destx + (rx >> 16);
+						int py = desty + (ry >> 16);
+						
+						if((unsigned int)px < where_w && (unsigned int)py < where_h)
+						{
+							rx = (rx >> 11) & 31;
+							ry = (ry >> 11) & 31;
+							Pixel16* urow = (Pixel16 *)where_line[py];
+							Pixel16* lrow = (Pixel16 *)where_line[py + 1];
+							Pixel u = *(Pixel16_2 *)(urow + px);
+							Pixel l = *(Pixel16_2 *)(lrow + px);
+							
+							// Merge the top row with the bottom row
+							Pixel v = Blitters::blendColorsFact_16_2(u, l, ry);
+							
+							// Merge both columns
+							// WARNING: Endian-assumption here, change (32-rx) to (rx) if on a big endian machine
+							// We use 32-rx rather than 31-rx to avoid ugly artifacts with identity distortions
+							Pixel p = Blitters::blendColorsFact_16(v, 32-rx);
+							
+							*dest++ = p;
+						}
+						else
+						{
+							*dest++ = 0;
+						}
+					}
+					m = (std::pair<int, int> *)(((char *)m) + wrap);
+				}
+			}
+			break;
+		}
 	}
 	
-	#undef WORK
-	#undef GET32
-	#undef SET32
-	
 	blit(buffer, where, x1, y1, orgDestX, orgDestY, orgW, orgH);
+	//drawSprite_blend(where, buffer, orgDestX, orgDestY, 90);
 }
 

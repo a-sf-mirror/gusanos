@@ -30,6 +30,7 @@
 #include "menu.h"
 #include "keyboard.h"
 #include "script.h"
+#include "ninjarope.h"
 
 #include "loaders/gusanos.h"
 #include "loaders/lierox.h"
@@ -637,14 +638,13 @@ BaseWorm* Game::addWorm(bool isAuthority)
 		returnWorm = worm;
 	}
 #ifdef USE_GRID
-	objects.insert(returnWorm, Grid::WormColLayer, Grid::WormRenderLayer);
-	objects.insert((BaseObject *)returnWorm->getNinjaRopeObj(), 1, 1);
+	objects.insertImmediately(returnWorm, Grid::WormColLayer, Grid::WormRenderLayer);
+	objects.insertImmediately(returnWorm->getNinjaRopeObj(), 1, 1);
 #else
 	objects.insert(WORMS_COLLISION_LAYER,WORMS_RENDER_LAYER, returnWorm);
 	objects.insert( 1,1, (BaseObject*)returnWorm->getNinjaRopeObj() );
 #endif
-	// WARNING: :OOOO, the BaseObject* cast is evil, include "ninjarope.h" instead?
-	objects.flush();
+
 	return returnWorm;
 }
 
@@ -673,5 +673,5 @@ unsigned long Game::stringToIndex(std::string const& str)
 
 std::string const& Game::indexToString(unsigned long idx)
 {
-	return indexToStringMap[idx];
+	return indexToStringMap.at(idx);
 }

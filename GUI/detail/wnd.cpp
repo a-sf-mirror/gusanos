@@ -545,7 +545,7 @@ bool Wnd::doRender(Renderer* renderer, Rect const& clip)
 		return false;
 	renderer->setClip(rect);
 	
-	if(m_formatting.alpha != 100)
+	if(m_formatting.alpha != 255)
 		renderer->setBlending(m_formatting.alpha);
 	else
 		renderer->resetBlending();

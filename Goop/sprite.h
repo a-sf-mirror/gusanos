@@ -5,6 +5,7 @@
 //#include <allegro.h>
 
 struct BITMAP;
+class BlitterContext;
 
 enum
 {
@@ -13,7 +14,8 @@ enum
 	ALIGN_RIGHT = 4,
 	ALIGN_LEFT = 16
 };
-	
+
+
 class Sprite
 {
 public:
@@ -23,7 +25,8 @@ public:
 	
 	void draw(BITMAP *where, int x, int y, bool flipped = false, int Alignment = 0);
 	void drawCut(BITMAP *where, int x, int y, int alignment, int left, int top, int bottom, int right);
-	void drawBlended(BITMAP *where, int x, int y, int alpha, bool flipped = false, int Alignment = 0, Blenders blender = ADD );
+	//void drawBlended(BITMAP *where, int x, int y, bool flipped = false, int alignment = 0, Blenders blender = ADD );
+	void drawBlended(BITMAP *where, int x, int y, BlitterContext const& blender, bool flipped = false, int alignment = 0);
 	
 	int getWidth()
 	{ return m_bitmap->w; }

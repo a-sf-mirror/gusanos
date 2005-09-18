@@ -208,7 +208,9 @@ public:
 	
 	bool checkState()
 	{
-		return m_old != *m_ptr;
+		bool res = m_old != *m_ptr;
+		m_old = *m_ptr;
+		return res;
 	}
 	
 	bool checkInitialState() { return true; }
