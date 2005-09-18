@@ -10,6 +10,9 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
 	
+	if(fact <= 0)
+		return;
+	
 	CLIP_SPRITE();
 	
 	int fact2 = fact * 256;
@@ -21,11 +24,8 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 	
 	movq_mr(fact32, mm6);
 	
-	
-
 	SPRITE_Y_LOOP(
 		SPRITE_X_LOOP_NOALIGN(4,
-		//SPRITE_X_LOOP(
 			Pixel s = *src;
 			*dest = blendColorsFact_32(*dest, s, (((s >> 24) * fact) >> 8))
 		,
@@ -117,6 +117,9 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int fact
 {
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
+	
+	if(fact <= 0)
+		return;
 	
 	CLIP_SPRITE();
 
@@ -321,6 +324,9 @@ void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int fact
 	typedef Pixel16 pixel_t_1;
 	typedef Pixel16 pixel_t_2; // Doesn't really matter what type this is
 	
+	if(fact < 4)
+		return;
+	
 	CLIP_SPRITE();
 
 	static unsigned long long RED = 0xF800F800F800F800ull;
@@ -330,40 +336,37 @@ void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int fact
 	
 	fact = (fact + 4) / 8;
 
-	if(fact > 1)
-	{
-		movd_rm(mm6, fact);
-		punpcklwd_rr(mm6, mm6); // 00000000ff00ff00
-		punpcklwd_rr(mm6, mm6); // ff00ff00ff00ff00
-		
-		movq_rm(mm7, MASK);
-
-		SPRITE_Y_LOOP(
-			SPRITE_X_LOOP_NOALIGN(4,
-				Pixel s = *src;
-				if(s != maskcolor_16)
-					*dest = blendColorsFact_16_2(*dest, s, fact)
-			,
-				prefetchnta(src[8]);
-				prefetcht0(dest[8]);
-				
-				movq_rm(mm0, dest[0]);    // mm1 = dest1 | dest2 | dest3 | dest4
-				movq_rm(mm3, src[0]);     // mm0 = src1 | src2 | src3 | src4
-				
-				movq_rr(mm1, mm3);
-				movq_rr(mm2, mm0);
-				pcmpeqw_rr(mm3, mm7);
-				pand_rr(mm2, mm3);
-				pandn_rr(mm3, mm1);
-				por_rr(mm3, mm2);
-
-				FBLEND_BLEND_16_4_MMX(mm3, mm0, mm6, RED, GREEN, BLUE, mm1, mm2, mm4, mm5);
-				
-				movq_mr(dest[0], mm3);
-			)
-		)
-	}
+	movd_rm(mm6, fact);
+	punpcklwd_rr(mm6, mm6); // 00000000ff00ff00
+	punpcklwd_rr(mm6, mm6); // ff00ff00ff00ff00
 	
+	movq_rm(mm7, MASK);
+
+	SPRITE_Y_LOOP(
+		SPRITE_X_LOOP_NOALIGN(4,
+			Pixel s = *src;
+			if(s != maskcolor_16)
+				*dest = blendColorsFact_16_2(*dest, s, fact)
+		,
+			prefetchnta(src[8]);
+			prefetcht0(dest[8]);
+			
+			movq_rm(mm0, dest[0]);    // mm1 = dest1 | dest2 | dest3 | dest4
+			movq_rm(mm3, src[0]);     // mm0 = src1 | src2 | src3 | src4
+			
+			movq_rr(mm1, mm3);
+			movq_rr(mm2, mm0);
+			pcmpeqw_rr(mm3, mm7);
+			pand_rr(mm2, mm3);
+			pandn_rr(mm3, mm1);
+			por_rr(mm3, mm2);
+
+			FBLEND_BLEND_16_4_MMX(mm3, mm0, mm6, RED, GREEN, BLUE, mm1, mm2, mm4, mm5);
+			
+			movq_mr(dest[0], mm3);
+		)
+	)
+
 	emms();
 }
 

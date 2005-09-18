@@ -17,6 +17,7 @@ using boost::array;
 
 class Sprite;
 class LevelEffect;
+struct BlitterContext;
 
 class Level
 {
@@ -65,7 +66,7 @@ class Level
 	template<class PredT>
 	bool trace(long srcx, long srcy, long destx, long desty, PredT predicate);
 	
-	void specialDrawSprite(Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos );
+	void specialDrawSprite(Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos, BlitterContext const& blitter );
 	
 	// applies the effect and returns true if it actually changed something on the map
 	bool applyEffect( LevelEffect* effect, int x, int y);

@@ -44,6 +44,8 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 , m_alpha(m_type->alpha), m_fadeSpeed(0), m_animator(0)
 , m_alphaDest(255), m_sprite(m_type->sprite), m_origin(pos_)
 {
+	m_angle.clamp();
+	
 	if ( m_sprite )
 	{
 		m_animator = m_type->allocateAnimator();

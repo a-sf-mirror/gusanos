@@ -101,9 +101,7 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 		}
 		else
 		{
-			//TODO: Blending
-			game.level.specialDrawSprite( m_sprite->getSprite(m_animator->getFrame(), Angle(0)), where, pos - Vec(xOff, yOff), pos );
-			
+			game.level.specialDrawSprite( m_sprite->getSprite(m_animator->getFrame(), Angle(0)), where, pos - Vec(xOff, yOff), pos, blitter );
 		}
 	}
 	if (m_type->distortion)

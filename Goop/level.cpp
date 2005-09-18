@@ -7,6 +7,7 @@
 #include "math_func.h"
 #include "level_effect.h"
 #include "sprite_set.h"
+#include "blitters/context.h"
 
 #include <allegro.h>
 #include <string>
@@ -50,8 +51,10 @@ Level::Level()
 	m_materialList[4].worm_pass = false;
 	m_materialList[4].particle_pass = true;
 	m_materialList[4].draw_exps = false;
-
-
+	
+	m_materialList[7].worm_pass = false;
+	m_materialList[7].particle_pass = false;
+	m_materialList[7].draw_exps = false;
 }
 
 Level::~Level()
@@ -178,7 +181,7 @@ void Level::draw(BITMAP* where, int x, int y)
 }
 
 // TODO: optimize this
-void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos )
+void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos, BlitterContext const& blitter )
 {
 	int transCol = makecol(255,0,255); // TODO: make a gfx.getTransCol() function
 
@@ -193,7 +196,7 @@ void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, co
 		{
 			//int c = sprite->m_bitmap->line[y][x];
 			int c = getpixel( sprite->m_bitmap, x, y );
-			if ( c != transCol ) putpixel( where, xDrawStart + x, yDrawStart + y, c );
+			if ( c != transCol ) blitter.putpixel( where, xDrawStart + x, yDrawStart + y, c );
 		}
 	}
 }
