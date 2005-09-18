@@ -24,7 +24,7 @@ class ShootParticles : public BaseAction
 	ShootParticles( const std::vector< std::string >& params );
 	~ShootParticles();
 
-	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+	void run( ActionParams const& params );
 
 	private:
 
@@ -50,7 +50,7 @@ class UniformShootParticles : public BaseAction
 		UniformShootParticles( const std::vector< std::string >& params );
 		~UniformShootParticles();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 
@@ -76,7 +76,7 @@ class CreateExplosion : public BaseAction
 		CreateExplosion( const std::vector< std::string >& params );
 		~CreateExplosion();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 
@@ -92,7 +92,7 @@ class Push : public BaseAction
 		Push( const std::vector< std::string >& params );
 		~Push();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 		float factor;
@@ -107,7 +107,7 @@ class Repel : public BaseAction
 		Repel( const std::vector< std::string >& params );
 		~Repel();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 		float maxForce;
@@ -128,7 +128,7 @@ class Damp : public BaseAction
 		Damp( const std::vector< std::string >& params );
 		~Damp();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 		float factor;
@@ -143,7 +143,7 @@ class Damage : public BaseAction
 		Damage( const std::vector< std::string >& params );
 		~Damage();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 		float m_damage;
@@ -159,7 +159,7 @@ class Remove : public BaseAction
 	Remove( const std::vector< std::string >& params );
 	~Remove();
 
-	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+	void run( ActionParams const& params );
 
 	private:
 	
@@ -174,7 +174,7 @@ class PlaySound : public BaseAction
 	PlaySound( const std::vector< std::string >& params );
 	~PlaySound();
 
-	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+	void run( ActionParams const& params );
 
 	private:
 		
@@ -194,7 +194,7 @@ class PlayRandomSound : public BaseAction
 		PlayRandomSound( const std::vector< std::string >& params );
 		~PlayRandomSound();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 		
@@ -214,7 +214,7 @@ class PlaySoundStatic : public BaseAction
 	PlaySoundStatic( const std::vector< std::string >& params );
 	~PlaySoundStatic();
 
-	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+	void run( ActionParams const& params );
 
 	private:
 		
@@ -234,7 +234,7 @@ class DelayFire : public BaseAction
 	DelayFire( const std::vector< std::string >& params );
 	~DelayFire();
 
-	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+	void run( ActionParams const& params );
 
 	private:
 	
@@ -251,7 +251,7 @@ class ShowFirecone : public BaseAction
 		ShowFirecone( const std::vector< std::string >& params );
 		~ShowFirecone();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 	
@@ -269,7 +269,7 @@ class AddAngleSpeed : public BaseAction
 	AddAngleSpeed( const std::vector< std::string >& params );
 	~AddAngleSpeed();
 
-	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+	void run( ActionParams const& params );
 
 	private:
 	
@@ -286,7 +286,7 @@ class SetAlphaFade : public BaseAction
 		SetAlphaFade( const std::vector< std::string >& params );
 		~SetAlphaFade();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 	
@@ -303,7 +303,7 @@ class RunCustomEvent : public BaseAction
 		RunCustomEvent( const std::vector< std::string >& params );
 		~RunCustomEvent();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 	
@@ -319,7 +319,7 @@ public:
 	RunScript( std::vector< std::string > const& params );
 	~RunScript();
 
-	void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+	void run( ActionParams const& params );
 
 private:
 
@@ -335,7 +335,7 @@ class ApplyMapEffect : public BaseAction
 		ApplyMapEffect( const std::vector< std::string >& params );
 		~ApplyMapEffect();
 
-		void run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon );
+		void run( ActionParams const& params );
 
 	private:
 	

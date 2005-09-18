@@ -32,6 +32,23 @@ void registerPlayerInput()
 			("-P" + cast<string>(i) + "_FIRE", boost::bind(fireStop, i, _1))
 		;
 	}
+	console.registerCommands()
+		(string("SAY"), say);
+}
+
+string say( const list<string> &args )
+{
+	if ( !game.localPlayers.empty() )
+	{
+		if ( !args.empty() )
+		{
+			game.localPlayers[0]->sendChatMsg( *(args.begin()) );
+		}else
+		{
+			return "SAY <MESSAGE> : SENDS A MESSAGE TO THE OTHER PLAYERS ON THE SERVER";
+		}
+	}
+	return "";
 }
 
 string leftStart(int index, const list<string> &args)

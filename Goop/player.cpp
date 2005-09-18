@@ -14,6 +14,8 @@ Player::Player(PlayerOptions* options) : BasePlayer()
 	aimingDown = false;
 	changing = false;
 	jumping = false;
+	walkingRight = false;
+	walkingLeft = false;
 	
 	m_options = options;
 
@@ -93,7 +95,12 @@ void Player::actionStart ( Actions action )
 					m_worm->changeWeaponTo( m_worm->getWeaponIndexOffset(-1) );
 				}
 				else
+				{
 					BasePlayer::baseActionStart(BasePlayer::LEFT);
+					walkingLeft = true;
+					if ( walkingRight )
+						BasePlayer::baseActionStart(BasePlayer::DIG);
+				}
 			}
 		}
 		break;
@@ -107,7 +114,12 @@ void Player::actionStart ( Actions action )
 					m_worm->changeWeaponTo( m_worm->getWeaponIndexOffset(1) );
 				}
 				else
+				{
 					BasePlayer::baseActionStart(BasePlayer::RIGHT);
+					walkingRight = true;
+					if ( walkingLeft )
+						BasePlayer::baseActionStart(BasePlayer::DIG);
+				}
 			}
 		}
 		break;
@@ -202,6 +214,7 @@ void Player::actionStop ( Actions action )
 			if ( m_worm )
 			{
 				BasePlayer::baseActionStop(BasePlayer::LEFT);
+				walkingLeft = false;
 			}
 		}
 		break;
@@ -211,6 +224,7 @@ void Player::actionStop ( Actions action )
 			if ( m_worm )
 			{
 				BasePlayer::baseActionStop(BasePlayer::RIGHT);
+				walkingRight = false;
 			}
 		}
 		break;

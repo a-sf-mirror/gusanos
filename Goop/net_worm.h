@@ -18,6 +18,7 @@ class NetWorm : public BaseWorm
 	{
 		PosCorrection = 0,
 		Respawn,
+		Dig,
 		Die,
 		ChangeWeapon,
 		WeaponMessage,
@@ -49,6 +50,7 @@ class NetWorm : public BaseWorm
 	ZCom_NodeID getNodeID();
 	
 	void respawn();
+	void dig();
 	void die();
 	void changeWeaponTo( unsigned int weapIndex );
 	

@@ -37,8 +37,9 @@ void Event::addAction( const string& name, const vector<string>& params )
 
 void Event::run( BaseObject *object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
 {
+	ActionParams params(object, object2, worm, weapon);
 	for ( vector<BaseAction*>::iterator action = actions.begin(); action != actions.end(); action++)
 	{
-		(*action)->run( object, object2, worm, weapon );
+		(*action)->run( params );
 	}
 }

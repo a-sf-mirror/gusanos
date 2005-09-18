@@ -41,6 +41,8 @@ private:
 	bool aimingDown;
 	bool changing;
 	bool jumping;
+	bool walkingLeft;
+	bool walkingRight;
 
 	Viewport* m_viewport;
 };

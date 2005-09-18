@@ -129,6 +129,11 @@ void BasePlayer::think()
 							changeName( data->getStringStatic() );
 						}
 						break;
+						case CHAT_MSG:
+						{
+							sendChatMsg( data->getStringStatic() );
+						}
+						break;
 						
 						case EVENT_COUNT: break; // Do nothing
 					}
@@ -220,6 +225,18 @@ void BasePlayer::nameChangePetition()
 		addEvent(data, NAME_PETITION);
 		data->addString( m_options->name.c_str() );
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, data);
+	}
+}
+
+void BasePlayer::sendChatMsg( std::string const& message )
+{
+	game.displayChatMsg( m_name, message );
+	if ( m_node )
+	{
+		ZCom_BitStream *data = new ZCom_BitStream;
+		addEvent(data, CHAT_MSG);
+		data->addString( message.c_str() );
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY, data);
 	}
 }
 
@@ -425,6 +442,21 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			{
 				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
 				addActionStart(data, NINJAROPE);
+				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
+			}
+		}
+		break;
+		
+		case DIG:
+		{
+			if ( m_worm )
+			{
+				m_worm->dig();
+			}
+			if ( m_node )
+			{
+				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				addActionStart(data, DIG);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
 		}

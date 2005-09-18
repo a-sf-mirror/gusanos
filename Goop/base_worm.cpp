@@ -847,6 +847,18 @@ void BaseWorm::respawn( const Vec& newPos)
 	}
 }
 
+void BaseWorm::dig()
+{
+	if ( m_isActive )
+	dig( pos, getAngle() );
+}
+
+void BaseWorm::dig( const Vec& digPos, Angle angle )
+{
+	if( game.digObject )
+		game.digObject->newParticle( game.digObject, digPos, Vec(angle), m_dir, m_owner, angle );
+}
+
 void BaseWorm::die()
 {
 	m_isActive = false;

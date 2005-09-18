@@ -67,7 +67,7 @@ void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec sp
 }
 
 PartType::PartType()
-: newParticle(0), wupixels(1)
+: newParticle(0), wupixels(0)
 {
 	gravity = 0;
 	bounceFactor = 1;

@@ -104,26 +104,26 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	}
 }
 
-void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void ShootParticles::run( ActionParams const& params )
 {
 	if (type)
 	{
 /*
 		Vec spd;
 		Angle tmpAngle;
-		char dir = object->getDir();
+		char dir = params.object->getDir();
 		//for ( int i = 0; i < amount + rnd()*amountVariation; i++) //WTF??
 		int realAmount = amount + int(rnd()*amountVariation);
 		for ( int i = 0; i < realAmount; i++)
 		{
-			tmpAngle = object->getAngle() + angleOffset * dir + distribution * midrnd();
+			tmpAngle = params.object->getAngle() + angleOffset * dir + distribution * midrnd();
 			spd = Vec( tmpAngle, speed + midrnd()*speedVariation );
-			spd += object->spd * motionInheritance;
-			game.insertParticle( new Particle( type, object->pos + Vec( tmpAngle, (double)distanceOffset) , spd, object->getDir(), object->getOwner() ));
+			spd += params.object->spd * motionInheritance;
+			game.insertParticle( new Particle( type, params.object->pos + Vec( tmpAngle, (double)distanceOffset) , spd, params.object->getDir(), params.object->getOwner() ));
 		}
 */
-		int dir = object->getDir();
-		Angle baseAngle(object->getAngle() + angleOffset * dir);
+		int dir = params.object->getDir();
+		Angle baseAngle(params.object->getAngle() + angleOffset * dir);
 		
 		int realAmount = amount + int(rnd()*amountVariation);
 		for(int i = 0; i < realAmount; ++i)
@@ -134,11 +134,11 @@ void ShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *wor
 			Vec spd(direction * (speed + midrnd()*speedVariation));
 			if(motionInheritance)
 			{
-				spd += object->spd * motionInheritance;
+				spd += params.object->spd * motionInheritance;
 				angle = spd.getAngle(); // Need to recompute angle
 			}
 
-			type->newParticle(type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle);
+			type->newParticle(type, params.object->pos + direction * distanceOffset, spd, params.object->getDir(), params.object->getOwner(), angle);
 		}
 	}
 }
@@ -206,12 +206,12 @@ UniformShootParticles::UniformShootParticles( const vector< string >& params )
 	}
 }
 
-void UniformShootParticles::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void UniformShootParticles::run( ActionParams const& params )
 {
 	if (type)
 	{
-		int dir = object->getDir();
-		Angle angle(object->getAngle() + (angleOffset * dir) - ( distribution * 0.5f ) );
+		int dir = params.object->getDir();
+		Angle angle(params.object->getAngle() + (angleOffset * dir) - ( distribution * 0.5f ) );
 		
 		
 		int realAmount = amount + int(rnd()*amountVariation);
@@ -224,11 +224,11 @@ void UniformShootParticles::run( BaseObject* object, BaseObject *object2, BaseWo
 			Vec spd(direction * (speed + midrnd()*speedVariation));
 			if(motionInheritance)
 			{
-				spd += object->spd * motionInheritance;
+				spd += params.object->spd * motionInheritance;
 				angle = spd.getAngle(); // Need to recompute angle
 			}
 
-			type->newParticle(type, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle);
+			type->newParticle(type, params.object->pos + direction * distanceOffset, spd, params.object->getDir(), params.object->getOwner(), angle);
 		}
 	}
 }
@@ -255,11 +255,11 @@ CreateExplosion::CreateExplosion( const vector< string >& params )
 	}
 }
 
-void CreateExplosion::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void CreateExplosion::run( ActionParams const& params )
 {
 	if (type != NULL)
 	{
-		game.insertExplosion( new Explosion( type, object->pos, object->getOwner() ) );
+		game.insertExplosion( new Explosion( type, params.object->pos, params.object->getOwner() ) );
 	}
 }
 
@@ -286,9 +286,9 @@ Push::Push( const vector< string >& params )
 	}
 }
 
-void Push::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void Push::run( ActionParams const& params  )
 {
-	object2->spd += object->spd*factor;
+	params.object2->spd += params.object->spd*factor;
 }
 
 Push::~Push()
@@ -327,22 +327,22 @@ Repel::Repel( const vector< string >& params )
 	forceDiffScaled = (minForce - maxForce) / maxDistance;
 }
 
-void Repel::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void Repel::run( ActionParams const& params )
 {
 /*
-	float distance = ( object2->pos - object->pos ).length();
+	float distance = ( params.object2->pos - params.object->pos ).length();
 	if ( ( distance > 0 ) && ( distance < maxDistance ) )
 	{
-		object2->spd += ( object2->pos - object->pos ).normal() * ( maxForce + distance * ( minForce - maxForce ) / maxDistance );
+		params.object2->spd += ( params.object2->pos - params.object->pos ).normal() * ( maxForce + distance * ( minForce - maxForce ) / maxDistance );
 	}
 */
-	Vec dir( object2->pos - object->pos );
+	Vec dir( params.object2->pos - params.object->pos );
 	double distanceSqr = dir.lengthSqr();
 	if ( distanceSqr > 0.f && distanceSqr < maxDistanceSqr )
 	{
 		double distance = sqrt(distanceSqr);
 		dir /= distance; // Normalize
-		object2->spd += dir * ( maxForce + distance * forceDiffScaled);
+		params.object2->spd += dir * ( maxForce + distance * forceDiffScaled);
 	}
 }
 
@@ -369,9 +369,9 @@ Damp::Damp( const vector< string >& params )
 	}
 }
 
-void Damp::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void Damp::run( ActionParams const& params )
 {
-	object2->spd *= factor;
+	params.object2->spd *= factor;
 }
 
 Damp::~Damp()
@@ -402,10 +402,10 @@ Damage::Damage( const vector< string >& params )
 	}
 }
 
-void Damage::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void Damage::run( ActionParams const& params )
 {
-	if ( object2 )
-		object2->damage( m_damage + rnd() * m_damageVariation, object->getOwner() );
+	if ( params.object2 )
+		params.object2->damage( m_damage + rnd() * m_damageVariation, params.object->getOwner() );
 }
 
 Damage::~Damage()
@@ -425,9 +425,9 @@ Remove::Remove( const vector< string >& params )
 {
 }
 
-void Remove::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void Remove::run( ActionParams const& params )
 {
-	object->remove();
+	params.object->remove();
 }
 
 Remove::~Remove()
@@ -468,11 +468,11 @@ PlaySound::PlaySound( const vector< string >& params )
 	}
 }
 
-void PlaySound::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void PlaySound::run( ActionParams const& params )
 {
 	if (sound != NULL)
 	{
-		sound->play2D(object,loudness,pitch,pitchVariation);
+		sound->play2D(params.object,loudness,pitch,pitchVariation);
 	}
 }
 
@@ -518,14 +518,14 @@ PlayRandomSound::PlayRandomSound( const vector< string >& params )
 	}
 }
 
-void PlayRandomSound::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void PlayRandomSound::run( ActionParams const& params )
 {
 	if ( !sounds.empty() )
 	{
 		int sound = rnd() * sounds.size(); // TODO: Make an integer version of rnd()
 		if ( sounds[sound] != NULL )
 		{
-			sounds[sound]->play2D(object,loudness,pitch,pitchVariation);
+			sounds[sound]->play2D(params.object,loudness,pitch,pitchVariation);
 		}
 	}
 }
@@ -568,11 +568,11 @@ PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
 	}
 }
 
-void PlaySoundStatic::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon  )
+void PlaySoundStatic::run( ActionParams const& params )
 {
 	if (sound != NULL)
 	{
-		sound->play2D(object->pos,loudness,pitch,pitchVariation);
+		sound->play2D(params.object->pos,loudness,pitch,pitchVariation);
 	}
 }
 
@@ -603,11 +603,11 @@ DelayFire::DelayFire( const vector< string >& params )
 	}
 }
 
-void DelayFire::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void DelayFire::run( ActionParams const& params )
 {
-	if(weapon)
+	if(params.weapon)
 	{
-		weapon->delay( static_cast<int>(delayTime + rnd()*delayTimeVariation) );
+		params.weapon->delay( static_cast<int>(delayTime + rnd()*delayTimeVariation) );
 	}
 }
 
@@ -643,10 +643,10 @@ ShowFirecone::ShowFirecone( const vector< string >& params )
 	}
 }
 
-void ShowFirecone::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void ShowFirecone::run( ActionParams const& params )
 {
 	BaseWorm* w;
-	if( w = dynamic_cast<BaseWorm*>(object) )
+	if( w = dynamic_cast<BaseWorm*>(params.object) )
 	{
 		w->showFirecone( sprite, frames, drawDistance );
 	}
@@ -679,11 +679,11 @@ AddAngleSpeed::AddAngleSpeed( const vector< string >& params )
 	}
 }
 
-void AddAngleSpeed::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void AddAngleSpeed::run( ActionParams const& params )
 {
-	if (object)
+	if (params.object)
 	{
-		object->addAngleSpeed( speed*object->getDir() + speedVariation*rnd() );
+		params.object->addAngleSpeed( speed*params.object->getDir() + speedVariation*rnd() );
 	}
 }
 
@@ -714,11 +714,11 @@ SetAlphaFade::SetAlphaFade( const vector< string >& params )
 	}
 }
 
-void SetAlphaFade::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void SetAlphaFade::run( ActionParams const& params )
 {
-	if (object)
+	if (params.object)
 	{
-		object->setAlphaFade( frames, dest );
+		params.object->setAlphaFade( frames, dest );
 	}
 }
 
@@ -744,11 +744,11 @@ RunCustomEvent::RunCustomEvent( const vector< string >& params )
 	}
 }
 
-void RunCustomEvent::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void RunCustomEvent::run( ActionParams const& params )
 {
-	if (object2)
+	if (params.object2)
 	{
-		object2->customEvent( index );
+		params.object2->customEvent( index );
 	}
 }
 
@@ -784,17 +784,17 @@ RunScript::RunScript( vector< string > const& params )
 	}
 }
 
-void RunScript::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void RunScript::run( ActionParams const& params )
 {
 	lua.pushReference(function);
 	
-	if(object)
-		object->pushLuaReference();
+	if(params.object)
+		params.object->pushLuaReference();
 	else
 		lua_pushnil(lua);
 		
-	if(object2)
-		object2->pushLuaReference();
+	if(params.object2)
+		params.object2->pushLuaReference();
 	else
 		lua_pushnil(lua);
 		
@@ -824,10 +824,10 @@ ApplyMapEffect::ApplyMapEffect( vector< string > const& params )
 	}
 }
 
-void ApplyMapEffect::run( BaseObject* object, BaseObject *object2, BaseWorm *worm, Weapon *weapon )
+void ApplyMapEffect::run( ActionParams const& params )
 {
 	if ( effect )
-		game.applyLevelEffect(effect, (int)object->pos.x, (int)object->pos.y);
+		game.applyLevelEffect(effect, (int)params.object->pos.x, (int)params.object->pos.y);
 }
 
 ApplyMapEffect::~ApplyMapEffect()

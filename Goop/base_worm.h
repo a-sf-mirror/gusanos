@@ -73,6 +73,10 @@ public:
 	// This are virtual so that NetWorm can know about them and tell others over the network.
 	virtual void respawn();
 	void respawn(const Vec& newPos);
+	
+	virtual void dig();
+	void dig(const Vec& digPos, Angle angle);
+	
 	virtual void die();
 	virtual void changeWeaponTo( unsigned int weapIndex );
 	

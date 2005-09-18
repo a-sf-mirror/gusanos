@@ -276,7 +276,7 @@ void Game::think()
 			
 			case ZCom_Node::eEvent_Init:
 			{
-				vector<LevelEffectEvent>::iterator iter = appliedLevelEffects.begin();
+				list<LevelEffectEvent>::iterator iter = appliedLevelEffects.begin();
 				for( ; iter != appliedLevelEffects.end() ; ++iter )
 				{
 					ZCom_BitStream *data = new ZCom_BitStream;
@@ -345,6 +345,7 @@ void Game::loadMod()
 	loadWeapons();
 	NRPartType = partTypeList.load("ninjarope.obj");
 	deathObject = partTypeList.load("death.obj");
+	digObject = partTypeList.load("wormdig.obj");
 	infoFont = fontLocator.load("minifont");
 	if (weaponList.size() > 0 )
 	{
@@ -559,6 +560,11 @@ void Game::setMod( const string& modname )
 	levelLocator.addPath(fs::path("default/maps"));
 	levelLocator.addPath(fs::path(nextMod) / "maps");
 	levelLocator.refresh();
+}
+
+void Game::displayChatMsg( std::string const& owner, std::string const& message)
+{
+	console.addLogMsg( "<" + owner + "> " + message );
 }
 
 const string& Game::getMod()

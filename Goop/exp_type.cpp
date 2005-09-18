@@ -28,7 +28,7 @@ using namespace std;
 ResourceList<ExpType> expTypeList("objects/");
 
 ExpType::ExpType()
-: wupixels(1)
+: wupixels(0)
 {
 	timeout = 0;
 	timeoutVariation = 0;

@@ -125,6 +125,8 @@ public:
 	
 	void applyLevelEffect( LevelEffect* effect, int x, int y );
 	
+	void displayChatMsg( std::string const& owner, std::string const& message);
+	
 	Level level;
 	std::vector<WeaponType*> weaponList;
 	Options options;
@@ -144,6 +146,7 @@ public:
 	
 	PartType* NRPartType;
 	PartType* deathObject;
+	PartType* digObject;
 	
 	const std::string& getMod();
 	const std::string& getModPath();
@@ -177,7 +180,7 @@ private:
 		eHole
 	};
 	
-	std::vector<LevelEffectEvent> appliedLevelEffects;
+	std::list<LevelEffectEvent> appliedLevelEffects;
 
 	std::string nextMod;
 	std::string m_modPath;

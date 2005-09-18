@@ -136,6 +136,13 @@ void NetWorm::think()
 						BaseWorm::respawn( newpos );
 					}
 					break;
+					case Dig:
+					{
+						Vec digPos = game.level.vectorEncoding.decode<Vec>(*data);
+						Angle digAngle = Angle((int)data->getInt(Angle::prec));
+						BaseWorm::dig(digPos, digAngle);
+					}
+					break;
 					case Die:
 					{
 						m_lastHurt = game.findPlayerWithID( data->getInt(32) );
@@ -243,6 +250,22 @@ void NetWorm::respawn()
 			data->addFloat(pos.x,32);
 			data->addFloat(pos.y,32);*/
 			game.level.vectorEncoding.encode<Vec>(*data, pos);
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		}
+	}
+}
+
+void NetWorm::dig()
+{
+	if ( m_isAuthority && m_node )
+	{
+		BaseWorm::dig();
+		if ( m_isActive )
+		{
+			ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+			addEvent(data, Dig);
+			game.level.vectorEncoding.encode<Vec>(*data, pos);
+			data->addInt(int(getAngle()), Angle::prec);
 			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 		}
 	}

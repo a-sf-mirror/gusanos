@@ -20,5 +20,6 @@ std::string jumpStart(int index, const std::list<std::string> &args);
 std::string jumpStop(int index, const std::list<std::string> &args);
 std::string changeStart(int index, const std::list<std::string> &args);
 std::string changeStop(int index, const std::list<std::string> &args);
+std::string say( const std::list<std::string> &args );
 
 #endif // _PLAYER_INPUT_H_
