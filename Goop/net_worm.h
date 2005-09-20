@@ -53,6 +53,7 @@ class NetWorm : public BaseWorm
 	void dig();
 	void die();
 	void changeWeaponTo( unsigned int weapIndex );
+	void damage( float amount, BasePlayer* damager );
 	
 	Vec lastPosUpdate;
 	int timeSinceLastUpdate;

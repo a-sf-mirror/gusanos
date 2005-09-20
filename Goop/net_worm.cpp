@@ -44,7 +44,8 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		
 		static ZCom_ReplicatorSetup angleSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
 				
-		//m_node->addReplicationFloat ((zFloat*)&aimAngle, 32, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
+		m_node->addReplicationFloat ((zFloat*)&health, 16, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+		
 		m_node->addReplicator(new AngleReplicator( &angleSetup, &aimAngle), true );
 		
 		// Intercepted stuff
@@ -299,6 +300,14 @@ void NetWorm::changeWeaponTo( unsigned int weapIndex )
 		data->addInt(weapIndex, Encoding::bitsOf(game.weaponList.size() - 1));
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH | ZCOM_REPRULE_AUTH_2_PROXY, data);
 		BaseWorm::changeWeaponTo( weapIndex );
+	}
+}
+
+void NetWorm::damage( float amount, BasePlayer* damager )
+{
+	if ( m_isAuthority )
+	{
+		BaseWorm::damage( amount, damager );
 	}
 }
 

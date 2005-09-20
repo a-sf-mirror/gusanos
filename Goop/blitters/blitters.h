@@ -8,6 +8,10 @@
 #define HAS_MMX (cpu_capabilities & CPU_MMX)
 #define HAS_SSE (cpu_capabilities & CPU_SSE)
 
+//#define HAS_MMX (false)
+//#define HAS_SSE (false)
+
+
 #define FOR_MMX(x_) if(HAS_MMX) { x_ }
 
 namespace Blitters

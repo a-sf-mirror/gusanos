@@ -68,7 +68,7 @@ public:
 
 	float getHealth();
 	
-	void damage( float amount, BasePlayer* damager );
+	virtual void damage( float amount, BasePlayer* damager );
 	
 	// This are virtual so that NetWorm can know about them and tell others over the network.
 	virtual void respawn();
