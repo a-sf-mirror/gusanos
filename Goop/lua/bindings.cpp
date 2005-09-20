@@ -1,6 +1,7 @@
 #include "bindings.h"
 
 #include "../base_player.h"
+#include "../player.h"
 #include "../base_worm.h"
 #include "../particle.h"
 #include "../gconsole.h"
@@ -23,6 +24,7 @@
 #include <list>
 #include <iostream>
 #include <vector>
+#include <allegro.h>
 using std::cerr;
 using std::endl;
 #include <boost/lexical_cast.hpp>
@@ -384,6 +386,24 @@ int l_game_players(lua_State* L)
 	return 3;
 }
 
+int l_game_localPlayer(lua_State* L)
+{
+	int i = (int)lua_tonumber(L, 1);
+	if(i >= 0 && i < game.localPlayers.size())
+	{
+		lua.pushReference(game.localPlayers[i]->luaReference);
+		return 1;
+	}
+	else
+		return 0;
+}
+
+int l_clear_keybuf(lua_State* L)
+{
+	clear_keybuf();
+	return 0;
+}
+
 int l_player_kills(lua_State* L)
 {
 	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
@@ -407,6 +427,18 @@ int l_player_name(lua_State* L)
 
 	return 1;
 }
+
+int l_player_say(lua_State* L)
+{
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
+	char const* s = lua_tostring(L, 2);
+	if(s)
+		p->sendChatMsg(s);
+
+	return 0;
+}
+
+
 
 /*
 void pushPlayer(BasePlayer* player)
@@ -743,8 +775,6 @@ int l_gui_find(lua_State* L)
 		return 1;
 	}
 	
-	cerr << "Window " << s << " @ " << w << endl;
-	
 	OmfgGUI::Wnd** wp = (OmfgGUI::Wnd **)lua_newuserdata(L, sizeof(OmfgGUI::Wnd *));
 	*wp = w;
 	lua.pushReference(LuaBindings::guiWndMetaTable[w->classID()]);
@@ -778,6 +808,15 @@ int l_gui_wnd_set_visibility(lua_State* L)
 	return 0;
 }
 
+int l_gui_wnd_get_visibility(lua_State* L)
+{
+	OmfgGUI::Wnd* p = *static_cast<OmfgGUI::Wnd **>(lua_touserdata (L, 1));
+	
+	lua_pushboolean(L, p->isVisibile());
+
+	return 0;
+}
+
 int l_gui_wnd_get_text(lua_State* L)
 {
 	OmfgGUI::Wnd* p = *static_cast<OmfgGUI::Wnd **>(lua_touserdata (L, 1));
@@ -790,11 +829,31 @@ int l_gui_wnd_get_text(lua_State* L)
 	return 1;
 }
 
+int l_gui_wnd_set_text(lua_State* L)
+{
+	OmfgGUI::Wnd* p = *static_cast<OmfgGUI::Wnd **>(lua_touserdata (L, 1));
+	
+	char const* s = lua_tostring(L, 2);
+	if(s)
+		p->setText(s);
+	
+	return 0;
+}
+
 int l_gui_wnd_focus(lua_State* L)
 {
 	OmfgGUI::Wnd* p = *static_cast<OmfgGUI::Wnd **>(lua_touserdata (L, 1));
 
 	OmfgGUI::menu.setFocus(p);
+	
+	return 0;
+}
+
+int l_gui_wnd_activate(lua_State* L)
+{
+	OmfgGUI::Wnd* p = *static_cast<OmfgGUI::Wnd **>(lua_touserdata (L, 1));
+
+	p->doSetActivation(true);
 	
 	return 0;
 }
@@ -971,8 +1030,16 @@ void addGUIWndFunctions(LuaContext& context)
 	lua_pushcfunction(context, l_gui_wnd_get_text);
 	lua_rawset(context, -3);
 	
+	lua_pushstring(context, "set_text");
+	lua_pushcfunction(context, l_gui_wnd_set_text);
+	lua_rawset(context, -3);
+	
 	lua_pushstring(context, "focus");
 	lua_pushcfunction(context, l_gui_wnd_focus);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "activate");
+	lua_pushcfunction(context, l_gui_wnd_activate);
 	lua_rawset(context, -3);
 }
 
@@ -1066,16 +1133,16 @@ void init()
 	context.function("game_players", l_game_players);
 	lua_pushcfunction(context, l_game_playerIterator);
 	playerIterator = context.createReference();
-
+	
+	context.function("game_local_player", l_game_localPlayer);
 	context.function("game_get_closest_worm", l_game_getClosestWorm);
+	
+	context.function("clear_keybuf", l_clear_keybuf);
 	
 	context.function("map_is_blocked", l_map_isBlocked);
 	context.function("map_is_particle_pass", l_map_isParticlePass);
 	
 	context.function("quit", l_quit);
-	
-	//context.function("player_kills", l_player_kills);
-	//context.function("player_name", l_player_name);
 	
 	context.function("gui_find", l_gui_find);
 	
@@ -1086,14 +1153,6 @@ void init()
 	context.function("bind", l_bind);
 	
 	context.function("connect", l_connect);
-	
-	
-	
-	/*
-	lua_newtable(context);
-	lua_pushstring(context, "__add");
-	lua_pushcfunction(context, l_vector_add);
-	lua_rawset(context, -3);*/
 	
 	// Player method and metatable
 	
@@ -1112,6 +1171,10 @@ void init()
 	
 	lua_pushstring(context, "name");
 	lua_pushcfunction(context, l_player_name);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "say");
+	lua_pushcfunction(context, l_player_say);
 	lua_rawset(context, -3);
 	
 	lua_rawset(context, -3);

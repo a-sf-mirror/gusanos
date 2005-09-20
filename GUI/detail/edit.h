@@ -41,9 +41,7 @@ public:
 		}
 	}
 	
-	//void Change(long a_Mult);
-	
-	//void SetText(std::string a_Text);
+	virtual void setText(std::string const& aStr);
 	
 	virtual bool keyDown(int key);
 	virtual bool keyUp(int key);

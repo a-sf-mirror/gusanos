@@ -1,6 +1,8 @@
 #include "edit.h"
 #include <allegro.h> //TEMP!!!!!!!!!!!
 
+#include <algorithm>
+
 namespace OmfgGUI
 {
 
@@ -64,6 +66,14 @@ void Edit::process()
 {
 	if(m_caretPos > m_text.size())
 		m_caretPos = m_text.size();
+}
+
+void Edit::setText(std::string const& aStr)
+{
+	Wnd::setText(aStr);
+	
+	m_caretPos = std::min(m_caretPos, (ulong)m_text.size());
+	m_selTo = std::min(m_selTo, (ulong)m_text.size());
 }
 
 bool Edit::keyDown(int key)

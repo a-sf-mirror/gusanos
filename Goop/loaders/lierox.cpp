@@ -139,8 +139,8 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 			switch(m)
 			{
 				default: m = 1; break; // Background
-				case 2:  m = 0; break; // Rock
-				case 4:  m = 2; break; // Dirt
+				case 2:  m = 2; break; // Dirt
+				case 4:  m = 0; break; // Rock
 			}
 			
 			putpixel(level->material, x, y, m);

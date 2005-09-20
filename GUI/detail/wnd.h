@@ -39,7 +39,6 @@ public:
 		{
 			setContext_(m_parent->m_context);
 			m_parent->m_children.push_back(this);
-			cerr << "Adding window " << this << " to " << m_parent << endl;
 		}
 		else
 			m_context = 0;
@@ -72,9 +71,9 @@ public:
 		doSetActivation(!m_active);
 	}
 	
-	void setText(std::string const& aStr);
+	virtual void setText(std::string const& aStr);
 
-	std::string const& getText()
+	std::string const& getText() const
 	{
 		return m_text;
 	}
@@ -133,11 +132,21 @@ public:
 	virtual int classID();
 	
 	void setVisibility(bool v)
-	{ m_visible = v; }
+	{
+		m_visible = v;
+		if(!v)
+			notifyHide();
+		else
+			notifyShow();
+	}
+	
+	void notifyHide();
+	
+	void notifyShow();
 	
 	bool isVisibile();
 	
-	std::string const& getText() const;
+	//std::string const& getText() const;
 	
 	bool                 m_focusable;
 	

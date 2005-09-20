@@ -170,7 +170,7 @@ void GContext::init()
 bool GContext::eventKeyDown(int k)
 {
 	Wnd* focus = getFocus();
-	if(focus && focus->keyDown(k) && focus->isVisibile())
+	if(focus && focus->isVisibile() && focus->keyDown(k))
 	{
 		Wnd* parent = focus->getParent();
 		if(parent && parent->isVisibile())
@@ -238,8 +238,10 @@ bool GContext::eventKeyDown(int k)
 bool GContext::eventKeyUp(int k)
 {
 	Wnd* focus = getFocus();
-	if(focus && focus->keyUp(k) && focus->isVisibile())
+	if(focus && focus->isVisibile())
 	{
+		bool ok = focus->keyUp(k);
+		
 		// Do sth?
 		switch(k)
 		{
@@ -278,12 +280,30 @@ bool GContext::eventPrintableChar(char c, int k)
 	return true;
 }
 
+void GContext::setFocus(Wnd* wnd)
+{
+	if(!wnd)
+		console.releaseBindings(bindingLock);
+	else
+		console.lockBindings(bindingLock);
+		
+	Context::setFocus(wnd);
+}
+
+void GContext::hiddenFocus()
+{
+	console.releaseBindings(bindingLock);
+}
+
+void GContext::shownFocus()
+{
+	console.releaseBindings(bindingLock);
+}
+
 void GContext::clear()
 {
-	cerr << "Deleting root window " << m_rootWnd << " ...";
 	delete m_rootWnd;
 	m_rootWnd = 0;
-	cerr << "done" << endl;
 	
 	std::istringstream rootGSS(
 		"#root { background: #000080 ; left: 0 ; top: 0 ; bottom : -1 ; right: -1; padding: 29; spacing: 20 }"
@@ -292,7 +312,6 @@ void GContext::clear()
 		
 	std::istringstream rootXML("<window id=\"root\" />");
 	
-	cerr << "Begins loading root GSS" << endl;
 	loadGSS(rootGSS);
 	buildFromXML(rootXML, 0);
 }

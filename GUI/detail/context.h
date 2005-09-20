@@ -277,7 +277,15 @@ public:
 		return m_mouseCaptureWnd;
 	}
 	
-	void setFocus(Wnd* aWnd);
+	virtual void setFocus(Wnd* aWnd);
+	
+	// Called by a window if it has focus and
+	// is being hidden.
+	virtual void hiddenFocus() {}
+	
+	// Called by a window if it has focus and
+	// is turned visible again.
+	virtual void shownFocus() {}
 	
 	Wnd* getFocus()
 	{

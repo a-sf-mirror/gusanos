@@ -11,6 +11,7 @@ using namespace boost::assign;
 
 #include <string>
 #include <algorithm>
+#include <iostream>
 #include <list>
 
 using namespace std;
@@ -34,7 +35,7 @@ void doubleRes( int oldValue )
 
 Gfx::Gfx()
 : buffer(NULL), m_initialized(false), m_fullscreen(true), m_doubleRes(false)
-, m_vwidth(320), m_vheight(240), m_bitdepth(32)
+, m_vwidth(320), m_vheight(240), m_bitdepth(32), m_doubleResBuffer(0)
 {
 }
 
@@ -123,7 +124,10 @@ void Gfx::updateScreen()
 		bool blitFromBuffer = true;
 		switch ( (Filters)m_filter )
 		{
-			case NO_FILTER: 
+			case NO_FILTER:
+				//blit(buffer, videobuffer, 0, 0, 0, 0, 320, 240);
+				//stretch_blit(videobuffer, screen, 0, 0, videobuffer->w, videobuffer->h, 0, 0, screen->w, screen->h);
+				
 				switch(bitmap_color_depth(screen))
 				{
 					case 32:
@@ -149,83 +153,7 @@ void Gfx::updateScreen()
 								bmp_write32(dest2, p); dest2 += sizeof(Pixel32);
 							}
 						}
-						/*
-						unsigned long lastRow[640];
 						
-						Pixel32* src = (Pixel32 *)buffer->line[0];
-						
-						unsigned long dest1 = bmp_write_line(screen, 0);
-						
-						Pixel32 p = *src++;
-														
-						for(int x = 0; x < 319; ++x)
-						{
-							Pixel next = *src++;
-							
-							Pixel ur = Blitters::blendColorsHalfCrude_32(p, next);
-
-							bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
-							bmp_write32(dest1, ur); dest1 += sizeof(Pixel32);
-							lastRow[x*2] = p;
-							lastRow[x*2 + 1] = ur;
-							
-							p = next;
-						}
-						
-						src = (Pixel32 *)buffer->line[1];
-						
-						dest1 = bmp_write_line(screen, 1);
-						unsigned long dest2 = bmp_write_line(screen, 1);
-						
-						p = *src++;
-														
-						for(int x = 0; x < 319; ++x)
-						{
-							Pixel next = *src++;
-							
-							Pixel ll = Blitters::blendColorsHalfCrude_32(lastRow[x*2], p);
-							Pixel ur = Blitters::blendColorsHalfCrude_32(p, next);
-							Pixel lr = Blitters::blendColorsHalfCrude_32(lastRow[x*2 + 1], ur);
-
-							bmp_write32(dest1, ll); dest1 += sizeof(Pixel32);
-							bmp_write32(dest1, lr); dest1 += sizeof(Pixel32);
-							bmp_write32(dest2, p);  dest2 += sizeof(Pixel32);
-							bmp_write32(dest2, ur); dest2 += sizeof(Pixel32);
-							lastRow[x*2] = p;
-							lastRow[x*2 + 1] = ur;
-							
-							p = next;
-						}
-
-						for(int y = 0; y < 239; ++y)
-						{
-							Pixel32* src = (Pixel32 *)buffer->line[y];
-
-							unsigned long dest1 = bmp_write_line(screen, y*2);
-							unsigned long dest2 = bmp_write_line(screen, y*2 + 1);
-							
-							p = *src++;
-														
-							for(int x = 0; x < 319; ++x)
-							{
-								Pixel next = *src++;
-								
-								Pixel ll = Blitters::blendColorsHalfCrude_32(lastRow[x*2], p);
-								Pixel ur = Blitters::blendColorsHalfCrude_32(p, next);
-								Pixel lr = Blitters::blendColorsHalfCrude_32(lastRow[x*2 + 1], ur);
-								
-	
-								bmp_write32(dest1, ll); dest1 += sizeof(Pixel32);
-								bmp_write32(dest1, lr); dest1 += sizeof(Pixel32);
-								bmp_write32(dest2, p);  dest2 += sizeof(Pixel32);
-								bmp_write32(dest2, ur); dest2 += sizeof(Pixel32);
-								lastRow[x*2] = p;
-								lastRow[x*2 + 1] = ur;
-								
-								p = next;
-							}
-						}
-						*/
 						bmp_unwrite_line(screen);
 						
 						release_screen();
@@ -401,6 +329,7 @@ int Gfx::getGraphicsDriver()
 void Gfx::fullscreenChange()
 {
 	set_color_depth(m_bitdepth);
+	//destroy_bitmap( videobuffer );
 	
 	// TODO: I suppose that changing graphics driver will clear out bitmaps and such
 
@@ -420,16 +349,23 @@ void Gfx::fullscreenChange()
 	
 	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
 		set_display_switch_mode(SWITCH_BACKGROUND);
+			
+	
+	//videobuffer = create_video_bitmap(320, 240);
+	//if(!videobuffer)
+	//	cerr << ">:O" << endl;
 }
 
 void Gfx::doubleResChange()
 {
 	destroy_bitmap( m_doubleResBuffer );
+	
 	if ( m_doubleRes )
 	{
 		m_vwidth = 640;
 		m_vheight = 480;
 		m_doubleResBuffer = create_bitmap(m_vwidth, m_vheight );
+		
 	}else
 	{
 		m_vwidth = 320;

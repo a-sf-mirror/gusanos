@@ -483,7 +483,7 @@ inline void linewu_solid(BITMAP* where, float x, float y, float destx, float des
 
 inline void drawSprite_add(BITMAP* where, BITMAP* from, int x, int y, int fact)
 {
-	SELECT_SSE(drawSprite_add, (where, from, x, y, fact));
+	SELECT(drawSprite_add, (where, from, x, y, fact));
 }
 
 inline void drawSprite_blend(BITMAP* where, BITMAP* from, int x, int y, int fact)

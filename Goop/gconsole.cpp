@@ -239,7 +239,7 @@ string rndSeedCmd(list<string> const& args)
 GConsole::GConsole()
 : Console(256), m_consoleKey(KEY_TILDE), background(NULL)
 {
-	
+	m_lockRefCount.assign(0);
 }
 
 //============================= INTERFACE ====================================
@@ -498,7 +498,8 @@ bool GConsole::eventKeyDown(int k)
 	}
 	else if ( m_mode == CONSOLE_MODE_BINDINGS )		// Only if in bindings mode
 	{
-		analizeKeyEvent(true, k);
+		if(m_lockRefCount.at(k) <= 0)
+			analizeKeyEvent(true, k);
 	}
 	else if ( m_mode == CONSOLE_MODE_INPUT )
 	{
@@ -540,7 +541,8 @@ bool GConsole::eventKeyUp(int k)
 {
 	if ( m_mode == CONSOLE_MODE_BINDINGS )		// Only if in bindings mode
 	{
-		analizeKeyEvent(false, k);
+		if(m_lockRefCount.at(k) <= 0)
+			analizeKeyEvent(false, k);
 	}
 	else
 		return false;

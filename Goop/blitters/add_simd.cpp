@@ -206,12 +206,14 @@ void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	punpcklwd_rr(mm6, mm6); // ff00ff00ff00ff00
 	
 	movq_rm(mm7, MASK);
+	
+	int scaledFact = (fact + 4) / 8;
 
 	SPRITE_Y_LOOP(
 		SPRITE_X_LOOP_NOALIGN(4,
 			Pixel s = *src;
 			if(s != maskcolor_16)
-				*dest = addColors_16_2(*dest, scaleColor_16(s, fact))
+				*dest = addColors_16_2(*dest, scaleColor_16(s, scaledFact))
 		,
 			//TODO: Rearrange
 			prefetchnta(src[8]);

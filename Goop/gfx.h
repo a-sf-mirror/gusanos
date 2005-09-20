@@ -56,7 +56,7 @@ public:
 	}
 	
 	BITMAP* buffer;
-	
+
 	int m_distortionAA;
 	
 private:

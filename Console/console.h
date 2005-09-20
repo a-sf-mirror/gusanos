@@ -16,6 +16,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <set>
 
 // FORWARD REFERENCES
 //
@@ -119,6 +120,7 @@ protected:
 	BindTable bindTable;
 	std::map<std::string, ConsoleItem*, IStrCompare> items;
 	std::list<std::string> log;
+	
 	int m_variableCount;
 	unsigned int m_logMaxSize;
 	//unsigned int m_MaxMsgLength;

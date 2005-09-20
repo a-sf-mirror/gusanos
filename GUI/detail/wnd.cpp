@@ -605,10 +605,37 @@ void Wnd::setText(std::string const& aStr)
 	m_text = aStr;
 }
 
+void Wnd::notifyHide()
+{
+	if(m_context->getFocus() == this)
+		m_context->hiddenFocus();
+	
+	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
+	
+	for(; i != e; ++i)
+	{
+		(*i)->notifyHide();
+	}
+}
+
+void Wnd::notifyShow()
+{
+	if(m_context->getFocus() == this)
+		m_context->shownFocus();
+		
+	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
+	
+	for(; i != e; ++i)
+	{
+		(*i)->notifyShow();
+	}
+}
+
+/*
 std::string const& Wnd::getText() const
 {
 	return m_text;
-}
+}*/
 
 bool Wnd::getAttrib(std::string const& name, std::string& dest)
 {

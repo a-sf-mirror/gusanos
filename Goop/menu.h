@@ -3,6 +3,7 @@
 
 #include "omfggui.h"
 #include "resource_locator.h"
+#include "gconsole.h"
 #include "blitters/context.h"
 #include <boost/filesystem/fstream.hpp>
 
@@ -103,8 +104,15 @@ public:
 	
 	void clear();
 	
+	virtual void setFocus(Wnd* wnd);
+	virtual void hiddenFocus();
+	virtual void shownFocus();
+	
 	virtual BaseFont* loadFont(std::string const& name);
 	virtual BaseSpriteSet* loadSpriteSet(std::string const& name);
+	
+private:
+	GConsole::BindingLock bindingLock;
 };
 
 extern GContext menu;

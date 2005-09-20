@@ -153,8 +153,6 @@ bool XMLLoader::canLoad(fs::path const& path, std::string& name)
 	
 bool XMLLoader::load(XMLFile* xml, fs::path const& path)
 {
-	cerr << "Opening: " << path.native_file_string() << endl;
-
 	xml->f.open(path, std::ios::binary);
 	
 	if(!xml->f)
@@ -183,8 +181,6 @@ bool GSSLoader::canLoad(fs::path const& path, std::string& name)
 	
 bool GSSLoader::load(GSSFile* gss, fs::path const& path)
 {
-	cerr << "Opening: " << path.native_file_string() << endl;
-
 	gss->f.open(path, std::ios::binary);
 	
 	if(!gss->f)

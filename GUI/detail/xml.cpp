@@ -88,7 +88,6 @@ struct XMLHandler
 	
 	void beginTag(std::string const& label)
 	{
-		cerr << "Tag: " << label << endl;
 		tag = Tag(label);
 	}
 	
@@ -158,11 +157,8 @@ struct XMLHandler
 		
 		if(newWindow)
 		{
-			cerr << "Created window: " << newWindow << endl;
 			newWindow->applyGSS(style);
-			cerr << "Applied GSS" << endl;
 			newWindow->updatePlacement();
-			cerr << "Updated placement" << endl;
 
 			windows.push(WndInfo(newWindow)); // Done last
 		}
@@ -170,7 +166,6 @@ struct XMLHandler
 	
 	void endTag(std::string const& label)
 	{
-		cerr << "End tag: " << label << endl;
 		windows.pop();
 	}
 	
