@@ -1,6 +1,10 @@
 #ifndef OMFG_BLITTERS_BLITTERS_H
 #define OMFG_BLITTERS_BLITTERS_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include <allegro.h>
 #include "types.h"
 //#include "mmx.h"

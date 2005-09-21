@@ -1,6 +1,10 @@
 #ifndef OMFG_BLITTERS_CONTEXT_H
 #define OMFG_BLITTERS_CONTEXT_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include "blitters.h"
 
 #define FUNC(name_, params_, none_, sendfact_) \

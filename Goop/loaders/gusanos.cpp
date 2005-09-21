@@ -7,6 +7,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/convenience.hpp>
+#include <boost/filesystem/fstream.hpp>
 namespace fs = boost::filesystem;
 
 #include <iostream>
@@ -26,17 +27,18 @@ bool GusanosLevelLoader::canLoad(fs::path const& path, std::string& name)
 	
 bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 {
-	int vdepth = get_color_depth();
-	
 	std::string materialPath = (path / "material").native_file_string();
 	
 	level->path = path.native_directory_string();
 	
-	set_color_depth(8);
-	level->material = gfx.loadBitmap(materialPath.c_str(), 0);
-	set_color_depth(vdepth);
+	{
+		LocalSetColorDepth cd(8);
+		level->material = gfx.loadBitmap(materialPath.c_str(), 0);
+	}
+	
 	if (level->material)
 	{
+#ifndef DEDSERV
 		std::string imagePath = (path / "level").native_file_string();
 		
 		level->image = gfx.loadBitmap(imagePath.c_str(), 0);
@@ -57,6 +59,10 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 			level->loaderSucceeded();
 			return true;
 		}
+#else
+		level->loaderSucceeded();
+		return true;
+#endif
 	}
 	level->unload();
 	return false;
@@ -67,6 +73,7 @@ const char* GusanosLevelLoader::getName()
 	return "Gusanos 0.9 level loader";
 }
 
+#ifndef DEDSERV
 GusanosFontLoader GusanosFontLoader::instance;
 
 bool GusanosFontLoader::canLoad(fs::path const& path, std::string& name)
@@ -193,7 +200,7 @@ const char* GSSLoader::getName()
 {
 	return "GSS loader";
 }
-
+#endif
 
 LuaLoader LuaLoader::instance;
 

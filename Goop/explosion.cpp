@@ -7,12 +7,14 @@
 #include "base_player.h"
 #include "exp_type.h"
 #include "events.h"
+#ifndef DEDSERV
 #include "distortion.h"
 #include "gfx.h"
+#include "base_animator.h"
 #include "sprite.h"
 #include "sprite_set.h"
-#include "base_animator.h"
 #include "animators.h"
+#endif
 #include "detect_event.h"
 
 #include <vector>
@@ -21,10 +23,11 @@ using namespace std;
 
 Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseObject(owner)
 {
-	m_type = type;
-	
 	pos = _pos;
 	
+	m_type = type;
+	
+#ifndef DEDSERV
 	m_alpha = m_type->alpha;
 	
 	m_timeout = m_type->timeout + (int)( rnd() * (m_type->timeoutVariation+1) ); 
@@ -41,17 +44,22 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 		m_animator = new AnimRightOnce( m_sprite, m_timeout+2);
 	}
 	else m_animator = 0;
-	
-	if ( m_type->creation )
+#else
+	deleteMe = true; // We have no use of explosions except for the first frame
+#endif
+
+	if ( type->creation )
 	{
-		m_type->creation->run(this);
+		type->creation->run(this);
 	}
 
-	for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
+	for ( vector< DetectEvent* >::iterator t = type->detectRanges.begin(); t != type->detectRanges.end(); ++t )
 	{
 		(*t)->check(this);
 	}
 }
+
+#ifndef DEDSERV
 
 void Explosion::think()
 {
@@ -110,3 +118,5 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
 	}
 }
+
+#endif

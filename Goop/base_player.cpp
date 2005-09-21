@@ -13,7 +13,7 @@
 
 #include <zoidcom.h>
 #include "network.h"
-#include <allegro.h>
+//#include <allegro.h>
 #include <list>
 
 using namespace std;

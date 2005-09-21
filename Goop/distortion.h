@@ -1,6 +1,10 @@
 #ifndef DISTORTION_H
 #define DISTORTION_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include "vec.h"
 #include "math_func.h"
 #include <string>

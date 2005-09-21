@@ -1,6 +1,10 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include "resource_list.h"
 #include "vec.h"
 #include <string>

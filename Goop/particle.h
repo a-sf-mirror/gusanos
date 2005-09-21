@@ -5,12 +5,15 @@
 #include "part_type.h"
 #include "vec.h"
 #include "angle.h"
+#include "math_func.h"
 #include <vector>
 
+#ifndef DEDSERV
 class Sprite;
 class BaseAnimator;
-class BasePlayer;
 class BlitterContext;
+#endif
+class BasePlayer;
 
 struct PartTimer
 {
@@ -53,12 +56,16 @@ public:
 	Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0));
 	~Particle();
 
+#ifndef DEDSERV
 	void draw(BITMAP* where,int xOff, int yOff);
+#endif
 	void think();
 	Angle getAngle();
 	void setAngle(Angle v) { m_angle = v; }
 	void addAngleSpeed(AngleDiff);
+#ifndef DEDSERV
 	void setAlphaFade(int frames, int dest);
+#endif
 	void customEvent( size_t index );
 	virtual void pushLuaReference();
 	void damage(float amount, BasePlayer* damager );
@@ -75,8 +82,10 @@ public:
 	void operator delete(void* block);
 	
 private:
-	
+
+#ifndef DEDSERV
 	void drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext const& blitter);
+#endif
 	
 	int m_dir;
 	std::vector< PartTimer > timer; // This could cause a penalty
@@ -84,11 +93,13 @@ private:
 	float m_health;
 	Angle m_angle;
 	AngleDiff m_angleSpeed;
+#ifndef DEDSERV
 	float m_fadeSpeed;
 	float m_alpha;
 	int m_alphaDest;
 	SpriteSet* m_sprite;
 	BaseAnimator* m_animator;
+#endif
 	Vec m_origin;
 };
 

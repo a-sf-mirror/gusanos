@@ -9,11 +9,13 @@
 //#include "animators.h"
 //#include <boost/variant.hpp>
 
-class BaseAnimator;
 class BasePlayer;
 class NinjaRope;
 class Weapon;
+#ifndef DEDSERV
 class SpriteSet;
+class BaseAnimator;
+#endif
 
 class BaseWorm : public BaseObject
 {	
@@ -64,7 +66,9 @@ public:
 	void addRopeLength(float distance);
 	
 	Vec getWeaponPos();
+#ifndef DEDSERV
 	Vec getRenderPos();
+#endif
 
 	float getHealth();
 	
@@ -87,13 +91,15 @@ public:
 	//right ( it will wrap the value so that its always inside the worm's weapons size )
 	int getWeaponIndexOffset( int offset );
 	Angle getAngle();
-	void setDir(char d); // Made by nym, may be evil, I think its not used and it can be removed
+	void setDir(int d); // Made by nym, may be evil, I think its not used and it can be removed
 	int getDir() { return m_dir; }
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();
 	void removeRefsToPlayer( BasePlayer* player );
 	
+#ifndef DEDSERV
 	void showFirecone( SpriteSet* sprite, int frames, float distance );
+#endif
 	
 	NinjaRope* getNinjaRopeObj();
 	
@@ -110,15 +116,20 @@ public:
 	
 protected:
 
+#ifndef DEDSERV
 	Vec renderPos;
+#endif
+
 	int reacts[DirMax];
 
 	float aimRecoilSpeed;
 	float health;
 	//float currentRopeLength; //moved to Ninjarope
 	
+#ifndef DEDSERV
 	int m_fireconeTime;
 	float m_fireconeDistance;
+#endif
 	
 	int m_timeSinceDeath; // Used for the min and max respawn time sv variables
 	
@@ -129,12 +140,13 @@ protected:
 	BasePlayer* m_lastHurt;
 	NinjaRope* m_ninjaRope;
 	
+#ifndef DEDSERV
 	SpriteSet *skin;
 	SpriteSet *m_currentFirecone;
 	BaseAnimator* m_fireconeAnimator;
 	
 	BaseAnimator* m_animator;
-	
+#endif
 	// Smaller vars last to improve alignment and/or decrease structure size
 	bool m_isActive;
 	bool movingLeft;
@@ -144,9 +156,6 @@ protected:
 	bool movable; // What do we need this for? // Dunno, did I put this here? :o
 	bool changing; // This shouldnt be in the worm class ( its player stuff >:O )
 	int m_dir;
-	
-	long lieroCycles;
-	bool inLieroCycle;
 };
 
 #endif  // _WORM_H_

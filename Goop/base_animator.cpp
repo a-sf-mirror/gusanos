@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "base_animator.h"
 
 BaseAnimator::BaseAnimator(int initFrame)
@@ -14,3 +16,5 @@ void BaseAnimator::freeze(int ticks)
 {
 	freezeTicks = ticks;
 }
+
+#endif

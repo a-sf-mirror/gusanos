@@ -77,6 +77,7 @@ void Weapon::think( bool isFocused, size_t index )
 	}
 }
 
+#ifndef DEDSERV
 void Weapon::drawBottom(BITMAP* where, int x, int y )
 {
 	if ( m_type->laserSightIntensity > 0 )
@@ -112,6 +113,7 @@ void Weapon::drawBottom(BITMAP* where, int x, int y )
 		}
 	}
 }
+#endif
 
 void Weapon::recieveMessage( ZCom_BitStream* data )
 {

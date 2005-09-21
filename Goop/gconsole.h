@@ -4,21 +4,27 @@
 #include <console.h>
 //#include "font.h"
 
+#ifndef DEDSERV
 #include <allegro.h>
+#endif
 
 #include <list>
 #include <string>
 #include <list>
 #include <map>
+#include <set>
 #include <boost/array.hpp>
 using boost::array;
 
+#ifndef DEDSERV
 class SpriteSet;
 class Font;
+#endif
 
 class GConsole : public Console
 {
 public:
+#ifndef DEDSERV
 	struct BindingLock
 	{
 		BindingLock()
@@ -28,6 +34,7 @@ public:
 		
 		array<bool, 256> enable;
 	};
+#endif
 
 	GConsole();
 	
@@ -35,10 +42,13 @@ public:
 	void shutDown();
 	void loadResources();
 	void checkInput();
+#ifndef DEDSERV
 	void render(BITMAP *where, bool fullScreen = false);
+#endif
 	void think();
 	int executeConfig(const std::string &filename);
 	
+#ifndef DEDSERV
 	bool eventPrintableChar(char c, int k);
 	bool eventKeyDown(int k);
 	bool eventKeyUp(int k);
@@ -72,8 +82,8 @@ public:
 		}
 	}
 	
-	
 	void varCbFont( std::string oldValue );
+#endif
 
 private:
 	
@@ -84,13 +94,17 @@ private:
 	
 	//KeyHandler keyHandler;
 
+#ifndef DEDSERV
 	Font* m_font;
 	std::string m_fontName;
 	int m_consoleKey;
+	
 	std::string m_inputBuff;
 	SpriteSet *background;
 	std::set<BindingLock const*> m_locks;
 	array<int, 256> m_lockRefCount;
+#endif
+
 	
 	std::list< std::string > commandsLog;
 	std::list< std::string >::iterator currentCommand;

@@ -30,7 +30,9 @@ class Level
 	bool loadLiero(const std::string &name);*/
 	void unload();
 	bool isLoaded();
+#ifndef DEDSERV
 	void draw(BITMAP* where, int x, int y);
+#endif
 	int width();
 	int height();
 	
@@ -66,8 +68,9 @@ class Level
 	template<class PredT>
 	bool trace(long srcx, long srcy, long destx, long desty, PredT predicate);
 	
+#ifndef DEDSERV
 	void specialDrawSprite(Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos, BlitterContext const& blitter );
-	
+#endif
 	// applies the effect and returns true if it actually changed something on the map
 	bool applyEffect( LevelEffect* effect, int x, int y);
 	
@@ -77,9 +80,11 @@ class Level
 		
 	bool loaded;
 	
+#ifndef DEDSERV
 	BITMAP* image;
-	BITMAP* material;
 	BITMAP* background;
+#endif
+	BITMAP* material;
 	std::string name;
 	std::string path;
 	array<Material, 256> m_materialList;

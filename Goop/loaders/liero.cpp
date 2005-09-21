@@ -13,7 +13,9 @@
 namespace fs = boost::filesystem;
 
 LieroLevelLoader LieroLevelLoader::instance;
+#ifndef DEDSERV
 LieroFontLoader LieroFontLoader::instance;
+#endif
 
 bool LieroLevelLoader::canLoad(fs::path const& path, std::string& name)
 {
@@ -24,6 +26,8 @@ bool LieroLevelLoader::canLoad(fs::path const& path, std::string& name)
 	}
 	return false;
 }
+
+#ifndef DEDSERV
 
 static unsigned char const lieroPalette[] = 
 {0x0,0x0,0x0,0x6c,0x38,0x0,0x6c,0x50,0x0,0xa4,0x94,0x80,0x0,0x90,0x0,0x3c,0xac,0x3c,0xfc,0x54,0x54,0xa8,0xa8,0xa8,0x54,
@@ -58,6 +62,8 @@ static unsigned char const lieroPalette[] =
 0xfc,0x48,0x0,0xfc,0x6c,0x0,0xfc,0x90,0x0,0xfc,0xb4,0x0,0xfc,0xd8,0x0,0xfc,0xfc,0x0,0xa8,0xf0,0x0,0x54,0xe8,0x0,
 0x0,0xe0,0x0,0xfc,0x0,0x0,0xe8,0x4,0x14,0xd8,0xc,0x2c,0xc4,0x14,0x44,0xb4,0x18,0x58,0xa0,0x20,0x70,0x90,0x28,0x88,
 0x7c,0x2c,0x9c,0x6c,0x34,0xb4,0x58,0x3c,0xcc,0x48,0x44,0xe4};
+
+#endif
 
 static unsigned char const lieroMaterials[1280]={
 0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,
@@ -193,8 +199,10 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 		return false;
 	
 	level->material = create_bitmap_ex(8, width, height);
+#ifndef DEDSERV
 	level->image = create_bitmap(width, height);
 	level->background = create_bitmap(width, height);
+#endif
 	
 	initMaterialMappings();
 
@@ -204,6 +212,7 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 		{
 			int c = f.get();
 			
+#ifndef DEDSERV
 			unsigned char const* entry = &lieroPalette[c * 3];
 			int imagec = makecol(entry[0], entry[1], entry[2]);
 			putpixel(level->image, x, y, imagec);
@@ -211,6 +220,7 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 			entry = &lieroPalette[(160 + (rndgen() & 3)) * 3];
 			int backgroundc = makecol(entry[0], entry[1], entry[2]);
 			putpixel(level->background, x, y, backgroundc);
+#endif
 			
 			putpixel(level->material, x, y, materialMappings[c]); //TODO
 		}
@@ -225,6 +235,8 @@ const char* LieroLevelLoader::getName()
 	return "Liero level loader";
 }
 
+#ifndef DEDSERV
+
 bool LieroFontLoader::canLoad(fs::path const& path, std::string& name)
 {
 	if(fs::extension(path) == ".lft")
@@ -234,8 +246,6 @@ bool LieroFontLoader::canLoad(fs::path const& path, std::string& name)
 	}
 	return false;
 }
-
-
 	
 bool LieroFontLoader::load(Font* font, fs::path const& path)
 {
@@ -300,3 +310,5 @@ const char* LieroFontLoader::getName()
 {
 	return "Liero font loader";
 }
+
+#endif

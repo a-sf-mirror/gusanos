@@ -1,7 +1,9 @@
 #include "sprite.h"
 
 #include "gfx.h"
+#ifndef DEDSERV
 #include "blitters/context.h"
+#endif
 
 #include <allegro.h>
 #include <iostream>
@@ -19,8 +21,8 @@ Sprite::Sprite( BITMAP* bitmap, int xPivot, int yPivot) : m_bitmap(bitmap)
 
 Sprite::~Sprite()
 {
-	if (m_bitmap) destroy_bitmap( m_bitmap );
-	if (m_mirror) destroy_bitmap( m_mirror );
+	destroy_bitmap( m_bitmap );
+	destroy_bitmap( m_mirror );
 }
 /*
 void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment )
@@ -41,6 +43,8 @@ void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment )
 		draw_sprite( where, m_bitmap, x - _x, y - _y);
 }
 */
+
+#ifndef DEDSERV
 
 void Sprite::drawCut(BITMAP *where, int x, int y, BlitterContext const& blender, int alignment, int left, int top, int bottom, int right)
 {
@@ -97,4 +101,4 @@ void Sprite::draw(BITMAP *where, int x, int y, BlitterContext const& blender, bo
 		blender.drawSprite(where, m_bitmap, x - _x, y - _y);
 	}
 }
-
+#endif

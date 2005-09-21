@@ -7,18 +7,23 @@
 #include "../gconsole.h"
 #include "../game.h"
 #include "../vec.h"
-#include "../sprite_set.h"
-#include "../sprite.h"
 #include "../script.h"
-#include "../font.h"
 #include "../gfx.h"
-#include "../viewport.h"
-#include "../menu.h"
 #include "../network.h"
 #include "../glua.h"
+
+//TEMP:
+#include "../sprite_set.h"
+#include "../sprite.h"
+
+#ifndef DEDSERV
+#include "../menu.h"
+#include "../blitters/context.h"
+#include "../viewport.h"
+#include "../font.h"
 #include "omfggui.h"
 #include "omfggui_windows.h"
-#include "../blitters/context.h"
+#endif
 #include <cmath>
 #include <string>
 #include <list>
@@ -38,14 +43,16 @@ namespace LuaBindings
 
 int playerIterator = 0;
 int playerMetaTable = 0;
+#ifndef DEDSERV
+int viewportMetaTable = 0;
 int fontMetaTable = 0;
+std::vector<int> guiWndMetaTable;
+BlitterContext blitter;
+#endif
 int wormMetaTable = 0;
 int baseObjectMetaTable = 0;
 int particleMetaTable = 0;
-int viewportMetaTable = 0;
 int partTypeMetaTable = 0;
-std::vector<int> guiWndMetaTable;
-BlitterContext blitter;
 
 template<class T>
 inline void pushFullReference(T& x)
@@ -300,6 +307,7 @@ int l_sprites_load(lua_State* L)
 
 int l_sprites_render(lua_State* L)
 {
+#ifndef DEDSERV
 	SpriteSet* s = (SpriteSet *)lua_touserdata(L, 1);
 	if(!s)
 		return 0;
@@ -310,10 +318,11 @@ int l_sprites_render(lua_State* L)
 	int x = (int)lua_tonumber(L, 4);
 	int y = (int)lua_tonumber(L, 5);
 	s->getSprite(frame)->draw(b, x, y);
-
+#endif
 	return 0;
 }
 
+#ifndef DEDSERV
 int l_font_load(lua_State* L)
 {
 	char const* n = lua_tostring(L, 1);
@@ -361,6 +370,7 @@ int l_font_render(lua_State* L)
 	
 	return 0;
 }
+#endif
 
 int l_map_is_loaded(lua_State* L)
 {
@@ -398,11 +408,13 @@ int l_game_localPlayer(lua_State* L)
 		return 0;
 }
 
+#ifndef DEDSERV
 int l_clear_keybuf(lua_State* L)
 {
 	clear_keybuf();
 	return 0;
 }
+#endif
 
 int l_player_kills(lua_State* L)
 {
@@ -520,6 +532,7 @@ void pushWorm(BaseWorm* worm)
 	pushFullReference(*worm, LuaBindings::wormMetaTable);
 }*/
 
+#ifndef DEDSERV
 int l_viewport_getBitmap(lua_State* L)
 {
 	Viewport* p = *static_cast<Viewport **>(lua_touserdata (L, 1));
@@ -528,6 +541,7 @@ int l_viewport_getBitmap(lua_State* L)
 	return 1;
 }
 
+#endif
 /*
 void pushViewport(Viewport* viewport)
 {
@@ -765,6 +779,7 @@ int l_map_isParticlePass(lua_State* L)
 	return 1;
 }
 
+#ifndef DEDSERV
 int l_gui_find(lua_State* L)
 {
 	char const* s = lua_tostring(L, 1);
@@ -782,7 +797,7 @@ int l_gui_find(lua_State* L)
 	{
 		cerr << "Failed to set metatable for window " << s << "!" << endl;
 	}
-	
+
 	return 1;
 }
 
@@ -903,6 +918,8 @@ int l_gui_list_add_column(lua_State* L)
 	return 0;
 }
 
+#endif
+
 int l_connect(lua_State* L)
 {
 	char const* s = lua_tostring(L, 1);
@@ -958,6 +975,7 @@ int l_load_particle(lua_State* L)
 
 int l_gfx_draw_box(lua_State* L)
 {
+#ifndef DEDSERV
 	BITMAP* b = (BITMAP *)lua_touserdata(L, 1);
 	
 	int x1 = (int)lua_tonumber(L, 2);
@@ -969,22 +987,24 @@ int l_gfx_draw_box(lua_State* L)
 	int cb = static_cast<int>(lua_tonumber(L, 8));
 	
 	blitter.rectfill(b, x1, y1, x2, y2, makecol(cr, cg, cb));
-	
+#endif
 	return 0;
 }
 
 int l_gfx_set_alpha(lua_State* L)
 {
+#ifndef DEDSERV
 	int alpha = (int)lua_tonumber(L, 1);
 	blitter.set(BlitterContext::alpha(), alpha);
-	
+#endif
 	return 0;
 }
 
 int l_gfx_reset_blending(lua_State* L)
 {
+#ifndef DEDSERV
 	blitter.set(BlitterContext::none());
-	
+#endif
 	return 0;
 }
 
@@ -1016,6 +1036,7 @@ std::string runLua(int ref, std::list<std::string> const& args)
 	return "";
 }
 
+#ifndef DEDSERV
 void addGUIWndFunctions(LuaContext& context)
 {
 	lua_pushstring(context, "attribute");
@@ -1061,7 +1082,7 @@ void addGUIListFunctions(LuaContext& context)
 	lua_pushcfunction(context, l_gui_list_sort);
 	lua_rawset(context, -3);
 }
-
+#endif
 void addBaseObjectFunctions(LuaContext& context)
 {
 	lua_pushstring(context, "remove");
@@ -1125,7 +1146,9 @@ void init()
 	
 	context.function("load_particle", l_load_particle);
 	
+#ifndef DEDSERV
 	context.function("font_load", l_font_load);
+#endif
 	
 	context.function("map_is_loaded", l_map_is_loaded);
 	context.function("console_register_command", l_console_register_command);
@@ -1137,14 +1160,18 @@ void init()
 	context.function("game_local_player", l_game_localPlayer);
 	context.function("game_get_closest_worm", l_game_getClosestWorm);
 	
+#ifndef DEDSERV
 	context.function("clear_keybuf", l_clear_keybuf);
+#endif
 	
 	context.function("map_is_blocked", l_map_isBlocked);
 	context.function("map_is_particle_pass", l_map_isParticlePass);
 	
 	context.function("quit", l_quit);
 	
+#ifndef DEDSERV
 	context.function("gui_find", l_gui_find);
+#endif
 	
 	context.function("gfx_draw_box", l_gfx_draw_box);
 	context.function("gfx_set_alpha", l_gfx_set_alpha);
@@ -1267,7 +1294,8 @@ void init()
 		
 	lua_rawset(context, -3);
 	wormMetaTable = context.createReference();
-	
+
+#ifndef DEDSERV
 	// Viewport method and metatable
 	
 	lua_newtable(context); 
@@ -1284,6 +1312,7 @@ void init()
 
 	// Font method and metatable
 	
+
 	lua_newtable(context); 
 	lua_pushstring(context, "__index");
 	
@@ -1295,7 +1324,7 @@ void init()
 		
 	lua_rawset(context, -3);
 	fontMetaTable = context.createReference();
-	
+
 	// GUI Wnd method and metatable
 	
 	guiWndMetaTable.resize(OmfgGUI::Context::WndCount);
@@ -1326,7 +1355,8 @@ void init()
 
 	lua_rawset(context, -3);
 	guiWndMetaTable[OmfgGUI::Context::List] = context.createReference();
-	
+#endif
+
 	// Global metatable
 	
 	lua_pushvalue(context, LUA_GLOBALSINDEX);

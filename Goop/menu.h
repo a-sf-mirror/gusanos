@@ -1,6 +1,10 @@
 #ifndef GUSANOS_MENU_H
 #define GUSANOS_MENU_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include "omfggui.h"
 #include "resource_locator.h"
 #include "gconsole.h"

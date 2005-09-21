@@ -2,14 +2,17 @@
 
 #include "resource_list.h"
 
+#include "game.h"
+#ifndef DEDSERV
 #include "sprite_set.h"
 #include "gfx.h"
-#include "game.h"
 #include "distortion.h"
+#include "animators.h"
+#endif
 #include "text.h"
 #include "parser.h"
 #include "detect_event.h"
-#include "animators.h"
+
 
 #include "particle.h"
 #include "simple_particle.h"
@@ -86,11 +89,13 @@ PartType::PartType()
 	health = 100;
 	
 	renderLayer = Grid::WormRenderLayer;
+#ifndef DEDSERV
 	sprite = NULL;
 	distortion = NULL;
 	distortMagnitude = 0.8;
-	
+
 	blender = BlitterContext::None;
+#endif
 	
 	line2Origin = false;
 	
@@ -106,9 +111,11 @@ PartType::PartType()
 
 PartType::~PartType()
 {
-	if (groundCollision) delete groundCollision;
-	if (creation) delete creation;
-	if (distortion) delete distortion;
+	delete groundCollision;
+	delete creation;
+#ifndef DEDSERV
+	delete distortion;
+#endif
 	for ( vector<TimerEvent*>::iterator i = timer.begin(); i != timer.end(); i++)
 	{
 		delete *i;
@@ -121,8 +128,12 @@ PartType::~PartType()
 
 bool PartType::isSimpleParticleType()
 {
-	if(repeat != 1 || alpha != 255 || sprite || distortion || damping != 1.f
-	|| acceleration != 0.f || blender || !groundCollision
+	if(repeat != 1 || alpha != 255
+#ifndef DEDSERV
+	|| sprite || distortion || blender
+#endif
+	|| damping != 1.f
+	|| acceleration != 0.f || !groundCollision
 	|| death || timer.size() > 1 || line2Origin
 	|| detectRanges.size() > 0)
 	{
@@ -220,7 +231,11 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "line_to_origin" ) 
 						line2Origin = ( cast<int>(val) == 1 );
 					else if ( var == "col_layer" ) colLayer = cast<int>(val);
+#ifndef DEDSERV
 					else if ( var == "sprite" ) sprite = spriteList.load(val);
+#else
+					else if ( var == "sprite" ) /* ignore */;
+#endif
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
 					else if ( var == "anim_on_ground" ) animOnGround = cast<int>(val);
 					else if ( var == "anim_type" )
@@ -231,12 +246,16 @@ bool PartType::load(fs::path const& filename)
 					}
 					else if ( var == "render_layer" ) renderLayer = cast<int>(val);
 					else if ( var == "alpha" ) alpha = cast<int>(val);
+#ifndef DEDSERV
 					else if ( var == "blender" )
 					{
 						if ( val == "add" ) blender = BlitterContext::Add;
 						else if ( val == "alpha" ) blender = BlitterContext::Alpha;
 						else if ( val == "alphach" ) blender = BlitterContext::AlphaChannel;
 					}
+#else
+					else if ( var == "blender" ) /* ignore */;
+#endif
 					else if ( var == "wu_pixels" ) 
 						wupixels = ( cast<int>(val) != 0 );
 					else if ( var == "colour" || var == "color" )
@@ -244,6 +263,7 @@ bool PartType::load(fs::path const& filename)
 						if ( tokens.size() >= 5 )
 						colour = makecol( cast<int>(tokens[2]), cast<int>(tokens[3]), cast<int>(tokens[4]) );
 					}
+#ifndef DEDSERV
 					else if ( var == "distortion" && !distortion )
 					{
 						if ( val == "lens" && tokens.size() >= 4)
@@ -260,6 +280,10 @@ bool PartType::load(fs::path const& filename)
 							distortion = new Distortion( bitmapMap( tokens[3] ) );
 					}
 					else if ( var == "distort_magnitude" ) distortMagnitude = cast<float>(val); //<GLIP> Fixed a spelling error, magnitud -> magnitude
+#else
+					else if ( var == "distortion" ) /* ignore */;
+					else if ( var == "distort_magnitude" ) /* ignore */;
+#endif
 					else
 					{
 						std::cout << "Unknown variable on following line:" << std::endl;
@@ -373,6 +397,7 @@ bool PartType::load(fs::path const& filename)
 				
 		if(isSimpleParticleType())
 		{
+#ifndef DEDSERV
 			if(wupixels)
 			{
 				switch(bitmap_color_depth(screen))
@@ -391,7 +416,9 @@ bool PartType::load(fs::path const& filename)
 					case 16: newParticle = newParticle_SimpleParticle<SimpleParticle16>; break;
 				}
 			}
-			
+#else
+			newParticle = newParticle_SimpleParticle<SimpleParticle>;
+#endif
 			cerr << filename.native_file_string() << ": blood" << endl;
 		}
 		else
@@ -410,6 +437,7 @@ bool PartType::load(fs::path const& filename)
 	}
 }
 
+#ifndef DEDSERV
 BaseAnimator* PartType::allocateAnimator()
 {
 	switch ( animType )
@@ -429,4 +457,5 @@ BaseAnimator* PartType::allocateAnimator()
 	
 	return 0;
 }
+#endif
 

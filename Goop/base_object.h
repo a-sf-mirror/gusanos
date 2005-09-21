@@ -16,9 +16,10 @@ public:
 	BaseObject( BasePlayer* owner = NULL, Vec pos_ = Vec(), Vec spd_ = Vec() );
 	virtual ~BaseObject();
 
+#ifndef DEDSERV
 	// Draw the object in the where bitmap with an offset ( used for camera )
 	virtual void draw(BITMAP* where, int xOff, int yOff) {}
-	
+#endif
 	// All the object logic here
 	virtual void think() {}
 	
@@ -46,8 +47,10 @@ public:
 	// Tells the object to remove itself ( The object may not agree and nothing will happen )
 	virtual void remove();
 	
+#ifndef DEDSERV
 	// Sets a destination alpha value and the time in logic frames it will take to reach that value
 	virtual void setAlphaFade( int frames, int dest ) {}
+#endif
 	
 	// Runs the custom event number "index" of the object
 	virtual void customEvent ( size_t index ) {}

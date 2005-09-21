@@ -24,6 +24,7 @@ public:
 	void init();
 	void shutDown();
 	void registerInConsole();
+#ifndef DEDSERV
 	void fullscreenChange();
 	void doubleResChange();
 	int  getGraphicsDriver(); // Selects and returns graphics driver
@@ -31,13 +32,7 @@ public:
 	void fullscreen( int oldValue );
 	void doubleRes( int oldValue );
 	
-	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL, bool keepAlpha = false);
-	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);
-	
 	void updateScreen();
-	
-	operator bool()
-	{ return m_initialized; } // Returns true if it's safe to use this object
 	
 	inline void setBlender( Blenders blender, int alpha )
 	{
@@ -61,11 +56,20 @@ public:
 	BITMAP* buffer;
 
 	int m_distortionAA;
+#endif
+	
+	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL, bool keepAlpha = false);
+	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);
+	
+	operator bool()
+	{ return m_initialized; } // Returns true if it's safe to use this object
+
 	
 private:
 	
 	bool m_initialized;
 	
+#ifndef DEDSERV
 	int m_fullscreen;
 	int m_doubleRes;
 	int m_vwidth;
@@ -84,10 +88,13 @@ private:
 		SCANLINES,
 		SCANLINES2
 	};
+#endif
 
 };
 
+#ifndef DEDSERV
 std::string screenShot(const std::list<std::string> &args);
+#endif
 
 extern Gfx gfx;
 

@@ -49,6 +49,10 @@ if conf == 'posix':
 		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG ')
 	elif build == 'debug':
 		env.Append(CPPFLAGS = '-O0 -g -DDEBUG ')
+	elif build == 'dedserv':
+		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG -DDEDSERV ')
+	elif build == 'dedserv-debug':
+		env.Append(CPPFLAGS = '-O0 -g -DDEBUG -DDEDSERV ')
 		
 elif conf == 'mingw-cross':
 	mingwPath = ARGUMENTS.get('mingw-path', '/usr/local/mingw/')
@@ -68,6 +72,10 @@ elif conf == 'mingw-cross':
 		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG ')
 	elif build == 'debug':
 		env.Append(CPPFLAGS = '-O0 -g -DDEBUG ')
+	elif build == 'dedserv':
+		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG -DDEDSERV ')
+	elif build == 'dedserv-debug':
+		env.Append(CPPFLAGS = '-O0 -g -DDEBUG -DDEDSERV ')
 elif conf == 'basara':
 	env.Append(
 		CPPPATH = ['/usr/local/include/zoidcom'],
@@ -79,6 +87,10 @@ elif conf == 'basara':
 		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG ')
 	elif build == 'debug':
 		env.Append(CPPFLAGS = '-O0 -g -DDEBUG ')
+	elif build == 'dedserv':
+		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG -DDEDSERV ')
+	elif build == 'dedserv-debug':
+		env.Append(CPPFLAGS = '-O0 -g -DDEBUG -DDEDSERV ')
 elif conf == 'darka':
 	env.Append(
 		CPPPATH = ['/usr/local/include/zoidcom'],
@@ -90,6 +102,26 @@ elif conf == 'darka':
 		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG -fomit-frame-pointer ')
 	elif build == 'debug':
 		env.Append(CPPFLAGS = '-O0 -g -DDEBUG ')
+	elif build == 'dedserv':
+		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG -DDEDSERV -fomit-frame-pointer ')
+	elif build == 'dedserv-debug':
+		env.Append(CPPFLAGS = '-O0 -g -DDEBUG -DDEDSERV ')
+elif conf == 'lucas':
+	env.Append(
+		CPPPATH = ['/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_33'],
+		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib'],
+		CPPFLAGS = '-Wall ',
+		CXX='g++-3.4',
+		)
+	
+	if build == 'release':
+		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG ')
+	elif build == 'debug':
+		env.Append(CPPFLAGS = '-O0 -g -DDEBUG ')
+	elif build == 'dedserv':
+		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG -DDEDSERV -fomit-frame-pointer ')
+	elif build == 'dedserv-debug':
+		env.Append(CPPFLAGS = '-O0 -g -DDEBUG -DDEDSERV ')
 # add more platforms here
 	
 #Builds all cpp and c files in this directory and returns a list of nodes

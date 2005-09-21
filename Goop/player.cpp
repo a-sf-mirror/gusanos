@@ -1,7 +1,9 @@
 #include "player.h"
 #include "player_options.h"
 #include "worm.h"
+#ifndef DEDSERV
 #include "viewport.h"
+#endif
 #include "ninjarope.h"
 
 //#include <allegro.h>
@@ -18,28 +20,32 @@ Player::Player(PlayerOptions* options) : BasePlayer()
 	walkingLeft = false;
 	
 	m_options = options;
-
+#ifndef DEDSERV
 	m_viewport = NULL;
+#endif
 }
 
 Player::~Player()
 {
-	if ( m_viewport )
-	{
-		delete m_viewport;
-	}
+#ifndef DEDSERV
+	delete m_viewport;
+#endif
 }
 
+#ifndef DEDSERV
 void Player::assignViewport(Viewport* viewport)
 {
 	m_viewport = viewport;
 }
+#endif
 
 void Player::subThink()
 {
 	if ( m_worm )
 	{
+#ifndef DEDSERV
 		if ( m_viewport ) m_viewport->interpolateTo(m_worm->getRenderPos(), m_options->viewportFollowFactor);
+#endif
 		
 		if(changing && m_worm->getNinjaRopeObj()->active)
 		{
@@ -74,6 +80,7 @@ void Player::subThink()
 	}
 }
 
+#ifndef DEDSERV
 void Player::render()
 {
 	if ( m_viewport )
@@ -81,6 +88,7 @@ void Player::render()
 		m_viewport->render(this);
 	}
 }
+#endif
 
 void Player::actionStart ( Actions action )
 {

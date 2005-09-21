@@ -3,8 +3,10 @@
 
 #include "../resource_locator.h"
 #include "../level.h"
+#ifndef DEDSERV
 #include "../font.h"
 #include "../menu.h"
+#endif
 #include "../script.h"
 
 struct GusanosLevelLoader : ResourceLocator<Level>::BaseLoader
@@ -18,6 +20,7 @@ struct GusanosLevelLoader : ResourceLocator<Level>::BaseLoader
 	static GusanosLevelLoader instance;
 };
 
+#ifndef DEDSERV
 struct GusanosFontLoader : ResourceLocator<Font>::BaseLoader
 {
 	virtual bool canLoad(fs::path const& path, std::string& name);
@@ -50,6 +53,7 @@ struct GSSLoader : ResourceLocator<GSSFile, false, false>::BaseLoader
 	
 	static GSSLoader instance;
 };
+#endif
 
 struct LuaLoader : ResourceLocator<Script>::BaseLoader
 {

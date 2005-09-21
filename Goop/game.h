@@ -8,7 +8,9 @@
 #include "hash_table.h"
 #include "object_grid.h"
 
+#ifndef DEDSERV
 #include <allegro.h>
+#endif
 #include <string>
 #include <vector>
 #include <list>
@@ -23,7 +25,9 @@ class WeaponType;
 class Particle;
 class PartType;
 class Explosion;
+#ifndef DEDSERV
 class Font;
+#endif
 
 
 #define USE_GRID
@@ -49,6 +53,7 @@ struct Options
 	int worm_disableWallHugging;
 	int worm_weaponHeight;
 	int worm_height;
+	int worm_width;
 	int worm_maxClimb;
 	float worm_boxRadius;
 	float worm_boxTop;
@@ -180,8 +185,10 @@ public:
 		
 		return false;
 	}*/
-	
+
+#ifndef DEDSERV
 	Font *infoFont;
+#endif
 	std::list<ScreenMessage> messages;
 	
 

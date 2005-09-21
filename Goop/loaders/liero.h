@@ -3,7 +3,9 @@
 
 #include "../resource_locator.h"
 #include "../level.h"
+#ifndef DEDSERV
 #include "../font.h"
+#endif
 
 struct LieroLevelLoader : ResourceLocator<Level>::BaseLoader
 {
@@ -16,6 +18,8 @@ struct LieroLevelLoader : ResourceLocator<Level>::BaseLoader
 	static LieroLevelLoader instance;
 };
 
+#ifndef DEDSERV
+
 struct LieroFontLoader : ResourceLocator<Font>::BaseLoader
 {
 	virtual bool canLoad(fs::path const& path, std::string& name);
@@ -26,5 +30,7 @@ struct LieroFontLoader : ResourceLocator<Font>::BaseLoader
 	
 	static LieroFontLoader instance;
 };
+
+#endif
 
 #endif //GUSANOS_LOADERS_LIERO_H

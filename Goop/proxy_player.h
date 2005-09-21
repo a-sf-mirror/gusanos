@@ -15,8 +15,9 @@ public:
 	~ProxyPlayer();
 	
 	void subThink();
+#ifndef DEDSERV
 	void render();
-	
+#endif
 private:
 
 };

@@ -6,15 +6,17 @@
 #include "base_worm.h"
 #include "base_player.h"
 #include "part_type.h"
+#ifndef DEDSERV
 #include "gfx.h"
 #include "sprite.h"
 #include "sprite_set.h"
 #include "base_animator.h"
-//#include "animators.h"
+#include "blitters/blitters.h"
+#endif
 #include "glua.h"
 #include "lua/bindings.h"
 #include "detect_event.h"
-#include "blitters/blitters.h"
+
 
 #include <vector>
 #include <iostream>
@@ -41,31 +43,20 @@ void Particle::operator delete(void* block)
 Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle)
 : BaseObject(owner, pos_, spd_), m_dir(dir), m_type(type)
 , m_health(type->health), m_angle(angle), m_angleSpeed(0)
+#ifndef DEDSERV
 , m_alpha(m_type->alpha), m_fadeSpeed(0), m_animator(0)
-, m_alphaDest(255), m_sprite(m_type->sprite), m_origin(pos_)
+, m_alphaDest(255), m_sprite(m_type->sprite)
+#endif
+, m_origin(pos_)
 {
 	m_angle.clamp();
 	
+#ifndef DEDSERV
 	if ( m_sprite )
 	{
 		m_animator = m_type->allocateAnimator();
-/*
-		switch ( m_type->animType )
-		{
-			case PartType::ANIM_PINGPONG : 
-				m_animator = AnimPingPong(m_sprite,m_type->animDuration);
-			break;
-			
-			case PartType::ANIM_LOOPRIGHT : 
-				m_animator = AnimLoopRight(m_sprite,m_type->animDuration);
-			break;
-				
-			case PartType::ANIM_RIGHTONCE : 
-				m_animator = AnimRightOnce(m_sprite,m_type->animDuration);
-			break;
-		}*/
 	}
-	
+#endif
 	// If it's deleted, we must allocate animator so that we can render it,
 	// but we don't need any timers.
 	
@@ -86,7 +77,9 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 
 Particle::~Particle()
 {
+#ifndef DEDSERV
 	delete m_animator;
+#endif
 }
 
 void Particle::think()
@@ -131,8 +124,10 @@ void Particle::think()
 				m_type->groundCollision->run(this);
 				if ( deleteMe ) break;
 			}
+#ifndef DEDSERV
 			if ( !m_type->animOnGround && m_animator )
 				m_animator->freeze(5); //I GOT DEFEATED!
+#endif
 		}
 
 		for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
@@ -163,6 +158,7 @@ void Particle::think()
 		//Position update
 		pos = pos + spd;
 		
+#ifndef DEDSERV
 		// Animation
 		if ( m_animator ) m_animator->tick();
 		
@@ -177,6 +173,7 @@ void Particle::think()
 			else
 				m_alpha += m_fadeSpeed;
 		}
+#endif
 	}
 }
 
@@ -190,11 +187,13 @@ void Particle::addAngleSpeed( AngleDiff speed )
 	m_angleSpeed += speed;
 }
 
+#ifndef DEDSERV
 void Particle::setAlphaFade(int frames, int dest)
 {
 	m_fadeSpeed = ( dest - m_alpha ) / frames;
 	m_alphaDest = dest;
 }
+#endif
 
 void Particle::customEvent( size_t index )
 {
@@ -208,6 +207,8 @@ void Particle::damage( float amount, BasePlayer* damager )
 {
 	m_health -= amount;
 }
+
+#ifndef DEDSERV
 
 void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext const& blitter)
 {
@@ -271,6 +272,7 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
 	}
 }
+#endif
 
 void Particle::pushLuaReference()
 {

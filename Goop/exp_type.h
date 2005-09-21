@@ -2,10 +2,10 @@
 #define EXP_TYPE_H
 
 #include "resource_list.h"
+#ifndef DEDSERV
 #include "gfx.h"
-//#include "events.h"
-//#include "distortion.h"
 #include "blitters/context.h"
+#endif
 
 #include <allegro.h>
 #include <string>
@@ -30,16 +30,17 @@ class ExpType
 		int timeout;
 		int timeoutVariation;
 
+#ifndef DEDSERV
 		Distortion* distortion;
 		float distortMagnitude;
-	
+		SpriteSet* sprite;
+		BlitterContext::Type blender;
+#endif //DEDSERV
 		int renderLayer;
 		int colour;
 		int alpha;
 		int destAlpha;
-		SpriteSet* sprite;
-		//Blenders blender;
-		BlitterContext::Type blender;
+
 		bool wupixels;
 	
 		std::vector< DetectEvent* > detectRanges;

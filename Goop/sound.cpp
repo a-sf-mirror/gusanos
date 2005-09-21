@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "sound.h"
 
 #include "sfx.h"
@@ -101,3 +103,5 @@ void Sound::play2D(BaseObject* obj, float loudness, float pitch, float pitchVari
 		}
 	}
 }
+
+#endif

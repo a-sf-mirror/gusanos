@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "distortion.h"
 
 #include <allegro.h>
@@ -424,3 +426,4 @@ void Distortion::apply( BITMAP* where, int destx, int desty, float multiply = 1.
 	//drawSprite_blend(where, buffer, orgDestX, orgDestY, 90);
 }
 
+#endif

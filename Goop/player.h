@@ -4,10 +4,12 @@
 #include "base_player.h"
 #include <string>
 
+#ifndef DEDSERV
 class Viewport;
+struct BITMAP;
+#endif
 class Worm;
 class PlayerOptions;
-struct BITMAP;
 
 class Player : public BasePlayer
 {
@@ -28,10 +30,11 @@ public:
 	~Player();
 	
 	void subThink();
+#ifndef DEDSERV
 	void render();
-	
-	void assignViewport(Viewport* Viewport);
 
+	void assignViewport(Viewport* Viewport);
+#endif
 	void actionStart( Actions action );
 	void actionStop( Actions action );
 	
@@ -43,8 +46,9 @@ private:
 	bool jumping;
 	bool walkingLeft;
 	bool walkingRight;
-
+#ifndef DEDSERV
 	Viewport* m_viewport;
+#endif
 };
 
 #endif  // _WORM_H_

@@ -9,18 +9,20 @@
 #include "particle.h"
 #include "player_options.h"
 #include "player.h"
+#ifndef DEDSERV
 #include "base_animator.h"
 #include "animators.h"
 #include "sprite_set.h"
 #include "sprite.h"
+#include "gfx.h"
+#include "font.h"
+#include "blitters/blitters.h"
+#endif
 #include "weapon.h"
 #include "ninjarope.h"
-#include "font.h"
-#include "gfx.h"
 
 #include "glua.h"
 #include "lua/bindings.h"
-#include "blitters/blitters.h"
 
 #include <math.h>
 #include <string>
@@ -43,17 +45,21 @@ void BaseWorm::operator delete(void* block)
 
 BaseWorm::BaseWorm()
 : BaseObject(), aimSpeed(0.0), aimAngle(90.0)
-, m_animator(0), animate(false), movable(false), changing(false), m_dir(1)
-, lieroCycles(0), inLieroCycle(false)
+#ifndef DEDSERV
+, m_animator(0)
+#endif
+, animate(false), movable(false), changing(false), m_dir(1)
 {
+	m_lastHurt = NULL;
+#ifndef DEDSERV
 	skin = spriteList.load("skin");
 	m_animator = new AnimLoopRight(skin,35);
-	m_lastHurt = NULL;
-	
+
 	m_fireconeTime = 0;
 	m_currentFirecone = NULL;
 	m_fireconeAnimator = NULL;
 	m_fireconeDistance = 0;
+#endif
 	
 	m_timeSinceDeath = 0;
 	
@@ -81,8 +87,10 @@ BaseWorm::BaseWorm()
 
 BaseWorm::~BaseWorm()
 {
+#ifndef DEDSERV
 	delete m_animator; m_animator = 0;
 	delete m_fireconeAnimator; m_fireconeAnimator = 0;
+#endif
 
 	//m_ninjaRope->deleteMe = true;
 	for ( size_t i = 0; i < m_weapons.size(); i++)
@@ -111,37 +119,42 @@ void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 	BaseVec<long> step;
 	long len = 0;
 	
+	int bottom = game.options.worm_weaponHeight;
+	int top = bottom - game.options.worm_height + 1;
+	int left = (-game.options.worm_width) / 2;
+	int right = (game.options.worm_width) / 2;
+		
 	switch(d)
 	{
 		case Down:
 		{
-			origin += BaseVec<long>(-1, -3);
+			origin += BaseVec<long>(left, top);
 			step = BaseVec<long>(1, 0);
-			len = 3;
+			len = game.options.worm_width;
 		}
 		break;
 		
 		case Left:
 		{
-			origin += BaseVec<long>(1, -2);
+			origin += BaseVec<long>(right, top + 1);
 			step = BaseVec<long>(0, 1);
-			len = 7;
+			len = game.options.worm_height - 2;
 		}
 		break;
 		
 		case Up:
 		{
-			origin += BaseVec<long>(-1, 5);
+			origin += BaseVec<long>(left, bottom);
 			step = BaseVec<long>(1, 0);
-			len = 3;
+			len = game.options.worm_width;
 		}
 		break;
 		
 		case Right:
 		{
-			origin += BaseVec<long>(-1, -2);
+			origin += BaseVec<long>(left, top + 1);
 			step = BaseVec<long>(0, 1);
-			len = 7;
+			len = game.options.worm_height - 2;
 		}
 		break;
 		
@@ -331,72 +344,9 @@ void BaseWorm::processJumpingAndNinjaropeControls()
 		spd.y -= game.options.worm_jumpForce;
 		jumping = false;
 	}
-	
-	/*
-	if(keyChange())
-	{
-		if(m_NinjaropeOut)
-		{
-			//Change ninjarope length
-			if(keyUp())
-			{
-				m_NinjaropeLength -= WS.ninjarope.lengthChangeVelocity * timeStep;
-			}
-
-			if(keyDown())
-			{
-				m_NinjaropeLength += WS.ninjarope.lengthChangeVelocity * timeStep;
-			}
-
-			if(m_NinjaropeLength < WS.ninjarope.minLength)
-			{
-				m_NinjaropeLength = WS.ninjarope.minLength;
-			}
-			else if(m_NinjaropeLength > WS.ninjarope.maxLength)
-			{
-				m_NinjaropeLength = WS.ninjarope.maxLength;
-			}
-		}
-
-		if(keyJump())
-		{
-			//Throw ninjarope
-			
-			keyJump() = false;
-
-			m_NinjaropeOut = true;
-			m_NinjaropeAttached = false;
-
-			g_SoundThrow->play(false);
-
-			m_NinjaropePos = pos;
-			m_NinjaropeVel = FVec(m_AimingAngle, WS.ninjarope.throwVelocity);
-			m_NinjaropeLength = WS.ninjarope.initLength;
-			m_NinjaropeCurLength = 0.0f;
-
-		}
-	}
-	else
-	{
-		if(keyJump())
-		{
-			
-			m_NinjaropeOut = false;
-
-			if(m_Reacts[RA::Up] > 0 && m_AbleToJump)
-			{
-				//Jump
-				
-				vel.y -= WS.jumpVelocity;
-				m_AbleToJump = false;
-			}
-		}
-		else
-		{
-			m_AbleToJump = true;
-		}
-	}*/
 }
+
+
 
 void BaseWorm::processMoveAndDig(void)
 {
@@ -455,24 +405,18 @@ void BaseWorm::think()
 {
 	if(m_isActive)
 	{
-		lieroCycles -= 70;
-		if(lieroCycles < 0)
-		{
-			lieroCycles += 100;
-			inLieroCycle = true;
-		}
-		else
-			inLieroCycle = false;
-		
 		if ( health <= 0 ) die();
-	
+		
 		BaseVec<float> next = pos + spd;
 		
 		BaseVec<long> inext(static_cast<long>(next.x), static_cast<long>(next.y));
-		
-		if(true)//inLieroCycle)
-			calculateAllReactionForces(next, inext);
-		
+
+		calculateAllReactionForces(next, inext);
+
+		processJumpingAndNinjaropeControls();
+		processPhysics();
+		processMoveAndDig();
+
 		aimAngle += aimSpeed;
 		if(aimAngle < Angle(0.0))
 		{
@@ -484,23 +428,18 @@ void BaseWorm::think()
 			aimAngle = Angle(180.0);
 			aimSpeed = 0;
 		}
-		
-		processJumpingAndNinjaropeControls();
-		processPhysics();
-		// TODO: Weapon changes
-		// TODO: Sight
-		processMoveAndDig();
-		// TODO: Weapons
-		
+
 		for ( size_t i = 0; i < m_weapons.size(); ++i )
 		{
 			m_weapons[i]->think( i == currentWeapon, i );
 		}
 
+#ifndef DEDSERV
 		if(animate)
 			m_animator->tick();
 		else
 			m_animator->reset();
+
 		
 		if ( m_currentFirecone )
 		{
@@ -511,8 +450,9 @@ void BaseWorm::think()
 				m_fireconeAnimator->tick();*/
 			m_fireconeAnimator->tick();
 		}
-		// TODO: Viewport
-	}else
+#endif
+	}
+	else
 	{
 		if ( m_timeSinceDeath > game.options.maxRespawnTime && game.options.maxRespawnTime >= 0 )
 		{
@@ -664,10 +604,12 @@ Vec BaseWorm::getWeaponPos()
 	return pos;
 }
 
+#ifndef DEDSERV
 Vec BaseWorm::getRenderPos()
 {
 	return renderPos - Vec(0,0.5);
 }
+#endif
 /*
 Vec BaseWorm::getWeaponPos()
 {
@@ -694,11 +636,12 @@ int BaseWorm::getWeaponIndexOffset( int offset )
 	return returnValue;
 }
 
-void BaseWorm::setDir(char d)
+void BaseWorm::setDir(int d)
 {
 	m_dir = d;
 }
 
+/*
 bool BaseWorm::isCollidingWith( const Vec& point, float radius )
 {
 	if ( m_isActive )
@@ -736,6 +679,51 @@ bool BaseWorm::isCollidingWith( const Vec& point, float radius )
 	}
 	return false;
 }
+*/
+
+bool BaseWorm::isCollidingWith( Vec const& point, float radius )
+{
+	if ( !m_isActive )
+		return false;
+	
+	float top = pos.y - game.options.worm_boxTop;
+	if(point.y < top)
+	{
+		float left = pos.x - game.options.worm_boxRadius;
+		if(point.x < left)
+			return (point - Vec(left, top)).lengthSqr() < radius*radius;
+		
+		float right = pos.x + game.options.worm_boxRadius;
+		if(point.x > right)
+			return (point - Vec(right, top)).lengthSqr() < radius*radius;
+
+		return top - point.y < radius;
+	}
+	
+	float bottom = pos.y + game.options.worm_boxBottom;
+	if(point.y > bottom)
+	{
+		float left = pos.x - game.options.worm_boxRadius;
+		if(point.x < left)
+			return (point - Vec(left, bottom)).lengthSqr() < radius*radius;
+		
+		float right = pos.x + game.options.worm_boxRadius;
+		if(point.x > right)
+			return (point - Vec(right, bottom)).lengthSqr() < radius*radius;
+	
+		return point.y - bottom < radius;
+	}
+	
+	float left = pos.x - game.options.worm_boxRadius;
+	if(point.x < left)
+		return left - point.x < radius;
+		
+	float right = pos.x + game.options.worm_boxRadius;
+	if(point.x > right)
+		return point.x - right < radius;		
+
+	return true;
+}
 
 bool BaseWorm::isActive()
 {
@@ -750,6 +738,8 @@ void BaseWorm::removeRefsToPlayer(BasePlayer* player)
 }
 
 //#define DEBUG_WORM_REACTS
+
+#ifndef DEDSERV
 
 void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 {
@@ -835,6 +825,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 	
 	
 }
+#endif //DEDSERV
 
 void BaseWorm::respawn()
 {
@@ -851,7 +842,9 @@ void BaseWorm::respawn( const Vec& newPos)
 	spd = Vec ( 0, 0 );
 	pos = newPos;
 	m_dir = 1;
+#ifndef DEDSERV
 	renderPos = pos;
+#endif
 	m_lastHurt = NULL;
 	for ( size_t i = 0; i < m_weapons.size(); ++i )
 	{
@@ -914,6 +907,7 @@ void BaseWorm::addRopeLength( float distance )
 	m_ninjaRope->addLength(distance);
 }
 
+#ifndef DEDSERV
 void BaseWorm::showFirecone( SpriteSet* sprite, int frames, float distance )
 {
 	if(sprite)
@@ -925,6 +919,7 @@ void BaseWorm::showFirecone( SpriteSet* sprite, int frames, float distance )
 		m_fireconeDistance = distance;
 	}
 }
+#endif
 
 void BaseWorm::actionStart( Actions action )
 {

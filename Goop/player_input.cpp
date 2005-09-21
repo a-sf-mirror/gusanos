@@ -1,4 +1,6 @@
+#ifndef DEDSERV
 #include "player_input.h"
+
 #include "game.h"
 #include "player.h"
 #include "gconsole.h"
@@ -177,5 +179,4 @@ string changeStop(int index, const list<string> &args)
 	return "";
 }
 
-
-
+#endif

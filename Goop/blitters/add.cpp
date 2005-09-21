@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "blitters.h"
 #include "macros.h"
 
@@ -254,3 +256,5 @@ void drawSprite_add_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int 
 }
 
 } //namespace Blitters
+
+#endif

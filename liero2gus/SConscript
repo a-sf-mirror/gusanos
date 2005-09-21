@@ -10,5 +10,7 @@ elif conf == 'basara':
 	env.Append(LIBS = 'boost_filesystem-gcc')
 elif conf == 'darka':
 	env.Append(LIBS = 'boost_filesystem-gcc-mt')
+elif conf == 'lucas':
+	env.Append(LIBS = 'boost_filesystem-gcc')
 	
 env.Program(getBinName('liero2gus'), getObjects(env))

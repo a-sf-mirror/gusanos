@@ -10,8 +10,10 @@
 #include <vector>
 //#include <boost/variant.hpp>
 
+#ifndef DEDSERV
 class SpriteSet;
 class BaseAnimator;
+#endif
 class PartType;
 class TimerEvent;
 //class BaseWorm;
@@ -35,7 +37,9 @@ public:
 	void shoot(Vec _pos, Vec _spd);
 	void remove();
 
+#ifndef DEDSERV
 	void draw(BITMAP* where, int xOff, int yOff);
+#endif
 	void think();
 	Angle getAngle();
 	void addAngleSpeed(AngleDiff);
@@ -60,10 +64,11 @@ private:
 	Angle m_angle;
 	AngleDiff m_angleSpeed;
 	float m_length;
-	SpriteSet* m_sprite;
 	BaseObject* m_worm;
+#ifndef DEDSERV
+	SpriteSet* m_sprite;
 	BaseAnimator* m_animator;
-	//boost::variant< int, AnimPingPong, AnimLoopRight, AnimRightOnce > m_animator;
+#endif
 	
 	bool justCreated;
 };

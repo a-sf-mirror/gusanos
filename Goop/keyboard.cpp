@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "keyboard.h"
 #include "keys.h"
 #include "console.h"
@@ -183,5 +185,4 @@ void KeyHandler::addEvent(int type, char key)
 	}
 }*/
 
-
-
+#endif

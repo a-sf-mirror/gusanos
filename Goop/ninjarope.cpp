@@ -4,15 +4,17 @@
 #include "game.h"
 #include "base_object.h"
 #include "part_type.h"
+#ifndef DEDSERV
 #include "sprite_set.h"
 #include "sprite.h"
 #include "base_animator.h"
 #include "animators.h"
+#endif
 #include "vec.h"
 #include "part_type.h"
+#include "math_func.h"
 
 #include <vector>
-#include <boost/variant/apply_visitor.hpp>
 
 using namespace std;
 
@@ -39,20 +41,11 @@ NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 	m_angleSpeed = 0;
 	//m_animator = NULL;
 	
+#ifndef DEDSERV
 	m_sprite = m_type->sprite;
-	/*
-	if ( m_sprite )
-	{
-		switch ( m_type->animType )
-		{
-			case PartType::ANIM_PINGPONG : 
-				m_animator = new AnimPingPong(m_sprite,m_type->animDuration); break;
-			
-			case PartType::ANIM_LOOPRIGHT : 
-				m_animator = new AnimLoopRight(m_sprite,m_type->animDuration); break;
-		}
-	}*/
+	
 	m_animator = m_type->allocateAnimator();
+#endif
 		
 	// Why this?? :OO // Re: Modders may want to make the rope leave trails or sth :o
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
@@ -124,7 +117,7 @@ void NinjaRope::think()
 				m_length = 450.f / 16.f - 1.0f;
 				attached = true;
 				spd.zero();
-				if ( m_type->groundCollision != NULL )
+				if ( m_type->groundCollision  )
 					m_type->groundCollision->run(this);
 			}
 		}
@@ -148,11 +141,10 @@ void NinjaRope::think()
 			}
 		}
 		
-/*
+#ifndef DEDSERV
 		if ( m_animator )
 			m_animator->tick();
-		*/
-		m_animator->tick();
+#endif
 		
 		/* OLD CODE
 		if ( justCreated && m_type->creation )
@@ -232,6 +224,7 @@ Vec& NinjaRope::getPosReference()
 	return pos;
 }
 
+#ifndef DEDSERV
 void NinjaRope::draw(BITMAP* where,int xOff, int yOff)
 {
 	if (active)
@@ -255,3 +248,4 @@ void NinjaRope::draw(BITMAP* where,int xOff, int yOff)
 		}
 	}
 }
+#endif

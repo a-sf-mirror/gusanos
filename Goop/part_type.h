@@ -2,22 +2,26 @@
 #define PART_TYPE_H
 
 #include "resource_list.h"
+#ifndef DEDSERV
 #include "gfx.h"
-#include "events.h"
 #include "distortion.h"
+#include "blitters/context.h"
+#include <allegro.h>
+#endif
+#include "events.h"
 #include "angle.h"
 #include "vec.h"
-#include "blitters/context.h"
 
-#include <allegro.h>
 #include <string>
 #include <vector>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
 
+#ifndef DEDSERV
 class SpriteSet;
-class DetectEvent;
 class BaseAnimator;
+#endif
+class DetectEvent;
 class BasePlayer;
 //struct Distortion;
 
@@ -45,7 +49,9 @@ class PartType
 	bool isSimpleParticleType();
 	bool load(fs::path const& filename);
 	
+#ifndef DEDSERV
 	BaseAnimator* allocateAnimator();
+#endif
 	NewParticleFunc newParticle;
 
 	float gravity;
@@ -59,18 +65,23 @@ class PartType
 	int colLayer;
 	float health;
 	
+#ifndef DEDSERV
 	Distortion* distortion;
 	float distortMagnitude;
-	
+#endif
 	int renderLayer;
 	int colour;
 	int alpha;
+#ifndef DEDSERV
 	SpriteSet* sprite;
+#endif
 	int animDuration;
 	int animType;
 	int animOnGround;
 	//Blenders blender;
+#ifndef DEDSERV
 	BlitterContext::Type blender;
+#endif
 	bool line2Origin;
 	bool wupixels;
 	

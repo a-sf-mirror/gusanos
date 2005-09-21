@@ -1,9 +1,11 @@
 #include "gconsole.h"
+#ifndef DEDSERV
 #include "keyboard.h"
 #include "keys.h"
 #include "font.h"
 #include "sprite_set.h"
 #include "sprite.h"
+#endif
 #include "script.h"
 #include "game.h"
 #include "glua.h"
@@ -15,6 +17,8 @@
 using boost::lexical_cast;
 
 using namespace std;
+
+#ifndef DEDSERV
 
 #define TEST_KEY(k_, keyname_) if(k_ < 0) return "UNKNOWN KEY \"" + keyname_ + '"'
 
@@ -40,6 +44,7 @@ string bindCmd(const list<string> &args)
 	
 	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
 }
+#endif
 
 string echoCmd(list<string> const& args)
 {
@@ -59,6 +64,7 @@ string echoCmd(list<string> const& args)
 	return "ECHO <ARGS> ... : PRINTS OUT ARGS TO THE CONSOLE";
 }
 
+#ifndef DEDSERV
 // Key map swapping command
 string swapKeysCmd(const list<string> &args)
 {
@@ -148,7 +154,7 @@ string GConsole::setConsoleKey(list<string> const& args)
 	}
 	return "SETCONSOLEKEY <KEY> : SETS THE KEY TO SHOW/HIDE THE CONSOLE";
 }
-
+#endif
 
 
 string execCmd(const list<string> &args)
@@ -237,13 +243,19 @@ string rndSeedCmd(list<string> const& args)
 //============================= LIFECYCLE ====================================
 
 GConsole::GConsole()
-: Console(256), m_consoleKey(KEY_TILDE), background(NULL)
+: Console(256)
+#ifndef DEDSERV
+, m_consoleKey(KEY_TILDE), background(NULL)
+#endif
 {
+#ifndef DEDSERV
 	m_lockRefCount.assign(0);
+#endif
 }
 
 //============================= INTERFACE ====================================
 
+#ifndef DEDSERV
 void GConsole::varCbFont( std::string oldValue )
 {
 	Font* newFont = fontLocator.load(m_fontName);
@@ -255,15 +267,17 @@ void GConsole::varCbFont( std::string oldValue )
 	}
 	m_font = newFont;
 }
-
+#endif
 void GConsole::init()
 {
 	//keyHandler.init();
 	
 	//Connect the handlers as group 0 so they are called first
+#ifndef DEDSERV
 	keyHandler.printableChar.connect(0, boost::bind(&GConsole::eventPrintableChar, this, _1, _2));
 	keyHandler.keyDown.connect(0, boost::bind(&GConsole::eventKeyDown, this, _1));
 	keyHandler.keyUp.connect(0, boost::bind(&GConsole::eventKeyUp, this, _1));
+#endif
 
 	m_mode = CONSOLE_MODE_BINDINGS;
 	//m_mode = CONSOLE_MODE_INPUT;
@@ -271,16 +285,20 @@ void GConsole::init()
 	console.registerVariables()
 		("CON_SPEED", &speed, 4)
 		("CON_HEIGHT", &height, 120)
+#ifndef DEDSERV
 		("CON_FONT", &m_fontName, "minifont", boost::bind(&GConsole::varCbFont, this, _1))
+#endif
 	;
 
 	console.registerCommands()
+#ifndef DEDSERV
 		(string("BIND"), bindCmd)
 		(string("SWAPKEYS"), swapKeysCmd)
 		(string("SETSHIFTCHAR"), setShiftChar)
 		(string("SETALTGRCHAR"), setAltGrChar)
 		(string("SETCHAR"), setChar)
 		(string("SETCONSOLEKEY"), boost::bind(&GConsole::setConsoleKey, this, _1))
+#endif
 		(string("EXEC"), execCmd)
 		(string("EXECSCRIPT"), execScript)
 		(string("ALIAS"), aliasCmd)
@@ -293,21 +311,26 @@ void GConsole::init()
 
 void GConsole::shutDown()
 {
+#ifndef DEDSERV
 	keyHandler.shutDown();
 	
 	//m_font must be deleted here!!!! hmm not sure now
+#endif
 }
 
 void GConsole::loadResources()
 {
+#ifndef DEDSERV
 	m_font = fontLocator.load(m_fontName);
 
 	if(!m_font)
 		cout << "Console font couldn't be loaded" << endl;
 	
 	background = spriteList.load("con_background.bmp");
+#endif
 }
 
+#ifndef DEDSERV
 void GConsole::render(BITMAP* where, bool fullScreen)
 {
 	//int textIndex = 0;
@@ -602,6 +625,7 @@ void GConsole::think()
 	if (m_pos > height) m_pos = height;
 	if (m_pos < 0) m_pos = 0;
 }
+#endif
 
 int GConsole::executeConfig(const std::string& filename)
 {

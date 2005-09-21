@@ -91,7 +91,9 @@ inline void addEvent(ZCom_BitStream* data, int event)
 void NetWorm::think()
 {
 	BaseWorm::think();
+#ifndef DEDSERV
 	renderPos += (pos - renderPos)*0.2;
+#endif
 
 	++timeSinceLastUpdate;
 	

@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "animators.h"
 
 #include "base_animator.h"
@@ -177,3 +179,5 @@ void AnimRightOnce::reset()
 	m_animPos = 0;
 	m_frame = 0;
 }
+
+#endif

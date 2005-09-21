@@ -3,32 +3,30 @@
 #include "gconsole.h"
 #include "resource_list.h"
 #include "sprite.h"
-#include "font.h"
+
 #include "vec.h"
 #include "level.h"
 #include "game.h"
-#include "viewport.h"
 #include "part_type.h"
 #include "particle.h"
 #include "worm.h"
 #include "player.h"
 #include "text.h"
+#ifndef DEDSERV
+#include "viewport.h"
+#include "font.h"
 #include "gfx.h"
 #include "sfx.h"
+#include "menu.h"
 #include "distortion.h"
-#include "player_ai.h"
-#include "gui.h"
-#include "guilist.h"
-#include "network.h"
 #include "keyboard.h"
+#endif
+#include "player_ai.h"
+#include "network.h"
+
 
 #include "script.h"
 #include "glua.h"
-
-
-#if 1
-#include "menu.h"
-#endif
 
 #ifdef WINDOWS
 	#include <winalleg.h>
@@ -70,35 +68,6 @@ int main(int argc, char **argv)
 	
 #endif
 
-/*
-	gui::init();
-	
-	//Font *tempFont = fontList.load("minifont.bmp");
-	BITMAP *gusLogo = gfx.loadBitmap("default/gui/gusanos.bmp");
-	gui::windowDecor = gfx.loadBitmap("default/gui/window.bmp");
-	gui::Container top;
-	gui::Window window;
-	gui::ListContainer glist;
-	gui::ListDragItem gdrag;
-	gui::ListButtonItem gstart;
-	window.setTitle("MAIN MENU");
-	window.setPosition(31, 31);
-	window.setSize(96, 64);
-	
-	gstart.setText("NEW GAME");
-	gstart.setEvent(startGame);
-	
-	glist.setPosition(31, 31);
-	glist.setSize(96, 64);
-	glist.setBackColor(0);
-	glist.setSelColor(makecol(63, 63, 63));
-	glist.addItem(&gstart);
-	glist.addItem(&gdrag);
-	
-	window.addWidget(&glist);
-	top.addWidget(&window);
-*/
-
 	//OmfgGUI::menu.testParseXML();
 
 	console.registerVariables()
@@ -110,18 +79,12 @@ int main(int argc, char **argv)
 		(string("QUIT"), Exit)
 	;
 	
-
-	//console.parseLine("BIND F12 SCREENSHOT; BIND ESC QUIT");
 	console.parseLine("BIND F12 SCREENSHOT");
-	//console.parseLine("SETCHAR STOP \".\"");
-	
-	///* <GLIP> Stuff for me ;o
-	//console.parseLine("BIND LEFT +P0_LEFT; BIND RIGHT +P0_RIGHT; BIND 2_PAD +P0_JUMP; BIND UP +P0_UP; BIND DOWN +P0_DOWN; BIND 1_PAD +P0_FIRE; BIND 3_PAD +P0_CHANGE");
-	//console.parseLine("SETSHIFTCHAR MINUS \"_\" ; SETSHIFTCHAR 2 \"\\\"\" ; SETSHIFTCHAR COMMA \";\" ; SETALTGRCHAR 7 \"\\{\" ; SETALTGRCHAR 0 \"\\}\"");
-	//console.parseLine("SETALTGRCHAR PLUS_PAD \"\\\\\" ; SETSHIFTCHAR 3 \"#\" ; SETSHIFTCHAR STOP \":\"");
-	//*/
-	
+
+#ifndef DEDSERV
 	OmfgGUI::menu.clear();
+	OmfgGUI::AllegroRenderer renderer;
+#endif
 	game.loadMod();
 	
 	//install millisecond timer
@@ -135,22 +98,7 @@ int main(int argc, char **argv)
 	int _fps = 0;
 	unsigned int logicLast = 0;
 	
-	OmfgGUI::AllegroRenderer renderer;
-/*
-	while (menu)
-	{
-	    if (key[KEY_ESC])
-	    {
-	        menu = false;
-	        key[KEY_ESC] = 0;
-	    }
-	    rectfill(gfx.buffer, 0, 0, 319, 239, 0);
-	    top.keys((bool*)key);
-	    top.render();
-	    blit(gusLogo, gfx.buffer, 0, 0, 319 - gusLogo->w, 239 - gusLogo->h, gusLogo->w, gusLogo->h);
-		gfx.updateScreen();
-	}
-*/
+	console.executeConfig("autoexec.cfg");
 
 	//main game loop
 	while (!quit)
@@ -206,7 +154,9 @@ int main(int argc, char **argv)
 				game.think();
 			}
 			
+#ifndef DEDSERV
 			sfx.think(); // WARNING: THIS ¡MUST! BE PLACED BEFORE THE OBJECT DELETE LOOP
+#endif
 			
 			for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end();)
 			{
@@ -239,8 +189,10 @@ int main(int argc, char **argv)
 			network.update();
 #endif
 
+#ifndef DEDSERV
 			console.checkInput();
 			console.think();
+#endif
 			
 			logicLast+=1;
 		}
@@ -250,6 +202,8 @@ int main(int argc, char **argv)
 #else
 		rest(0);
 #endif
+
+#ifndef DEDSERV
 		//Update FPS
 		if (_fpsLast + 100 <= _timer)
 		{
@@ -259,14 +213,16 @@ int main(int argc, char **argv)
 			
 			//console.addLogMsg(cast<string>(_fps));
 		}
-		
+
+
 		if ( game.isLoaded() && game.level.isLoaded() )
 		{
+
 			for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 			{
 				(*iter)->render();
 			}
-			
+
 			//debug info
 			if (showDebug)
 			{
@@ -275,6 +231,7 @@ int main(int argc, char **argv)
 				game.infoFont->draw(gfx.buffer, "PING:    " + cast<string>(network.getServerPing()), 5, 20, 0);
 			}
 		}
+
 		
 		//show fps
 		if (showFps)
@@ -282,6 +239,7 @@ int main(int argc, char **argv)
 			game.infoFont->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
 		}
 		_fpsCount++;
+
 
 		OmfgGUI::menu.render(&renderer);
 		console.render(gfx.buffer);
@@ -292,13 +250,17 @@ int main(int argc, char **argv)
 		}
 		
 		gfx.updateScreen();
+#endif
 	}
 	
 	
 	game.unload();
 	console.shutDown();
+#ifndef DEDSERV
 	sfx.shutDown();
+#endif
 	gfx.shutDown();
+
 	allegro_exit();
 
 	return(0);

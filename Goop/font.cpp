@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "font.h"
 
 //#include "resource_list.h"
@@ -173,3 +175,5 @@ int Font::height()
 }
 
 */
+
+#endif //DEDSERV

@@ -1,34 +1,36 @@
 #include "game.h"
 
-#include "viewport.h"
 #include "base_worm.h"
 #include "worm.h"
 #include "part_type.h"
 #include "exp_type.h"
 #include "weapon_type.h"
-#include "sound.h"
-#include "sprite_set.h"
 #include "base_object.h"
 #include "player.h"
-#include "player_input.h"
 #include "player_options.h"
 #include "particle.h"
 #include "explosion.h"
 #include "exp_type.h"
 #include "level_effect.h"
 #include "level.h"
-#include "font.h"
 #include "gconsole.h"
 #include "game_actions.h"
 #include "base_player.h"
 #include "proxy_player.h"
 #include "gfx.h"
+#include "sprite_set.h"
+#ifndef DEDSERV
 #include "sfx.h"
+#include "sound.h"
+#include "font.h"
+#include "menu.h"
+#include "keyboard.h"
+#include "player_input.h"
+#include "viewport.h"
+#endif //DEDSERV
 #include "player_ai.h"
 #include "net_worm.h"
 #include "network.h"
-#include "menu.h"
-#include "keyboard.h"
 #include "script.h"
 #include "ninjarope.h"
 
@@ -129,8 +131,9 @@ void Options::registerInConsole()
 		//("SV_WORM_BOUNCE_LIMIT", &worm_bounceLimit, 0.56875f)
 		
 		("SV_WORM_JUMP_FORCE", &worm_jumpForce, 0.6)
-		("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 4)
-		("SV_WORM_HEIGHT", &worm_height, 7)
+		("SV_WORM_WEAPON_HEIGHT", &worm_weaponHeight, 5)
+		("SV_WORM_HEIGHT", &worm_height, 9)
+		("SV_WORM_WIDTH", &worm_width, 3)
 		("SV_WORM_MAX_CLIMB", &worm_maxClimb, 4)
  		("SV_WORM_BOX_RADIUS", &worm_boxRadius, 2)
 		("SV_WORM_BOX_TOP", &worm_boxTop, 3)
@@ -190,12 +193,15 @@ void Game::init(int argc, char** argv)
 	levelLocator.registerLoader(&LieroXLevelLoader::instance);
 	levelLocator.registerLoader(&LieroLevelLoader::instance);
 	
+#ifndef DEDSERV
 	fontLocator.registerLoader(&GusanosFontLoader::instance);
 	fontLocator.registerLoader(&LOSPFontLoader::instance);
 	fontLocator.registerLoader(&LieroFontLoader::instance);
-	
+
 	xmlLocator.registerLoader(&XMLLoader::instance);
 	gssLocator.registerLoader(&GSSLoader::instance);
+#endif
+
 	scriptLocator.registerLoader(&LuaLoader::instance);
 	
 	LuaBindings::init();
@@ -206,11 +212,15 @@ void Game::init(int argc, char** argv)
 	setMod("default");
 	refreshResources();
 
+#ifndef DEDSERV
 	keyHandler.init();
+#endif
 	console.init();
+#ifndef DEDSERV
 	OmfgGUI::menu.init();
 	
 	sfx.registerInConsole();
+#endif
 	gfx.registerInConsole();
 	options.registerInConsole();
 #ifndef DISABLE_ZOIDCOM
@@ -224,17 +234,22 @@ void Game::init(int argc, char** argv)
 		playerOptions.push_back(options);
 	}
 	
-	console.executeConfig("autoexec.cfg");
+	console.executeConfig("config.cfg");
 
 	parseCommandLine(argc, argv);
-
+	
 	gfx.init();
+#ifndef DEDSERV
 	sfx.init();
+#endif
+
 #ifndef DISABLE_ZOIDCOM
 	network.init();
 #endif
 	registerGameActions();
+#ifndef DEDSERV
 	registerPlayerInput();
+#endif
 }
 
 inline void addEvent(ZCom_BitStream* data, int event)
@@ -327,9 +342,9 @@ void Game::loadWeapons()
 			{
 				if ( fs::extension(*iter) == ".wpn")
 				{
-				WeaponType* weapon = new WeaponType;
-				weapon->load(*iter);
-				weaponList.push_back(weapon);
+					WeaponType* weapon = new WeaponType;
+					weapon->load(*iter);
+					weaponList.push_back(weapon);
 				}
 			}
 		}
@@ -346,7 +361,9 @@ void Game::loadMod()
 	NRPartType = partTypeList.load("ninjarope.obj");
 	deathObject = partTypeList.load("death.obj");
 	digObject = partTypeList.load("wormdig.obj");
+#ifndef DEDSERV
 	infoFont = fontLocator.load("minifont");
+#endif
 	if (weaponList.size() > 0 )
 	{
 		loaded = true;
@@ -364,11 +381,13 @@ void Game::unload()
 {
 	//cerr << "Unloading..." << endl;
 	loaded = false;
+#ifndef DEDSERV
 	OmfgGUI::menu.clear();
+	sfx.clear();
+#endif
 	
 	console.clearTemporaries();
-
-	sfx.clear();
+	
 	// Delete all objects
 #ifdef USE_GRID
 	objects.clear();
@@ -399,13 +418,17 @@ void Game::unload()
 	
 	partTypeList.clear();
 	expTypeList.clear();
+#ifndef DEDSERV
 	soundList.clear();
+#endif
 	spriteList.clear();
 	levelEffectList.clear();
-	
+
+#ifndef DEDSERV	
 	fontLocator.clear();
 	xmlLocator.clear();
 	gssLocator.clear();
+#endif
 	scriptLocator.clear();
 	
 	lua.reset();
@@ -419,10 +442,11 @@ bool Game::isLoaded()
 
 void Game::refreshResources()
 {
+#ifndef DEDSERV
 	fontLocator.addPath(fs::path("default/fonts"));
 	fontLocator.addPath(fs::path(nextMod) / "fonts");
 	fontLocator.refresh();
-	
+
 	xmlLocator.addPath(fs::path("default/gui"));
 	xmlLocator.addPath(fs::path(nextMod) / "gui");
 	xmlLocator.refresh();
@@ -430,6 +454,7 @@ void Game::refreshResources()
 	gssLocator.addPath(fs::path("default/gui"));
 	gssLocator.addPath(fs::path(nextMod) / "gui");
 	gssLocator.refresh();
+#endif
 	
 	scriptLocator.addPath(fs::path("default/scripts"));
 	scriptLocator.addPath(fs::path(nextMod) / "scripts");
@@ -445,9 +470,11 @@ void Game::refreshResources()
 	expTypeList.addPath(fs::path(nextMod) / "objects");
 	expTypeList.addPath(fs::path("default/objects"));
 	
+#ifndef DEDSERV
 	soundList.addPath(fs::path(level.getPath()) / "sounds");
 	soundList.addPath(fs::path(nextMod) / "sounds");
 	soundList.addPath(fs::path("default/sounds"));
+#endif
 	
 	spriteList.addPath(fs::path(level.getPath()) / "sprites");
 	spriteList.addPath(fs::path(nextMod) / "sprites");
@@ -615,9 +642,11 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 	if( type == OWNER )
 	{
 		Player* player = new Player(playerOptions[0]);
+#ifndef DEDSERV
 		Viewport* viewport = new Viewport;
 		viewport->setDestination(gfx.buffer,0,0,320,240);
 		player->assignViewport(viewport);
+#endif
 		players.push_back( player );
 		localPlayers.push_back( player );
 		retPlayer = player;

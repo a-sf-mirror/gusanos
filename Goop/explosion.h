@@ -7,35 +7,41 @@
 //#include "animators.h"
 #include <vector>
 
+#ifndef DEDSERV
 class Sprite;
 class BaseAnimator;
+#endif
 class BasePlayer;
 
 class Explosion : public BaseObject
 {
-	public:
-		
-		Explosion(ExpType* type, const Vec& _pos = Vec(0,0), BasePlayer* owner = NULL);
+public:
+	
+	Explosion(ExpType* type, const Vec& _pos = Vec(0,0), BasePlayer* owner = NULL);
 
-		void draw(BITMAP* where,int xOff, int yOff);
-		void think();
-		
-		ExpType* getType()
-		{
-			return m_type;
-		}
+#ifndef DEDSERV
+	void draw(BITMAP* where,int xOff, int yOff);
+	void think();
+#endif
+	ExpType* getType()
+	{
+		return m_type;
+	}
+
+
+private:
+
+	ExpType* m_type;
 	
-	private:
+#ifndef DEDSERV	
+	int m_timeout;
 	
-		ExpType* m_type;
-		
-		int m_timeout;
-		
-		float m_fadeSpeed;
-		float m_alpha;
-		SpriteSet* m_sprite;
-		BaseAnimator* m_animator;
-		//AnimLoopRight m_animator;
+	float m_fadeSpeed;
+	float m_alpha;
+	SpriteSet* m_sprite;
+	BaseAnimator* m_animator;
+	//AnimLoopRight m_animator;
+#endif
 };
 
 #endif  // _EXPLOSION_H_

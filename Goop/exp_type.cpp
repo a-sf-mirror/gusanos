@@ -3,10 +3,11 @@
 #include "resource_list.h"
 
 #include "events.h"
-#include "distortion.h"
+#ifndef DEDSERV
 #include "sprite_set.h"
-#include "gfx.h"
 #include "distortion.h"
+#include "gfx.h"
+#endif //DEDSERV
 #include "text.h"
 #include "parser.h"
 #include "detect_event.h"
@@ -32,24 +33,28 @@ ExpType::ExpType()
 {
 	timeout = 0;
 	timeoutVariation = 0;
-	
+
 	colour = -1;
 	alpha = 255;
 	destAlpha = -1;	
 	renderLayer = Grid::WormRenderLayer;
+#ifndef DEDSERV
 	sprite = NULL;
 	distortion = NULL;
 	distortMagnitude = 0.8;
 	
 	blender = BlitterContext::None;
+#endif
 	
 	creation = NULL;
 }
 
 ExpType::~ExpType()
 {
-	if (creation) delete creation;
-	if (distortion) delete distortion;
+	delete creation;
+#ifndef DEDSERV
+	delete distortion;
+#endif
 	for ( vector<DetectEvent*>::iterator i = detectRanges.begin(); i != detectRanges.end(); i++)
 	{
 		delete *i;
@@ -98,18 +103,25 @@ bool ExpType::load(fs::path const& filename)
 						if ( iter != tokens.end() )
 							val = *iter;
 					}
-									
+#ifndef DEDSERV
 					if ( var == "sprite" ) sprite = spriteList.load(val);
+#else
+					if ( var == "sprite" ) /* ignore */;
+#endif
 					else if ( var == "timeout" ) timeout = cast<int>(val);
 					else if ( var == "timeout_variation" ) timeoutVariation = cast<int>(val);
 					else if ( var == "render_layer" ) renderLayer = cast<int>(val);
 					else if ( var == "alpha" ) alpha = cast<int>(val);
 					else if ( var == "dest_alpha" ) destAlpha = cast<int>(val);
+#ifndef DEDSERV
 					else if ( var == "blender" )
 					{
 						if ( val == "add" ) blender = BlitterContext::Add;
 						else if ( val == "alpha" ) blender = BlitterContext::Alpha;
 					}
+#else
+					else if ( var == "blender" ) /* ignore */;
+#endif
 					else if ( var == "wu_pixels" ) 
 						wupixels = ( cast<int>(val) != 0 );
 					else if ( var == "colour" || var == "color" )
@@ -117,6 +129,7 @@ bool ExpType::load(fs::path const& filename)
 						if ( tokens.size() >= 5 )
 							colour = makecol( cast<int>(tokens[2]), cast<int>(tokens[3]), cast<int>(tokens[4]) );
 					}
+#ifndef DEDSERV
 					else if ( var == "distortion" && !distortion ) 
 					{	// TODO: Factorize this
 						if ( val == "lens" && tokens.size() >= 4)
@@ -133,6 +146,10 @@ bool ExpType::load(fs::path const& filename)
 							distortion = new Distortion( bitmapMap( tokens[3] ) );
 					}
 					else if ( var == "distort_magnitude" ) distortMagnitude = cast<float>(val);
+#else
+					else if ( var == "distortion" ) /* ignore*/;
+					else if ( var == "distort_magnitude" ) /* ignore*/;
+#endif
 					else
 					{
 						std::cout << "Unknown variable on following line:" << std::endl;

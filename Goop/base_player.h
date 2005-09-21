@@ -71,7 +71,9 @@ public:
 	// subThink() gets called inside think() and its used to give the derivations
 	// the ability to think without replacing the main BasePlayer::think().
 	virtual void subThink() = 0;
+#ifndef DEDSERV
 	virtual void render() {}
+#endif
 
 	void assignNetworkRole( bool authority );
 	void setOwnerId( ZCom_ConnID id );

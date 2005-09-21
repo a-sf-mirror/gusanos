@@ -1,6 +1,10 @@
 #ifndef FONT_H
 #define FONT_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 //#include "resource_list.h"
 #include "resource_locator.h"
 #include <omfggui.h> // For Rect

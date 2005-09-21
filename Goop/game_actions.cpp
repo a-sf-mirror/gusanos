@@ -5,21 +5,24 @@
 #include "part_type.h"
 #include "explosion.h"
 #include "exp_type.h"
+#ifndef DEDSERV
 #include "sound.h"
 #include "sprite_set.h"
+#endif
 #include "text.h"
 #include "base_object.h"
 #include "weapon.h"
 #include "worm.h"
 #include "angle.h"
 #include "level_effect.h"
+#include "math_func.h"
 
 #include "glua.h"
 #include "script.h"
 
-#include <allegro.h>
+//#include <allegro.h>
 
-#include <boost/random.hpp>
+//#include <boost/random.hpp>
 
 using namespace std;
 
@@ -445,6 +448,7 @@ BaseAction* playSound( const vector< string >& params )
 
 PlaySound::PlaySound( const vector< string >& params )
 {
+#ifndef DEDSERV
 	sound = NULL;
 	loudness = 100;
 	pitch = 1;
@@ -466,14 +470,17 @@ PlaySound::PlaySound( const vector< string >& params )
 	{
 		pitchVariation = cast<float>(params[3]);
 	}
+#endif
 }
 
 void PlaySound::run( ActionParams const& params )
 {
+#ifndef DEDSERV
 	if (sound != NULL)
 	{
 		sound->play2D(params.object,loudness,pitch,pitchVariation);
 	}
+#endif
 }
 
 PlaySound::~PlaySound()
@@ -491,6 +498,7 @@ BaseAction* playRandomSound( const vector< string >& params )
 
 PlayRandomSound::PlayRandomSound( const vector< string >& params )
 {
+#ifndef DEDSERV
 	loudness = 100;
 	pitch = 1;
 	pitchVariation = 0;
@@ -516,10 +524,12 @@ PlayRandomSound::PlayRandomSound( const vector< string >& params )
 		sounds.push_back( soundList.load(params[i]) );
 		++i;
 	}
+#endif
 }
 
 void PlayRandomSound::run( ActionParams const& params )
 {
+#ifndef DEDSERV
 	if ( !sounds.empty() )
 	{
 		int sound = rnd() * sounds.size(); // TODO: Make an integer version of rnd()
@@ -528,6 +538,7 @@ void PlayRandomSound::run( ActionParams const& params )
 			sounds[sound]->play2D(params.object,loudness,pitch,pitchVariation);
 		}
 	}
+#endif
 }
 
 PlayRandomSound::~PlayRandomSound()
@@ -545,6 +556,7 @@ BaseAction* playSoundStatic( const vector< string >& params )
 
 PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
 {
+#ifndef DEDSERV
 	sound = NULL;
 	loudness = 100;
 	pitch = 1;
@@ -566,14 +578,17 @@ PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
 	{
 		pitchVariation = cast<float>(params[3]);
 	}
+#endif
 }
 
 void PlaySoundStatic::run( ActionParams const& params )
 {
+#ifndef DEDSERV
 	if (sound != NULL)
 	{
 		sound->play2D(params.object->pos,loudness,pitch,pitchVariation);
 	}
+#endif
 }
 
 PlaySoundStatic::~PlaySoundStatic()
@@ -626,6 +641,7 @@ BaseAction* showFirecone( const vector< string >& params )
 
 ShowFirecone::ShowFirecone( const vector< string >& params )
 {
+#ifndef DEDSERV
 	sprite = NULL;
 	frames = 0;
 	drawDistance = 0;
@@ -641,15 +657,18 @@ ShowFirecone::ShowFirecone( const vector< string >& params )
 	{
 		drawDistance = cast<float>(params[2]);
 	}
+#endif
 }
 
 void ShowFirecone::run( ActionParams const& params )
 {
+#ifndef DEDSERV
 	BaseWorm* w;
 	if( w = dynamic_cast<BaseWorm*>(params.object) )
 	{
 		w->showFirecone( sprite, frames, drawDistance );
 	}
+#endif
 }
 
 ShowFirecone::~ShowFirecone()
@@ -716,10 +735,12 @@ SetAlphaFade::SetAlphaFade( const vector< string >& params )
 
 void SetAlphaFade::run( ActionParams const& params )
 {
+#ifndef DEDSERV
 	if (params.object)
 	{
 		params.object->setAlphaFade( frames, dest );
 	}
+#endif
 }
 
 SetAlphaFade::~SetAlphaFade()

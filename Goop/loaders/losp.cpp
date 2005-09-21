@@ -1,5 +1,7 @@
 #include "losp.h"
 
+#ifndef DEDSERV
+
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/convenience.hpp>
@@ -94,3 +96,5 @@ const char* LOSPFontLoader::getName()
 {
 	return "LOSP font loader";
 }
+
+#endif

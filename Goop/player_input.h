@@ -1,6 +1,10 @@
 #ifndef PLAYER_INPUT_H
 #define PLAYER_INPUT_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include <string>
 #include <list>
 

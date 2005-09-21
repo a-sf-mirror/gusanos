@@ -1,6 +1,10 @@
 #ifndef ANIMATORS_H
 #define ANIMATORS_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include "base_animator.h"
 
 class SpriteSet;

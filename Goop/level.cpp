@@ -1,13 +1,15 @@
 #include "level.h"
 
+#ifndef DEDSERV
 #include "gfx.h"
+#include "blitters/context.h"
+#endif
 #include "material.h"
-#include "liero.h"
+#include "sprite_set.h"
 #include "sprite.h"
 #include "math_func.h"
 #include "level_effect.h"
-#include "sprite_set.h"
-#include "blitters/context.h"
+
 
 #include <allegro.h>
 #include <string>
@@ -21,9 +23,11 @@ Level::Level()
 {
 	loaded = false;
 	
+#ifndef DEDSERV
 	image = NULL;
+	background = NULL;	
+#endif
 	material = NULL;
-	background = NULL;
 
 	// Rock
 	m_materialList[0].worm_pass = false;
@@ -158,12 +162,13 @@ void Level::unload()
 {
 	loaded = false;
 	path = "";
-	if (image) destroy_bitmap(image);
-	if (material) destroy_bitmap(material);
-	if (background) destroy_bitmap(background);
-	image = NULL;
-	material = NULL;
-	background = NULL;
+
+#ifndef DEDSERV
+	destroy_bitmap(image); image = NULL;
+	destroy_bitmap(background); material = NULL;
+	destroy_bitmap(material); background = NULL;
+#endif
+
 	vectorEncoding = Encoding::VectorEncoding();
 }
 
@@ -172,6 +177,7 @@ bool Level::isLoaded()
 	return loaded;
 }
 
+#ifndef DEDSERV
 void Level::draw(BITMAP* where, int x, int y)
 {
 	if (image)
@@ -179,6 +185,7 @@ void Level::draw(BITMAP* where, int x, int y)
 		blit(image,where,x,y,0,0,where->w,where->h);
 	}
 }
+
 
 // TODO: optimize this
 void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos, BlitterContext const& blitter )
@@ -200,6 +207,7 @@ void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, co
 		}
 	}
 }
+#endif
 
 bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 {
@@ -218,7 +226,9 @@ bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 			{
 				returnValue = true;
 				material->line[drawY+y][drawX+x] = 1;
+#ifndef DEDSERV
 				putpixel(image, drawX+x, drawY+y, getpixel( background, drawX+x, drawY+y ) );
+#endif
 			}
 		}
 	}

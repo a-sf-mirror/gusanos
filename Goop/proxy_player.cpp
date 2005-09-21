@@ -1,8 +1,5 @@
 #include "proxy_player.h"
 #include "player_options.h"
-#include <allegro.h>
-
-using namespace std;
 
 ProxyPlayer::ProxyPlayer() : BasePlayer()
 {
@@ -18,9 +15,11 @@ void ProxyPlayer::subThink()
 {
 }
 
+#ifndef DEDSERV
 void ProxyPlayer::render()
 {
 }
+#endif
 
 
 

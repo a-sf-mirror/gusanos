@@ -104,15 +104,13 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 	} while (ret != Z_STREAM_END);
 	
 	inflateEnd(&strm); // Clean up
-		
-	int vdepth = get_color_depth();
 	
-	set_color_depth(8);
 	level->material = create_bitmap_ex(8, width, height);
-	set_color_depth(vdepth);
-	level->image = create_bitmap_ex(vdepth, width, height);
-	level->background = create_bitmap_ex(vdepth, width, height);
 
+#ifndef DEDSERV
+	level->image = create_bitmap(width, height);
+	level->background = create_bitmap(width, height);
+#endif
 	unsigned char *pbackground = &data[0];
 	unsigned char *pimage = pbackground + width*height*3;
 	unsigned char *pmaterial = pimage + width*height*3;
@@ -122,10 +120,12 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 		for (int x = 0; x < width; x++)
 		{
 			
+#ifndef DEDSERV
 			int backgroundc = makecol(pbackground[0], pbackground[1], pbackground[2]);
-			
+#endif
 			int m = pmaterial[0];
 
+#ifndef DEDSERV
 			if(m == 1)
 				putpixel(level->image, x, y, backgroundc);
 			else
@@ -135,7 +135,8 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 			}
 				
 			putpixel(level->background, x, y, backgroundc);
-			
+#endif
+
 			switch(m)
 			{
 				default: m = 1; break; // Background
@@ -145,8 +146,10 @@ bool LieroXLevelLoader::load(Level* level, fs::path const& path)
 			
 			putpixel(level->material, x, y, m);
 			
+#ifndef DEDSERV
 			pimage += 3;
 			pbackground += 3;
+#endif
 			++pmaterial;
 		}
 	}

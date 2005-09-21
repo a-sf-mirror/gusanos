@@ -20,7 +20,9 @@ WeaponType::WeaponType()
 {
 	ammo = 1;
 	reloadTime = 0;
+#ifndef DEDSERV
 	firecone = NULL;
+#endif
 	
 	laserSightColour = makecol(255,0,0);
 	laserSightRange = -1;
@@ -94,7 +96,11 @@ bool WeaponType::load(const fs::path &filename)
 						if ( tokens.size() >= 5 )
 							laserSightColour = makecol( cast<int>(tokens[2]), cast<int>(tokens[3]), cast<int>(tokens[4]) );
 					}
+#ifndef DEDSERV
 					else if ( var == "firecone" ) firecone = spriteList.load(val);
+#else
+					else if ( var == "firecone" ) /* ignore */;
+#endif
 					else
 					{
 						std::cout << "Unknown variable on following line:" << std::endl;

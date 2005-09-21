@@ -1,6 +1,10 @@
 #ifndef SFX_H
 #define SFX_H
 
+#ifdef DEDSERV
+#error "Can't use this in dedicated server"
+#endif //DEDSERV
+
 #include "vec.h"
 #include <list>
 #include <vector>

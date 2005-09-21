@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "blitters.h"
 #include "mmx.h"
 #include "macros.h"
@@ -371,3 +373,5 @@ void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 }
 
 }
+
+#endif

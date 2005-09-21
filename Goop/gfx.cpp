@@ -1,7 +1,10 @@
 #include "gfx.h"
 #include "text.h"
 #include "gconsole.h"
+
+#ifndef DEDSERV
 #include "blitters/blitters.h"
+#endif
 #include <boost/bind.hpp>
 #include <boost/assign/list_inserter.hpp>
 using namespace boost::assign;
@@ -19,12 +22,9 @@ using namespace boost::assign;
 using namespace std;
 
 Gfx gfx;
-/*
-string fullscreenCmd(const list<string> &args)
-{
-	return "";
-}
-*/
+
+#ifndef DEDSERV
+
 void Gfx::fullscreen( int oldValue )
 {
 	cerr << "Fullscreen set to: " << m_fullscreen << endl;
@@ -51,9 +51,14 @@ void Gfx::doubleRes( int oldValue )
 	}
 }
 
+#endif
 Gfx::Gfx()
-: buffer(NULL), m_initialized(false), m_fullscreen(true), m_doubleRes(false)
+: m_initialized(false)
+#ifndef DEDSERV
+, buffer(NULL)
+, m_fullscreen(true), m_doubleRes(false)
 , m_vwidth(320), m_vheight(240), m_bitdepth(32), m_doubleResBuffer(0)
+#endif
 {
 }
 
@@ -61,10 +66,12 @@ Gfx::~Gfx()
 {
 }
 
+
 void Gfx::init()
 {
 	register_png_file_type();
 	
+#ifndef DEDSERV
 	set_color_depth(m_bitdepth); //Ugh
 
 	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
@@ -72,17 +79,23 @@ void Gfx::init()
 	loadpng_init();
 
 	buffer = create_bitmap(320,240);
-	
+#else
+	set_color_depth(32);
+#endif
+
 	m_initialized = true; // Tell console commands it's safe to manipulate gfx
 }
 
 void Gfx::shutDown()
 {
+#ifndef DEDSERV
 	destroy_bitmap(buffer); buffer = 0;
+#endif
 }
 
 void Gfx::registerInConsole()
 {
+#ifndef DEDSERV
 	console.registerCommands()
 		("SCREENSHOT", screenShot)
 	;
@@ -128,7 +141,10 @@ void Gfx::registerInConsole()
 
 		console.registerVariable(new EnumVariable("VID_DRIVER", &m_driver, GFX_AUTODETECT, videoDrivers));
 	}
+#endif
 }
+
+#ifndef DEDSERV
 
 void Gfx::updateScreen()
 {
@@ -399,6 +415,8 @@ void Gfx::doubleResChange()
 	fullscreenChange();
 }
 
+#endif
+
 BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette, bool keepAlpha )
 {
 	BITMAP* returnValue = NULL;
@@ -460,6 +478,8 @@ bool Gfx::saveBitmap( const string &filename,BITMAP* image, RGB* palette )
 	return returnValue;
 }
 
+#ifndef DEDSERV
+
 string screenShot(const list<string> &args)
 {
 	int nameIndex = 0;
@@ -490,3 +510,4 @@ string screenShot(const list<string> &args)
 	else 
 		return "UNABLE TO SAVE SCREENSHOT";
 }
+#endif

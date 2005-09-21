@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "blitters.h"
 #include "macros.h"
 
@@ -360,3 +362,5 @@ void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, i
 }
 
 } //namespace Blitters
+
+#endif

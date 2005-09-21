@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "menu.h"
 #include "keyboard.h"
 #include "gfx.h"
@@ -448,3 +450,5 @@ void AllegroRenderer::resetBlending()
 }
 
 }
+
+#endif

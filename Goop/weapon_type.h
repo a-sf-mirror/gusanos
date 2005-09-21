@@ -9,7 +9,9 @@
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
 
+#ifndef DEDSERV
 class SpriteSet;
+#endif
 class Event;
 
 class WeaponType
@@ -28,9 +30,11 @@ class WeaponType
 	int laserSightRange;
 	float laserSightIntensity;
 	int laserSightAlpha;
-	Blenders laserSightBlender;
+	Blenders laserSightBlender; // Change to BlitterContext::Type
 	
+#ifndef DEDSERV
 	SpriteSet *firecone;
+#endif
 	std::string name;
 	fs::path fileName;
 

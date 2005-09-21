@@ -1,3 +1,5 @@
+#ifndef DEDSERV
+
 #include "sfx.h"
 #include "gconsole.h"
 #include "base_object.h"
@@ -184,4 +186,4 @@ void Sfx::volumeChange()
 	FSOUND_SetSFXMasterVolume(m_volume);
 }
 
-
+#endif
