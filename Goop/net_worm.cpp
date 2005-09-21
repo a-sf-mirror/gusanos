@@ -190,7 +190,7 @@ void NetWorm::think()
 
 void NetWorm::correctOwnerPosition()
 {
-	ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+	ZCom_BitStream *data = new ZCom_BitStream;
 	addEvent(data, PosCorrection);
 	/*
 	data->addFloat(pos.x,32); // Maybe this packet is too heavy...
@@ -248,7 +248,7 @@ void NetWorm::respawn()
 		BaseWorm::respawn();
 		if ( m_isActive )
 		{
-			ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+			ZCom_BitStream *data = new ZCom_BitStream;
 			addEvent(data, Respawn);
 			/*
 			data->addFloat(pos.x,32);
@@ -266,7 +266,7 @@ void NetWorm::dig()
 		BaseWorm::dig();
 		if ( m_isActive )
 		{
-			ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+			ZCom_BitStream *data = new ZCom_BitStream;
 			addEvent(data, Dig);
 			game.level.vectorEncoding.encode<Vec>(*data, pos);
 			data->addInt(int(getAngle()), Angle::prec);
@@ -279,7 +279,7 @@ void NetWorm::die()
 {
 	if ( m_isAuthority && m_node )
 	{
-		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+		ZCom_BitStream *data = new ZCom_BitStream;
 		addEvent(data, Die);
 		if ( m_lastHurt )
 		{
@@ -298,7 +298,7 @@ void NetWorm::changeWeaponTo( unsigned int weapIndex )
 {
 	if ( m_node )
 	{
-		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+		ZCom_BitStream *data = new ZCom_BitStream;
 		addEvent(data, ChangeWeapon);
 		data->addInt(weapIndex, Encoding::bitsOf(game.weaponList.size() - 1));
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH | ZCOM_REPRULE_AUTH_2_PROXY, data);

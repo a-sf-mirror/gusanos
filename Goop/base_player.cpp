@@ -210,7 +210,7 @@ void BasePlayer::changeName( const std::string& name )
 	m_name = name;
 	if ( m_node && m_isAuthority )
 	{
-		ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+		ZCom_BitStream *data = new ZCom_BitStream;
 		addEvent(data, NAME_CHANGE);
 		data->addString( name.c_str() );
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
@@ -379,7 +379,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStart(data, LEFT);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -394,7 +394,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStart(data, RIGHT);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -408,7 +408,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 				m_worm -> actionStart(Worm::FIRE);
 				if ( m_node )
 				{
-					ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+					ZCom_BitStream *data = new ZCom_BitStream;
 					addActionStart(data, FIRE);
 					data->addInt(int(m_worm->aimAngle), Angle::prec);
 					m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
@@ -425,7 +425,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStart(data, JUMP);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -440,7 +440,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStart(data, NINJAROPE);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -455,7 +455,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStart(data, DIG);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -470,7 +470,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStart(data, RESPAWN);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 				// I am sending the event to both the auth and the proxies, but I 
@@ -498,7 +498,7 @@ void BasePlayer::baseActionStop ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStop(data, LEFT);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -513,7 +513,7 @@ void BasePlayer::baseActionStop ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStop(data, RIGHT);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -528,7 +528,7 @@ void BasePlayer::baseActionStop ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStop(data, FIRE);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -543,7 +543,7 @@ void BasePlayer::baseActionStop ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStop(data, JUMP);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
@@ -558,7 +558,7 @@ void BasePlayer::baseActionStop ( BaseActions action )
 			}
 			if ( m_node )
 			{
-				ZCom_BitStream *data = ZCom_Control::ZCom_createBitStream();
+				ZCom_BitStream *data = new ZCom_BitStream;
 				addActionStop(data, NINJAROPE);
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
