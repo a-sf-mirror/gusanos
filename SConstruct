@@ -38,7 +38,7 @@ if conf == 'posix':
 	env.Append(
 		CPPPATH = ['/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_32'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib'],
-		CPPFLAGS = ' -pipe -Wall ',
+		CPPFLAGS = '-pipe -Wall -DGLIPTIC_SCREENSHOT_HAX ',
 		#LINKFLAGS = '-pg',
 	)
 	env.Replace(

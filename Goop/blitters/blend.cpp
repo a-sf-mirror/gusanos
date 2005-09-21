@@ -2,6 +2,9 @@
 #include "macros.h"
 
 #include <algorithm>
+#include <iostream>
+using std::cerr;
+using std::endl;
 
 namespace Blitters
 {
@@ -209,14 +212,14 @@ bool linewu_blend(BITMAP* where, float x, float y, float destx, float desty, Pix
 	return false;
 }
 
-void drawSprite_blend_32(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_blend_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	
 	if(bitmap_color_depth(from) != 32)
 		return;
 
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 	
 	// Adjust to some suitable range where the difference isn't noticable
 	if(fact >= 127 && fact <= 128) 
@@ -242,7 +245,7 @@ void drawSprite_blend_32(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	
 }
 
-void drawSprite_blend_16(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_blend_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel16   pixel_t_1;
 	typedef Pixel16_2 pixel_t_2;
@@ -250,7 +253,7 @@ void drawSprite_blend_16(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	if(bitmap_color_depth(from) != 16)
 		return;
 
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 	
 	fact = (fact + 4) / 8;
 	
@@ -281,6 +284,79 @@ void drawSprite_blend_16(BITMAP* where, BITMAP* from, int x, int y, int fact)
 		)
 	}
 	
+}
+
+void drawSprite_blendalpha_32_to_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
+{
+	typedef Pixel32 pixel_t_1;
+
+	if(fact <= 0)
+		return;
+		
+	if(bitmap_color_depth(from) != 32)
+		return;
+	
+	CLIP_SPRITE_REGION();
+	
+	if(fact >= 255)
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP(
+				Pixel s = *src;
+				*dest = blendColorsFact_32(*dest, s, (s >> 24))
+			)
+		)
+	}
+	else
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP(
+				Pixel s = *src;
+				*dest = blendColorsFact_32(*dest, s, (((s >> 24) * fact) >> 8))
+			)
+		)
+	}
+}
+
+void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
+{
+	typedef Pixel32 pixel_t_src;
+	typedef Pixel16 pixel_t_dest;
+	
+	if(fact <= 0)
+		return;
+		
+	if(bitmap_color_depth(from) != 32)
+	{
+		static bool once = true;
+		if(once)
+		{
+			once = false;
+			cerr << "From: " << from << endl;
+		}
+		return;
+	}
+	
+	CLIP_SPRITE_REGION();
+	
+	if(fact >= 255)
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_T(
+				Pixel s = *src;
+				*dest = blendColorsFact_16(*dest, convertColor_32_to_16(s), (s >> (24+3)))
+			)
+		)
+	}
+	else
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_T(
+				Pixel s = *src;
+				*dest = blendColorsFact_16(*dest, convertColor_32_to_16(s), ((s >> 24) * fact) >> (8+3))
+			)
+		)
+	}
 }
 
 } //namespace Blitters

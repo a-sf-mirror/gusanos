@@ -204,7 +204,7 @@ void Game::init(int argc, char** argv)
 	m_modPath = "default/";
 	m_modName = "default";
 	setMod("default");
-	refreshResources(); // 
+	refreshResources();
 
 	keyHandler.init();
 	console.init();

@@ -23,10 +23,13 @@ public:
 	Sprite(BITMAP* bitmap, int xPivot, int yPivot);
 	~Sprite();
 	
-	void draw(BITMAP *where, int x, int y, bool flipped = false, int Alignment = 0);
-	void drawCut(BITMAP *where, int x, int y, int alignment, int left, int top, int bottom, int right);
+	//void draw(BITMAP *where, int x, int y, bool flipped = false, int Alignment = 0);
+	void drawCut(BITMAP *where, int x, int y, BlitterContext const& blender, int alignment, int left, int top, int bottom, int right);
 	//void drawBlended(BITMAP *where, int x, int y, bool flipped = false, int alignment = 0, Blenders blender = ADD );
-	void drawBlended(BITMAP *where, int x, int y, BlitterContext const& blender, bool flipped = false, int alignment = 0);
+	void draw(BITMAP *where, int x, int y, BlitterContext const& blender, bool flipped = false, int alignment = 0);
+	
+	// To ease transition
+	void draw(BITMAP *where, int x, int y, bool flipped = false, int alignment = 0);
 	
 	int getWidth()
 	{ return m_bitmap->w; }

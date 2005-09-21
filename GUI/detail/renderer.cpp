@@ -15,7 +15,7 @@ void Renderer::drawSkinnedBox(BaseSpriteSet const& skin, Rect const& rect, RGB c
 	int boxWidth = rect.getWidth();
 	int boxHeight = rect.getHeight();
 	*/
-	drawBox(Rect(rect.x1 + skinWidth, rect.y1 + skinHeight, rect.x2 - skinWidth, rect.y2 - skinHeight), backgroundColor);
+	drawBox(Rect(rect.x1 + skinWidth, rect.y1 + skinHeight, rect.x2 - skinWidth, rect.y2 - skinHeight - 1), backgroundColor);
 	for(y = rect.y1 + skinHeight; y < rect.y2 - skinHeight * 2; y += skinHeight)
 	{
 		drawSprite(skin, 4, rect.x1, y);

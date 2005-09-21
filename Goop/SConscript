@@ -8,12 +8,13 @@ env.Append(LIBS = Split("""
 if conf == 'posix':
 	env.Append(LIBS = Split("""
 	        png12 z fmod
-	        alleg-4.1.15 m
-	        pthread 
-	        Xpm
-	        Xext X11 dl
-	        zoidcom boost_filesystem-gcc boost_signals-gcc""")
+	        alleg-4.2.0 alleg_unsharable
+	        zoidcom boost_filesystem-gcc boost_signals-gcc"""),
+			LINKFLAGS = '-Wl,--export-dynamic'
 		)
+		
+		#Xpm Xext X11
+		
 elif conf == 'mingw-cross':
 	env.Append(LIBS = Split("""
 	        png13 z fmod

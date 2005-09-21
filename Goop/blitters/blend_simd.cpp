@@ -5,7 +5,7 @@
 namespace Blitters
 {
 	
-void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
@@ -13,7 +13,7 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 	if(fact <= 0)
 		return;
 	
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 	
 	int fact2 = fact * 256;
 	movd_rm(mm6, fact2);
@@ -42,7 +42,7 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 			movq_rr(mm2, mm0);
 		
 			punpcklbw_rr(mm0, mm7); // mm0 = src2 = 00aa00rr00gg00bb
-			punpckhbw_rr(mm2, mm7); // mm4 = src1 = 00aa00rr00gg00bb
+			punpckhbw_rr(mm2, mm7); // mm2 = src1 = 00aa00rr00gg00bb
 			
 			movq_rr(mm3, mm1);
 			movq_rr(mm5, mm1);
@@ -51,7 +51,7 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 			punpckhbw_rr(mm3, mm7); // mm3 = dest1 = 00rr00gg00bb
 
 			pshufw_rri(mm4, mm0, 0xFF); // mm4 = src2 = 00aa00aa00aa00aa
-			pshufw_rri(mm7, mm4, 0xFF); // mm7 = src1 = 00aa00aa00aa00aa
+			pshufw_rri(mm7, mm2, 0xFF); // mm7 = src1 = 00aa00aa00aa00aa
 
 			psubw_rr(mm0, mm1);
 			psubw_rr(mm2, mm3);
@@ -113,7 +113,7 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 	emms();
 }
 
-void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
@@ -121,7 +121,7 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int fact
 	if(fact <= 0)
 		return;
 	
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 
 	static unsigned long long rb_mask32 = 0x00FF00FF00FF00FFull;
 	//static unsigned long long g_mask32  = 0x0000FF000000FF00ull;
@@ -319,7 +319,7 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int fact
 	por_rr(source1, scratch4)     /* Combine RGB */
 	
 
-void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel16 pixel_t_1;
 	typedef Pixel16 pixel_t_2; // Doesn't really matter what type this is
@@ -327,7 +327,7 @@ void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int fact
 	if(fact < 4)
 		return;
 	
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 
 	static unsigned long long RED = 0xF800F800F800F800ull;
 	static unsigned long long GREEN = 0x07E007E007E007E0ull;

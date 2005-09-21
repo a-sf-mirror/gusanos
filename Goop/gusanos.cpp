@@ -117,8 +117,8 @@ int main(int argc, char **argv)
 	
 	///* <GLIP> Stuff for me ;o
 	//console.parseLine("BIND LEFT +P0_LEFT; BIND RIGHT +P0_RIGHT; BIND 2_PAD +P0_JUMP; BIND UP +P0_UP; BIND DOWN +P0_DOWN; BIND 1_PAD +P0_FIRE; BIND 3_PAD +P0_CHANGE");
-	console.parseLine("SETSHIFTCHAR MINUS \"_\" ; SETSHIFTCHAR 2 \"\\\"\" ; SETSHIFTCHAR COMMA \";\" ; SETALTGRCHAR 7 \"\\{\" ; SETALTGRCHAR 0 \"\\}\"");
-	console.parseLine("SETALTGRCHAR PLUS_PAD \"\\\\\" ; SETSHIFTCHAR 3 \"#\" ; SETSHIFTCHAR STOP \":\"");
+	//console.parseLine("SETSHIFTCHAR MINUS \"_\" ; SETSHIFTCHAR 2 \"\\\"\" ; SETSHIFTCHAR COMMA \";\" ; SETALTGRCHAR 7 \"\\{\" ; SETALTGRCHAR 0 \"\\}\"");
+	//console.parseLine("SETALTGRCHAR PLUS_PAD \"\\\\\" ; SETSHIFTCHAR 3 \"#\" ; SETSHIFTCHAR STOP \":\"");
 	//*/
 	
 	OmfgGUI::menu.clear();

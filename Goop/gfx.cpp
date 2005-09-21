@@ -2,6 +2,7 @@
 #include "text.h"
 #include "gconsole.h"
 #include "blitters/blitters.h"
+#include <boost/bind.hpp>
 #include <boost/assign/list_inserter.hpp>
 using namespace boost::assign;
 
@@ -13,24 +14,41 @@ using namespace boost::assign;
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include <stdexcept>
 
 using namespace std;
 
 Gfx gfx;
-
+/*
 string fullscreenCmd(const list<string> &args)
 {
 	return "";
 }
-
-void fullscreen( int oldValue )
+*/
+void Gfx::fullscreen( int oldValue )
 {
-	if(gfx) gfx.fullscreenChange();
+	cerr << "Fullscreen set to: " << m_fullscreen << endl;
+	
+	if(m_fullscreen == oldValue)
+		return;
+		
+	if(*this)
+	{
+		fullscreenChange();
+		clear_keybuf();
+	}
 }
 
-void doubleRes( int oldValue )
+void Gfx::doubleRes( int oldValue )
 {
-	if(gfx) gfx.doubleResChange();
+	if(m_doubleRes == oldValue)
+		return;
+		
+	if(*this)
+	{
+		doubleResChange();
+		clear_keybuf();
+	}
 }
 
 Gfx::Gfx()
@@ -60,7 +78,7 @@ void Gfx::init()
 
 void Gfx::shutDown()
 {
-	if ( buffer ) destroy_bitmap(buffer);
+	destroy_bitmap(buffer); buffer = 0;
 }
 
 void Gfx::registerInConsole()
@@ -70,8 +88,8 @@ void Gfx::registerInConsole()
 	;
 	
 	console.registerVariables()
-		("VID_FULLSCREEN", &m_fullscreen, 0, fullscreen)
-		("VID_DOUBLERES", &m_doubleRes, 0, doubleRes)
+		("VID_FULLSCREEN", &m_fullscreen, 0, boost::bind(&Gfx::fullscreen, this, _1))
+		("VID_DOUBLERES", &m_doubleRes, 0, boost::bind(&Gfx::doubleRes, this, _1))
 		("VID_VSYNC", &m_vsync, 0)
 		("VID_CLEAR_BUFFER", &m_clearBuffer, 0)
 		("VID_BITDEPTH", &m_bitdepth, 32)
@@ -94,7 +112,7 @@ void Gfx::registerInConsole()
 		console.registerVariable(new EnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters));
 	}
 	
-	{ // TODO: Only include drivers relevant to the platform
+	{
 		EnumVariable::MapType videoDrivers;
 		
 		insert(videoDrivers)
@@ -332,20 +350,26 @@ void Gfx::fullscreenChange()
 	//destroy_bitmap( videobuffer );
 	
 	// TODO: I suppose that changing graphics driver will clear out bitmaps and such
+	
+	int driver = getGraphicsDriver();
 
-	int result = set_gfx_mode(getGraphicsDriver(), m_vwidth, m_vheight, 0, 0);
+	int result = set_gfx_mode(driver, m_vwidth, m_vheight, 0, 0);
 	if(result < 0)
 	{
-		// TODO: Print error to cerr
+		cerr << "set_gfx_mode("
+		<< driver << ", " << m_vwidth << ", " << m_vheight << ", 0, 0): " << allegro_error << endl;
 		// We hit some error
 		if(m_driver != GFX_AUTODETECT)
 		{
 			// If the driver wasn't at autodetect, revert to it and try again
 			m_driver = GFX_AUTODETECT;
 			result = set_gfx_mode(getGraphicsDriver(), m_vwidth, m_vheight, 0, 0);
-			// TODO: if result returns a negative value, we should close down the shop
 		}
 	}
+	
+	// Check if we still haven't got a graphics mode working
+	if(result < 0)
+		throw std::runtime_error("Couldn't set graphics mode");
 	
 	if(set_display_switch_mode(SWITCH_BACKAMNESIA) == -1)
 		set_display_switch_mode(SWITCH_BACKGROUND);
@@ -375,7 +399,7 @@ void Gfx::doubleResChange()
 	fullscreenChange();
 }
 
-BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette )
+BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette, bool keepAlpha )
 {
 	BITMAP* returnValue = NULL;
 	
@@ -391,15 +415,21 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette )
 			COLORCONV_REDUCE_TRUE_TO_HI |
 			COLORCONV_24_EQUALS_32;
 #endif
+
+	int flags = COLORCONV_DITHER;
 	
-	
-	int old = get_color_conversion();
-	set_color_conversion(COLORCONV_KEEP_ALPHA | COLORCONV_DITHER);
+	if(keepAlpha)
+		flags |= COLORCONV_KEEP_ALPHA;
+	else
+		flags |= COLORCONV_TOTAL;
+
+	LocalSetColorConversion cc(flags);
 	
 	if ( exists( filename.c_str() ) )
 	{
 		returnValue = load_bitmap(filename.c_str(), palette);
-	}else
+	}
+	else
 	{
 		string tmp = filename;
 		tmp += ".png";
@@ -418,8 +448,6 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette )
 		}
 	}
 	
-	set_color_conversion(old);
-	
 	return returnValue;
 }
 
@@ -436,12 +464,21 @@ string screenShot(const list<string> &args)
 {
 	int nameIndex = 0;
 	
+#ifdef GLIPTIC_SCREENSHOT_HAX
+	string filename;
+	do
+	{
+		filename = "/usr/local/htdocs/stuff/gusanos-screens/ss" + cast<string>(nameIndex) + ".png";
+		++nameIndex;
+	} while( exists( filename.c_str() ) );
+#else
 	string filename;
 	do
 	{
 		filename = "screenshots/ss" + cast<string>(nameIndex) + ".png";
 		++nameIndex;
 	} while( exists( filename.c_str() ) );
+#endif
 	
 	BITMAP * tmpbitmap = create_bitmap_ex(16,screen->w,screen->h);
 	blit(screen,tmpbitmap,0,0,0,0,screen->w,screen->h);

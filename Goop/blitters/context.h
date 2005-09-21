@@ -8,7 +8,8 @@
 	switch(m_type) { \
 		case None: name_##_solid none_; break; \
 		case Add: name_##_add sendfact_; break; \
-		case Alpha: name_##_blend sendfact_; break; } }
+		case Alpha: name_##_blend sendfact_; break; \
+		case AlphaChannel: name_##_blendalpha sendfact_; break; } }
 
 #define FUNC_6(name_, P1, P2, P3, P4, P5, P6) \
 	FUNC(name_ \
@@ -21,6 +22,12 @@
 		, (P1 p1, P2 p2, P3 p3, P4 p4) \
 		, (p1, p2, p3, p4) \
 		, (p1, p2, p3, p4, m_fact))
+		
+#define FUNC_8(name_, P1, P2, P3, P4, P5, P6, P7, P8) \
+	FUNC(name_ \
+		, (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8) \
+		, (p1, p2, p3, p4, p5, p6, p7, p8) \
+		, (p1, p2, p3, p4, p5, p6, p7, p8, m_fact))
 	
 
 struct BlitterContext
@@ -98,6 +105,7 @@ struct BlitterContext
 	
 	FUNC_6(rectfill, BITMAP*, int, int, int, int, Pixel)
 	FUNC_4(drawSprite, BITMAP*, BITMAP*, int, int)
+	FUNC_8(drawSpriteCut, BITMAP*, BITMAP*, int, int, int, int, int, int)
 	FUNC_4(putpixel, BITMAP*, int, int, Pixel)
 	FUNC_4(putpixelwu, BITMAP*, float, float, Pixel)
 	FUNC_6(linewu, BITMAP*, float, float, float, float, Pixel)

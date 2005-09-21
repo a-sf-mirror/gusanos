@@ -94,10 +94,11 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 	{	
 		if ( false )
 		{
+			/*
 			if ( !m_type->blender )
 				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->draw(where, x, y);
-			else
-				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->drawBlended(where, x, y, blitter, false, 0);
+			else*/
+			m_sprite->getSprite(m_animator->getFrame(), Angle(0))->draw(where, x, y, blitter);
 		}
 		else
 		{

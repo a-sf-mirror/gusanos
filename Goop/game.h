@@ -68,6 +68,23 @@ struct LevelEffectEvent
 	
 };
 
+struct ScreenMessage
+{
+	enum Type
+	{
+		Death,
+		Chat,
+	};
+	
+	ScreenMessage(Type type_, std::string const& str_)
+	: type(type_), str(str_)
+	{
+	}
+	
+	Type type;
+	std::string str;
+};
+
 class Game
 {
 public:
@@ -164,6 +181,7 @@ public:
 	}*/
 	
 	Font *infoFont;
+	std::list<ScreenMessage> messages;
 	
 
 	HashTable<std::string, unsigned long> stringToIndexMap;

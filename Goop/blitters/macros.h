@@ -53,6 +53,14 @@
 	if(x < where->cl)      { x1 = where->cl - x; x = where->cl; } else x1 = 0; \
 	if(y < where->ct)      { y1 = where->ct - y; y = where->ct; } else y1 = 0; \
 	if(x1 >= x2 || y1 >= y2) return
+	
+#define CLIP_SPRITE_REGION() \
+	int x1 = cutl, y1 = cutt, x2 = from->w - cutr, y2 = from->h - cutb; \
+	if(x + (x2 - x1) > where->cr) { x2 = where->cr - x + x1; } \
+	if(y + (y2 - y1) > where->cb) { y2 = where->cb - y + y1; } \
+	if(x < where->cl) { x1 += where->cl - x; x = where->cl; } \
+	if(y < where->ct) { y1 += where->ct - y; y = where->ct; } \
+	if(x1 >= x2 || y1 >= y2) return
 
 #define SPRITE_Y_LOOP(ops_) \
 	for(; y1 < y2; ++y, ++y1) { \
@@ -64,6 +72,15 @@
 	pixel_t_1* src  = (pixel_t_1 *)from->line[y1] + x1; \
 	for(; c_ >= 1; --c_, ++dest, ++src) { \
 		op_1; } }
+		
+#define SPRITE_X_LOOP_T(op_1) { \
+	int c_ = x2 - x1; \
+	pixel_t_dest* dest = (pixel_t_dest *)where->line[y] + x; \
+	pixel_t_src* src  = (pixel_t_src *)from->line[y1] + x1; \
+	for(; c_ >= 1; --c_, ++dest, ++src) { \
+		op_1; } }
+		
+		
 		
 #define SPRITE_X_LOOP_ALIGN(par_, align_, op_1, op_2) { \
 	int c_ = x2 - x1; \

@@ -100,41 +100,56 @@ void List::Node::renderFrom(Renderer* renderer, long& y, List& list)
 	}
 }
 
-List::node_iter_t List::Node::findByIdx(node_iter_t i, long aIdx)
+List::node_iter_t List::Node::findRelative(node_iter_t i, long aIdx)
 {
 	node_iter_t parent = i->parent;
-	//bool        hasParent = i->hasParent;
-	//list_t*     parentList = i->parentList;
-	//assert(parentList);
-	
-	//Only the root element has parentList == 0, and we can't even obtain an iterator
-	//to the root element, thus it's safe to assume that parentList is a valid pointer.
-	
-	while(--aIdx >= 0)
+
+	if(aIdx < 0)
 	{
-		node_iter_t lastValid = i;
-		
-		if(i->expanded)
+		while(++aIdx <= 0)
 		{
-			parent = i;
-			//hasParent = true;
-			//parentList = &i->children;
-			i = i->children.begin();
+			node_iter_t lastValid = i;
+
+			--i;
+			while(!i)
+			{
+				if(!parent)
+					return lastValid;
+					
+				i = parent;
+				parent = i->parent;
+				--i;
+			}
 			
+			if(i->expanded)
+			{
+				parent = i;
+				i = i->children.last();
+			}
 		}
-		
-		++i;
-		while(!i)
+	}
+	else if(aIdx > 0)
+	{
+		while(--aIdx >= 0)
 		{
-			if(!parent)
-				return lastValid;
-				
-			i = parent;
-			//parentList = i->parentList;
-			//assert(parentList);
-			//hasParent = i->hasParent;
-			parent = i->parent;
+			node_iter_t lastValid = i;
+			
+			if(i->expanded)
+			{
+				parent = i;
+				i = i->children.begin();
+			}
+			
 			++i;
+			while(!i)
+			{
+				if(!parent)
+					return lastValid;
+					
+				i = parent;
+				parent = i->parent;
+				++i;
+			}
 		}
 	}
 	
@@ -196,7 +211,10 @@ bool List::render(Renderer* renderer)
 	
 	//node_iter_t cur = m_Base;
 	
-	m_RootNode.children.getFirst()->renderFrom(renderer, y, *this);
+	if(m_Base)
+	{
+		m_Base->renderFrom(renderer, y, *this);
+	}
 	
 	/*
 	while(isValid(cur) && y < m_Rect.y2)

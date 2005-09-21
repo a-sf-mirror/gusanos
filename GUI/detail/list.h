@@ -39,8 +39,8 @@ public:
 		friend class List;
 		
 		Node(std::string const& text)
-			: selected(false), expanded(true),
-			  parent(0), level(0)
+		: selected(false), expanded(true)
+		, parent(0), totalChildrenCount(0), level(0)
 		{
 			columns.push_back(text);
 		}
@@ -51,6 +51,7 @@ public:
 			
 			node->level = level + 1;
 			node->parent = this;
+			changeChildrenCount(1);
 
 			return node_iter_t(node);
 		}
@@ -58,7 +59,7 @@ public:
 		void render(Renderer* renderer, long& y, List& list);
 		//void renderChildren(Renderer* aRenderer, long& y, List& list);
 		void renderFrom(Renderer* renderer, long& y, List& list);
-		static node_iter_t findByIdx(node_iter_t i, long aIdx);
+		static node_iter_t findRelative(node_iter_t i, long aIdx);
 		
 		void setText(unsigned int column, std::string const& text)
 		{
@@ -73,13 +74,21 @@ public:
 			else
 				return "";
 		}
-				
+		
+		void changeChildrenCount(long change)
+		{
+			if(expanded && parent)
+				parent->changeChildrenCount(change);
+			totalChildrenCount += change;
+		}
+		
 		//std::string text;
 		std::vector<std::string> columns;
 		bool        selected;
 		bool        expanded;
 		//list_t*     parentList;
 		Node*       parent;
+		long        totalChildrenCount;
 		//bool        hasParent;
 		long        level;
 		//TODO: columns
@@ -92,9 +101,9 @@ public:
 	List(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes)
 	: Wnd(parent, tagLabel, className, id, attributes, ""), m_RootNode("root")
+	, m_Base(0), m_MainSel(0)
 	{
-		m_MainSel = m_Base = node_iter_t(0);
-		//addColumn(ColumnHeader("Moo", 0.5));
+
 	}
 	
 	void addColumn(ColumnHeader const& column);
@@ -105,12 +114,44 @@ public:
 		node_iter_t i = m_RootNode.children.insert(node);
 		node->parent = 0; // Just to be sure
 		node->level = m_RootNode.level + 1;
+		
+		if(!m_Base)
+			m_Base = node_iter_t(node);
+			
+		//++m_RowCount; // Root node is always visible
 
 		return i;
 	}
 	
+	void expand(node_iter_t i)
+	{
+		if(i->expanded)
+		{
+			i->expanded = false;
+			if(i->parent)
+				i->parent->changeChildrenCount(-i->totalChildrenCount);
+		}
+		else
+		{
+			i->expanded = true;
+			if(i->parent)
+				i->parent->changeChildrenCount(i->totalChildrenCount);
+		}
+	}
+	
+	void scroll(long amount)
+	{
+		if(m_Base)
+		{
+			node_iter_t i = Node::findRelative(m_Base, amount);
+			m_Base = i;
+		}
+	}
+	
 	void clear()
 	{
+		m_MainSel = m_Base = node_iter_t(0);
+		m_RootNode.totalChildrenCount = 0;
 		m_RootNode.children.clear();
 	}
 	
@@ -135,6 +176,8 @@ public:
 	{
 		NumericLT criteria(byColumn);
 		m_RootNode.children.sort(criteria);
+		
+		m_Base = m_RootNode.children.begin();
 	}
 	
 	bool isValid()

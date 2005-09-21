@@ -269,20 +269,26 @@ bool LieroFontLoader::load(Font* font, fs::path const& path)
 		int width = buffer[i * 8 * 8 + 64];
 		if(width < 2)
 			width = 2;
+			
+		int beginy = y;
+		int endy = y;
 
-		font->m_chars.push_back(Font::CharInfo(Rect(0, y, width, y + 8), 0));
-		
 		for(int y2 = 0; y2 < 8; ++y2, ++y)
 		{
 			for(int x = 0; x < 7; ++x)
 			{
 				char v = buffer[y*8 + x + 1];
 				
+				if(v)
+					endy = y;
+				
 				int c = v ? 1 : 0;
 
 				putpixel(font->m_bitmap, x, y, c);
 			}
 		}
+		
+		font->m_chars.push_back(Font::CharInfo(Rect(0, beginy, width, endy + 1), 0));
 	}
 	
 	font->buildSubBitmaps();

@@ -381,9 +381,9 @@ void AllegroRenderer::drawText(BaseFont const& font, std::string const& str, ulo
 			std::pair<int, int> dim = f->font->getDimensions(str);
 			
 			if(flags & BaseFont::CenterH)
-				x -= dim.first / 2;
+				x -= (dim.first + 1) / 2;
 			if(flags & BaseFont::CenterV)
-				y -= dim.second / 2;
+				y -= (dim.second + 1) / 2;
 		}
 		
 		f->font->draw(gfx.buffer, str, x, y, spacing, aColor.r, aColor.g, aColor.b);
@@ -403,7 +403,8 @@ void AllegroRenderer::drawSprite(BaseSpriteSet const& spriteSet, int frame, ulon
 {
 	if(GusanosSpriteSet const* s = dynamic_cast<GusanosSpriteSet const*>(&spriteSet))
 	{
-		s->spriteSet->getSprite(frame)->draw(gfx.buffer, x, y);
+		s->spriteSet->getSprite(frame)->draw(gfx.buffer, x, y, blitter);
+		//s->spriteSet->getSprite(frame)->drawCut(gfx.buffer, x, y, 0, 0, 0, 0, 0);
 	}
 }
 
@@ -411,7 +412,7 @@ void AllegroRenderer::drawSprite(BaseSpriteSet const& spriteSet, int frame, ulon
 {
 	if(GusanosSpriteSet const* s = dynamic_cast<GusanosSpriteSet const*>(&spriteSet))
 	{
-		s->spriteSet->getSprite(frame)->drawCut(gfx.buffer, x, y, 0, left, top, bottom, right);
+		s->spriteSet->getSprite(frame)->drawCut(gfx.buffer, x, y, blitter, 0, left, top, bottom, right);
 	}
 }
 

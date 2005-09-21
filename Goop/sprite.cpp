@@ -22,7 +22,7 @@ Sprite::~Sprite()
 	if (m_bitmap) destroy_bitmap( m_bitmap );
 	if (m_mirror) destroy_bitmap( m_mirror );
 }
-
+/*
 void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment )
 {
 	int _x,_y;
@@ -40,8 +40,9 @@ void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment )
 	else
 		draw_sprite( where, m_bitmap, x - _x, y - _y);
 }
+*/
 
-void Sprite::drawCut(BITMAP *where, int x, int y, int alignment, int left, int top, int bottom, int right)
+void Sprite::drawCut(BITMAP *where, int x, int y, BlitterContext const& blender, int alignment, int left, int top, int bottom, int right)
 {
 	int realX = x + left, realY = y + top;
 	
@@ -55,11 +56,17 @@ void Sprite::drawCut(BITMAP *where, int x, int y, int alignment, int left, int t
 	
 	int x1 = left, y1 = top, w = m_bitmap->w - (left + right), h = m_bitmap->h - (top + bottom);
 	//cerr << m_xPivot << ", " << m_yPivot << endl;
-	masked_blit(m_bitmap, where, x1, y1, realX, realY, w, h);
+	//masked_blit(m_bitmap, where, x1, y1, realX, realY, w, h);
+	blender.drawSpriteCut(where, m_bitmap, realX, realY, left, top, right, bottom);
 
 }
 
-void Sprite::drawBlended(BITMAP *where, int x, int y, BlitterContext const& blender, bool flipped, int alignment )
+void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment)
+{
+	draw(where, x, y, BlitterContext(), flipped, alignment);
+}
+
+void Sprite::draw(BITMAP *where, int x, int y, BlitterContext const& blender, bool flipped, int alignment )
 {
 	int _x,_y;
 	
@@ -75,6 +82,9 @@ void Sprite::drawBlended(BITMAP *where, int x, int y, BlitterContext const& blen
 	{
 		if(!m_mirror)
 		{
+			LocalSetColorConversion cc(COLORCONV_NONE);
+			LocalSetColorDepth cd(bitmap_color_depth(m_bitmap));
+			
 			m_mirror = create_bitmap(m_bitmap->w,m_bitmap->h);
 			clear_to_color(m_mirror,makecol(255,0,255));
 			draw_sprite_h_flip(m_mirror, m_bitmap, 0, 0);

@@ -131,13 +131,16 @@ KeyEvent KeyHandler::getEvent()
 
 /*static*/ int KeyHandler::mapKey(int k)
 {
-	return keyMap[k];
+	return k; //keyMap[k];
 }
 
 /*static*/ int KeyHandler::reverseMapKey(int k)
 {
+/*
 	int *kp = std::find(&keyMap[0], &keyMap[KEY_MAX], k);
-	return static_cast<int>(kp - keyMap);
+	return static_cast<int>(kp - keyMap);*/
+	
+	return k;
 }
 
 /*static*/ void KeyHandler::swapKeyMapping(int keyA, int keyB)

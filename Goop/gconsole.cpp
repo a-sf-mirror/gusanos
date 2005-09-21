@@ -133,7 +133,7 @@ string setAltGrChar(const list<string> &args)
 	return "SETALTGRCHAR <KEY> <CHARACTER> : SETS THE CHARACTER TO BE USED WITH ALTGR+KEY";
 }
 
-string setConsoleKey(const list<string> &args)
+string GConsole::setConsoleKey(list<string> const& args)
 {
 	if (args.size() >= 1)
 	{
@@ -143,10 +143,10 @@ string setConsoleKey(const list<string> &args)
 		int key = kName2Int(keyName);
 		TEST_KEY(key, keyName);
 
-		//console.m_consoleKey = key; //TODO
+		m_consoleKey = key;
 		return "";
 	}
-	return "SETCONSOLEKEY <KEY> : SETS THE KEY TO SHOWS/HIDES THE CONSOLE";
+	return "SETCONSOLEKEY <KEY> : SETS THE KEY TO SHOW/HIDE THE CONSOLE";
 }
 
 
@@ -280,7 +280,7 @@ void GConsole::init()
 		(string("SETSHIFTCHAR"), setShiftChar)
 		(string("SETALTGRCHAR"), setAltGrChar)
 		(string("SETCHAR"), setChar)
-		(string("SETCONSOLEKEY"), setConsoleKey)
+		(string("SETCONSOLEKEY"), boost::bind(&GConsole::setConsoleKey, this, _1))
 		(string("EXEC"), execCmd)
 		(string("EXECSCRIPT"), execScript)
 		(string("ALIAS"), aliasCmd)

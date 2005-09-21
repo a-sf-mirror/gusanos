@@ -35,11 +35,14 @@ bool SpriteSet::load(fs::path const& filename)
 {	
 	//cerr << "Loading sprite set: " << filename.native_file_string() << endl;
 	
-	BITMAP *tempBitmap = gfx.loadBitmap(filename.native_file_string().c_str(),0);
+	BITMAP *tempBitmap = gfx.loadBitmap(filename.native_file_string().c_str(), 0, true);
 	
 	if (!tempBitmap)
 		return false;
 		
+	LocalSetColorConversion cc(COLORCONV_NONE);
+	LocalSetColorDepth cd(bitmap_color_depth(tempBitmap));
+
 	if ( (tempBitmap->w > 1) && (tempBitmap->h > 1) )
 	{
 		int lastY = 1;
@@ -66,9 +69,9 @@ bool SpriteSet::load(fs::path const& filename)
 					}
 					else if(getpixel(tempBitmap,x,0) == 0 || x == tempBitmap->w - 1 )
 					{
-						BITMAP* spriteFrame = create_bitmap(x-lastX+1,y-lastY+1);
-						blit(tempBitmap,spriteFrame,lastX,lastY,0,0,spriteFrame->w,spriteFrame->h);
-						m_frame.back().push_back(new Sprite( spriteFrame,pivotX,pivotY ) );
+						BITMAP* spriteFrame = create_bitmap(x-lastX+1, y-lastY+1);
+						blit(tempBitmap, spriteFrame, lastX, lastY, 0, 0, spriteFrame->w, spriteFrame->h);
+						m_frame.back().push_back(new Sprite( spriteFrame, pivotX, pivotY ) );
 						
 						pivotX = -1;
 						
@@ -84,7 +87,7 @@ bool SpriteSet::load(fs::path const& filename)
 		// Fill the other 180º with the sprites but mirrored.
 
 	}
-	
+
 	destroy_bitmap(tempBitmap);
 	
 	m_angleFactor = (m_frame.size() - 1) * 2;

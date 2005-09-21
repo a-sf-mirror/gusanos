@@ -181,14 +181,14 @@ bool linewu_add(BITMAP* where, float x, float y, float destx, float desty, Pixel
 	return false;
 }
 
-void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	
 	if(bitmap_color_depth(from) != 32)
 		return;
 
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 	
 	if(fact >= 255)
 	{
@@ -213,7 +213,7 @@ void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	
 }
 
-void drawSprite_add_16(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_add_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel16 pixel_t_1;
 	typedef Pixel16_2 pixel_t_2;
@@ -221,7 +221,7 @@ void drawSprite_add_16(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	if(bitmap_color_depth(from) != 16)
 		return;
 
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 	
 	fact = (fact + 4) / 8;
 	

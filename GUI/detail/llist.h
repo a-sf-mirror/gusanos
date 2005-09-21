@@ -180,6 +180,11 @@ public:
 		return iterator(0);
 	}
 	
+	iterator last()
+	{
+		return iterator(m_Last);
+	}
+	
 /*
 	reverse_iterator rbegin()
 	{

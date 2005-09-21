@@ -43,11 +43,13 @@ public:
 	bool eventKeyDown(int k);
 	bool eventKeyUp(int k);
 	
+	std::string setConsoleKey(std::list<std::string> const& args);
+	
 	void lockBindings(BindingLock const& lock)
 	{
 		if(m_locks.insert(&lock).second)
 		{
-			for(int i = 0; i < m_lockRefCount.size(); ++i)
+			for(size_t i = 0; i < m_lockRefCount.size(); ++i)
 			{
 				if(lock.enable[i])
 					++m_lockRefCount[i];
@@ -62,7 +64,7 @@ public:
 		{
 			m_locks.erase(l);
 			
-			for(int i = 0; i < m_lockRefCount.size(); ++i)
+			for(size_t i = 0; i < m_lockRefCount.size(); ++i)
 			{
 				if(lock.enable[i])
 					--m_lockRefCount[i];

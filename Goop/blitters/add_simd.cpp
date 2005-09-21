@@ -55,7 +55,7 @@ void rectfill_add_32_mmx(BITMAP* where, int x1, int y1, int x2, int y2, Pixel co
 	emms();
 }
 
-void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
@@ -63,7 +63,7 @@ void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	if(fact <= 0)
 		return;
 	
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 
 	static unsigned long long rb_mask32 = 0x00FF00FF00FF00FFull;
 	//static unsigned long long g_mask32  = 0x0000FF000000FF00ull;
@@ -186,7 +186,7 @@ void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	emms();
 }
 
-void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
+void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel16 pixel_t_1;
 	typedef Pixel16 pixel_t_2; // Doesn't really matter what type this is
@@ -194,20 +194,22 @@ void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int fact)
 	if(fact < 4)
 		return;
 	
-	CLIP_SPRITE();
+	CLIP_SPRITE_REGION();
 
 	static unsigned long long RED = 0xF800F800F800F800ull;
 	static unsigned long long GREEN = 0x07E007E007E007E0ull;
 	static unsigned long long BLUE = 0x001F001F001F001Full;
 	static unsigned long long MASK = 0xF81FF81FF81FF81Full;
 
+	int scaledFact = (fact + 4) / 8;
+	
+	fact = scaledFact * 8;
+	
 	movd_rm(mm6, fact);
 	punpcklwd_rr(mm6, mm6); // 00000000ff00ff00
 	punpcklwd_rr(mm6, mm6); // ff00ff00ff00ff00
 	
 	movq_rm(mm7, MASK);
-	
-	int scaledFact = (fact + 4) / 8;
 
 	SPRITE_Y_LOOP(
 		SPRITE_X_LOOP_NOALIGN(4,
