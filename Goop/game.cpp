@@ -466,15 +466,15 @@ void Game::changeLevel(const std::string& levelName )
 	
 	m_modName = nextMod;
 	m_modPath = nextMod + "/";
-	/*
-	if ( !level.load( m_modPath +"maps/"+ levelName ) )
-	{
-		level.load( m_defaultPath +"maps/"+ levelName );
-	}
-	*/
+
 	level.setName(levelName);
 	refreshResources();
 	//cerr << "Loading level" << endl;
+	levelLocator.clear();
+	levelLocator.addPath(fs::path("default/maps"));
+	levelLocator.addPath(fs::path(nextMod) / "maps");
+	levelLocator.refresh();
+	
 	levelLocator.load(&level, levelName);
 #ifdef USE_GRID
 	objects.resize(0, 0, level.width(), level.height());

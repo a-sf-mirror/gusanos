@@ -44,6 +44,7 @@ void BaseWorm::operator delete(void* block)
 BaseWorm::BaseWorm()
 : BaseObject(), aimSpeed(0.0), aimAngle(90.0)
 , m_animator(0), animate(false), movable(false), changing(false), m_dir(1)
+, lieroCycles(0), inLieroCycle(false)
 {
 	skin = spriteList.load("skin");
 	m_animator = new AnimLoopRight(skin,35);
@@ -166,7 +167,8 @@ void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
 
 void BaseWorm::calculateAllReactionForces(BaseVec<float>& nextPos, BaseVec<long>& inextPos)
 {
-	static const float correctionSpeed = 70.0f / 100.0f;
+	//static const float correctionSpeed = 70.0f / 100.0f;
+	static const float correctionSpeed = 1.0f;
 
 	// Calculate all reaction forces
 	calculateReactionForce(inextPos, Down);
@@ -453,13 +455,23 @@ void BaseWorm::think()
 {
 	if(m_isActive)
 	{
+		lieroCycles -= 70;
+		if(lieroCycles < 0)
+		{
+			lieroCycles += 100;
+			inLieroCycle = true;
+		}
+		else
+			inLieroCycle = false;
+		
 		if ( health <= 0 ) die();
 	
 		BaseVec<float> next = pos + spd;
 		
 		BaseVec<long> inext(static_cast<long>(next.x), static_cast<long>(next.y));
 		
-		calculateAllReactionForces(next, inext);
+		if(inLieroCycle)
+			calculateAllReactionForces(next, inext);
 		
 		aimAngle += aimSpeed;
 		if(aimAngle < Angle(0.0))

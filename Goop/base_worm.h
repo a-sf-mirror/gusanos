@@ -144,6 +144,9 @@ protected:
 	bool movable; // What do we need this for? // Dunno, did I put this here? :o
 	bool changing; // This shouldnt be in the worm class ( its player stuff >:O )
 	int m_dir;
+	
+	long lieroCycles;
+	bool inLieroCycle;
 };
 
 #endif  // _WORM_H_
