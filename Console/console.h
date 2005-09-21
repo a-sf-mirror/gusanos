@@ -109,7 +109,7 @@ public:
 	//void parse(std::list<std::string> &args, bool parseRelease);
 	std::string invoke(std::string const& name, std::list<std::string> const& args, bool parseRelease);
 	void bind(char key, const std::string &action);
-	void addLogMsg(const std::string &msg);
+	virtual void addLogMsg(const std::string &msg);
 	void analizeKeyEvent(bool state, char key);
 	virtual int executeConfig(const std::string &filename);
 	std::string autoComplete(const std::string &text);

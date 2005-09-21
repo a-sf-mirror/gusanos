@@ -3,8 +3,10 @@
 #include "vec.h"
 #include "game.h"
 #include "base_object.h"
+#ifndef DEDSERV
 #include "gfx.h"
 #include "blitters/blitters.h"
+#endif
 
 #define BOOST_NO_MT
 #include <boost/pool/pool.hpp>
@@ -45,6 +47,7 @@ void SimpleParticle::think()
 	*/
 }
 
+#ifndef DEDSERV
 void SimpleParticle::draw(BITMAP* where, int xOff, int yOff)
 {
 	putpixel(where, (int)(pos.x)-xOff, (int)(pos.y)-yOff, colour);
@@ -82,3 +85,5 @@ void SimpleParticle16wu::draw(BITMAP* where, int xOff, int yOff)
 {
 	Blitters::putpixelwu_blend_16(where, pos.x - xOff, pos.y - yOff, colour, 32);
 }
+
+#endif

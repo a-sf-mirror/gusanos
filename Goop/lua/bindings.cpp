@@ -780,6 +780,60 @@ int l_map_isParticlePass(lua_State* L)
 }
 
 #ifndef DEDSERV
+
+int l_gui_loadxml(lua_State* L)
+{
+	OmfgGUI::Wnd* loadTo = OmfgGUI::menu.getRoot();
+	
+	int params = lua_gettop(L);
+	
+	if(params > 0)
+	{
+		char const* name = lua_tostring(L, 1);
+		
+		if(!name)
+			return 1;
+
+		XMLFile f;
+		if(xmlLocator.load(&f, name))
+		{
+			OmfgGUI::menu.buildFromXML(f.f, loadTo);
+			return 0;
+		}
+	}
+	
+	return 0;
+}
+
+int l_gui_loadgss(lua_State* L)
+{
+	bool passive = false;
+	
+	int params = lua_gettop(L);
+	
+	if(params > 0)
+	{
+		char const* name = lua_tostring(L, 1);
+		
+		if(!name)
+			return 1;
+		
+		if(params > 1)
+			passive = lua_toboolean(L, 2);
+
+		GSSFile f;
+		if(gssLocator.load(&f, name))
+		{
+			OmfgGUI::menu.loadGSS(f.f);
+			if(!passive)
+				OmfgGUI::menu.updateGSS();
+			return 0;
+		}
+	}
+	
+	return 0;
+}
+
 int l_gui_find(lua_State* L)
 {
 	char const* s = lua_tostring(L, 1);
@@ -1170,6 +1224,8 @@ void init()
 	context.function("quit", l_quit);
 	
 #ifndef DEDSERV
+	context.function("gui_load_gss", l_gui_loadgss);
+	context.function("gui_load_xml", l_gui_loadxml);
 	context.function("gui_find", l_gui_find);
 #endif
 	
@@ -1380,6 +1436,16 @@ void init()
 	lua_setmetatable(context, -2);
 
 	lua_rawset(context, LUA_GLOBALSINDEX);
+	
+#ifdef DEDSERV
+	lua_pushstring(context, "DEDSERV");
+	lua_pushboolean(context, 1);
+	lua_rawset(context, LUA_GLOBALSINDEX);
+#else
+	lua_pushstring(context, "DEDSERV");
+	lua_pushboolean(context, 0);
+	lua_rawset(context, LUA_GLOBALSINDEX);
+#endif
 	
 	cerr << "LuaBindings::init() done." << endl;
 }

@@ -27,8 +27,6 @@ Gfx gfx;
 
 void Gfx::fullscreen( int oldValue )
 {
-	cerr << "Fullscreen set to: " << m_fullscreen << endl;
-	
 	if(m_fullscreen == oldValue)
 		return;
 		

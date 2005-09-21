@@ -98,7 +98,11 @@ int main(int argc, char **argv)
 	int _fps = 0;
 	unsigned int logicLast = 0;
 	
+#ifndef DEDSERV
 	console.executeConfig("autoexec.cfg");
+#else
+	console.executeConfig("autoexec-ded.cfg");
+#endif
 
 	//main game loop
 	while (!quit)
@@ -200,7 +204,11 @@ int main(int argc, char **argv)
 #ifdef WINDOWS
 		Sleep(0);
 #else
+#ifndef DEDSERV
 		rest(0);
+#else
+		rest(2);
+#endif
 #endif
 
 #ifndef DEDSERV

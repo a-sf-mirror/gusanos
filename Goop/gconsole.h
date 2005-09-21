@@ -47,6 +47,9 @@ public:
 #endif
 	void think();
 	int executeConfig(const std::string &filename);
+#ifdef DEDSERV
+	virtual void addLogMsg(const std::string &msg);
+#endif
 	
 #ifndef DEDSERV
 	bool eventPrintableChar(char c, int k);

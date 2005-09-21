@@ -126,7 +126,7 @@ private:
 template<class T, bool Cache, bool ReturnResource>
 void ResourceLocator<T, Cache, ReturnResource>::refresh(fs::path const& path)
 {
-	std::cout << "Scanning: " << path.native_file_string() << std::endl;
+	//std::cout << "Scanning: " << path.native_file_string() << std::endl;
 	try
 	{
 		fs::directory_iterator i(path), e;
@@ -153,6 +153,7 @@ void ResourceLocator<T, Cache, ReturnResource>::refresh(fs::path const& path)
 			{
 				// We found a loader
 				std::pair<typename NamedResourceMap::iterator, bool> r = m_namedResources.insert(std::make_pair(name, ResourceInfo(*i, loader)));
+				/*
 				if(r.second)
 				{
 					std::cout << "Found resource: " << name << ", loader: " << loader->getName() << std::endl;
@@ -161,6 +162,7 @@ void ResourceLocator<T, Cache, ReturnResource>::refresh(fs::path const& path)
 				{
 					std::cout << "Duplicate resource: " << name << ", old path: " << r.first->second.path.native_file_string() << ", new path: " << i->native_file_string() << std::endl;
 				}
+				*/
 			}
 			else if(fs::is_directory(*i))
 			{

@@ -234,7 +234,11 @@ void Game::init(int argc, char** argv)
 		playerOptions.push_back(options);
 	}
 	
+#ifndef DEDSERV
 	console.executeConfig("config.cfg");
+#else
+	console.executeConfig("config-ded.cfg");
+#endif
 
 	parseCommandLine(argc, argv);
 	

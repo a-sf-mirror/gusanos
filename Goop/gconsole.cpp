@@ -634,6 +634,12 @@ int GConsole::executeConfig(const std::string& filename)
 	else return Console::executeConfig((game.getDefaultPath()+filename).c_str());
 }
 
+#ifdef DEDSERV
+void GConsole::addLogMsg(const std::string &msg)
+{
+	cout << "CONSOLE: " << msg << endl;
+}
+#endif
 //============================= PRIVATE ======================================
 
 

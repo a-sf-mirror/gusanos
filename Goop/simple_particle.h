@@ -4,8 +4,6 @@
 #include "base_object.h"
 #include "vec.h"
 
-struct BITMAP;
-
 class SimpleParticle : public BaseObject
 {
 public:
@@ -41,6 +39,7 @@ protected:
 	int spdy;*/
 };
 
+#ifndef DEDSERV
 class SimpleParticle32 : public SimpleParticle
 {
 public:
@@ -92,7 +91,7 @@ public:
 	
 	void draw(BITMAP* where, int xOff, int yOff);
 };
-
+#endif
 
 
 #endif  // GUSANOS_BLOOD_H
