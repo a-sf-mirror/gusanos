@@ -38,7 +38,7 @@ void Network::log(char const* msg)
 
 void Network::init()
 {	
-	m_zcom = new ZoidCom();
+	m_zcom = new ZoidCom("network.log");
 	if ( !m_zcom->Init() )
 	{
 		console.addLogMsg("* ERROR: UNABLE TO INITIALIZE ZOIDCOM NETWORK LIB");

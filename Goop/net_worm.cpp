@@ -10,6 +10,7 @@
 #include "ninjarope.h"
 #include "network.h"
 #include "vector_replicator.h"
+#include "posspd_replicator.h"
 #include "encoding.h"
 #include "gconsole.h"
 
@@ -36,7 +37,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	
 		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH , (int)Position, -1, 1000);
 		
-		m_node->addReplicator(new VectorReplicator( &posSetup, &pos, game.level.vectorEncoding ), true);
+		m_node->addReplicator(new PosSpdReplicator( &posSetup, &pos, &spd, game.level.vectorEncoding ), true);
 		
 		static ZCom_ReplicatorSetup nrSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
 		
@@ -339,7 +340,7 @@ bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, e
 			}
 			returnValue = true;
 		} break;
-		case NetWorm::Position:
+		/*case NetWorm::Position:
 		{
 			Vec recievedPos = *static_cast<Vec*>(_replicator->peekData());
 			Vec speedPrediction = (recievedPos - m_parent->lastPosUpdate) / m_parent->timeSinceLastUpdate;
@@ -347,7 +348,7 @@ bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, e
 			m_parent->timeSinceLastUpdate = 0;
 			m_parent->spd = m_parent->spd*0.2 + speedPrediction*0.8;
 			returnValue = true;
-		} break;
+		} break;*/
 	}
 	return returnValue;
 }
