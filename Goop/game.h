@@ -133,6 +133,7 @@ public:
 	bool isLoaded();
 	void refreshResources();
 	void changeLevel(const std::string& level);
+	void changeLevelCmd(const std::string& level);
 	void addBot();
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
 	BasePlayer* addPlayer( PLAYER_TYPE player );

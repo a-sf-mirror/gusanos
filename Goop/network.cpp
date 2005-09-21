@@ -101,7 +101,14 @@ void Network::connect( const std::string &_address )
 
 void Network::disconnect()
 {
-	if ( m_control ) delete m_control;
+	if ( m_control )
+	{
+		m_control->ZCom_disconnectAll(NULL);
+		m_control->Shutdown();
+	}
+	
+	delete m_control;
+	m_control = NULL;
 	m_client = false;
 	m_host = false;
 	m_serverID = ZCom_Invalid_ID;

@@ -382,7 +382,7 @@ void Gfx::fullscreenChange()
 
 void Gfx::doubleResChange()
 {
-	destroy_bitmap( m_doubleResBuffer );
+	if( m_doubleResBuffer ) destroy_bitmap( m_doubleResBuffer );
 	
 	if ( m_doubleRes )
 	{

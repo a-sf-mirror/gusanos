@@ -69,7 +69,7 @@ string mapCmd(const list<string> &args)
 	{
 		string tmp = *args.begin();
 		std::transform(tmp.begin(), tmp.end(), tmp.begin(), (int(*)(int)) tolower);
-		game.changeLevel( tmp );
+		game.changeLevelCmd( tmp );
 		return "";
 	}
 	return "MAP <MAPNAME> : LOAD A MAP";
@@ -458,29 +458,9 @@ void Game::refreshResources()
 	levelEffectList.addPath(fs::path("default/mapeffects"));
 }
 
-void Game::changeLevel(const std::string& levelName )
+void Game::changeLevelCmd(const std::string& levelName )
 {
-	//cerr << "Unloading resources" << endl;
-	unload();
-	LuaBindings::init();
-	
-	m_modName = nextMod;
-	m_modPath = nextMod + "/";
-
-	level.setName(levelName);
-	refreshResources();
-	//cerr << "Loading level" << endl;
-	levelLocator.clear();
-	levelLocator.addPath(fs::path("default/maps"));
-	levelLocator.addPath(fs::path(nextMod) / "maps");
-	levelLocator.refresh();
-	
-	levelLocator.load(&level, levelName);
-#ifdef USE_GRID
-	objects.resize(0, 0, level.width(), level.height());
-#endif
-	//cerr << "Loading mod" << endl;
-	loadMod();
+	changeLevel( levelName );
 	
 	if ( options.host && !network.isClient() )
 	{
@@ -516,6 +496,31 @@ void Game::changeLevel(const std::string& levelName )
 		}
 	}
 	//cerr << "changeLevel() done." << endl;
+}
+
+void Game::changeLevel(const std::string& levelName )
+{
+	//cerr << "Unloading resources" << endl;
+	unload();
+	LuaBindings::init();
+	
+	m_modName = nextMod;
+	m_modPath = nextMod + "/";
+
+	level.setName(levelName);
+	refreshResources();
+	//cerr << "Loading level" << endl;
+	levelLocator.clear();
+	levelLocator.addPath(fs::path("default/maps"));
+	levelLocator.addPath(fs::path(nextMod) / "maps");
+	levelLocator.refresh();
+	
+	levelLocator.load(&level, levelName);
+#ifdef USE_GRID
+	objects.resize(0, 0, level.width(), level.height());
+#endif
+	//cerr << "Loading mod" << endl;
+	loadMod();
 	
 }
 

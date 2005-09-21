@@ -144,7 +144,7 @@ void BasePlayer::think()
 					sendSyncMessage( conn_id );
 				}
 				break;
-				case ZCom_Node::eEvent_Removed:
+				case ZCom_Node::eEvent_AuthorityRemoved:
 				{
 					deleteMe = true;
 				}

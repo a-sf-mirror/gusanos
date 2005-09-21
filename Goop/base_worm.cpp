@@ -470,7 +470,7 @@ void BaseWorm::think()
 		
 		BaseVec<long> inext(static_cast<long>(next.x), static_cast<long>(next.y));
 		
-		if(inLieroCycle)
+		if(true)//inLieroCycle)
 			calculateAllReactionForces(next, inext);
 		
 		aimAngle += aimSpeed;
