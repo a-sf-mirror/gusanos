@@ -9,14 +9,20 @@
 #ifndef DISABLE_ZOIDCOM
 
 #include <zoidcom.h>
+#include <allegro.h>
 #include <list>
 
 Server::Server( int _udpport )
 {
-	if ( !ZCom_initSockets( true, _udpport, 1, 0 ) )
+	int tries = 10;
+	bool result = false;
+	while ( !result && tries-- > 0 )
 	{
-		console.addLogMsg("* ERROR: FAILED TO INITIALIZE SOCKETS");
+		rest(100);
+		result = ZCom_initSockets( true, _udpport, 1, 0 );
 	}
+	if(!result)
+		console.addLogMsg("* ERROR: FAILED TO INITIALIZE SOCKETS");
 	ZCom_setControlID(0);
 	ZCom_setDebugName("ZCOM_CLI");
 	console.addLogMsg("SERVER UP");

@@ -105,6 +105,8 @@ void Gfx::registerInConsole()
 		("VID_CLEAR_BUFFER", &m_clearBuffer, 0)
 		("VID_BITDEPTH", &m_bitdepth, 32)
 		("VID_DISTORTION_AA", &m_distortionAA, 1)
+		("MOO", &m_distortionAA, 1)
+		("MOOMOO", &m_distortionAA, 1)
 	;
 	
 	// NOTE: When/if adding a callback to gfx variables, make it do nothing if

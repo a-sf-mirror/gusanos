@@ -294,6 +294,7 @@ int Console::executeConfig(const string &filename)
 	return 0;
 };
 
+/*
 string Console::autoComplete(const string &text)
 {
 	string returnText = text;
@@ -335,6 +336,59 @@ string Console::autoComplete(const string &text)
 						}
 					}
 					returnText = firstMatch->first.substr(0, text.length() + i - 1);
+				}
+			}
+		}
+		
+	}
+	return returnText;
+}
+*/
+
+
+string Console::autoComplete(const string &text)
+{
+	string returnText = text;
+	
+	if ( !text.empty() )
+	{
+		map<string, ConsoleItem*, IStrCompare>::iterator item = items.lower_bound( text );
+		if( item != items.end() )
+		{
+			if ( iStrCmp( text, item->first.substr(0, text.length()) ) )
+			{	
+				map<string, ConsoleItem*>::iterator firstMatch = item;
+				map<string, ConsoleItem*>::iterator lastMatch;
+				
+				while ( item != items.end() && iStrCmp( text, item->first.substr(0, text.length() ) ) )
+				{
+					lastMatch = item;
+					item++;
+				}
+				
+				if (lastMatch == firstMatch)
+				{
+					// <GLIP> Adds a space after successful matches
+					returnText = firstMatch->first + ' '; 
+				}else
+				{
+					lastMatch++;
+					bool differenceFound = false;
+					int i = text.length();
+					for(; !differenceFound; ++i)
+					{
+						
+						for (item = firstMatch; item != lastMatch; ++item)
+						{
+							if(item->first.size() <= i
+							|| tolower(item->first[i]) != tolower(firstMatch->first[i]))
+							{
+								differenceFound = true;
+								break;
+							}
+						}
+					}
+					returnText = firstMatch->first.substr(0, i - 1);
 				}
 			}
 		}
