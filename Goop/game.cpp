@@ -111,7 +111,12 @@ string rConCmd(const list<string> &args)
 {
 	if ( !args.empty() && network.isClient() )
 	{
-		string tmp = *args.begin();
+		string tmp;
+		list<string>::const_iterator iter = args.begin();
+		while ( iter != args.end() )
+		{
+			tmp += *iter + " ";
+		}
 		game.sendRConMsg( tmp );
 		return "";
 	}
