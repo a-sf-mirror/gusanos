@@ -495,7 +495,7 @@ void Game::changeLevelCmd(const std::string& levelName )
 {
 	changeLevel( levelName );
 	
-	//network.disconnect();
+	network.disconnect();
 	if ( options.host && !network.isClient() )
 	{
 #ifndef DISABLE_ZOIDCOM
