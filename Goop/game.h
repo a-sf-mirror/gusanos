@@ -145,6 +145,7 @@ public:
 	BaseWorm* addWorm(bool isAuthority); // Creates a worm class depending on the network condition.
 	
 	void assignNetworkRole( bool authority );
+	void removeNode();
 	
 	void applyLevelEffect( LevelEffect* effect, int x, int y );
 	

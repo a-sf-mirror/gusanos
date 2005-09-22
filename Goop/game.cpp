@@ -158,6 +158,7 @@ Game::Game()
 	NRPartType = NULL;
 	deathObject = NULL;
 	loaded = false;
+	m_node = NULL;
 }
 
 Game::~Game()
@@ -413,6 +414,7 @@ void Game::unload()
 	players.clear();
 	localPlayers.clear();
 	level.unload();
+	removeNode();
 	
 	for ( vector<WeaponType*>::iterator iter = weaponList.begin(); iter != weaponList.end(); ++iter)
 	{
@@ -582,6 +584,12 @@ void Game::assignNetworkRole( bool authority )
 	}
 
 	m_node->applyForZoidLevel(1);
+}
+
+void Game::removeNode()
+{
+	delete m_node;
+	m_node = NULL;
 }
 
 void Game::setMod( const string& modname )
