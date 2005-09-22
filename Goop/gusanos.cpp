@@ -262,6 +262,8 @@ int main(int argc, char **argv)
 	}
 	
 	
+	network.disconnect();
+	network.shutDown();
 	game.unload();
 	console.shutDown();
 #ifndef DEDSERV
