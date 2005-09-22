@@ -92,15 +92,16 @@ void Network::connect( const std::string &_address )
 	disconnect();
 	m_control = new Client( 0 );
 	registerClasses();
+	game.assignNetworkRole( false ); // Gives the game class node proxy role
 	ZCom_Address address;
 	address.setAddress( eZCom_AddressUDP, 0, ( _address + ":" + cast<string>(m_serverPort) ).c_str() );
 	m_control->ZCom_Connect( address, NULL );
 	m_client = true;
-	game.assignNetworkRole( false ); // Gives the game class node proxy role
 }
 
 void Network::disconnect()
 {
+	game.removeNode();
 	if ( m_control )
 	{
 		m_control->ZCom_disconnectAll(NULL);

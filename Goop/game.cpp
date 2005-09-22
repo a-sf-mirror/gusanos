@@ -414,7 +414,6 @@ void Game::unload()
 	players.clear();
 	localPlayers.clear();
 	level.unload();
-	removeNode();
 	
 	for ( vector<WeaponType*>::iterator iter = weaponList.begin(); iter != weaponList.end(); ++iter)
 	{
