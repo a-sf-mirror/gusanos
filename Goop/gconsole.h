@@ -88,6 +88,8 @@ public:
 	void varCbFont( std::string oldValue );
 #endif
 
+	void addQueueCommand( std::string const & command );
+
 private:
 	
 	float m_pos;
@@ -111,6 +113,8 @@ private:
 	
 	std::list< std::string > commandsLog;
 	std::list< std::string >::iterator currentCommand;
+	
+	std::list< std::string > commandsQueue;
 	
 	enum
 	{

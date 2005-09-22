@@ -624,6 +624,12 @@ void GConsole::think()
 	}
 	if (m_pos > height) m_pos = height;
 	if (m_pos < 0) m_pos = 0;
+	
+	while( !commandsQueue.empty() )
+	{
+		console.parseLine( *commandsQueue.begin() );
+		commandsQueue.erase( commandsQueue.begin() );
+	}
 }
 #endif
 
@@ -632,6 +638,11 @@ int GConsole::executeConfig(const std::string& filename)
 	if ( exists((game.getModPath()+filename).c_str()))
 		return Console::executeConfig((game.getModPath()+filename).c_str());
 	else return Console::executeConfig((game.getDefaultPath()+filename).c_str());
+}
+
+void GConsole::addQueueCommand( std::string const & command )
+{
+	commandsQueue.push_back( command );
 }
 
 #ifdef DEDSERV
