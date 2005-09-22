@@ -47,6 +47,16 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 			player->setOwnerId(_id);
 			player->assignWorm(worm);
 		}
+		break;
+		case Network::RConMsg:
+		{
+			//console.addLogMsg( "RCON MESSAGE RECIEVED");
+			if ( !game.options.rConPassword.empty() && game.options.rConPassword == _data.getStringStatic() )
+			{
+				console.parseLine(_data.getStringStatic());
+			}
+		}
+		break;
 	}
 }
 

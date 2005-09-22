@@ -61,6 +61,7 @@ struct Options
 	int maxRespawnTime;
 	int minRespawnTime;
 	int host;
+	std::string rConPassword;
 };
 
 struct LevelEffectEvent
@@ -149,6 +150,7 @@ public:
 	
 	void applyLevelEffect( LevelEffect* effect, int x, int y );
 	
+	void sendRConMsg( std::string const & message );
 	void displayChatMsg( std::string const& owner, std::string const& message);
 	
 	Level level;

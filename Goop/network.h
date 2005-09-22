@@ -16,7 +16,8 @@ public:
 		
 	enum NetEvents
 	{
-		PLAYER_REQUEST
+		PLAYER_REQUEST,
+		RConMsg
 	};
 		
 	Network();

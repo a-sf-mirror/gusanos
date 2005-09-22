@@ -107,6 +107,17 @@ string connectCmd(const list<string> &args)
 	return "CONNECT <HOST_ADDRESS> : JOIN A NETWORK SERVER";
 }
 
+string rConCmd(const list<string> &args)
+{
+	if ( !args.empty() && network.isClient() )
+	{
+		string tmp = *args.begin();
+		game.sendRConMsg( tmp );
+		return "";
+	}
+	return "";
+}
+
 void Options::registerInConsole()
 {
 	console.registerVariables()
@@ -143,6 +154,8 @@ void Options::registerInConsole()
 		("SV_MIN_RESPAWN_TIME", &minRespawnTime, 100 )
 
 		("HOST", &host, 0)
+			
+		("RCON_PASSWORD", &rConPassword, "" )
 	;
 	
 	console.registerCommands()
@@ -150,6 +163,7 @@ void Options::registerInConsole()
 		(string("GAME"), gameCmd)
 		(string("ADDBOT"), addbotCmd)
 		(string("CONNECT"),connectCmd)
+		(string("RCON"),rConCmd)
 	;
 }
 
@@ -584,6 +598,15 @@ void Game::assignNetworkRole( bool authority )
 	}
 
 	m_node->applyForZoidLevel(1);
+}
+
+void Game::sendRConMsg( string const& message )
+{
+	ZCom_BitStream *req = new ZCom_BitStream;
+	req->addInt(Network::RConMsg, 8);
+	req->addString( options.rConPassword.c_str() );
+	req->addString( message.c_str() );
+	network.getZControl()->ZCom_sendData( network.getServerID(), req, eZCom_ReliableOrdered );
 }
 
 void Game::removeNode()
