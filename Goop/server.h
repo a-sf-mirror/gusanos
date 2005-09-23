@@ -7,10 +7,16 @@
 
 class Server : public ZCom_Control
 {
+	private:
+	// Flag to refuse connection while waiting for all players to aknowledge disconnection
+	bool m_preShutdown;
+	
 	public:
 	
 	Server( int _udpport );
 	~Server();
+	
+	void preShutdown() { m_preShutdown = true; }
 	
 	protected:
 		

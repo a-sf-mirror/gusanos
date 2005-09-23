@@ -115,7 +115,8 @@ string rConCmd(const list<string> &args)
 		list<string>::const_iterator iter = args.begin();
 		while ( iter != args.end() )
 		{
-			tmp += *iter + " ";
+			tmp += '"' + *iter + '"' + " ";
+			++iter;
 		}
 		game.sendRConMsg( tmp );
 		return "";
@@ -304,6 +305,8 @@ void Game::think()
 					case eHole:
 					{
 						int index = data->getInt(8);
+						console.addLogMsg(cast<string>(index));
+						console.addLogMsg(cast<string>(event));
 						int x = data->getInt(32);
 						int y = data->getInt(32);
 						level.applyEffect( levelEffectList[index], x, y );
@@ -337,10 +340,10 @@ void Game::applyLevelEffect( LevelEffect* effect, int x, int y )
 {
 	if ( !network.isClient() )
 	{
-		if ( level.applyEffect( effect, x, y ) && network.isHost() )
+		if ( level.applyEffect( effect, x, y ) && m_node && network.isHost() )
 		{
 			ZCom_BitStream *data = new ZCom_BitStream;
-			addEvent(data, eHole);
+			addEvent(data, static_cast<int>(eHole));
 			data->addInt(effect->getIndex(), 8); // TODO: Gliptic can optimize this if he wants ;O
 			data->addInt( x, 32 ); // this too ;OOO
 			data->addInt( y, 32 );
@@ -388,10 +391,10 @@ void Game::loadMod()
 #ifndef DEDSERV
 	infoFont = fontLocator.load("minifont");
 #endif
+	levelEffectList.indexate();
 	if (weaponList.size() > 0 )
 	{
 		loaded = true;
-		levelEffectList.indexate();
 	}
 	else
 	{
@@ -511,7 +514,7 @@ void Game::refreshResources()
 
 void Game::changeLevelCmd(const std::string& levelName )
 {
-	network.disconnect();
+	network.disconnect( Network::ServerMapChange );
 	changeLevel( levelName );
 
 	if ( options.host && !network.isClient() )

@@ -12,7 +12,7 @@
 #include <allegro.h>
 #include <list>
 
-Server::Server( int _udpport )
+Server::Server( int _udpport ) : m_preShutdown(false)
 {
 	int tries = 10;
 	bool result = false;
@@ -68,16 +68,23 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 
 bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
 {
+	if ( !m_preShutdown )
+	{
 	console.addLogMsg("* CONNECTION REQUESTED");
 	_reply.addString( game.getMod().c_str() );
 	_reply.addString( game.level.getName().c_str() );
 	return true;
+	} else
+	{
+		return false;
+	}
 }
 
 void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 {
 	console.addLogMsg("* CONNECTION SPAWNED");
 	ZCom_requestDownstreamLimit(_id, 20, 200);
+	++network.connCount;
 }
 
 void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
@@ -90,6 +97,7 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 			(*iter)->deleteMe = true;
 		}
 	}
+	--network.connCount;
 }
 
 bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)

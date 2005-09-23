@@ -45,12 +45,28 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 		ZCom_requestZoidMode(_id, 1);
 		game.setMod( _reply.getStringStatic() );
 		game.changeLevel( _reply.getStringStatic() );
+		++network.connCount;
 	}
 } 
 
 void Client::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 {
-	console.addLogMsg("* CONNECTION CLOSED BY SERVER");
+	--network.connCount;
+	Network::DConnEvents dcEvent = static_cast<Network::DConnEvents>( _reason.getInt(8) );
+	switch( dcEvent )
+	{
+		case Network::ServerMapChange:
+		{
+			console.addLogMsg("* SERVER CHANGED MAP");
+			network.reconnect();
+		}
+		break;
+		case Network::Quit:
+		{
+			console.addLogMsg("* CONNECTION CLOSED BY SERVER");
+		}
+		break;
+	}
 }
 
 void Client::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
@@ -70,7 +86,6 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
 	// check the requested class
 	if ( _requested_class == NetWorm::classID )
 	{
-		console.addLogMsg("WORM NODE REQUESTED");
 		if(true)
 		{
 			game.addWorm(false);
@@ -78,21 +93,18 @@ void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested
 	}else if ( _requested_class == BasePlayer::classID )
 	{
 		// Creates a player class depending on the role
-		console.addLogMsg("PLAYER NODE REQUESTED");
 		if( _role == eZCom_RoleOwner )
 		{
-			console.addLogMsg("CREATING OWNER PLAYER");
 			BasePlayer* player = game.addPlayer ( Game::OWNER );
 			player->assignNetworkRole(false);
 		}else
 		{
-			console.addLogMsg("CREATING PROXY PLAYER");
 			BasePlayer* player = game.addPlayer ( Game::PROXY );
 			player->assignNetworkRole(false);
 		}
 	}else
 	{
-		console.addLogMsg("INVALID DYNAMIC NODE REQUEST");
+		console.addLogMsg("* ERROR: INVALID DYNAMIC NODE REQUEST");
 	}
 	
 }

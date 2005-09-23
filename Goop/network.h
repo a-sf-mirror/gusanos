@@ -17,9 +17,15 @@ public:
 	enum NetEvents
 	{
 		PLAYER_REQUEST,
-		RConMsg
+		RConMsg,
 	};
-		
+	
+	enum DConnEvents
+	{
+		ServerMapChange,
+		Quit
+	};
+	
 	Network();
 	~Network();
 	
@@ -32,7 +38,8 @@ public:
 	
 	void host();
 	void connect( const std::string &address);
-	void disconnect();
+	void disconnect( DConnEvents event = Quit );
+	void reconnect();
 	
 	void setServerID( ZCom_ConnID serverID );
 	ZCom_ConnID getServerID()
@@ -45,6 +52,8 @@ public:
 	
 	ZCom_Control* getZControl();
 	int getServerPing();
+	
+	int connCount;
 
 private:
 
@@ -54,6 +63,9 @@ private:
 	bool m_client;
 	
 	int m_serverPort;
+	
+	std::string m_lastServerAddr;
+	bool m_reconnect;
 	
 	ZoidCom* m_zcom;
 	ZCom_Control* m_control;

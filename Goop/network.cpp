@@ -22,6 +22,8 @@ Network::Network()
 {
 	m_zcom = NULL;
 	m_control = NULL;
+	connCount = 0;
+	m_reconnect = false;
 }
 
 Network::~Network()
@@ -69,6 +71,12 @@ void Network::update()
 		m_control->ZCom_processInput(eZCom_NoBlock);
 		m_control->ZCom_processOutput();
 	}
+	if( m_reconnect )
+	{
+		disconnect();
+		connect( m_lastServerAddr );
+		m_reconnect = false;
+	}
 }
 
 void Network::registerClasses() // Factorization of class registering in client and server
@@ -97,22 +105,41 @@ void Network::connect( const std::string &_address )
 	address.setAddress( eZCom_AddressUDP, 0, ( _address + ":" + cast<string>(m_serverPort) ).c_str() );
 	m_control->ZCom_Connect( address, NULL );
 	m_client = true;
+	m_lastServerAddr = _address;
 }
 
-void Network::disconnect()
+void Network::disconnect( DConnEvents event )
 {
-	game.removeNode();
 	if ( m_control )
 	{
-		m_control->ZCom_disconnectAll(NULL);
+		ZCom_BitStream *eventData = new ZCom_BitStream;
+		eventData->addInt( static_cast<int>( event ), 8 );
+		
+		m_control->ZCom_disconnectAll(eventData);
+		
+		int count = 0;
+		while ( count < 10 )
+		{
+			rest(50);
+			m_control->ZCom_processOutput();
+			++count;
+		}
 		m_control->Shutdown();
 	}
 	
 	delete m_control;
 	m_control = NULL;
+	connCount = 0;
 	m_client = false;
 	m_host = false;
 	m_serverID = ZCom_Invalid_ID;
+	
+	game.removeNode();
+}
+
+void Network::reconnect()
+{
+	m_reconnect = true;
 }
 
 void Network::setServerID(ZCom_ConnID serverID)
