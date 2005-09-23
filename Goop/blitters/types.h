@@ -14,8 +14,14 @@ typedef boost::uint16_t Pixel16;
 // Can contain two pixels in 565
 typedef boost::uint32_t Pixel16_2;
 
+typedef boost::uint8_t Pixel8;
+typedef boost::uint16_t Pixel8_2;
+typedef boost::uint32_t Pixel8_4;
+
+
 // Can contain one pixel in all formats.
 // Two pixels in 565 or 555.
+// Four pixels in 8-bit color
 // Prefered for manipulation
 // and passing around.
 typedef boost::uint_fast32_t Pixel;

@@ -381,15 +381,19 @@ void drawSprite_add_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int 
 void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blend_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
+void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
+inline void drawSprite_blendtint_8_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color)
+{
+	//TODO
+}
 
 void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blend_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
-void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
-
 void drawSprite_blendalpha_32_to_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
-void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
+void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
+void drawSprite_blendtint_8_to_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color);
 
 } // namespace Blitters
 
@@ -543,6 +547,11 @@ inline void drawSprite_blend(BITMAP* where, BITMAP* from, int x, int y, int fact
 inline void drawSprite_blendalpha(BITMAP* where, BITMAP* from, int x, int y, int fact)
 {
 	SELECT_SSE_OR_3DNOW_32(drawSprite_blendalpha_32_to, (where, from, x, y, 0, 0, 0, 0, fact));
+}
+
+inline void drawSprite_blendtint(BITMAP* where, BITMAP* from, int x, int y, int fact, int color)
+{
+	SELECT(drawSprite_blendtint_8_to, (where, from, x, y, 0, 0, 0, 0, fact, color));
 }
 
 inline void drawSprite_solid(BITMAP* where, BITMAP* from, int x, int y)

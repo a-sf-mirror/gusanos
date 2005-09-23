@@ -89,6 +89,7 @@ class Level
 	std::string path;
 	array<Material, 256> m_materialList;
 	Encoding::VectorEncoding vectorEncoding;
+	Encoding::VectorEncoding intVectorEncoding;
 	
 	struct ParticleBlockPredicate
 	{

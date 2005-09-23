@@ -330,12 +330,6 @@ void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, i
 		
 	if(bitmap_color_depth(from) != 32)
 	{
-		static bool once = true;
-		if(once)
-		{
-			once = false;
-			cerr << "From: " << from << endl;
-		}
 		return;
 	}
 	
@@ -356,6 +350,40 @@ void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, i
 			SPRITE_X_LOOP_T(
 				Pixel s = *src;
 				*dest = blendColorsFact_16(*dest, convertColor_32_to_16(s), ((s >> 24) * fact) >> (8+3))
+			)
+		)
+	}
+}
+
+void drawSprite_blendtint_8_to_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color)
+{
+	typedef Pixel8 pixel_t_src;
+	typedef Pixel32 pixel_t_dest;
+	
+	if(fact <= 0)
+		return;
+		
+	if(bitmap_color_depth(from) != 8)
+	{
+		return;
+	}
+	
+	CLIP_SPRITE_REGION();
+	
+	if(fact >= 255)
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_T(
+				*dest = blendColorsFact_32(*dest, color, (int)*src)
+			)
+		)
+	}
+	else
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_T(
+				Pixel s = *src;
+				*dest = blendColorsFact_32(*dest, color, (s * fact) >> 8)
 			)
 		)
 	}

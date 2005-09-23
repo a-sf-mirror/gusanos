@@ -59,6 +59,7 @@ using std::string;
 using std::list;
 using std::vector;
 using std::cerr;
+using std::cout;
 using std::endl;
 
 ZCom_ClassID Game::classID = ZCom_Invalid_ID;
@@ -111,12 +112,12 @@ string rConCmd(const list<string> &args)
 {
 	if ( !args.empty() && network.isClient() )
 	{
-		string tmp;
+		
 		list<string>::const_iterator iter = args.begin();
-		while ( iter != args.end() )
+		string tmp = *iter++;
+		for (; iter != args.end(); ++iter )
 		{
-			tmp += '"' + *iter + '"' + " ";
-			++iter;
+			tmp += " \"" + *iter + '"';
 		}
 		game.sendRConMsg( tmp );
 		return "";
@@ -277,13 +278,23 @@ void Game::init(int argc, char** argv)
 #endif
 }
 
-inline void addEvent(ZCom_BitStream* data, int event)
+inline void addEvent(ZCom_BitStream* data, Game::NetEvents event)
 {
-	data->addInt( event, 8 );
+	Encoding::encode( *data, static_cast<int>(event), Game::NetEventsCount );
 }
 
 void Game::think()
 {
+#ifndef DEDSERV
+	if(!messages.empty())
+	{
+		int size = messages.size();
+		int step = 1 + (size / 3);
+		if((messages.front().timeOut -= step) < 0)
+			messages.erase(messages.begin());
+	}
+#endif
+
 	if ( !m_node )
 		return;
 	
@@ -293,25 +304,26 @@ void Game::think()
 		eZCom_NodeRole    remote_role;
 		ZCom_ConnID       conn_id;
 		
-		ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
+		ZCom_BitStream* data = m_node->getNextEvent(&type, &remote_role, &conn_id);
 		switch(type)
 		{
 			case ZCom_Node::eEvent_User:
 			if ( data )
 			{
-				NetEvents event = (NetEvents)data->getInt(8);
+				NetEvents event = (NetEvents)Encoding::decode(*data, NetEventsCount);
 				switch ( event )
 				{
 					case eHole:
 					{
-						int index = data->getInt(8);
-						console.addLogMsg(cast<string>(index));
-						console.addLogMsg(cast<string>(event));
-						int x = data->getInt(32);
-						int y = data->getInt(32);
-						level.applyEffect( levelEffectList[index], x, y );
+						int index = Encoding::decode(*data, levelEffectList.size());
+						BaseVec<int> v = level.intVectorEncoding.decode<BaseVec<int> >(*data);
+						cerr << index << endl;
+						cerr << event << endl;
+						level.applyEffect( levelEffectList[index], v.x, v.y );
 					}
 					break;
+					
+					case NetEventsCount: break;
 				}
 			}
 			break;
@@ -323,9 +335,9 @@ void Game::think()
 				{
 					ZCom_BitStream *data = new ZCom_BitStream;
 					addEvent(data, eHole);
-					data->addInt( iter->index, 8);
-					data->addInt( iter->x, 32 );
-					data->addInt( iter->y, 32 );
+					Encoding::encode(*data, iter->index, levelEffectList.size());
+					level.intVectorEncoding.encode(*data, BaseVec<int>(iter->x, iter->y));
+					
 					m_node->sendEventDirect(eZCom_ReliableOrdered, data, conn_id );
 				}
 			}
@@ -334,6 +346,7 @@ void Game::think()
 			default: break; // Annoying warnings >:O
 		}
 	}
+
 }
 
 void Game::applyLevelEffect( LevelEffect* effect, int x, int y )
@@ -343,10 +356,11 @@ void Game::applyLevelEffect( LevelEffect* effect, int x, int y )
 		if ( level.applyEffect( effect, x, y ) && m_node && network.isHost() )
 		{
 			ZCom_BitStream *data = new ZCom_BitStream;
-			addEvent(data, static_cast<int>(eHole));
-			data->addInt(effect->getIndex(), 8); // TODO: Gliptic can optimize this if he wants ;O
-			data->addInt( x, 32 ); // this too ;OOO
-			data->addInt( y, 32 );
+
+			addEvent(data, eHole);
+			Encoding::encode(*data, effect->getIndex(), levelEffectList.size());
+			level.intVectorEncoding.encode(*data, BaseVec<int>(x, y));
+
 			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 			
 			appliedLevelEffects.push_back( LevelEffectEvent(effect->getIndex(), x, y ) );
@@ -639,7 +653,32 @@ void Game::setMod( const string& modname )
 
 void Game::displayChatMsg( std::string const& owner, std::string const& message)
 {
-	console.addLogMsg( "<" + owner + "> " + message );
+	displayMessage(ScreenMessage(ScreenMessage::Chat, '{' + owner + "}: " + message));
+}
+
+void Game::displayKillMsg( BasePlayer* killed, BasePlayer* killer )
+{
+	std::string str = "{" + killed->m_name + "} ";
+	
+	if(killed != killer)
+	{
+		str += "got killed by";
+		if(killer)
+			str += " {" + killer->m_name + '}';
+		else
+			str += " {\01305anonymous}";
+	}
+	else
+	{
+		str += "commited suicide";
+	}
+	
+	displayMessage(ScreenMessage(ScreenMessage::Death, str, 400));
+}
+
+void Game::displayMessage( ScreenMessage const& msg )
+{
+	messages.push_back(msg);
 }
 
 const string& Game::getMod()

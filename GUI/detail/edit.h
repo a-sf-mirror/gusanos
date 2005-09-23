@@ -14,7 +14,9 @@ public:
 	Edit(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes,
 	  std::string const& text = std::string(""))
-	: Wnd(parent, tagLabel, className, id, attributes, text), m_select(false), m_caretPos(0), m_selTo(0)
+	: Wnd(parent, tagLabel, className, id, attributes, text)
+	, m_select(false), m_caretPos(0), m_selTo(0)
+	, m_hscroll(0)
 	{
 
 	}
@@ -48,6 +50,8 @@ public:
 	
 	virtual bool charPressed(char c, int key);
 	
+	void assertCaretVisibility(Renderer* renderer);
+	
 	/*
 	virtual bool keyUp(int key);*/
 	
@@ -58,6 +62,7 @@ protected:
 	bool        m_select;
 	ulong		m_caretPos;
 	ulong		m_selTo;
+	long        m_hscroll;
 	
 /*
 	bool		m_OnlyNumbers;

@@ -8,6 +8,7 @@
 template<class T>
 struct BaseVec
 {
+	typedef T manip_t;
 	
 	BaseVec()
 	: x(T(0)), y(T(0))

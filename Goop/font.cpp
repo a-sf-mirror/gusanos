@@ -4,6 +4,7 @@
 
 //#include "resource_list.h"
 #include "resource_locator.h"
+#include "blitters/blitters.h"
 
 #include <allegro.h>
 #include <string>
@@ -12,6 +13,26 @@
 #include <iostream>
 
 using namespace std;
+
+array<Font::Color, 16> Font::palette =
+{
+	Color(255, 255, 255), //0
+	Color(0, 0, 0),       //1
+	Color(255, 0, 0),     //2
+	Color(0, 255, 0),     //3
+	Color(0, 0, 255),     //4
+	Color(255, 255, 0),   //5
+	Color(0, 255, 255),   //6
+	Color(255, 0, 255),   //7
+	Color(90, 90, 90),    //8
+	Color(170, 170, 170), //9
+	Color(128, 0, 0),     //10
+	Color(0, 128, 0),     //11
+	Color(0, 0, 128),     //12
+	Color(128, 128, 0),   //13
+	Color(0, 128, 128),   //14
+	Color(128, 0, 128),   //15
+};
 
 //ResourceList<Font> fontList("fonts/");
 ResourceLocator<Font> fontLocator;
@@ -58,23 +79,8 @@ Font::CharInfo* Font::lookupChar(char c)
 	return &m_chars[idx];
 }
 
-void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing, int cr, int cg, int cb)
-{/*
-	if(!m_supportColoring)
-	{
-		for(; b != e; ++b)
-		{
-			CharInfo *c = lookupChar(*b);
-			
-			masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
-			//draw_character_ex(where, c->subBitmap, x, y, color, -1);
-			
-			
-			x += c->width + c->spacing + spacing;
-		}
-	}
-	else
-	{*/
+void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing, int cr, int cg, int cb, int fact, int flags)
+{
 	int color = makecol(cr, cg, cb);
 	for(; b != e; ++b)
 	{
@@ -82,42 +88,50 @@ void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator
 		
 		//masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
 		if(c->subBitmap)
-			draw_character_ex(where, c->subBitmap, x, y, color, -1);
+		{
+			if(flags & Shadow)
+				drawSprite_blendtint(where, c->subBitmap, x + 2, y + 2, fact / 2, 0);
+			drawSprite_blendtint(where, c->subBitmap, x, y, fact, color);
+			
+		}
 
 		x += c->width + c->spacing + spacing;
 	}
-	/*}*/
+}
+
+void Font::drawFormatted( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing, int cr, int cg, int cb, int fact, int flags)
+{
+	CharFormatting format(CharFormatting::Item(Color(cr, cg, cb)));
+	for(; b != e; ++b)
+	{
+		while(checkFormatting(format, b, e))
+		{
+			if(b == e)
+				return;
+		}
+		CharInfo *c = lookupChar(*b);
+		
+		if(c->subBitmap)
+		{
+			if(flags & Shadow)
+				drawSprite_blendtint(where, c->subBitmap, x + 2, y + 2, fact / 2, 0);
+			drawSprite_blendtint(where, c->subBitmap, x, y, fact, format.cur.color.toAllegro());
+		}
+
+		x += c->width + c->spacing + spacing;
+	}
 }
 
 pair<int, int> Font::getDimensions(std::string const& text, int spacing)
 {
-	if(text.empty())
-		return zeroDimensions();
-		
-	string::const_iterator i = text.begin();
-	CharInfo *c = lookupChar(*i);
-	int w = c->width;
-	int h = c->height;
-	
-	++i;
-	
-	for(; i != text.end(); ++i)
-	{
-		w += c->spacing + spacing;
-		c = lookupChar(*i);
-		w += c->width;
-		if(c->height > h)
-			h = c->height;
-	}
-	
-	return make_pair(w, h);
+	return getDimensions(text.begin(), text.end(), spacing);
 }
 
 pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing)
 {
 	if(b == e)
 		return zeroDimensions();
-		
+
 	CharInfo *c = lookupChar(*b);
 	int w = c->width;
 	int h = c->height;
@@ -127,6 +141,44 @@ pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::c
 	for(; b != e; ++b)
 	{
 		w += c->spacing + spacing;
+		c = lookupChar(*b);
+		w += c->width;
+		if(c->height > h)
+			h = c->height;
+	}
+	
+	return make_pair(w, h);
+}
+
+pair<int, int> Font::getFormattedDimensions(std::string const& text, int spacing)
+{
+	return getFormattedDimensions(text.begin(), text.end(), spacing);
+}
+
+pair<int, int> Font::getFormattedDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing)
+{
+	if(b == e)
+		return zeroDimensions();
+	
+	while(skipFormatting(b, e))
+	{
+		if(b == e)
+			return zeroDimensions();
+	}
+	CharInfo *c = lookupChar(*b);
+	int w = c->width;
+	int h = c->height;
+	
+	++b;
+	
+	for(; b != e; ++b)
+	{
+		w += c->spacing + spacing;
+		while(skipFormatting(b, e))
+		{
+			if(b == e)
+				return make_pair(w, h);
+		}
 		c = lookupChar(*b);
 		w += c->width;
 		if(c->height > h)

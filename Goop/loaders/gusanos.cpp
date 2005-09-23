@@ -1,6 +1,6 @@
 #include "gusanos.h"
 #include "../gfx.h"
-//#include "../game.h"
+#include "../blitters/types.h"
 #include "../glua.h"
 #include <string>
 
@@ -90,17 +90,23 @@ bool GusanosFontLoader::load(Font* font, fs::path const& path)
 {
 	font->free();
 	
-	int oldColorDepth = get_color_depth();
-	int oldColorConversion = get_color_conversion();
-	set_color_depth(8);
-	set_color_conversion(COLORCONV_REDUCE_TO_256 | COLORCONV_KEEP_TRANS);
-
-	font->m_bitmap = load_bmp(path.native_file_string().c_str(), 0);
-	if(!font->m_bitmap)
-		return false;
+	{
+		LocalSetColorDepth cd(8);
+		LocalSetColorConversion cc(COLORCONV_REDUCE_TO_256 | COLORCONV_KEEP_TRANS);
+	
+		font->m_bitmap = load_bmp(path.native_file_string().c_str(), 0);
+		if(!font->m_bitmap)
+			return false;
 		
-	set_color_conversion(oldColorConversion);
-	set_color_depth(oldColorDepth);
+		// Change all non-transparent pixels to full opacity
+		for(int y = 0; y < font->m_bitmap->h; ++y)
+		for(int x = 0; x < font->m_bitmap->w; ++x)
+		{
+			Pixel8* p = font->m_bitmap->line[y] + x;
+			if(*p != 0)
+				*p = 255;
+		}
+	}
 		
 	font->m_supportColoring = true;
 		

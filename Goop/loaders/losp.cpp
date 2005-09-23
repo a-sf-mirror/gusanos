@@ -73,6 +73,8 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 		font->m_chars.push_back(Font::CharInfo(Rect(x, y, x + w, y + h), 0));
 	}
 	
+	font->m_chars[11] = font->m_chars[200];
+	
 	for(int y = 0; y < bitmapWidth; ++y)
 	{
 		for(int x = 0; x < bitmapHeight; ++x)
@@ -81,7 +83,7 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 			if(!f.get(v))
 				return false;
 				
-			int c = v ? 1 : 0;
+			int c = v ? 255 : 0;
 
 			putpixel(font->m_bitmap, x, y, c);
 		}

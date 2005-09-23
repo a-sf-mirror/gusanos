@@ -195,8 +195,8 @@ int main(int argc, char **argv)
 
 #ifndef DEDSERV
 			console.checkInput();
-			console.think();
 #endif
+			console.think();
 			
 			logicLast+=1;
 		}
@@ -234,9 +234,39 @@ int main(int argc, char **argv)
 			//debug info
 			if (showDebug)
 			{
-				game.infoFont->draw(gfx.buffer, "OBJECTS: " + cast<string>(game.objects.size()), 5, 10, 0);
-				game.infoFont->draw(gfx.buffer, "PLAYERS: " + cast<string>(game.players.size()), 5, 15, 0);
-				game.infoFont->draw(gfx.buffer, "PING:    " + cast<string>(network.getServerPing()), 5, 20, 0);
+				game.infoFont->drawFormatted(gfx.buffer, "OBJECTS: \01303" + cast<string>(game.objects.size()), 5, 10, 0);
+				game.infoFont->drawFormatted(gfx.buffer, "PLAYERS: \01303" + cast<string>(game.players.size()), 5, 15, 0);
+				game.infoFont->drawFormatted(gfx.buffer, "PING:    \01303" + cast<string>(network.getServerPing()), 5, 20, 0);
+			}
+			
+			int y = 235;
+			for(std::list<ScreenMessage>::reverse_iterator msgiter = game.messages.rbegin();
+			    msgiter != game.messages.rend() && y > 0;
+			    ++msgiter)
+			{
+				ScreenMessage const& msg = *msgiter;
+				
+				pair<int, int> dim = game.infoFont->getFormattedDimensions(msg.str);
+				
+				y -= dim.second;
+				
+				int fact = 255;
+				if(msg.timeOut < 100)
+					fact = msg.timeOut * 255 / 100;
+					
+				int r, g, b;
+				switch(msg.type)
+				{
+					case ScreenMessage::Chat:
+						r = 255; g = 255; b = 255;
+					break;
+					
+					case ScreenMessage::Death:
+						r = 0; g = 255; b = 0;
+					break;
+				}
+				
+				game.infoFont->drawFormatted(gfx.buffer, msg.str, 5, y, 0, r, g, b, fact, Font::Shadow);
 			}
 		}
 
@@ -244,7 +274,7 @@ int main(int argc, char **argv)
 		//show fps
 		if (showFps)
 		{
-			game.infoFont->draw(gfx.buffer, "FPS: " + cast<string>(_fps), 5, 5, 0);
+			game.infoFont->drawFormatted(gfx.buffer, "FPS: \01303" + cast<string>(_fps), 5, 5, 0);
 		}
 		_fpsCount++;
 

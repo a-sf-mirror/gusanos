@@ -867,8 +867,13 @@ void BaseWorm::dig( const Vec& digPos, Angle angle )
 void BaseWorm::die()
 {
 	m_isActive = false;
-	if (m_owner) m_owner->deaths++;
-	if (m_lastHurt) m_lastHurt->kills++;
+	if (m_owner)
+	{
+		m_owner->deaths++;
+		game.displayKillMsg(m_owner, m_lastHurt); //TODO: Record what weapon it was?
+	}
+	if (m_lastHurt && m_lastHurt != m_owner) m_lastHurt->kills++;
+	
 	m_ninjaRope->remove();
 	m_timeSinceDeath = 0;
 	if ( game.deathObject )

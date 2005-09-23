@@ -13,10 +13,40 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <boost/array.hpp>
+using boost::array;
 
 class Font
 {
 public:
+	enum Flags
+	{
+		Shadow = (1<<0),
+	};
+	
+	struct Color
+	{
+		Color()
+		{
+		}
+		
+		Color(int r_, int g_, int b_)
+		: r(r_), g(g_), b(b_)
+		{
+		}
+		
+		int toAllegro()
+		{
+			return makecol(r, g, b);
+		}
+		
+		int r;
+		int g;
+		int b;
+	};
+	
+	static array<Color, 16> palette;
+	
 	struct CharInfo
 	{
 		CharInfo()
@@ -42,25 +72,152 @@ public:
 		int  spacing; // Extra spacing to the next character
 		BITMAP* subBitmap;
 	};
+	
+	struct CharFormatting
+	{
+		struct Item
+		{
+			Item()
+			{
+			}
+			
+			Item(Color const& color_)
+			: color(color_)
+			{
+			}
+			
+			Color color;
+		};
+		
+		CharFormatting(Item item_)
+		: cur(item_), loc(0)
+		{
+		}
+		
+		void push()
+		{
+			if((size_t)loc < stack.size())
+				stack[loc] = cur;
+			++loc;
+		}
+		
+		void pop()
+		{
+			--loc;
+			if((size_t)loc < stack.size())
+				cur = stack[loc];
+		}
+		
+		Item cur;
+		int loc;
+		array<Item, 5> stack;
+	};
 		
 	Font();
 	~Font();
 	
 	void free();
 
-	void draw(BITMAP* where, std::string const& text, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255)
+	void draw(BITMAP* where, std::string const& text, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0)
 	{
-		draw(where, text.begin(), text.end(), x, y, spacing, cr, cg, cb);
+		draw(where, text.begin(), text.end(), x, y, spacing, cr, cg, cb, fact, flags);
 	}
 	
-	void draw(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255);
+	void draw(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0);
+	
+	void drawFormatted(BITMAP* where, std::string const& text, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0)
+	{
+		drawFormatted(where, text.begin(), text.end(), x, y, spacing, cr, cg, cb, fact, flags);
+	}
+	
+	void drawFormatted(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0);
 	
 	CharInfo* lookupChar(char c);
+	
+	template<class IteratorT>
+	char readChar(IteratorT& p, IteratorT end)
+	{
+		if(p != end)
+			return *p++;
+		return 0;
+	}
+		
+	template<class IteratorT>
+	bool checkFormatting(CharFormatting& format, IteratorT& p, IteratorT end)
+	{
+		char c = *p;
+		switch(c)
+		{
+			case '\013':
+			{
+				++p;
+				int colIndexA = readChar(p, end) - '0';
+				int colIndexB = readChar(p, end) - '0';
+				
+				int colIndex = colIndexA * 10 + colIndexB;
+				if((size_t)colIndex >= palette.size())
+					colIndex = 0;
+				
+				format.cur.color = palette[colIndex];
+				
+				return true;
+			}
+			break;
+			
+			case '{':
+			{
+				++p;
+				format.push();
+				return true;
+			}
+			break;
+			
+			case '}':
+			{
+				++p;
+				format.pop();
+				return true;
+			}
+			break;
+		}
+		
+		return false;
+	}
+	
+	template<class IteratorT>
+	bool skipFormatting(IteratorT& p, IteratorT end)
+	{
+		char c = *p;
+		switch(c)
+		{
+			case '\013':
+			{
+				++p;
+				readChar(p, end);
+				readChar(p, end);
+				return true;
+			}
+			break;
+			
+			case '{': case '}':
+			{
+				++p;
+				return true;
+			}
+			break;
+		}
+		
+		return false;
+	}
 	
 	// Returns the dimensions of 'text' when printed with the spacing 'spacing'
 	std::pair<int, int> getDimensions(std::string const& text, int spacing = 0);
 	
 	std::pair<int, int> getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing = 0);
+	
+	std::pair<int, int> getFormattedDimensions(std::string const& text, int spacing = 0);
+	
+	std::pair<int, int> getFormattedDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing = 0);
 	
 	// Returns an iterator to the first character between b and e that doesn't
 	// fit in 'space'

@@ -31,16 +31,22 @@ bool Edit::render(Renderer* renderer)
 	}
 		
 	//std::pair<int, int> dim = m_font->getDimensions(m_text.begin(), m_text.begin() + m_caretPos);
+	
+	assertCaretVisibility(renderer);
+	
+	int xoff = 5 - m_hscroll;
+	
 	if(m_active)
 	{
+		
 		std::pair<int, int> dim = renderer->getTextDimensions(*m_font, m_text.begin(), m_text.begin() + m_caretPos);
 		
 		if(m_selTo != m_caretPos)
 		{
 			std::pair<int, int> dim2 = renderer->getTextDimensions(*m_font, m_text.begin(), m_text.begin() + m_selTo);
 			
-			int x1 = m_rect.x1 + 5;
-			int x2 = x1;;
+			int x1 = m_rect.x1 + xoff;
+			int x2 = x1;
 			if(dim2.first < dim.first)
 				x1 += dim2.first, x2 += dim.first;
 			else
@@ -51,13 +57,11 @@ bool Edit::render(Renderer* renderer)
 			renderer->drawBox(Rect(x1, m_rect.y1 + 2, x2, m_rect.y2 - 2), color, color, color, color, color);
 		}
 		
-		
-		
-		renderer->drawVLine(m_rect.x1 + 5 + dim.first, m_rect.y1 + 2, m_rect.y2 - 2, RGB(0, 0, 0));
+		renderer->drawVLine(m_rect.x1 + xoff + dim.first, m_rect.y1 + 2, m_rect.y2 - 2, RGB(0, 0, 0));
 	}
 	
 	if(m_font)
-		renderer->drawText(*m_font, m_text, BaseFont::CenterV, m_rect.x1 + 5, m_rect.centerY(), m_formatting.fontColor);
+		renderer->drawText(*m_font, m_text, BaseFont::CenterV, m_rect.x1 + xoff, m_rect.centerY(), m_formatting.fontColor);
 	
 	return true;
 }
@@ -222,6 +226,21 @@ bool Edit::charPressed(char c, int key)
 	}
 	
 	return true;
+}
+
+void Edit::assertCaretVisibility(Renderer* renderer)
+{
+	std::pair<int, int> dim = renderer->getTextDimensions(*m_font, m_text.begin(), m_text.begin() + m_caretPos);
+	
+	int relCaretPos = dim.first - m_hscroll;
+	if(relCaretPos > getRect().getWidth())
+	{
+		m_hscroll += relCaretPos - getRect().getWidth() + 5;
+	}
+	else if(relCaretPos < 0)
+	{
+		m_hscroll += relCaretPos;
+	}
 }
 	
 /*

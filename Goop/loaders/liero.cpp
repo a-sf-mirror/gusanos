@@ -292,7 +292,7 @@ bool LieroFontLoader::load(Font* font, fs::path const& path)
 				if(v)
 					endy = y;
 				
-				int c = v ? 1 : 0;
+				int c = v ? 255 : 0;
 
 				putpixel(font->m_bitmap, x, y, c);
 			}

@@ -274,6 +274,7 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 	emms();
 }
 
+
 #define FBLEND_BLEND_16_4_MMX(source1, dest1, fact, r_mask, g_mask, b_mask, scratch1, scratch2, scratch3, scratch4) \
 	movq_rr(scratch1, source1);                                          \
 	movq_rr(scratch2, dest1);                                          \

@@ -289,5 +289,6 @@ void Level::loaderSucceeded()
 	// Make the domain one pixel larger than the level so that things like ninjarope hook
 	// can get slightly outside the level and attach.
 	vectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 2048);
+	intVectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 1);
 	cerr << "vectorEncoding: " << vectorEncoding.totalBits() << endl;
 }

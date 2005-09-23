@@ -52,33 +52,30 @@ public:
 		
 	T1* load( fs::path const& filename )
 	{
-		if ( !m_locked )
+		if ( m_locked )
+			return NULL;
+
+		typename std::map<fs::path, T1*>::iterator item = m_resItems.find(filename);
+		if (item != m_resItems.end())
 		{
-			typename std::map<fs::path, T1*>::iterator item = m_resItems.find(filename);
-			if (item != m_resItems.end())
+			return item->second;
+		}
+		else
+		{
+			T1 *i = new T1;
+			m_resItems[filename] = i;
+
+			if(load(filename, *i))
 			{
-				return item->second;
+				return i;
 			}
 			else
 			{
-				T1 *i = new T1;
-				m_resItems[filename] = i;
-	
-				if(load(filename, *i))
-				{
-					return i;
-				}
-				else
-				{
-					delete i;
-					item = m_resItems.find(filename);
-					m_resItems.erase(item);
-					return NULL;
-				}
+				delete i;
+				item = m_resItems.find(filename);
+				m_resItems.erase(item);
+				return NULL;
 			}
-		}else
-		{
-			return NULL;
 		}
 	}
 	
@@ -91,6 +88,11 @@ public:
 			m_resItemsIndex.push_back( item->second );
 			item->second->setIndex(i);
 		}
+	}
+	
+	size_t size()
+	{
+		return m_resItemsIndex.size();
 	}
 	
 	T1* operator[]( size_t index ) const

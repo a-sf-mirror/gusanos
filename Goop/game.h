@@ -82,13 +82,14 @@ struct ScreenMessage
 		Chat,
 	};
 	
-	ScreenMessage(Type type_, std::string const& str_)
-	: type(type_), str(str_)
+	ScreenMessage(Type type_, std::string const& str_, int timeOut_ = 400)
+	: type(type_), str(str_), timeOut(timeOut_)
 	{
 	}
 	
 	Type type;
 	std::string str;
+	int timeOut;
 };
 
 class Game
@@ -152,6 +153,8 @@ public:
 	
 	void sendRConMsg( std::string const & message );
 	void displayChatMsg( std::string const& owner, std::string const& message);
+	void displayKillMsg( BasePlayer* killed, BasePlayer* killer );
+	void displayMessage( ScreenMessage const& msg );
 	
 	Level level;
 	std::vector<WeaponType*> weaponList;
@@ -206,8 +209,12 @@ private:
 	
 	enum NetEvents
 	{
-		eHole
+		eHole = 0,
+		// Add here
+		NetEventsCount,
 	};
+	
+	friend inline void addEvent(ZCom_BitStream* data, NetEvents event);
 	
 	std::list<LevelEffectEvent> appliedLevelEffects;
 

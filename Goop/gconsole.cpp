@@ -611,9 +611,11 @@ bool GConsole::eventPrintableChar(char c, int k)
 	}
 	return true;
 }
+#endif
 
 void GConsole::think()
 {
+#ifndef DEDSERV
 	if ( height > 240 ) height=240;
 	if ( m_mode == CONSOLE_MODE_INPUT && m_pos < height )
 	{
@@ -624,14 +626,13 @@ void GConsole::think()
 	}
 	if (m_pos > height) m_pos = height;
 	if (m_pos < 0) m_pos = 0;
-	
+#endif
 	while( !commandsQueue.empty() )
 	{
 		console.parseLine( *commandsQueue.begin() );
 		commandsQueue.erase( commandsQueue.begin() );
 	}
 }
-#endif
 
 int GConsole::executeConfig(const std::string& filename)
 {

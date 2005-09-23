@@ -53,8 +53,8 @@ void Network::init()
 
 void Network::shutDown()
 {
-	if ( m_control ) delete m_control;
-	if ( m_zcom ) delete m_zcom;
+	delete m_control; m_control = 0;
+	delete m_zcom; m_zcom = 0;
 }
 
 void Network::registerInConsole()

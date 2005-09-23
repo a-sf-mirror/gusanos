@@ -2,6 +2,7 @@
 #define GUSANOS_ENCODING_H
 
 #include <utility>
+#include <cassert>
 //#include <boost/dynamic_bitset.hpp>
 #include "omfggui.h" // For Rect
 #include "zoidcom.h"
@@ -21,6 +22,19 @@ inline unsigned int bitsOf(unsigned long n)
 		bits++;
 		
 	return bits;
+}
+
+inline void encode(ZCom_BitStream& stream, int i, int count)
+{
+	assert(count > 0);
+	assert(i >= 0 && i < count);
+	stream.addInt(i, bitsOf(count - 1));
+}
+
+inline int decode(ZCom_BitStream& stream, int count)
+{
+	assert(count > 0);
+	return stream.getInt(bitsOf(count - 1));
 }
 
 struct VectorEncoding
@@ -64,33 +78,17 @@ struct VectorEncoding
 			
 		stream.addInt(x, bitsX);
 		stream.addInt(y, bitsY);
-		
-		/*
-		unsigned long n = y * width + x;
-		
-		dynamic_bitset<> b((dynamic_bitset<>::size_type)bitsX, x);
-		
-		for(int i = 0; i < bitsY; ++i)
-			b.push_back((y >> i) & 1); // Is this the best way really?
-			
-		return b;
-		*/
-		
 	}
 	
 	template<class T>
 	T decode(ZCom_BitStream& stream)
 	{
-		/*
-		unsigned long n = b.to_ulong();
-		
-		long y = n / width;
-		long x = n % width;*/
+		typedef typename T::manip_t manip_t;
 		
 		long x = stream.getInt(bitsX);
 		long y = stream.getInt(bitsY);
 		
-		return T(double(x) / subPixelAcc + area.x1, double(y) / subPixelAcc + area.y1);
+		return T(manip_t(x) / subPixelAcc + area.x1, manip_t(y) / subPixelAcc + area.y1);
 	}
 	
 	unsigned long totalBits()
