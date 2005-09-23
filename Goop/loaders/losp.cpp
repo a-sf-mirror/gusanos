@@ -73,7 +73,7 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 		font->m_chars.push_back(Font::CharInfo(Rect(x, y, x + w, y + h), 0));
 	}
 	
-	font->m_chars[11] = font->m_chars[200];
+	font->m_chars[11] = font->m_chars[(unsigned char)'^'];
 	
 	for(int y = 0; y < bitmapWidth; ++y)
 	{

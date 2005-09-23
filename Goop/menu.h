@@ -96,9 +96,7 @@ private:
 class GContext : public Context
 {
 public:
-	GContext()
-	{
-	}
+	GContext();
 	
 	void init();
 	

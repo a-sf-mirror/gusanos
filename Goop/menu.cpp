@@ -155,6 +155,12 @@ ulong GusanosSpriteSet::getFrameHeight(int frame, int angle) const
 	return spriteSet->getSprite(frame)->getHeight();
 }
 
+GContext::GContext()
+{
+	array<bool, 256>::iterator b = bindingLock.enable.begin();
+	std::fill(b + KEY_F1, b + KEY_ESC + 1, false);
+}
+
 void GContext::init()
 {
 	keyHandler.keyDown.connect(boost::bind(&GContext::eventKeyDown, this, _1));

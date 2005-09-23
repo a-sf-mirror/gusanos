@@ -877,13 +877,13 @@ int l_gui_wnd_set_visibility(lua_State* L)
 	return 0;
 }
 
-int l_gui_wnd_get_visibility(lua_State* L)
+int l_gui_wnd_is_visible(lua_State* L)
 {
 	OmfgGUI::Wnd* p = *static_cast<OmfgGUI::Wnd **>(lua_touserdata (L, 1));
 	
 	lua_pushboolean(L, p->isVisibile());
 
-	return 0;
+	return 1;
 }
 
 int l_gui_wnd_get_text(lua_State* L)
@@ -1099,6 +1099,10 @@ void addGUIWndFunctions(LuaContext& context)
 	
 	lua_pushstring(context, "set_visibility");
 	lua_pushcfunction(context, l_gui_wnd_set_visibility);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "is_visible");
+	lua_pushcfunction(context, l_gui_wnd_is_visible);
 	lua_rawset(context, -3);
 	
 	lua_pushstring(context, "get_text");

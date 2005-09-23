@@ -508,6 +508,7 @@ bool GConsole::eventKeyDown(int k)
 	{
 		if ( m_mode == CONSOLE_MODE_INPUT )	// If the console is in input mode toogle to Binding mode
 		{
+			clear_keybuf();
 			m_mode = CONSOLE_MODE_BINDINGS;
 			return false;
 		}
@@ -522,7 +523,11 @@ bool GConsole::eventKeyDown(int k)
 	else if ( m_mode == CONSOLE_MODE_BINDINGS )		// Only if in bindings mode
 	{
 		if(m_lockRefCount.at(k) <= 0)
+		{
 			analizeKeyEvent(true, k);
+			clear_keybuf();
+			return false;
+		}
 	}
 	else if ( m_mode == CONSOLE_MODE_INPUT )
 	{
@@ -565,7 +570,11 @@ bool GConsole::eventKeyUp(int k)
 	if ( m_mode == CONSOLE_MODE_BINDINGS )		// Only if in bindings mode
 	{
 		if(m_lockRefCount.at(k) <= 0)
+		{
 			analizeKeyEvent(false, k);
+			clear_keybuf();
+			return false;
+		}
 	}
 	else
 		return false;
