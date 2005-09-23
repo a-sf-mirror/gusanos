@@ -111,8 +111,10 @@ elif conf == 'lucas':
 		CPPPATH = ['/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_33'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib'],
 		CPPFLAGS = '-Wall ',
-		CXX='g++-3.4',
 		)
+	env.Replace(
+		CXX = 'g++-3.4',
+	)
 	
 	if build == 'release':
 		env.Append(CPPFLAGS = '-O3 -g -DNDEBUG ')
