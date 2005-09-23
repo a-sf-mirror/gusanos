@@ -653,7 +653,8 @@ void Game::setMod( const string& modname )
 
 void Game::displayChatMsg( std::string const& owner, std::string const& message)
 {
-	displayMessage(ScreenMessage(ScreenMessage::Chat, '{' + owner + "}: " + message));
+	console.addLogMsg('<' + owner + "> " + message);
+	displayMessage(ScreenMessage(ScreenMessage::Chat, '{' + owner + "}: " + message, 800));
 }
 
 void Game::displayKillMsg( BasePlayer* killed, BasePlayer* killer )

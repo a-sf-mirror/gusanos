@@ -262,7 +262,7 @@ int main(int argc, char **argv)
 					break;
 					
 					case ScreenMessage::Death:
-						r = 0; g = 255; b = 0;
+						r = 190; g = 190; b = 190;
 					break;
 				}
 				
