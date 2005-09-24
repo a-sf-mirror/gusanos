@@ -300,6 +300,9 @@ void drawSprite_blendtint_8_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, in
 	{
 		pxor_rr(mm7, mm7);
 		movq_rm(mm6, color);
+		movq_rr(mm5, mm6);
+		punpckldq_rr(mm5, mm5);
+		punpcklbw_rr(mm6, mm7); // mm6 = 00rr00gg00bb
 		SPRITE_Y_LOOP(
 			SPRITE_X_LOOP_NOALIGN(4,
 				Pixel s = *src;
@@ -308,12 +311,25 @@ void drawSprite_blendtint_8_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, in
 			,
 				prefetchnta(src[8]);
 				prefetcht0(dest[8]);
-				
 				movd_rm(mm0, src[0]);
-				punpcklbw_rr(mm0, mm7); // mm0 = dest0 = 00pa00pb00pc00pd
+				movq_rm(mm1, dest[0]);
+				punpcklbw_rr(mm0, mm7); // mm0 = src0-3 = 00pa00pb00pc00pd
+				movq_rr(mm2, mm1);
+				punpcklbw_rr(mm1, mm7); // mm1 = dest2 = 00rr00gg00bb
+				punpckhbw_rr(mm2, mm7); // mm2 = dest1 = 00rr00gg00bb
 				
-				pshufw_rri(mm1, mm0, SHUF_MASK(3, 3, 3, 3)); // mm1 = src2 = 00pa00pa00pa00pa
+				pshufw_rri(mm3, mm0, SHUF_MASK(3, 3, 3, 3)); // mm1 = src2 = 00pa00pa00pa00pa
+				pshufw_rri(mm4, mm0, SHUF_MASK(2, 2, 2, 2)); // mm1 = src2 = 00pa00pa00pa00pa
 				
+				psubw_rr(mm1, mm6);
+				psubw_rr(mm2, mm6);
+				pmullw_rr(mm1, mm3);
+				pmullw_rr(mm2, mm4);
+				psrlw_ri(mm1, 8);
+				
+				
+				
+				movq_rm(mm2, dest[2]);
 				
 				movq_rm(mm0, src[0]);    // mm0 = src1 | src2
 				movq_rm(mm1, src[2]);    // mm1 = src3 | src4
@@ -446,8 +462,8 @@ void drawSprite_blendtint_8_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, in
 	}
 	
 	emms();
-}*/
-
+}
+*/
 
 #define FBLEND_BLEND_16_4_MMX(source1, dest1, fact, r_mask, g_mask, b_mask, scratch1, scratch2, scratch3, scratch4) \
 	movq_rr(scratch1, source1);                                          \

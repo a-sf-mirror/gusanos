@@ -97,7 +97,9 @@ void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator
 		if(c->subBitmap)
 		{
 			if(flags & Shadow)
-				drawSprite_blendtint(where, c->subBitmap, x + 2, y + 2, fact / 2, 0);
+			{
+				drawSprite_blendtint(where, c->subBitmap, x + 1, y + 1, fact, 0);
+			}
 			drawSprite_blendtint(where, c->subBitmap, x, y, fact, format.cur.color.toAllegro());
 		}
 

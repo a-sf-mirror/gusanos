@@ -11,6 +11,8 @@
 #include "glua.h"
 #include "math_func.h" // for rndgen
 
+#include "network.h" //TEMP
+
 #include <allegro.h>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
@@ -245,8 +247,15 @@ string restCmd(list<string> const& args)
 	{
 		std::list<string>::const_iterator i = args.begin();
 		
-		rest(cast<int>(*i));
-
+		int t = cast<int>(*i);
+		
+		for(; t > 400; t -= 400)
+		{
+			rest(400);
+			network.getZControl()->ZCom_processInput(eZCom_NoBlock);
+			network.getZControl()->ZCom_processOutput();
+		}
+		
 		return "DONE";
 	}
 	

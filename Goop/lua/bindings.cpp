@@ -116,6 +116,12 @@ int l_abs(lua_State* L)
 	return 1;
 }
 
+int l_floor(lua_State* L)
+{
+	lua_pushnumber(L, floor(luaL_checknumber(L, 1)));
+	return 1;
+}
+
 int l_randomint(lua_State* L)
 {
 	int l = (int)luaL_checknumber(L, 1);
@@ -363,7 +369,7 @@ int l_font_render(lua_State* L)
 		int cr = static_cast<int>(lua_tonumber(L, 6));
 		int cg = static_cast<int>(lua_tonumber(L, 7));
 		int cb = static_cast<int>(lua_tonumber(L, 8));
-		f->draw(b, s, x, y, 0, cr, cg, cb);
+		f->draw(b, s, x, y, 0, 255, cr, cg, cb);
 	}
 	else
 		f->draw(b, s, x, y, 0);
@@ -1179,6 +1185,7 @@ void init()
 	context.function("print", print);
 	context.function("sqrt", l_sqrt);
 	context.function("abs", l_abs);
+	context.function("floor", l_floor);
 	
 	context.function("randomint", l_randomint);
 	context.function("randomfloat", l_randomfloat);

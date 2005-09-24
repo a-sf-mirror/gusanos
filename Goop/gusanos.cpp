@@ -317,7 +317,7 @@ int main(int argc, char **argv)
 				while(b != e);
 			}
 			
-			rectfill_blend(gfx.buffer, 3, y-2, 3+w+5, 237, 0, 130);
+			//rectfill_blend(gfx.buffer, 3, y-2, 3+w+5, 237, 0, 130);
 			
 			for(std::list<ScreenMessage>::iterator msgiter = rmsgiter.base();
 			    msgiter != game.messages.end();
@@ -327,9 +327,9 @@ int main(int argc, char **argv)
 				
 				string::const_iterator b = msg.str.begin(), e = msg.str.end(), n;
 				
-				int fact = 150;
+				int fact = 255;
 				if(msg.timeOut < 100)
-					fact = msg.timeOut * 150 / 100;
+					fact = msg.timeOut * 255 / 100;
 				
 				Font::CharFormatting format;
 				switch(msg.type)
