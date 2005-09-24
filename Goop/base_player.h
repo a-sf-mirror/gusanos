@@ -85,7 +85,7 @@ public:
 	void sendSyncMessage( ZCom_ConnID id ); // Its the initializing message that is sent to new clients that recieve the node.
 	
 	void nameChangePetition(); // Asks the server to change the name to the one in the player options.
-	void changeName( const std::string& name ); // Changes the name and if its server it will tell all clients about it.
+	void changeName( const std::string& name, bool forceChange = false ); // Changes the name and if its server it will tell all clients about it.
 	
 	void baseActionStart( BaseActions action );
 	void baseActionStop( BaseActions action );

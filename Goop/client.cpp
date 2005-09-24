@@ -66,6 +66,16 @@ void Client::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 			console.addLogMsg("* CONNECTION CLOSED BY SERVER");
 		}
 		break;
+		case Network::Kick:
+		{
+			console.addLogMsg("* YOU WERE KICKED");
+		}
+		break;
+		default:
+		{
+			console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");
+		}
+		break;
 	}
 }
 

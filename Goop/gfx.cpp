@@ -541,7 +541,12 @@ string screenShot(const list<string> &args)
 	string filename;
 	do
 	{
-		filename = "screenshots/ss" + cast<string>(nameIndex) + ".png";
+		string ssIndex = cast<string>(nameIndex);
+		while ( ssIndex.size() < 3 )
+		{
+			ssIndex = "0" + ssIndex;
+		}
+		filename = "screenshots/ss" + ssIndex + ".png";
 		++nameIndex;
 	} while( exists( filename.c_str() ) );
 #endif

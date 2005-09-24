@@ -150,6 +150,42 @@ string rConCmd(const list<string> &args)
 	return "";
 }
 
+string kickCmd(const list<string> &args)
+{
+	if ( !network.isClient() && !args.empty() )
+	{
+		BasePlayer* player2Kick = NULL;
+		for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+		{
+			if ( (*iter)->m_name == *args.begin() )
+			{
+				player2Kick = *iter;
+				break;
+			}
+		}
+		if ( player2Kick )
+		{
+			bool isLocal = false;
+			for ( std::vector<Player*>::iterator iter = game.localPlayers.begin(); iter != game.localPlayers.end(); iter++)
+			{
+				if ( (*iter)->m_name == player2Kick->m_name )
+				{
+					isLocal = true;
+					break;
+				}
+			}
+			if (!isLocal)
+			{
+				player2Kick->deleteMe = true;
+				network.kick( player2Kick->getConnectionID() );
+				return "PLAYER KICKED";
+			}
+		}
+		return "PLAYER NOT FOUND OR IS LOCAL";
+	}
+	return "KICK <PLAYER_NAME> : KICKS THE PLAYER WITH THE SPECIFIED NAME";
+}
+
 void Options::registerInConsole()
 {
 	console.registerVariables()
@@ -196,6 +232,7 @@ void Options::registerInConsole()
 		(string("ADDBOT"), addbotCmd)
 		(string("CONNECT"),connectCmd)
 		(string("RCON"),rConCmd)
+		(string("KICK"),kickCmd)
 	;
 }
 

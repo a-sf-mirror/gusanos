@@ -47,6 +47,7 @@ void Network::init()
 		console.addLogMsg("* ERROR: UNABLE TO INITIALIZE ZOIDCOM NETWORK LIB");
 	}else
 	{
+		m_zcom->setConnectionTimeout( 20000 );
 		console.addLogMsg("* ZOIDCOM NETWORK LIB INITIALIZED");
 		console.addLogMsg("* FOR MORE INFO VISIT WWW.ZOIDCOM.COM");
 	}
@@ -101,12 +102,12 @@ void Network::connect( const std::string &_address )
 	disconnect();
 	m_control = new Client( 0 );
 	registerClasses();
-	game.assignNetworkRole( false ); // Gives the game class node proxy role
 	ZCom_Address address;
 	address.setAddress( eZCom_AddressUDP, 0, ( _address + ":" + cast<string>(m_serverPort) ).c_str() );
 	m_control->ZCom_Connect( address, NULL );
 	m_client = true;
 	m_lastServerAddr = _address;
+	game.assignNetworkRole( false ); // Gives the game class node proxy role
 }
 
 void Network::disconnect( DConnEvents event )
@@ -141,6 +142,16 @@ void Network::disconnect( DConnEvents event )
 void Network::reconnect()
 {
 	m_reconnect = true;
+}
+
+void Network::kick( ZCom_ConnID connId )
+{
+	if( m_control )
+	{
+		ZCom_BitStream *eventData = new ZCom_BitStream;
+		eventData->addInt( static_cast<int>( Kick ), 8 );
+		m_control->ZCom_Disconnect( connId, eventData );
+	}
 }
 
 void Network::setServerID(ZCom_ConnID serverID)

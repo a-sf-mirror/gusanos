@@ -22,6 +22,7 @@ public:
 	
 	enum DConnEvents
 	{
+		Kick,
 		ServerMapChange,
 		Quit
 	};
@@ -40,6 +41,8 @@ public:
 	void connect( const std::string &address);
 	void disconnect( DConnEvents event = Quit );
 	void reconnect();
+	
+	void kick( ZCom_ConnID connId );
 	
 	void setServerID( ZCom_ConnID serverID );
 	ZCom_ConnID getServerID()

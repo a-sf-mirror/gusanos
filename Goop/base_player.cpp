@@ -131,7 +131,7 @@ void BasePlayer::think()
 						break;
 						case NAME_CHANGE:
 						{
-							changeName( data->getStringStatic() );
+							changeName( data->getStringStatic(), true );
 						}
 						break;
 						case NAME_PETITION:
@@ -213,16 +213,38 @@ inline void addActionStop(ZCom_BitStream* data, int action)
 #endif
 }
 
-void BasePlayer::changeName( const std::string& name )
+bool nameIsTaken( const std::string& name )
 {
+	list<BasePlayer*>::iterator playerIter;
+	for ( playerIter = game.players.begin(); playerIter != game.players.end(); playerIter++ )
+	{
+		if ( (*playerIter)->m_name == name )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void BasePlayer::changeName( const std::string& name, bool forceChange )
+{
+	string nameToUse = name;
+	
+	int nameSuffix = 0;
+	while ( nameIsTaken( nameToUse ) && !forceChange )
+	{
+		++nameSuffix;
+		nameToUse = name + "(" + cast<string>(nameSuffix) + ")";
+	}
+	
 	if(!m_name.empty())
-		console.addLogMsg( "* " + m_name + " CHANGED NAME TO " + name );
-	m_name = name;
+		console.addLogMsg( "* " + m_name + " CHANGED NAME TO " + nameToUse );
+	m_name = nameToUse;
 	if ( m_node && m_isAuthority )
 	{
 		ZCom_BitStream *data = new ZCom_BitStream;
 		addEvent(data, NAME_CHANGE);
-		data->addString( name.c_str() );
+		data->addString( nameToUse.c_str() );
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 	}
 }
