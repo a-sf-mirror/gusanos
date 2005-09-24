@@ -72,7 +72,8 @@ string mapCmd(const list<string> &args)
 	{
 		string tmp = *args.begin();
 		std::transform(tmp.begin(), tmp.end(), tmp.begin(), (int(*)(int)) tolower);
-		game.changeLevelCmd( tmp );
+		if(!game.changeLevelCmd( tmp ))
+			return "ERROR LOADING MAP";
 		return "";
 	}
 	return "MAP <MAPNAME> : LOAD A MAP";
@@ -84,7 +85,8 @@ string gameCmd(const list<string> &args)
 	{
 		string tmp = *args.begin();
 		std::transform(tmp.begin(), tmp.end(), tmp.begin(), (int(*)(int)) tolower);
-		game.setMod( tmp );
+		if(!game.setMod( tmp ))
+			return "MOD " + tmp + " NOT FOUND";
 		return "THE GAME WILL CHANGE THE NEXT TIME YOU CHANGE MAP";
 	}
 	return "GAME <MODNAME> : SET THE MOD TO LOAD THE NEXT MAP CHANGE";
@@ -317,8 +319,6 @@ void Game::think()
 					{
 						int index = Encoding::decode(*data, levelEffectList.size());
 						BaseVec<int> v = level.intVectorEncoding.decode<BaseVec<int> >(*data);
-						cerr << index << endl;
-						cerr << event << endl;
 						level.applyEffect( levelEffectList[index], v.x, v.y );
 					}
 					break;
@@ -526,10 +526,24 @@ void Game::refreshResources()
 	levelEffectList.addPath(fs::path("default/mapeffects"));
 }
 
-void Game::changeLevelCmd(const std::string& levelName )
+void Game::refreshLevels()
 {
+	levelLocator.clear();
+	levelLocator.addPath(fs::path("default/maps"));
+	levelLocator.addPath(fs::path(nextMod) / "maps");
+	levelLocator.refresh();
+}
+
+bool Game::changeLevelCmd(const std::string& levelName )
+{
+	refreshLevels();
+	if(!levelLocator.exists(levelName))
+		return false;
+	
 	network.disconnect( Network::ServerMapChange );
-	changeLevel( levelName );
+	
+	if(!changeLevel( levelName, false ))
+		return false;
 
 	if ( options.host && !network.isClient() )
 	{
@@ -538,7 +552,6 @@ void Game::changeLevelCmd(const std::string& levelName )
 #endif
 	}
 	
-	//cerr << "Creating players and worms" << endl;
 	// All this is temporal, dont be scared ;D
 	if ( loaded && level.isLoaded() ) 
 	{
@@ -564,12 +577,18 @@ void Game::changeLevelCmd(const std::string& levelName )
 			}
 		}
 	}
-	//cerr << "changeLevel() done." << endl;
+	
+	return true;
 }
 
-void Game::changeLevel(const std::string& levelName )
+bool Game::changeLevel(const std::string& levelName, bool refresh )
 {
-	//cerr << "Unloading resources" << endl;
+	if(refresh)
+		refreshLevels();
+		
+	if(!levelLocator.exists(levelName))
+		return false;
+	
 	unload();
 	LuaBindings::init();
 	
@@ -579,10 +598,7 @@ void Game::changeLevel(const std::string& levelName )
 	level.setName(levelName);
 	refreshResources();
 	//cerr << "Loading level" << endl;
-	levelLocator.clear();
-	levelLocator.addPath(fs::path("default/maps"));
-	levelLocator.addPath(fs::path(nextMod) / "maps");
-	levelLocator.refresh();
+	
 	
 	levelLocator.load(&level, levelName);
 #ifdef USE_GRID
@@ -591,6 +607,7 @@ void Game::changeLevel(const std::string& levelName )
 	//cerr << "Loading mod" << endl;
 	loadMod();
 	
+	return true;
 }
 
 void Game::assignNetworkRole( bool authority )
@@ -637,18 +654,21 @@ void Game::removeNode()
 	m_node = NULL;
 }
 
-void Game::setMod( const string& modname )
+bool Game::setMod( const string& modname )
 {
 	if ( file_exists( modname.c_str(), FA_DIREC, NULL) ) //TODO: Change to Boost.Filesystem
 	{
 		nextMod = modname;
 	}
-	else nextMod = m_modName;
+	else
+	{
+		nextMod = m_modName;
+		return false;
+	}
 	
-	levelLocator.clear();
-	levelLocator.addPath(fs::path("default/maps"));
-	levelLocator.addPath(fs::path(nextMod) / "maps");
-	levelLocator.refresh();
+	refreshLevels();
+	
+	return true;
 }
 
 void Game::displayChatMsg( std::string const& owner, std::string const& message)

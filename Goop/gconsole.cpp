@@ -238,6 +238,20 @@ string rndSeedCmd(list<string> const& args)
 	
 	return "RND_SEED <SEED> : SEEDS THE RANDOM GENERATOR WITH <SEED>";
 }
+
+string restCmd(list<string> const& args)
+{
+	if(args.size() > 0)
+	{
+		std::list<string>::const_iterator i = args.begin();
+		
+		rest(cast<int>(*i));
+
+		return "DONE";
+	}
+	
+	return "REST <MS> : RESTS FOR A NUMBER OF MILLISECONDS";
+}
 /////////////////////////////// Console //////////////////////////////////////
 
 //============================= LIFECYCLE ====================================
@@ -304,6 +318,7 @@ void GConsole::init()
 		(string("ALIAS"), aliasCmd)
 		(string("ECHO"), echoCmd)
 		(string("RND_SEED"), rndSeedCmd)
+		(string("REST"), restCmd)
 	;
 	
 	currentCommand = commandsLog.end(); //To workaround a crashbug with uninitialized iterator
@@ -353,7 +368,7 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 		e = m_font->fitString(b, e, 320-5, dim);
 		y -= dim.second;
 		m_font->draw(where, e.base(), b.base(), 5, y);
-				
+		
 		for(list<string>::reverse_iterator msgiter = log.rbegin();
 		    msgiter != log.rend() && y > 0;
 		    ++msgiter)
@@ -366,7 +381,7 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 			do
 			{
 				pair<int, int> dim;
-				n = m_font->fitString(b, e, 320-5, dim);
+				n = m_font->fitString(b, e, 320-5, dim, 0, Font::Formatting);
 				if(n == b)
 					break;
 				b = n;
@@ -380,13 +395,19 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 			
 			int y2 = y;
 			
+			Font::CharFormatting format(
+				Font::CharFormatting::Item(
+					Font::Color(255, 255, 255)
+					)
+				);
+			
 			do
 			{
 				pair<int, int> dim;
-				n = m_font->fitString(b, e, 320-5, dim);
+				n = m_font->fitString(b, e, 320-5, dim, 0, Font::Formatting);
 				if(n == b)
 					break;
-				m_font->draw(where, b, n, 5, y2, 0);
+				m_font->draw(where, b, n, 5, y2, format, 0, 255, Font::Formatting);
 				y2 += dim.second;
 				
 				b = n;

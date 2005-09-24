@@ -53,7 +53,8 @@ void Weapon::think( bool isFocused, size_t index )
 			if ( network.isHost() )
 			{
 				ZCom_BitStream* data = new ZCom_BitStream;
-				data->addInt( OUTOFAMMO , 8);
+				//data->addInt( OUTOFAMMO , 8);
+				Encoding::encode(*data, OUTOFAMMO, EventsCount);
 				m_owner->sendWeaponMessage( index, data );
 				delete data;
 			}
@@ -68,7 +69,8 @@ void Weapon::think( bool isFocused, size_t index )
 				if ( network.isHost() )
 				{
 					ZCom_BitStream* data = new ZCom_BitStream;
-					data->addInt( RELOADED , 8);
+					//data->addInt( RELOADED , 8);
+					Encoding::encode(*data, RELOADED, EventsCount);
 					m_owner->sendWeaponMessage( index, data );
 					delete data;
 				}
@@ -117,7 +119,8 @@ void Weapon::drawBottom(BITMAP* where, int x, int y )
 
 void Weapon::recieveMessage( ZCom_BitStream* data )
 {
-	switch ( static_cast<Events>( data->getInt(8) ) )
+	Events event = static_cast<Events>(Encoding::decode(*data, EventsCount));
+	switch ( event )
 	{
 		case OUTOFAMMO:
 		{

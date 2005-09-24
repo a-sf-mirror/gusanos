@@ -133,14 +133,15 @@ public:
 	
 	void think();
 	
-	void setMod(const std::string& mod);
+	bool setMod(const std::string& mod);
 	void loadWeapons();
 	void unload();
 	void loadMod();
 	bool isLoaded();
 	void refreshResources();
-	void changeLevel(const std::string& level);
-	void changeLevelCmd(const std::string& level);
+	void refreshLevels();
+	bool changeLevel(const std::string& level, bool refresh = true);
+	bool changeLevelCmd(const std::string& level);
 	void addBot();
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
 	BasePlayer* addPlayer( PLAYER_TYPE player );

@@ -86,7 +86,8 @@ private:
 	{
 		NO_FILTER,
 		SCANLINES,
-		SCANLINES2
+		SCANLINES2,
+		BILINEAR
 	};
 #endif
 

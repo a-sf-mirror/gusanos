@@ -4,6 +4,7 @@
 
 #ifndef DEDSERV
 #include "blitters/blitters.h"
+#include "blitters/macros.h"
 #endif
 #include <boost/bind.hpp>
 #include <boost/assign/list_inserter.hpp>
@@ -105,8 +106,6 @@ void Gfx::registerInConsole()
 		("VID_CLEAR_BUFFER", &m_clearBuffer, 0)
 		("VID_BITDEPTH", &m_bitdepth, 32)
 		("VID_DISTORTION_AA", &m_distortionAA, 1)
-		("MOO", &m_distortionAA, 1)
-		("MOOMOO", &m_distortionAA, 1)
 	;
 	
 	// NOTE: When/if adding a callback to gfx variables, make it do nothing if
@@ -119,6 +118,7 @@ void Gfx::registerInConsole()
 			("NOFILTER", NO_FILTER)
 			("SCANLINES", SCANLINES)
 			("SCANLINES2", SCANLINES2)
+			("BILINEAR", BILINEAR)
 			//("2XSAI", AA2XSAI) // To be included later.
 		;
 
@@ -165,7 +165,7 @@ void Gfx::updateScreen()
 				switch(bitmap_color_depth(screen))
 				{
 					case 32:
-
+					{
 						acquire_screen();
 
 						bmp_select(screen);
@@ -191,6 +191,7 @@ void Gfx::updateScreen()
 						bmp_unwrite_line(screen);
 						
 						release_screen();
+					}
 					break;
 					
 					case 16:
@@ -313,6 +314,51 @@ void Gfx::updateScreen()
 				}
 				release_screen();
 				blitFromBuffer = false;
+			break;
+			
+			case BILINEAR:
+			{
+				switch(bitmap_color_depth(screen))
+				{
+					case 32:
+					{
+						typedef Pixel32 pixel_t_1;
+						
+						FILTER_2X_TO_VIDEO(
+							bmp_write32(dest, ul)
+						,
+							bmp_write32(dest, Blitters::blendColorsHalfCrude_32(ul, ur))
+						,
+							bmp_write32(dest, Blitters::blendColorsHalfCrude_32(ul, ll))
+						,
+							bmp_write32(dest, Blitters::blendColorsHalfCrude_32(
+								Blitters::blendColorsHalfCrude_32(ul, ur),
+								Blitters::blendColorsHalfCrude_32(ll, lr)))
+						)
+					}
+					break;
+					
+					case 16:
+					{
+						typedef Pixel16 pixel_t_1;
+						
+						FILTER_2X_TO_VIDEO(
+							bmp_write16(dest, ul)
+						,
+							bmp_write16(dest, Blitters::blendColorsHalf_16_2(ul, ur))
+						,
+							bmp_write16(dest, Blitters::blendColorsHalf_16_2(ul, ll))
+						,
+							bmp_write16(dest, Blitters::blendColorsHalf_16_2(
+								Blitters::blendColorsHalf_16_2(ul, ur),
+								Blitters::blendColorsHalf_16_2(ll, lr)))
+						)
+					}
+					break;
+				}
+				
+				blitFromBuffer = false;
+			}
 			break;
 		}
 		if(blitFromBuffer)

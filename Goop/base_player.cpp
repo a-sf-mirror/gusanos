@@ -97,9 +97,19 @@ void BasePlayer::think()
 							if ( ( action == FIRE ) && m_worm)
 							{
 								m_worm->aimAngle = Angle((int)data->getInt(Angle::prec));
-								baseActionStart(action);
+								if(m_worm->aimAngle > Angle(180.0))
+								{
+									m_worm->aimAngle = -m_worm->aimAngle;
+									m_worm->setDir(-1);
+								}
+								else
+								{
+									m_worm->setDir(1);
+								}
+								m_worm->aimAngle.clamp();
 							}
-							else baseActionStart(action);
+							
+							baseActionStart(action);
 						}
 						break;
 						case ACTION_STOP:
@@ -406,7 +416,7 @@ void BasePlayer::baseActionStart ( BaseActions action )
 				{
 					ZCom_BitStream *data = new ZCom_BitStream;
 					addActionStart(data, FIRE);
-					data->addInt(int(m_worm->aimAngle), Angle::prec);
+					data->addInt(int(m_worm->getAngle()), Angle::prec);
 					m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 				}
 			}

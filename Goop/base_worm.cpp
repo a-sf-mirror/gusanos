@@ -797,7 +797,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 				int wx = x - dim.first / 2;
 				int wy = y - dim.second / 2 - 10;
 							
-				game.infoFont->draw(where, weaponName, wx, wy, 0);
+				game.infoFont->draw(where, weaponName, wx, wy);
 			}
 			
 			if ( true && m_owner && !dynamic_cast<Player*>(m_owner) )
@@ -807,7 +807,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 				int wx = x - dim.first / 2;
 				int wy = y - dim.second / 2 - 10;
 								
-				game.infoFont->draw(where, playerName, wx, wy, 0);
+				game.infoFont->draw(where, playerName, wx, wy);
 			}
 		}
 		

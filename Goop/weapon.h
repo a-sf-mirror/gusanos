@@ -22,9 +22,10 @@ public:
 	
 	enum Events
 	{
-		RELOADED,
-		SHOOT,
-		OUTOFAMMO
+		RELOADED = 0,
+		//SHOOT, //unused?
+		OUTOFAMMO,
+		EventsCount,
 	};
 		
 	Weapon(WeaponType* type, BaseWorm* owner);

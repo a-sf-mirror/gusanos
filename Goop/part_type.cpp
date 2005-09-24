@@ -69,6 +69,13 @@ void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec sp
 	game.objects.insert( particle, type->colLayer, type->renderLayer);
 }
 
+#ifdef DEDSERV
+void newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
+{
+	// dummy
+}
+#endif
+
 PartType::PartType()
 : newParticle(0), wupixels(0)
 {
@@ -417,7 +424,7 @@ bool PartType::load(fs::path const& filename)
 				}
 			}
 #else
-			newParticle = newParticle_SimpleParticle<SimpleParticle>;
+			newParticle = newParticle_Dummy;
 #endif
 			cerr << filename.native_file_string() << ": blood" << endl;
 		}

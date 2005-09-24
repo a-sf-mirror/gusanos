@@ -79,11 +79,18 @@ Font::CharInfo* Font::lookupChar(char c)
 	return &m_chars[idx];
 }
 
-void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing, int cr, int cg, int cb, int fact, int flags)
+void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, CharFormatting& format, int spacing, int fact, int flags)
 {
-	int color = makecol(cr, cg, cb);
 	for(; b != e; ++b)
 	{
+		if(flags & Formatting)
+		{
+			while(checkFormatting(format, b, e))
+			{
+				if(b == e)
+					return;
+			}
+		}
 		CharInfo *c = lookupChar(*b);
 		
 		//masked_blit(m_bitmap, where, c->rect.x1, c->rect.y1, x, y, c->width, c->height);
@@ -91,17 +98,16 @@ void Font::draw( BITMAP* where, string::const_iterator b, string::const_iterator
 		{
 			if(flags & Shadow)
 				drawSprite_blendtint(where, c->subBitmap, x + 2, y + 2, fact / 2, 0);
-			drawSprite_blendtint(where, c->subBitmap, x, y, fact, color);
-			
+			drawSprite_blendtint(where, c->subBitmap, x, y, fact, format.cur.color.toAllegro());
 		}
 
 		x += c->width + c->spacing + spacing;
 	}
 }
 
-void Font::drawFormatted( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing, int cr, int cg, int cb, int fact, int flags)
+/*
+void Font::drawFormatted( BITMAP* where, string::const_iterator b, string::const_iterator e, int x, int y, int spacing, int fact, int flags)
 {
-	CharFormatting format(CharFormatting::Item(Color(cr, cg, cb)));
 	for(; b != e; ++b)
 	{
 		while(checkFormatting(format, b, e))
@@ -120,17 +126,26 @@ void Font::drawFormatted( BITMAP* where, string::const_iterator b, string::const
 
 		x += c->width + c->spacing + spacing;
 	}
-}
+}*/
 
-pair<int, int> Font::getDimensions(std::string const& text, int spacing)
+pair<int, int> Font::getDimensions(std::string const& text, int spacing, int flags)
 {
-	return getDimensions(text.begin(), text.end(), spacing);
+	return getDimensions(text.begin(), text.end(), spacing, flags);
 }
 
-pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing)
+pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing, int flags)
 {
 	if(b == e)
 		return zeroDimensions();
+	
+	if(flags & Formatting)
+	{
+		while(skipFormatting(b, e))
+		{
+			if(b == e)
+				return zeroDimensions();
+		}
+	}
 
 	CharInfo *c = lookupChar(*b);
 	int w = c->width;
@@ -141,6 +156,14 @@ pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::c
 	for(; b != e; ++b)
 	{
 		w += c->spacing + spacing;
+		if(flags & Formatting)
+		{
+			while(skipFormatting(b, e))
+			{
+				if(b == e)
+					return make_pair(w, h);
+			}
+		}
 		c = lookupChar(*b);
 		w += c->width;
 		if(c->height > h)
@@ -150,6 +173,7 @@ pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::c
 	return make_pair(w, h);
 }
 
+/*
 pair<int, int> Font::getFormattedDimensions(std::string const& text, int spacing)
 {
 	return getFormattedDimensions(text.begin(), text.end(), spacing);
@@ -186,7 +210,7 @@ pair<int, int> Font::getFormattedDimensions(std::string::const_iterator b, std::
 	}
 	
 	return make_pair(w, h);
-}
+}*/
 
 pair<int, int> Font::zeroDimensions()
 {

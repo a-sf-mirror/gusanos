@@ -389,6 +389,40 @@ void drawSprite_blendtint_8_to_32(BITMAP* where, BITMAP* from, int x, int y, int
 	}
 }
 
+void drawSprite_blendtint_8_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color)
+{
+	typedef Pixel8 pixel_t_src;
+	typedef Pixel16 pixel_t_dest;
+	
+	if(fact <= 0)
+		return;
+		
+	if(bitmap_color_depth(from) != 8)
+	{
+		return;
+	}
+	
+	CLIP_SPRITE_REGION();
+		
+	if(fact >= 255)
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_T(
+				*dest = blendColorsFact_16(*dest, color, (int)*src >> 3)
+			)
+		)
+	}
+	else
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_T(
+				Pixel s = *src;
+				*dest = blendColorsFact_16(*dest, color, (s * fact) >> (8+3))
+			)
+		)
+	}
+}
+
 } //namespace Blitters
 
 #endif

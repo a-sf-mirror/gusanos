@@ -5,8 +5,12 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <iostream>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
+
+using std::cerr;
+using std::endl;
 
 template<typename T1>
 class ResourceList
@@ -50,7 +54,7 @@ public:
 		return false;
 	}
 		
-	T1* load( fs::path const& filename )
+	T1* load( fs::path const& filename, bool suppressError = false )
 	{
 		if ( m_locked )
 			return NULL;
@@ -74,6 +78,8 @@ public:
 				delete i;
 				item = m_resItems.find(filename);
 				m_resItems.erase(item);
+				if(!suppressError)
+					cerr << "ERROR: Could not load " << filename.native_file_string() << endl;
 				return NULL;
 			}
 		}

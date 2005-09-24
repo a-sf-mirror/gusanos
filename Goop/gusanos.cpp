@@ -234,39 +234,127 @@ int main(int argc, char **argv)
 			//debug info
 			if (showDebug)
 			{
-				game.infoFont->drawFormatted(gfx.buffer, "OBJECTS: \01303" + cast<string>(game.objects.size()), 5, 10, 0);
-				game.infoFont->drawFormatted(gfx.buffer, "PLAYERS: \01303" + cast<string>(game.players.size()), 5, 15, 0);
-				game.infoFont->drawFormatted(gfx.buffer, "PING:    \01303" + cast<string>(network.getServerPing()), 5, 20, 0);
+				game.infoFont->draw(gfx.buffer, "OBJECTS: \01303" + cast<string>(game.objects.size()), 5, 10, 0, 255, 255, 255, 255, Font::Formatting);
+				game.infoFont->draw(gfx.buffer, "PLAYERS: \01303" + cast<string>(game.players.size()), 5, 15, 0, 255, 255, 255, 255, Font::Formatting);
+				game.infoFont->draw(gfx.buffer, "PING:    \01303" + cast<string>(network.getServerPing()), 5, 20, 0, 255, 255, 255, 255, Font::Formatting);
+			}
+			/*
+			int y = 235;
+			int w = 0;
+			std::list<ScreenMessage>::reverse_iterator rmsgiter = game.messages.rbegin();
+			for(; rmsgiter != game.messages.rend() && y > 150;
+			    ++rmsgiter)
+			{
+				ScreenMessage const& msg = *rmsgiter;
+				
+				pair<int, int> dim = game.infoFont->getDimensions(msg.str, 0, Font::Formatting);
+				
+				y -= dim.second;
+				
+				if(dim.first > w)
+					w = dim.first;
 			}
 			
-			int y = 235;
-			for(std::list<ScreenMessage>::reverse_iterator msgiter = game.messages.rbegin();
-			    msgiter != game.messages.rend() && y > 0;
+			rectfill_blend(gfx.buffer, 3, y-2, 3+w+5, 237, 0, 130);
+			
+			for(std::list<ScreenMessage>::iterator msgiter = rmsgiter.base();
+			    msgiter != game.messages.end() && y < 240;
 			    ++msgiter)
 			{
 				ScreenMessage const& msg = *msgiter;
 				
-				pair<int, int> dim = game.infoFont->getFormattedDimensions(msg.str);
+				pair<int, int> dim = game.infoFont->getDimensions(msg.str, 0, Font::Formatting);
 				
-				y -= dim.second;
-				
-				int fact = 255;
+				int fact = 150;
 				if(msg.timeOut < 100)
-					fact = msg.timeOut * 255 / 100;
+					fact = msg.timeOut * 150 / 100;
 					
-				int r, g, b;
+				Font::CharFormatting format;
 				switch(msg.type)
 				{
 					case ScreenMessage::Chat:
-						r = 255; g = 255; b = 255;
+						format.cur.color = Font::Color(255, 255, 255);
 					break;
 					
 					case ScreenMessage::Death:
-						r = 190; g = 190; b = 190;
+						format.cur.color = Font::Color(200, 255, 200);
 					break;
 				}
 				
-				game.infoFont->drawFormatted(gfx.buffer, msg.str, 5, y, 0, r, g, b, fact, Font::Shadow);
+				game.infoFont->draw(gfx.buffer, msg.str, 5, y, format, 0, fact, Font::Formatting | Font::Shadow);
+				
+				y += dim.second;
+			}
+			*/
+			
+			int miny = 150;
+			int maxw = 160;
+			int y = 235;
+			int w = 0;
+			
+			std::list<ScreenMessage>::reverse_iterator rmsgiter = game.messages.rbegin();
+			
+			for(;
+		    rmsgiter != game.messages.rend() && y > miny;
+		    ++rmsgiter)
+			{
+				ScreenMessage const& msg = *rmsgiter;
+				
+				string::const_iterator b = msg.str.begin(), e = msg.str.end(), n;
+				
+				do
+				{
+					pair<int, int> dim;
+					n = game.infoFont->fitString(b, e, maxw, dim, 0, Font::Formatting);
+					if(n == b)
+						break;
+					b = n;
+					y -= dim.second;
+					
+					if(dim.first > w)
+						w = dim.first;
+				}
+				while(b != e);
+			}
+			
+			rectfill_blend(gfx.buffer, 3, y-2, 3+w+5, 237, 0, 130);
+			
+			for(std::list<ScreenMessage>::iterator msgiter = rmsgiter.base();
+			    msgiter != game.messages.end();
+			    ++msgiter)
+			{
+				ScreenMessage const& msg = *msgiter;
+				
+				string::const_iterator b = msg.str.begin(), e = msg.str.end(), n;
+				
+				int fact = 150;
+				if(msg.timeOut < 100)
+					fact = msg.timeOut * 150 / 100;
+				
+				Font::CharFormatting format;
+				switch(msg.type)
+				{
+					case ScreenMessage::Chat:
+						format.cur.color = Font::Color(255, 255, 255);
+					break;
+					
+					case ScreenMessage::Death:
+						format.cur.color = Font::Color(200, 255, 200);
+					break;
+				}
+				
+				do
+				{
+					pair<int, int> dim;
+					n = game.infoFont->fitString(b, e, maxw, dim, 0, Font::Formatting);
+					if(n == b)
+						break;
+					game.infoFont->draw(gfx.buffer, b, n, 5, y, format, 0, fact, Font::Formatting | Font::Shadow);
+					y += dim.second;
+					
+					b = n;
+				}
+				while(b != e);
 			}
 		}
 
@@ -274,7 +362,7 @@ int main(int argc, char **argv)
 		//show fps
 		if (showFps)
 		{
-			game.infoFont->drawFormatted(gfx.buffer, "FPS: \01303" + cast<string>(_fps), 5, 5, 0);
+			game.infoFont->draw(gfx.buffer, "FPS: \01303" + cast<string>(_fps), 5, 5, 0, 255, 255, 255, 255, Font::Formatting);
 		}
 		_fpsCount++;
 

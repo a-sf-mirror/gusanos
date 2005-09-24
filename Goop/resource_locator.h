@@ -104,6 +104,9 @@ struct ResourceLocator
 	
 	// Loads and returns the named resource or, if it was loaded already, returns a cached version
 	T* load(std::string const& name);
+	
+	// Returns true if the named resource can be loaded
+	bool exists(std::string const& name);
 
 	// Registers a new loader for this resource type
 	void registerLoader(BaseLoader* loader)
@@ -119,7 +122,6 @@ private:
 	NamedResourceMap m_namedResources; //The resource list
 	
 	std::list<BaseLoader *> m_loaders; // Registered loaders
-	//std::set<fs::path>      m_paths; // Paths to scan
 	std::list<fs::path>     m_paths; // Paths to scan
 };
 
@@ -227,6 +229,16 @@ T* ResourceLocator<T, Cache, ReturnResource>::load(std::string const& name)
 		i->second.cached = resource;
 	
 	return resource;
+}
+
+template<class T, bool Cache, bool ReturnResource>
+bool ResourceLocator<T, Cache, ReturnResource>::exists(std::string const& name)
+{
+	typename NamedResourceMap::iterator i = m_namedResources.find(name);
+	if(i == m_namedResources.end())
+		return false;
+		
+	return true;
 }
 
 #endif //GUSANOS_RESOURCE_LOCATOR_H

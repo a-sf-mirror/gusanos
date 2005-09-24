@@ -50,16 +50,30 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 		
 	if(!f)
 		return false;
+		
+	bool full = false;
+		
+	if(bitmapWidth < 0)
+	{
+		bitmapWidth = -bitmapWidth;
+		full = true;
+	}
 
 	font->m_bitmap = create_bitmap_ex(8, bitmapWidth, bitmapHeight);
 	if(!font->m_bitmap)
 		return false;
 		
 	font->m_supportColoring = true;
-		
-	font->m_chars.assign(32, Font::CharInfo(Rect(0, 0, 1, 1), 0));
 	
-	for(int i = 0; i < 224; ++i)
+	int max = 224;
+	if(full)
+	{
+		max = 256;
+	}
+	else
+		font->m_chars.assign(32, Font::CharInfo(Rect(0, 0, 1, 1), 0));
+	
+	for(int i = 0; i < max; ++i)
 	{
 		int x, y, w, h;
 		f.read((char *)&x, 4);
@@ -73,7 +87,8 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 		font->m_chars.push_back(Font::CharInfo(Rect(x, y, x + w, y + h), 0));
 	}
 	
-	font->m_chars[11] = font->m_chars[(unsigned char)'^'];
+	if(!full)
+		font->m_chars[11] = font->m_chars[(unsigned char)'^'];
 	
 	for(int y = 0; y < bitmapWidth; ++y)
 	{
@@ -83,7 +98,7 @@ bool LOSPFontLoader::load(Font* font, fs::path const& path)
 			if(!f.get(v))
 				return false;
 				
-			int c = v ? 255 : 0;
+			int c = (unsigned char)v;
 
 			putpixel(font->m_bitmap, x, y, c);
 		}

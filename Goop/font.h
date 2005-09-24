@@ -22,6 +22,7 @@ public:
 	enum Flags
 	{
 		Shadow = (1<<0),
+		Formatting = (1<<1),
 	};
 	
 	struct Color
@@ -78,6 +79,7 @@ public:
 		struct Item
 		{
 			Item()
+			: color(255, 255, 255)
 			{
 			}
 			
@@ -88,6 +90,11 @@ public:
 			
 			Color color;
 		};
+		
+		CharFormatting()
+		: loc(0)
+		{
+		}
 		
 		CharFormatting(Item item_)
 		: cur(item_), loc(0)
@@ -117,21 +124,34 @@ public:
 	~Font();
 	
 	void free();
+	
+	void draw(BITMAP* where, std::string const& text, int x, int y, int spacing = 0, int fact = 256, int cr = 255, int cg = 255, int cb = 255, int flags = 0)
+	{
+		CharFormatting format(CharFormatting::Item(Color(cr, cg, cb)));
+		draw(where, text.begin(), text.end(), x, y, format, spacing, fact, flags);
+	}
 
-	void draw(BITMAP* where, std::string const& text, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0)
+	void draw(BITMAP* where, std::string const& text, int x, int y, CharFormatting& format, int spacing = 0, int fact = 256, int flags = 0)
 	{
-		draw(where, text.begin(), text.end(), x, y, spacing, cr, cg, cb, fact, flags);
+		draw(where, text.begin(), text.end(), x, y, format, spacing, fact, flags);
 	}
 	
-	void draw(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0);
-	
-	void drawFormatted(BITMAP* where, std::string const& text, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0)
+	void draw(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0, int fact = 256, int cr = 255, int cg = 255, int cb = 255, int flags = 0)
 	{
-		drawFormatted(where, text.begin(), text.end(), x, y, spacing, cr, cg, cb, fact, flags);
+		CharFormatting format(CharFormatting::Item(Color(cr, cg, cb)));
+		draw(where, b, e, x, y, format, spacing, fact, flags);
 	}
 	
-	void drawFormatted(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0, int cr = 255, int cg = 255, int cb = 255, int fact = 256, int flags = 0);
+	void draw(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, CharFormatting& format, int spacing = 0, int fact = 256, int flags = 0);
 	
+/*
+	void drawFormatted(BITMAP* where, std::string const& text, int x, int y, int spacing = 0, int fact = 256, int flags = 0, CharFormatting& format = CharFormatting())
+	{
+		drawFormatted(where, text.begin(), text.end(), x, y, spacing, fact, flags, format);
+	}
+	
+	void drawFormatted(BITMAP* where, std::string::const_iterator b, std::string::const_iterator e, int x, int y, int spacing = 0, int fact = 256, int flags = 0, CharFormatting& format = CharFormatting());
+*/
 	CharInfo* lookupChar(char c);
 	
 	template<class IteratorT>
@@ -211,21 +231,30 @@ public:
 	}
 	
 	// Returns the dimensions of 'text' when printed with the spacing 'spacing'
-	std::pair<int, int> getDimensions(std::string const& text, int spacing = 0);
+	std::pair<int, int> getDimensions(std::string const& text, int spacing = 0, int flags = 0);
 	
-	std::pair<int, int> getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing = 0);
+	std::pair<int, int> getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing = 0, int flags = 0);
 	
+/*
 	std::pair<int, int> getFormattedDimensions(std::string const& text, int spacing = 0);
 	
 	std::pair<int, int> getFormattedDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing = 0);
-	
+*/
 	// Returns an iterator to the first character between b and e that doesn't
 	// fit in 'space'
 	template<class IteratorT>
-	IteratorT fitString(IteratorT b, IteratorT e, int space, int spacing = 0)
+	IteratorT fitString(IteratorT b, IteratorT e, int space, int spacing = 0, int flags = 0)
 	{
 		for(; b != e; ++b)
 		{
+			if(flags & Formatting)
+			{
+				while(skipFormatting(b, e))
+				{
+					if(b == e)
+						return e;
+				}
+			}
 			CharInfo* c = lookupChar(*b);
 			if(c->width > space)
 				return b;
@@ -237,7 +266,7 @@ public:
 	
 	// Dimension calculating version
 	template<class IteratorT>
-	IteratorT fitString(IteratorT b, IteratorT e, int space, std::pair<int, int>& dim, int spacing = 0)
+	IteratorT fitString(IteratorT b, IteratorT e, int space, std::pair<int, int>& dim, int spacing = 0, int flags = 0)
 	{
 		dim.second = 0;
 		
@@ -245,6 +274,17 @@ public:
 		
 		for(; b != e; ++b)
 		{
+			if(flags & Formatting)
+			{
+				while(skipFormatting(b, e))
+				{
+					if(b == e)
+					{
+						dim.first = oldSpace - space; // TODO: Remove spacing for last character
+						return e;
+					}
+				}
+			}
 			CharInfo* c = lookupChar(*b);
 			
 			if(c->width > space)
@@ -263,6 +303,60 @@ public:
 		return e;
 	}
 	
+/*
+	template<class IteratorT>
+	IteratorT fitFormattedString(IteratorT b, IteratorT e, int space, int spacing = 0)
+	{
+		for(; b != e; ++b)
+		{
+			while(skipFormatting(b, e))
+			{
+				if(b == e)
+					return b;
+			}
+			CharInfo* c = lookupChar(*b);
+			if(c->width > space)
+				return b;
+			space -= c->width - c->spacing - spacing;
+		}
+		
+		return e;
+	}
+	
+	// Dimension calculating version
+	template<class IteratorT>
+	IteratorT fitFormattedString(IteratorT b, IteratorT e, int space, std::pair<int, int>& dim, int spacing = 0)
+	{
+		dim.second = 0;
+		
+		int oldSpace = space;
+		
+		for(; b != e; ++b)
+		{
+			while(skipFormatting(b, e))
+			{
+				if(b == e)
+					return b;
+			}
+			
+			CharInfo* c = lookupChar(*b);
+			
+			if(c->width > space)
+			{
+				dim.first = oldSpace - space; // TODO: Remove spacing for last character
+				return b;
+			}
+
+			space -= c->width - c->spacing - spacing;
+
+			if(c->height > dim.second)
+				dim.second = c->height;
+		}
+		
+		dim.first = oldSpace - space; // TODO: Remove spacing for last character
+		return e;
+	}
+	*/
 	// Returns a (0, 0) pair
 	std::pair<int, int> zeroDimensions();
 	

@@ -91,7 +91,7 @@ public:
 	//right ( it will wrap the value so that its always inside the worm's weapons size )
 	int getWeaponIndexOffset( int offset );
 	Angle getAngle();
-	void setDir(int d); // Made by nym, may be evil, I think its not used and it can be removed
+	void setDir(int d); // Made by nym, may be evil, I think its not used and it can be removed -- Well, I'm using it now so ;o
 	int getDir() { return m_dir; }
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();

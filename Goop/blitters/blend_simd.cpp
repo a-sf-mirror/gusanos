@@ -274,6 +274,180 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 	emms();
 }
 
+/*
+void drawSprite_blendtint_8_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color)
+{
+	typedef Pixel32 pixel_t_1;
+	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
+	
+	if(fact <= 0)
+		return;
+	
+	CLIP_SPRITE_REGION();
+
+	static unsigned long long rb_mask32 = 0x00FF00FF00FF00FFull;
+	//static unsigned long long g_mask32  = 0x0000FF000000FF00ull;
+	
+	movq_rm(mm6, fact);
+	punpcklwd_rr(mm6, mm5); // 0000000000ff00ff
+	punpcklwd_rr(mm6, mm5); // 00ff00ff00ff00ff
+	
+	
+	
+	#define SHUF_MASK(a, b, c, d) ((a << 6) | (b << 4) | (c << 2) | d)
+
+	if(fact >= 255)
+	{
+		pxor_rr(mm7, mm7);
+		movq_rm(mm6, color);
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_NOALIGN(4,
+				Pixel s = *src;
+				if(s != maskcolor_32)
+					*dest = blendColorsHalfCrude_32(*dest, s)
+			,
+				prefetchnta(src[8]);
+				prefetcht0(dest[8]);
+				
+				movd_rm(mm0, src[0]);
+				punpcklbw_rr(mm0, mm7); // mm0 = dest0 = 00pa00pb00pc00pd
+				
+				pshufw_rri(mm1, mm0, SHUF_MASK(3, 3, 3, 3)); // mm1 = src2 = 00pa00pa00pa00pa
+				
+				
+				movq_rm(mm0, src[0]);    // mm0 = src1 | src2
+				movq_rm(mm1, src[2]);    // mm1 = src3 | src4
+				
+				movq_rm(mm2, dest[0]);   // mm2 = dest1 | dest2
+				movq_rm(mm3, dest[2]);   // mm3 = dest3 | dest4
+				
+				movq_rr(mm4, mm0);
+				movq_rr(mm5, mm1);
+				
+				pcmpeqd_rm(mm0, rb_mask32);
+				pcmpeqd_rm(mm1, rb_mask32);
+				movq_rr(mm6, mm2);
+				movq_rr(mm7, mm3);
+				pand_rr(mm6, mm0);
+				pand_rr(mm7, mm1);
+				pandn_rr(mm0, mm4);
+				pandn_rr(mm1, mm5);
+				por_rr(mm0, mm6);
+	    		por_rr(mm1, mm7);
+				
+				
+				pavgb_rr(mm0, mm2);
+				pavgb_rr(mm1, mm3);
+				
+				movq_mr(dest[0], mm0);
+				movq_mr(dest[2], mm1);
+			)
+		)
+	}
+	else
+	{
+		movd_rm(mm5, fact);
+		punpcklwd_rr(mm5, mm5); // 0000000000ff00ff
+		punpcklwd_rr(mm5, mm5); // 00ff00ff00ff00ff
+		
+		static unsigned long long fact32;
+		
+		movq_mr(fact32, mm5);
+
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP_NOALIGN(4,
+				Pixel s = *src;
+				if(s != maskcolor_32)
+					*dest = blendColorsFact_32(*dest, s, fact)
+			,
+				prefetchnta(src[8]);
+				prefetcht0(dest[8]);
+				
+				movq_rm(mm0, src[0]);    // mm0 = src1 | src2
+				movq_rm(mm1, src[2]);    // mm1 = src3 | src4
+				
+				movq_rm(mm2, dest[0]);   // mm2 = dest1 | dest2
+				movq_rm(mm3, dest[2]);   // mm3 = dest3 | dest4
+				
+				movq_rr(mm4, mm0);
+				movq_rr(mm5, mm1);
+
+				// Can this be optimized?
+				pcmpeqd_rm(mm0, rb_mask32);
+				pcmpeqd_rm(mm1, rb_mask32);
+				movq_rr(mm6, mm2);
+				movq_rr(mm7, mm3);
+				pand_rr(mm6, mm0);
+				pand_rr(mm7, mm1);
+				pandn_rr(mm0, mm4);
+				pandn_rr(mm1, mm5);
+				por_rr(mm0, mm6);
+	    		por_rr(mm1, mm7);
+	    		
+				pxor_rr(mm7, mm7);
+
+				// Do src1/2 - dest1/2
+				
+				movq_rr(mm4, mm0);
+			
+				punpcklbw_rr(mm0, mm7); // mm0 = src2 = 00rr00gg00bb
+				punpckhbw_rr(mm4, mm7); // mm4 = src1 = 00rr00gg00bb
+				
+				movq_rr(mm6, mm2);
+				movq_rr(mm5, mm2);
+			
+				punpcklbw_rr(mm2, mm7); // mm2 = dest2 = 00rr00gg00bb
+				punpckhbw_rr(mm6, mm7); // mm6 = dest1 = 00rr00gg00bb
+				
+				psubw_rr(mm0, mm2);
+				psubw_rr(mm4, mm6);
+				
+				movq_rm(mm6, fact32);
+				
+				pmullw_rr(mm0, mm6);
+				pmullw_rr(mm4, mm6);
+				psrlw_ri(mm0, 8);
+				psrlw_ri(mm4, 8);
+				
+				packuswb_rr(mm0, mm4);  // mm0 = scaled1 | scaled2
+				
+				paddb_rr(mm0, mm5);
+				
+				// Do src3/4 - dest3/4
+				
+				movq_rr(mm4, mm1);
+				
+				punpcklbw_rr(mm1, mm7); // mm1 = src4 = 00rr00gg00bb
+				punpckhbw_rr(mm4, mm7); // mm4 = src3 = 00rr00gg00bb
+				
+				movq_rr(mm2, mm3);
+				movq_rr(mm5, mm3);
+				
+				punpcklbw_rr(mm3, mm7); // mm3 = dest4 = 00rr00gg00bb
+				punpckhbw_rr(mm2, mm7); // mm6 = dest3 = 00rr00gg00bb
+				
+				psubw_rr(mm1, mm3);
+				psubw_rr(mm4, mm2);
+				
+				pmullw_rr(mm1, mm6);
+				pmullw_rr(mm4, mm6);
+				psrlw_ri(mm1, 8);
+				psrlw_ri(mm4, 8);
+
+				packuswb_rr(mm1, mm4);  // mm1 = scaled3 | scaled4
+				
+				paddb_rr(mm1, mm5);
+
+				movq_mr(dest[0], mm0);
+				movq_mr(dest[2], mm1);
+				
+			)
+		)
+	}
+	
+	emms();
+}*/
+
 
 #define FBLEND_BLEND_16_4_MMX(source1, dest1, fact, r_mask, g_mask, b_mask, scratch1, scratch2, scratch3, scratch4) \
 	movq_rr(scratch1, source1);                                          \
