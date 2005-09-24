@@ -632,6 +632,7 @@ bool GConsole::eventPrintableChar(char c, int k)
 		}
 		else if (c == '\t') //Tab
 		{
+			/*
 			string autoCompText = autoComplete( m_inputBuff );
 			if (m_inputBuff == autoCompText)
 			{
@@ -640,6 +641,9 @@ bool GConsole::eventPrintableChar(char c, int k)
 			{
 				m_inputBuff = autoCompText;
 			}
+			*/
+			
+			m_inputBuff = autoComplete( m_inputBuff );
 		}
 		else // No special keys where detected so the char gets added to the string
 		{

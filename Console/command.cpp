@@ -15,8 +15,8 @@ Command::~Command()
 {
 }
 
-Command::Command(CallbackT const& func)
-: m_func(func)
+Command::Command(CallbackT const& func, CompleteCallbackT const& completeFunc)
+: m_func(func), m_completeFunc(completeFunc)
 {
 
 }
@@ -26,4 +26,14 @@ Command::Command(CallbackT const& func)
 string Command::invoke(std::list<std::string> const& args)
 {
 	return m_func(args);
+}
+
+std::string Command::completeArgument(int idx, std::string const& beginning)
+{
+	if(m_completeFunc)
+	{
+		return m_completeFunc(m_owner, idx, beginning);
+	}
+	else
+		return beginning;
 }

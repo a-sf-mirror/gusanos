@@ -79,6 +79,29 @@ string mapCmd(const list<string> &args)
 	return "MAP <MAPNAME> : LOAD A MAP";
 }
 
+struct MapIterGetText
+{
+	template<class IteratorT>
+	std::string const& operator()(IteratorT i) const
+	{
+		return i->first;
+	}
+};
+
+string mapCompleter(Console* con, int idx, std::string const& beginning)
+{
+	if(idx != 0)
+		return beginning;
+		
+	return shellComplete(
+		levelLocator.getMap(),
+		beginning.begin(),
+		beginning.end(),
+		MapIterGetText(),
+		ConsoleAddLines(*con)
+	);
+}
+
 string gameCmd(const list<string> &args)
 {
 	if (!args.empty())
@@ -168,7 +191,7 @@ void Options::registerInConsole()
 	;
 	
 	console.registerCommands()
-		(string("MAP"), mapCmd)
+		(string("MAP"), mapCmd, mapCompleter)
 		(string("GAME"), gameCmd)
 		(string("ADDBOT"), addbotCmd)
 		(string("CONNECT"),connectCmd)

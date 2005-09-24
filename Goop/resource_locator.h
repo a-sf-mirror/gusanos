@@ -57,6 +57,8 @@ struct ResourceLocator
 		T* cached;
 	};
 	
+	typedef std::map<std::string, ResourceInfo, IStrCompare> NamedResourceMap;
+	
 	// Refreshes the internal resource list by
 	// scanning the path list after resources that can
 	// be loaded by any of the registered loaders.
@@ -114,10 +116,13 @@ struct ResourceLocator
 		m_loaders.push_back(loader);
 	}
 	
+	NamedResourceMap const& getMap()
+	{
+		return m_namedResources;
+	}
+	
 private:
 	void refresh(fs::path const& path);
-	
-	typedef std::map<std::string, ResourceInfo, IStrCompare> NamedResourceMap;
 	
 	NamedResourceMap m_namedResources; //The resource list
 	

@@ -28,6 +28,8 @@ class Console
 {
 public:
 
+	typedef std::map<std::string, ConsoleItem*, IStrCompare> ItemMap;
+	
 	struct RegisterVariableProxy
 	{
 		RegisterVariableProxy(Console& console)
@@ -73,6 +75,13 @@ public:
 			return *this;
 		}
 		
+		template<class FT, class CFT>
+		RegisterCommandProxy const& operator()(std::string const& name, FT func, CFT completeFunc) const
+		{
+			m_console.registerCommand(name, new Command(func, completeFunc));
+			return *this;
+		}
+		
 		template<class FT>
 		RegisterCommandProxy const& operator()(std::string const& name, FT func, bool temp) const
 		{
@@ -100,6 +109,7 @@ public:
 		return RegisterCommandProxy(*this);
 	}
 	
+	void registerItem(std::string const& name, ConsoleItem* item);
 	void registerAlias(const std::string &name, const std::string &action);
 	void registerCommand(std::string const& name, Command* command);
 	void registerSpecialCommand(const std::string &name, int index, std::string (*func)(int,const std::list<std::string>&));
@@ -112,19 +122,42 @@ public:
 	virtual void addLogMsg(const std::string &msg);
 	void analizeKeyEvent(bool state, char key);
 	virtual int executeConfig(const std::string &filename);
-	std::string autoComplete(const std::string &text);
+	std::string autoComplete(std::string const& text);
 	void listItems(const std::string &text);
+	
+	std::string completeCommand(std::string const& b);
 	
 protected:
 	
 	BindTable bindTable;
-	std::map<std::string, ConsoleItem*, IStrCompare> items;
+	ItemMap items;
 	std::list<std::string> log;
 	
 	int m_variableCount;
 	unsigned int m_logMaxSize;
 	//unsigned int m_MaxMsgLength;
 	int m_mode;
+};
+
+struct ConsoleAddLines
+{
+	ConsoleAddLines(Console& console_)
+	: console(console_)
+	{
+	}
+	
+	template<class IteratorT, class GetText>
+	void operator()(IteratorT b, IteratorT e, GetText getText) const
+	{
+		console.addLogMsg("]");
+		
+		for(; b != e; ++b)
+		{
+			console.addLogMsg(getText(b));
+		}
+	}
+	
+	Console& console;
 };
 
 #endif  // _CONSOLE_H_

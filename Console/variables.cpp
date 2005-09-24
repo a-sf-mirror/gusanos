@@ -1,5 +1,6 @@
 #include "variables.h"
 #include "text.h"
+#include "console.h"
 
 using namespace std;
 
@@ -142,4 +143,27 @@ string EnumVariable::invoke(const std::list<std::string> &args)
 		//return m_name + " IS \"" + v->second + '"';
 		return v->second;
 	}
+}
+
+struct ItemGetText
+{
+	template<class IteratorT>
+	std::string const& operator()(IteratorT i) const
+	{
+		return i->first;
+	}
+};
+
+std::string EnumVariable::completeArgument(int idx, std::string const& beginning)
+{
+	if(idx != 0)
+		return beginning;
+		
+	return shellComplete(
+		m_mapping,
+		beginning.begin(),
+		beginning.end(),
+		ItemGetText(),
+		ConsoleAddLines(*m_owner)
+	);
 }

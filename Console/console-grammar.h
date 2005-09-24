@@ -33,7 +33,20 @@ private:
 	char const* desc;
 };
 
-
+struct ConsoleGrammarBase
+{
+	void inCommand() {}
+	
+	void inArguments(std::string const& command) {}
+	
+	void inArgument(int idx) {}
+	
+	void outArgument(int idx, std::string const& argument) {}
+	
+	void outCommand() {}
+	
+	std::string invoke(std::string const&, std::list<std::string> const&) { return std::string(); }
+};
 
 template<class BaseT>
 struct ConsoleGrammar : public BaseT
@@ -119,7 +132,7 @@ struct ConsoleGrammar : public BaseT
 						i += cur();
 				}
 			}
-			doneLexeme();
+			
 			return i;
 		}
 		else
@@ -197,8 +210,9 @@ struct ConsoleGrammar : public BaseT
 				arg += character();
 			if(cur() != '"')
 				throw SyntaxError("Expected '\"'");
+			
 			next();
-				
+
 			arguments.push_back(arg);
 		}
 		else if(firstIdent())
@@ -209,10 +223,21 @@ struct ConsoleGrammar : public BaseT
 	
 	std::string command()
 	{
+		BaseT::inCommand();
 		std::string name = ident();
+		BaseT::inArguments(name);
+		
+		doneLexeme();
+
 		std::list<std::string> arguments;
-		while(firstArgument())
+		for(int i = 0; firstArgument(); ++i)
+		{
+			BaseT::inArgument(i);
 			argument(arguments);
+			BaseT::outArgument(i, arguments.back());
+			doneLexeme();
+		}
+		BaseT::outCommand();
 		return BaseT::invoke(name, arguments);
 	}
 	

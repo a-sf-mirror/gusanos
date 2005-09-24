@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <fstream>
 #include <string>
+#include <stack>
 #include <cctype>
 
 #include <sstream>
@@ -51,6 +52,12 @@ Console::~Console()
 
 //============================= INTERFACE ====================================
 
+void Console::registerItem(std::string const& name, ConsoleItem* item)
+{
+	item->m_owner = this;
+	items[name] = item;
+}
+
 void Console::registerVariable(Variable* var)
 {
 	string const& name = var->getName();
@@ -61,10 +68,9 @@ void Console::registerVariable(Variable* var)
 		{
 			// Replace old variable
 			delete i->second;
-			i->second = var;
 		}
-		else
-			items[name] = var;
+		
+		registerItem(name, var);
 	}
 	else
 	{
@@ -76,7 +82,7 @@ void Console::registerCommand(std::string const& name, Command* command)
 {
 	if (!name.empty() && items.find(name) == items.end())
 	{
-		items[name] = command;
+		registerItem(name, command);
 	}
 	else
 		delete command;
@@ -86,10 +92,11 @@ void Console::registerSpecialCommand(const std::string &name, int index, std::st
 {
 	if (!name.empty())
 	{
-		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
+		ItemMap::iterator tempItem = items.find(name);
 		if (tempItem == items.end())
 		{
-			items[name] = new SpecialCommand(index,func);
+			//items[name] = new SpecialCommand(index,func);
+			registerItem(name, new SpecialCommand(index, func));
 		}
 	}
 }
@@ -98,13 +105,13 @@ void Console::registerAlias(const std::string &name, const std::string &action)
 {
 	if (!name.empty())
 	{
-		map<string, ConsoleItem*>::iterator tempItem = items.find(name);
-		if (tempItem == items.end())
+		ItemMap::iterator tempItem = items.find(name);
+		if (tempItem == items.end()
+		|| !tempItem->second->isLocked())
 		{
-			items[name] = new Alias(this,name,action);
-		}else if (!tempItem->second->isLocked())
-		{
-			items[name] = new Alias(this,name,action);
+			if(tempItem != items.end())
+				delete tempItem->second;
+			registerItem(name, new Alias(this, name, action));
 		}
 	}
 }
@@ -132,7 +139,7 @@ void Console::clearTemporaries()
 	}
 }
 
-struct TestHandler
+struct TestHandler : public ConsoleGrammarBase
 {
 	TestHandler(std::istream& str_, Console& console_, bool parseRelease_ = false)
 	: str(str_), console(console_), parseRelease(parseRelease_)
@@ -165,19 +172,6 @@ struct TestHandler
 
 void Console::parseLine(const string &text, bool parseRelease)
 {
-/*
-	string textToParse;
-	string textInQueue = text;
-	
-	list< list<string> > argTree = text2Tree(text);
-	
-	list< list<string> >::iterator mainIter = argTree.begin();
-	while ( mainIter != argTree.end() )
-	{
-		parse( (*mainIter), parseRelease );
-		mainIter++;
-	}
-*/
 	std::istringstream ss(text);
 	ConsoleGrammar<TestHandler> handler((TestHandler(ss, *this, parseRelease)));
 
@@ -294,107 +288,172 @@ int Console::executeConfig(const string &filename)
 	return 0;
 };
 
-/*
-string Console::autoComplete(const string &text)
+struct CompletionHandler : public ConsoleGrammarBase
 {
-	string returnText = text;
-	
-	if ( !text.empty() )
+	struct State
 	{
-		map<string, ConsoleItem*, IStrCompare>::iterator item = items.lower_bound( text );
-		if( item != items.end() )
+		State()
 		{
-			if ( iStrCmp( text, item->first.substr(0, text.length()) ) )
-			{	
-				map<string, ConsoleItem*>::iterator firstMatch = item;
-				map<string, ConsoleItem*>::iterator lastMatch;
-				
-				while ( item != items.end() && iStrCmp( text, item->first.substr(0, text.length() ) ) )
-				{
-					lastMatch = item;
-					item++;
-				}
-				
-				if (lastMatch == firstMatch)
-				{
-					// <GLIP> Adds a space after successful matches
-					returnText = firstMatch->first + ' '; 
-				}else
-				{
-					lastMatch++;
-					bool differenceFound = false;
-					int i = 0;
-					while(!differenceFound)
-					{
-						i++;
-						for (item = firstMatch; item != lastMatch ; item++)
-						{
-							if ( !iStrCmp( firstMatch->first.substr(0, text.length() + i) , item->first.substr(0, text.length() + i) ) )
-							{
-								differenceFound = true;
-							}
-						}
-					}
-					returnText = firstMatch->first.substr(0, text.length() + i - 1);
-				}
-			}
 		}
 		
+		State(string::const_iterator b_)
+		: argumentIdx(0), commandComplete(false), argumentComplete(false)
+		, beginCommand(b_), beginArgument(b_)
+		{
+		}
+		
+		bool commandComplete;
+		bool argumentComplete;
+		std::string command;
+		std::string argument;
+		string::const_iterator beginArgument;
+		string::const_iterator beginCommand;
+		int argumentIdx;
+	};
+		
+	CompletionHandler(
+		string::const_iterator b_,
+		string::const_iterator e_,
+		Console& console_
+	)
+	: b(b_), e(e_), console(console_), current(b_), endPrefix(b_)
+	{
+		c = (unsigned char)*b;
 	}
-	return returnText;
+	
+	int cur()
+	{
+		return c;
+	}
+	
+	void next()
+	{
+		++b;
+		if(b == e)
+		{
+			if(!current.commandComplete)
+			{
+				current.command = std::string(current.beginCommand, b);
+			}
+			else if(!current.argumentComplete)
+			{
+				if(current.beginArgument != e)
+					current.argument = std::string(current.beginArgument, b);
+				else
+					endPrefix = b;
+			}
+			
+			throw current;
+		}
+		c = (unsigned char)*b;
+	}
+	
+	void inCommand()
+	{
+		states.push(current);
+		current.commandComplete = false;
+		current.beginCommand = b;
+		endPrefix = b;
+	}
+	
+	void inArguments(std::string const& command)
+	{
+		current.commandComplete = true;
+		current.argumentIdx = 0;
+		current.argumentComplete = false;
+		current.argument = "";
+		current.beginArgument = e;
+		current.command = command;
+	}
+	
+	void inArgument(int idx)
+	{
+		current.commandComplete = true;
+		current.argumentComplete = false;
+		current.argumentIdx = idx;
+		current.beginArgument = b;
+		endPrefix = b;
+	}
+	
+	void outArgument(int idx, std::string const& argument)
+	{
+		current.argumentComplete = false;
+		current.argumentIdx = idx + 1;
+		current.argument = "";
+		current.beginArgument = e;
+	}
+	
+	void outCommand()
+	{
+		if(!states.empty())
+		{
+			current = states.top();
+			states.pop();
+		}
+	}
+
+	int c;
+	string::const_iterator b;
+	string::const_iterator e;
+	string::const_iterator endPrefix;
+	
+	State current;
+	std::stack<State> states;
+	Console& console;
+};
+
+struct ItemGetText
+{
+	template<class IteratorT>
+	std::string const& operator()(IteratorT i) const
+	{
+		return i->first;
+	}
+};
+
+std::string Console::completeCommand(std::string const& b)
+{
+	return shellComplete(items, b.begin(), b.end()
+		, ItemGetText(), ConsoleAddLines(*this));
 }
-*/
 
-
-string Console::autoComplete(const string &text)
+string Console::autoComplete(string const& text)
 {
 	string returnText = text;
 	
 	if ( !text.empty() )
 	{
-		map<string, ConsoleItem*, IStrCompare>::iterator item = items.lower_bound( text );
-		if( item != items.end() )
+		ConsoleGrammar<CompletionHandler> handler((CompletionHandler(text.begin(), text.end(), *this)));
+		
+		try
 		{
-			if ( iStrCmp( text, item->first.substr(0, text.length()) ) )
-			{	
-				map<string, ConsoleItem*>::iterator firstMatch = item;
-				map<string, ConsoleItem*>::iterator lastMatch;
+			handler.block();
+		}
+		catch(CompletionHandler::State result)
+		{
+			if(result.commandComplete)
+			{
+				ItemMap::const_iterator item = items.find(result.command);
 				
-				while ( item != items.end() && iStrCmp( text, item->first.substr(0, text.length() ) ) )
+				if(item != items.end())
 				{
-					lastMatch = item;
-					item++;
+					return std::string(text.begin(), handler.endPrefix) + item->second->completeArgument(result.argumentIdx, result.argument);
 				}
 				
-				if (lastMatch == firstMatch)
-				{
-					// <GLIP> Adds a space after successful matches
-					returnText = firstMatch->first + ' '; 
-				}else
-				{
-					lastMatch++;
-					bool differenceFound = false;
-					int i = text.length();
-					for(; !differenceFound; ++i)
-					{
-						
-						for (item = firstMatch; item != lastMatch; ++item)
-						{
-							if(item->first.size() <= i
-							|| tolower(item->first[i]) != tolower(firstMatch->first[i]))
-							{
-								differenceFound = true;
-								break;
-							}
-						}
-					}
-					returnText = firstMatch->first.substr(0, i - 1);
-				}
+				return text;
+			}
+			else
+			{
+				return std::string(text.begin(), handler.endPrefix) + completeCommand(result.command);
 			}
 		}
-		
+		catch(SyntaxError error)
+		{
+			return text;
+		}
 	}
-	return returnText;
+	
+	return text;
 }
 
 void Console::listItems(const string &text)

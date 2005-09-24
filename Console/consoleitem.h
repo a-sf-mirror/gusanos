@@ -7,15 +7,25 @@
 class ConsoleItem
 {
 public:
-		
+	friend class Console;
+	
 	ConsoleItem(bool locked = true);
 
 	virtual std::string invoke(const std::list<std::string> &args) = 0;
+	
+	virtual std::string completeArgument(int idx, std::string const& beginning)
+	{
+		return beginning;
+	}
+	
 	bool isLocked();
 	
 	bool temp;
+	
+protected:
+	Console* m_owner;
+	
 private:
-		
 	bool m_locked;
 };
 

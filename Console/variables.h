@@ -144,6 +144,8 @@ class EnumVariable : public Variable
 	
 	std::string invoke(const std::list<std::string> &args);
 	
+	virtual std::string completeArgument(int idx, std::string const& beginning);
+	
 	private:
 	
 	int* m_src;
