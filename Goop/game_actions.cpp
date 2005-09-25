@@ -788,6 +788,7 @@ BaseAction* runScript( vector< string > const& params )
 }
 
 RunScript::RunScript( vector< string > const& params )
+: function(0)
 {
 	if ( params.size() > 0 )
 	{

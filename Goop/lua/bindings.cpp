@@ -42,18 +42,18 @@ extern bool quit; // Extern this somewhere else (such as a gusanos.h)
 namespace LuaBindings
 {
 
-LuaReference playerIterator;
-LuaReference playerMetaTable;
+LuaReference playerIterator(0);
+LuaReference playerMetaTable(0);
 #ifndef DEDSERV
-LuaReference viewportMetaTable;
-LuaReference fontMetaTable;
+LuaReference viewportMetaTable(0);
+LuaReference fontMetaTable(0);
 std::vector<LuaReference> guiWndMetaTable;
 BlitterContext blitter;
 #endif
-LuaReference wormMetaTable;
-LuaReference baseObjectMetaTable;
-LuaReference particleMetaTable;
-LuaReference partTypeMetaTable;
+LuaReference wormMetaTable(0);
+LuaReference baseObjectMetaTable(0);
+LuaReference particleMetaTable(0);
+LuaReference partTypeMetaTable(0);
 
 template<class T>
 inline void pushFullReference(T& x)
