@@ -57,6 +57,9 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 	{
 		(*t)->check(this);
 	}
+	
+	if(type->invisible)
+		deleteMe = true;
 }
 
 #ifndef DEDSERV
@@ -93,10 +96,13 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 	
 	if (!m_sprite)
 	{
-		if(m_type->wupixels)
-			blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
-		else
-			blitter.putpixel(where, x, y, m_type->colour);
+		if(!m_type->invisible)
+		{
+			if(m_type->wupixels)
+				blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
+			else
+				blitter.putpixel(where, x, y, m_type->colour);
+		}
 	}
 	else
 	{	

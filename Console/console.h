@@ -146,14 +146,14 @@ struct ConsoleAddLines
 	{
 	}
 	
-	template<class IteratorT, class GetText>
-	void operator()(IteratorT b, IteratorT e, GetText getText) const
+	template<class IteratorT>
+	void operator()(IteratorT b, IteratorT e) const
 	{
 		console.addLogMsg("]");
 		
 		for(; b != e; ++b)
 		{
-			console.addLogMsg(getText(b));
+			console.addLogMsg(*b);
 		}
 	}
 	

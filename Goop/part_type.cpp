@@ -78,6 +78,7 @@ void newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(
 
 PartType::PartType()
 : newParticle(0), wupixels(0)
+, invisible(false)
 {
 	gravity = 0;
 	bounceFactor = 1;
@@ -243,6 +244,7 @@ bool PartType::load(fs::path const& filename)
 #else
 					else if ( var == "sprite" ) /* ignore */;
 #endif
+					else if ( var == "invisible" ) invisible = (cast<int>(val) != 0);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
 					else if ( var == "anim_on_ground" ) animOnGround = cast<int>(val);
 					else if ( var == "anim_type" )

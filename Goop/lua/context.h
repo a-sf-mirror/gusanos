@@ -6,12 +6,15 @@ extern "C"
 #include "lua.h"
 }
 
+#include "types.h"
 #include <iostream>
 #include <string>
 using std::istream;
 using std::cerr;
 using std::endl;
 using std::string;
+
+
 
 class LuaContext
 {
@@ -38,12 +41,12 @@ public:
 	
 	void push(const char* v);
 	
-	void push(int v);
+	void push(LuaReference v);
 	
 	void push(bool v);
 	
 	template<class T>
-	void pushFullReference(T& x, int metatable)
+	void pushFullReference(T& x, LuaReference metatable)
 	{
 		T** i = (T **)lua_newuserdata (m_State, sizeof(T *));
 		*i = &x;
@@ -52,7 +55,7 @@ public:
 		lua_setmetatable(m_State, -2);
 	}
 	
-	void* pushObject(int metatable, size_t count)
+	void* pushObject(LuaReference metatable, size_t count)
 	{
 		void* p = lua_newuserdata (m_State, count);
 		
@@ -62,10 +65,10 @@ public:
 		return p;
 	}
 	
-	int callReference(int ref);
+	int callReference(LuaReference ref);
 	
 	template<class T1>
-	int callReference(int ref, T1 const& p1)
+	int callReference(LuaReference ref, T1 const& p1)
 	{
 		pushReference(ref);
 		push(p1);
@@ -75,7 +78,7 @@ public:
 	}
 	
 	template<class T1, class T2>
-	int callReference(int ref, T1 const& p1, T2 const& p2)
+	int callReference(LuaReference ref, T1 const& p1, T2 const& p2)
 	{
 		pushReference(ref);
 		push(p1);
@@ -86,7 +89,7 @@ public:
 	}
 	
 	template<class T1, class T2, class T3>
-	int callReference(int ref, T1 const& p1, T2 const& p2, T3 const& p3)
+	int callReference(LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3)
 	{
 		pushReference(ref);
 		push(p1);
@@ -98,7 +101,7 @@ public:
 	}
 	
 	template<class T1, class T2, class T3, class T4>
-	int callReference(int ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4)
+	int callReference(LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4)
 	{
 		pushReference(ref);
 		push(p1);
@@ -111,7 +114,7 @@ public:
 	}
 	
 	template<class T1, class T2, class T3, class T4, class T5>
-	int callReference(int ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4, T5 const& p5)
+	int callReference(LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4, T5 const& p5)
 	{
 		pushReference(ref);
 		push(p1);
@@ -128,11 +131,11 @@ public:
 	
 	void function(char const* name, lua_CFunction func);
 	
-	int createReference();
+	LuaReference createReference();
 	
-	void destroyReference(int ref);
+	void destroyReference(LuaReference ref);
 	
-	void pushReference(int ref);
+	void pushReference(LuaReference ref);
 	
 	operator lua_State*()
 	{

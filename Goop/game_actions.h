@@ -3,6 +3,7 @@
 
 #include "base_action.h"
 #include "angle.h"
+#include "lua/types.h"
 #include <string>
 #include <vector>
 
@@ -323,7 +324,7 @@ public:
 
 private:
 
-	int function;
+	LuaReference function;
 };
 
 BaseAction* applyMapEffect( const std::vector< std::string >& params );

@@ -3,6 +3,7 @@
 
 #include "vec.h"
 #include "angle.h"
+#include "lua/types.h"
 
 //#include <allegro.h>
 struct BITMAP;
@@ -73,7 +74,7 @@ public:
 	Vec pos; 
 	Vec spd;
 	
-	int luaData;
+	LuaReference luaData;
 
 	BaseObject* nextS_;
 	BaseObject* nextD_;

@@ -5,6 +5,9 @@
 #include <string>
 #include <vector>
 #include <cstring>
+#include <iostream>
+using std::cerr;
+using std::endl;
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -29,7 +32,7 @@ bool LieroLevelLoader::canLoad(fs::path const& path, std::string& name)
 
 #ifndef DEDSERV
 
-static unsigned char const lieroPalette[] = 
+static array<unsigned char, 256*3> const lieroPalette = 
 {0x0,0x0,0x0,0x6c,0x38,0x0,0x6c,0x50,0x0,0xa4,0x94,0x80,0x0,0x90,0x0,0x3c,0xac,0x3c,0xfc,0x54,0x54,0xa8,0xa8,0xa8,0x54,
 0x54,0x54,0x54,0x54,0xfc,0x54,0xd8,0x54,0x54,0xfc,0xfc,0x78,0x40,0x8,0x80,0x44,0x8,0x88,0x48,0xc,0x90,0x50,0x10,0x98,
 0x54,0x14,0xa0,0x58,0x18,0xac,0x60,0x1c,0x4c,0x4c,0x4c,0x54,0x54,0x54,0x5c,0x5c,0x5c,0x64,0x64,0x64,0x6c,0x6c,0x6c,
@@ -197,6 +200,30 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 	const std::streamoff regularFileSize = width*height;
 	if(fileSize < regularFileSize)
 		return false;
+		
+	array<unsigned char, 256*3> palette;
+	
+#ifndef DEDSERV
+	palette = lieroPalette;
+		
+	if(fileSize >= width*height+10+256*3)
+	{
+		char magic[10];
+		f.seekg(width*height, std::ios::beg);
+		f.read(magic, 10);
+		if(!memcmp(magic, "POWERLEVEL", 10))
+		{
+			f.read((char *)&palette[0], 256*3);
+			for(array<unsigned char, 256*3>::iterator i = palette.begin();
+				i != palette.end();
+				++i)
+			{
+				*i *= 4;
+			}
+		}
+		f.seekg(0, std::ios::beg);
+	}
+#endif
 	
 	level->material = create_bitmap_ex(8, width, height);
 #ifndef DEDSERV
@@ -213,11 +240,11 @@ bool LieroLevelLoader::load(Level* level, fs::path const& path)
 			int c = f.get();
 			
 #ifndef DEDSERV
-			unsigned char const* entry = &lieroPalette[c * 3];
+			unsigned char const* entry = &palette[c * 3];
 			int imagec = makecol(entry[0], entry[1], entry[2]);
 			putpixel(level->image, x, y, imagec);
 			
-			entry = &lieroPalette[(160 + (rndgen() & 3)) * 3];
+			entry = &palette[(160 + (rndgen() & 3)) * 3];
 			int backgroundc = makecol(entry[0], entry[1], entry[2]);
 			putpixel(level->background, x, y, backgroundc);
 #endif

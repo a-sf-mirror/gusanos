@@ -84,6 +84,7 @@ class PartType
 #endif
 	bool line2Origin;
 	bool wupixels;
+	bool invisible;
 	
 	int simpleParticle_timeout;
 	int simpleParticle_timeoutVariation;

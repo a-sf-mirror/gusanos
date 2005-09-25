@@ -11,14 +11,13 @@ int kName2Int(const string &name)
 	int i;
 	for (int i = 0; i < 120; ++i)
 	{
-		if (name == keyNames[i])
-		if(iStrCmp( name, keyNames[i] ))
+		if(istrCmp( name, keyNames[i] ))
 			return i;
 	}
 	return -1;
 }
 
-string keyNames[] =
+array<std::string, 256> keyNames =
 {
 	"NULL",
 	"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",

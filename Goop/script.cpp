@@ -27,20 +27,20 @@ bool Script::pushFunction(std::string const& name)
 	return true;
 }
 
-int Script::createFunctionRef(std::string const& name)
+LuaReference Script::createFunctionRef(std::string const& name)
 {
 	if(!lua)
-		return 0;
+		return LuaReference();
 		
-	std::map<std::string, int>::const_iterator i = cachedReferences.find(name);
+	std::map<std::string, LuaReference>::const_iterator i = cachedReferences.find(name);
 	
 	if(i != cachedReferences.end())
 		return i->second; // Reference cached
 		
 	if(!pushFunction(name))
-		return 0;
+		return LuaReference();
 		
-	int ref = lua->createReference();
+	LuaReference ref = lua->createReference();
 	cachedReferences[name] = ref; // Cache reference
 	return ref;
 }

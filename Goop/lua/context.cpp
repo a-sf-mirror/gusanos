@@ -152,7 +152,7 @@ void LuaContext::push(const char* v)
 	lua_pushstring(m_State, v);
 }
 
-void LuaContext::push(int v)
+void LuaContext::push(LuaReference v)
 {
 	pushReference(v);
 }
@@ -162,7 +162,7 @@ void LuaContext::push(bool v)
 	lua_pushboolean(m_State, v);
 }
 
-int LuaContext::callReference(int ref)
+int LuaContext::callReference(LuaReference ref)
 {
 	pushReference(ref);
 	int result = call(0, 0);
@@ -177,7 +177,7 @@ void LuaContext::function(char const* name, lua_CFunction func)
 	lua_settable(m_State, LUA_GLOBALSINDEX);
 }
 
-int LuaContext::createReference()
+LuaReference LuaContext::createReference()
 {
 	int ref;
 	int t = LUA_REGISTRYINDEX;
@@ -199,24 +199,24 @@ int LuaContext::createReference()
 	}
 	
 	lua_rawseti(m_State, t, ref);
-	return ref;
+	return LuaReference(ref);
 }
 
-void LuaContext::destroyReference(int ref)
+void LuaContext::destroyReference(LuaReference ref)
 {
-	if (ref >= 0)
+	if (ref.idx >= 0)
 	{
     	int t = LUA_REGISTRYINDEX;
 		lua_rawgeti(m_State, t, FREELIST_REF);
-		lua_rawseti(m_State, t, ref);  /* t[ref] = t[FREELIST_REF] */
-		lua_pushnumber(m_State, (lua_Number)ref);
+		lua_rawseti(m_State, t, ref.idx);  /* t[ref] = t[FREELIST_REF] */
+		lua_pushnumber(m_State, (lua_Number)ref.idx);
 		lua_rawseti(m_State, t, FREELIST_REF);  /* t[FREELIST_REF] = ref */
 	}
 }
 
-void LuaContext::pushReference(int ref)
+void LuaContext::pushReference(LuaReference ref)
 {
-	lua_rawgeti(m_State, LUA_REGISTRYINDEX, ref);
+	lua_rawgeti(m_State, LUA_REGISTRYINDEX, ref.idx);
 }
 
 

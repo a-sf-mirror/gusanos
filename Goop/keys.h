@@ -3,9 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <boost/array.hpp>
+using boost::array;
 
 int kName2Int(const std::string &name);
 
-extern std::string keyNames[];
+extern array<std::string, 256> keyNames;
 
 #endif // keys_h

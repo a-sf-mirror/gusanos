@@ -6,8 +6,7 @@
 #include "base_object.h"
 #include "angle.h"
 #include <vector>
-//#include "animators.h"
-//#include <boost/variant.hpp>
+#include "lua/types.h"
 
 class BasePlayer;
 class NinjaRope;
@@ -105,7 +104,7 @@ public:
 	
 	AngleDiff aimSpeed; // Useless to add setters and getters for this
 	Angle aimAngle;
-	int luaReference;
+	LuaReference luaReference;
 	
 	virtual void sendWeaponMessage( int index, ZCom_BitStream* data ) {}
 	virtual void pushLuaReference();

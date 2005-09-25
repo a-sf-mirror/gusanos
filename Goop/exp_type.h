@@ -42,6 +42,7 @@ class ExpType
 		int destAlpha;
 
 		bool wupixels;
+		bool invisible;
 	
 		std::vector< DetectEvent* > detectRanges;
 		Event *creation;

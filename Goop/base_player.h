@@ -3,6 +3,7 @@
 
 #include <string>
 #include "vec.h"
+#include "lua/types.h"
 
 #include <zoidcom.h>
 
@@ -108,7 +109,7 @@ public:
 	
 	std::string m_name;
 	
-	int luaReference;
+	LuaReference luaReference;
 	
 protected:
 

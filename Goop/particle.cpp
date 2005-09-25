@@ -239,13 +239,16 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 	
 	if (!m_sprite)
 	{
-		
-		if(m_type->wupixels)
-			blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
-		else
-			blitter.putpixel(where, x, y, m_type->colour);
-			
-		if ( m_type->line2Origin ) drawLine2Origin( where, xOff, yOff, blitter );
+		if(!m_type->invisible)
+		{
+			if(m_type->wupixels)
+				blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
+			else
+				blitter.putpixel(where, x, y, m_type->colour);
+				
+			if ( m_type->line2Origin )
+				drawLine2Origin( where, xOff, yOff, blitter );
+		}
 	}
 	else
 	{

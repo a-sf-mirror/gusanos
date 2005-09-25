@@ -29,7 +29,7 @@ using namespace std;
 ResourceList<ExpType> expTypeList("objects/");
 
 ExpType::ExpType()
-: wupixels(0)
+: wupixels(0), invisible(false)
 {
 	timeout = 0;
 	timeoutVariation = 0;
@@ -108,6 +108,7 @@ bool ExpType::load(fs::path const& filename)
 #else
 					if ( var == "sprite" ) /* ignore */;
 #endif
+					else if ( var == "invisible" ) invisible = (cast<int>(val) != 0);
 					else if ( var == "timeout" ) timeout = cast<int>(val);
 					else if ( var == "timeout_variation" ) timeoutVariation = cast<int>(val);
 					else if ( var == "render_layer" ) renderLayer = cast<int>(val);

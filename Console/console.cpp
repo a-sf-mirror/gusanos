@@ -317,6 +317,7 @@ struct CompletionHandler : public ConsoleGrammarBase
 		Console& console_
 	)
 	: b(b_), e(e_), console(console_), current(b_), endPrefix(b_)
+	, beginPrefix(b_)
 	{
 		c = (unsigned char)*b;
 	}
@@ -391,8 +392,14 @@ struct CompletionHandler : public ConsoleGrammarBase
 			states.pop();
 		}
 	}
+	
+	std::string prefix()
+	{
+		return std::string(beginPrefix, endPrefix);
+	}
 
 	int c;
+	string::const_iterator beginPrefix;
 	string::const_iterator b;
 	string::const_iterator e;
 	string::const_iterator endPrefix;
@@ -437,14 +444,14 @@ string Console::autoComplete(string const& text)
 				
 				if(item != items.end())
 				{
-					return std::string(text.begin(), handler.endPrefix) + item->second->completeArgument(result.argumentIdx, result.argument);
+					return handler.prefix() + item->second->completeArgument(result.argumentIdx, result.argument);
 				}
 				
 				return text;
 			}
 			else
 			{
-				return std::string(text.begin(), handler.endPrefix) + completeCommand(result.command);
+				return handler.prefix() + completeCommand(result.command);
 			}
 		}
 		catch(SyntaxError error)

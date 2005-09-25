@@ -150,6 +150,14 @@ string rConCmd(const list<string> &args)
 	return "";
 }
 
+string rConCompleter(Console* con, int idx, std::string const& beginning)
+{
+	if(idx != 0)
+		return beginning;
+		
+	return con->completeCommand(beginning);
+}
+
 string kickCmd(const list<string> &args)
 {
 	if ( !network.isClient() && !args.empty() )
@@ -184,6 +192,29 @@ string kickCmd(const list<string> &args)
 		return "PLAYER NOT FOUND OR IS LOCAL";
 	}
 	return "KICK <PLAYER_NAME> : KICKS THE PLAYER WITH THE SPECIFIED NAME";
+}
+
+struct BasePlayerIterGetText
+{
+	template<class IteratorT>
+	std::string const& operator()(IteratorT i) const
+	{
+		return (*i)->m_name;
+	}
+};
+
+string kickCompleter(Console* con, int idx, std::string const& beginning)
+{
+	if(idx != 0)
+		return beginning;
+		
+	return shellComplete(
+		game.players,
+		beginning.begin(),
+		beginning.end(),
+		BasePlayerIterGetText(),
+		ConsoleAddLines(*con)
+	);
 }
 
 void Options::registerInConsole()
@@ -231,8 +262,8 @@ void Options::registerInConsole()
 		(string("GAME"), gameCmd)
 		(string("ADDBOT"), addbotCmd)
 		(string("CONNECT"),connectCmd)
-		(string("RCON"),rConCmd)
-		(string("KICK"),kickCmd)
+		(string("RCON"), rConCmd, rConCompleter)
+		(string("KICK"), kickCmd, kickCompleter)
 	;
 }
 

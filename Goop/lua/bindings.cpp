@@ -1,5 +1,6 @@
 #include "bindings.h"
 
+#include "types.h"
 #include "../base_player.h"
 #include "../player.h"
 #include "../base_worm.h"
@@ -41,18 +42,18 @@ extern bool quit; // Extern this somewhere else (such as a gusanos.h)
 namespace LuaBindings
 {
 
-int playerIterator = 0;
-int playerMetaTable = 0;
+LuaReference playerIterator;
+LuaReference playerMetaTable;
 #ifndef DEDSERV
-int viewportMetaTable = 0;
-int fontMetaTable = 0;
-std::vector<int> guiWndMetaTable;
+LuaReference viewportMetaTable;
+LuaReference fontMetaTable;
+std::vector<LuaReference> guiWndMetaTable;
 BlitterContext blitter;
 #endif
-int wormMetaTable = 0;
-int baseObjectMetaTable = 0;
-int particleMetaTable = 0;
-int partTypeMetaTable = 0;
+LuaReference wormMetaTable;
+LuaReference baseObjectMetaTable;
+LuaReference particleMetaTable;
+LuaReference partTypeMetaTable;
 
 template<class T>
 inline void pushFullReference(T& x)
@@ -98,30 +99,46 @@ int l_bind(lua_State* L)
 		return 0;
 		
 	lua_pushvalue(L, 3);
-	int ref = lua.createReference();
+	LuaReference ref = lua.createReference();
 	luaCallbacks.bind(s, ref);
 
 	return 0;
 }
 
+/*! sqrt(n)
+
+	Returns the squareroot of n.
+*/
 int l_sqrt(lua_State* L)
 {
 	lua_pushnumber(L, sqrt(luaL_checknumber(L, 1)));
 	return 1;
 }
 
+/*! abs(n)
+
+	Returns the absolute value of n.
+*/
 int l_abs(lua_State* L)
 {
 	lua_pushnumber(L, fabs(luaL_checknumber(L, 1)));
 	return 1;
 }
 
+/*! floor(n)
+
+	Returns the number n rounded down towards infinity.
+*/
 int l_floor(lua_State* L)
 {
 	lua_pushnumber(L, floor(luaL_checknumber(L, 1)));
 	return 1;
 }
 
+/*! randomint(l, u)
+
+	Returns a random integer in the interval [l, u].
+*/
 int l_randomint(lua_State* L)
 {
 	int l = (int)luaL_checknumber(L, 1);
@@ -132,6 +149,10 @@ int l_randomint(lua_State* L)
 	return 1;
 }
 
+/*! randomfloat(l, u)
+
+	Returns a random floating point number in the interval [l, u].
+*/
 int l_randomfloat(lua_State* L)
 {
 	lua_Number l = luaL_checknumber(L, 1);
@@ -329,6 +350,12 @@ int l_sprites_render(lua_State* L)
 }
 
 #ifndef DEDSERV
+/*! font_load(name)
+
+	Loads and returns a Font object of the font with the passed name.
+	
+	If the font couldn't be loaded, nil is returned.
+*/
 int l_font_load(lua_State* L)
 {
 	char const* n = lua_tostring(L, 1);
@@ -348,7 +375,13 @@ int l_font_load(lua_State* L)
 
 	return 1;
 }
+/*! Font:render(bitmap, string, x, y[, r, g, b])
 
+	Draws the text 'string' on 'bitmap' at the position (x, y).
+	
+	If (r, g, b) is supplied, it draws the text with that color,
+	otherwise it draws the text white.
+*/
 int l_font_render(lua_State* L)
 {
 	Font *f = *(Font **)lua_touserdata(L, 1);
@@ -391,6 +424,19 @@ int l_quit(lua_State* L)
 	return 0;
 }
 
+/*! game_players()
+
+	Returns an iterator object that returns a Player class
+	for every player in the game.
+	
+	Intended to use together
+	with a for loop, like this:
+	<literal>
+	for p in game_players() do
+		-- Do something with p here
+	end
+	</literal>
+*/
 int l_game_players(lua_State* L)
 {
 	lua.pushReference(LuaBindings::playerIterator);
@@ -402,6 +448,11 @@ int l_game_players(lua_State* L)
 	return 3;
 }
 
+/*! game_local_player(i)
+
+	Returns a Player object of the local player with index i.
+	If the index is invalid, nil is returned.
+*/
 int l_game_localPlayer(lua_State* L)
 {
 	int i = (int)lua_tonumber(L, 1);
@@ -422,6 +473,10 @@ int l_clear_keybuf(lua_State* L)
 }
 #endif
 
+/*! Player:kills()
+
+	Returns the number of kills a player has made.
+*/
 int l_player_kills(lua_State* L)
 {
 	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
@@ -430,6 +485,10 @@ int l_player_kills(lua_State* L)
 	return 1;
 }
 
+/*! Player:deaths()
+
+	Returns the number of deaths a player has suffered.
+*/
 int l_player_deaths(lua_State* L)
 {
 	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
@@ -438,6 +497,10 @@ int l_player_deaths(lua_State* L)
 	return 1;
 }
 
+/*! Player:name()
+
+	Returns the name of the player.
+*/
 int l_player_name(lua_State* L)
 {
 	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
@@ -446,6 +509,10 @@ int l_player_name(lua_State* L)
 	return 1;
 }
 
+/*! Player:say(text)
+
+	Makes the player send 'text' as a chat message.
+*/
 int l_player_say(lua_State* L)
 {
 	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
@@ -515,6 +582,13 @@ int shootFromObject(lua_State* L, BaseObject* object)
 	return 0;
 }
 
+//! Worm inherits Object
+
+/*! Worm:get_player()
+
+	Returns a Player object of the player that owns this worm.
+*/
+
 int l_worm_getPlayer(lua_State* L)
 {
 	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
@@ -525,6 +599,10 @@ int l_worm_getPlayer(lua_State* L)
 }
 
 
+/*! Worm:get_health()
+
+	Returns the health of this worm.
+*/
 int l_worm_getHealth(lua_State* L)
 {
 	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
@@ -539,6 +617,11 @@ void pushWorm(BaseWorm* worm)
 }*/
 
 #ifndef DEDSERV
+
+/*! Viewport:get_bitmap()
+
+	Returns the HUD bitmap of this viewport.
+*/
 int l_viewport_getBitmap(lua_State* L)
 {
 	Viewport* p = *static_cast<Viewport **>(lua_touserdata (L, 1));
@@ -548,16 +631,6 @@ int l_viewport_getBitmap(lua_State* L)
 }
 
 #endif
-/*
-void pushViewport(Viewport* viewport)
-{
-	pushFullReference(*viewport, LuaBindings::viewportMetaTable);
-}
-
-void push(BaseObject* obj)
-{
-	pushFullReference(*obj, LuaBindings::baseObjectMetaTable);
-}*/
 
 int l_worm_remove(lua_State* L)
 {
@@ -614,12 +687,26 @@ int l_worm_shoot(lua_State* L)
 	return shootFromObject(L, object);
 }
 
+
+/*! Object:remove()
+
+	Removes the object in the next frame.
+*/
 int l_baseObject_remove(lua_State* L)
 {
 	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
 	p->deleteMe = true;
 	return 0;
 }
+
+/*! Object:pos()
+
+	Returns the position of this object as a tuple.
+	i.e.:
+	<literal>
+	local x, y = object:pos()
+	</literal>
+*/
 
 int l_baseObject_pos(lua_State* L)
 {
@@ -629,6 +716,15 @@ int l_baseObject_pos(lua_State* L)
 	return 2;
 }
 
+
+/*! Object:spd()
+
+	Returns the speed of this object as a tuple.
+	e.g.:
+	<literal>
+	local vx, vy = object:spd()
+	</literal>
+*/
 int l_baseObject_spd(lua_State* L) //
 {
 	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
@@ -644,6 +740,12 @@ int l_baseObject_push(lua_State* L) //
 	p->spd.y += lua_tonumber(L, 3);
 	return 0;
 }
+
+/*! Object:data()
+
+	Returns a table associated with this object that can
+	be used by Lua scripts to store values.
+*/
 
 int l_baseObject_data(lua_State* L)
 {
@@ -662,6 +764,15 @@ int l_baseObject_data(lua_State* L)
 	return 1;
 }
 
+/*! Object:getClosestWorm()
+
+	Returns the closest worm that fulfills these requirements:
+	<ul>
+	<li>It is not the owner of the object.</li>
+	<li>It is visible and active.</li>
+	<li>The straight path to it from the object is not, for particles, blocked.</li>
+	</ul>
+*/
 int l_baseObject_getClosestWorm(lua_State* L)
 {
 	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
@@ -993,7 +1104,7 @@ int l_console_register_command(lua_State* L)
 {
 	char const* name = lua_tostring(L, 1);
 	lua_pushvalue(L, 2);
-	int ref = lua.createReference();
+	LuaReference ref = lua.createReference();
 	
 	console.registerCommands()
 			(name, boost::bind(LuaBindings::runLua, ref, _1), true);
@@ -1068,7 +1179,7 @@ int l_gfx_reset_blending(lua_State* L)
 	return 0;
 }
 
-std::string runLua(int ref, std::list<std::string> const& args)
+std::string runLua(LuaReference ref, std::list<std::string> const& args)
 {
 	lua.pushReference(ref);
 	int params = 0;
@@ -1404,7 +1515,7 @@ void init()
 	addGUIWndFunctions(context);
 
 	lua_rawset(context, -3);
-	int ref = context.createReference();
+	LuaReference ref = context.createReference();
 	guiWndMetaTable[OmfgGUI::Context::Unknown] = ref;
 	guiWndMetaTable[OmfgGUI::Context::Button] = ref;
 	guiWndMetaTable[OmfgGUI::Context::Edit] = ref;

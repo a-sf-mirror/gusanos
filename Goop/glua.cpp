@@ -4,7 +4,7 @@ LuaContext lua;
 
 LuaCallbacks luaCallbacks;
 
-void LuaCallbacks::bind(std::string callback, int ref)
+void LuaCallbacks::bind(std::string callback, LuaReference ref)
 {
 	if(callback == "afterRender")
 		afterRender.push_back(ref);

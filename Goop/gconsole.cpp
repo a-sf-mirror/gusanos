@@ -46,6 +46,29 @@ string bindCmd(const list<string> &args)
 	
 	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
 }
+
+struct IdentityGetText
+{
+	template<class IteratorT>
+	std::string const& operator()(IteratorT i) const
+	{
+		return *i;
+	}
+};
+
+string bindCompleter(Console* con, int idx, std::string const& beginning)
+{
+	if(idx != 0)
+		return beginning;
+		
+	return shellComplete(
+		keyNames,
+		beginning.begin(),
+		beginning.end(),
+		IdentityGetText(),
+		ConsoleAddLines(*con)
+	);
+}
 #endif
 
 string echoCmd(list<string> const& args)
@@ -249,12 +272,7 @@ string restCmd(list<string> const& args)
 		
 		int t = cast<int>(*i);
 		
-		for(; t > 400; t -= 400)
-		{
-			rest(400);
-			network.getZControl()->ZCom_processInput(eZCom_NoBlock);
-			network.getZControl()->ZCom_processOutput();
-		}
+		rest(t);
 		
 		return "DONE";
 	}
@@ -315,7 +333,7 @@ void GConsole::init()
 
 	console.registerCommands()
 #ifndef DEDSERV
-		(string("BIND"), bindCmd)
+		(string("BIND"), bindCmd, bindCompleter)
 		(string("SWAPKEYS"), swapKeysCmd)
 		(string("SETSHIFTCHAR"), setShiftChar)
 		(string("SETALTGRCHAR"), setAltGrChar)

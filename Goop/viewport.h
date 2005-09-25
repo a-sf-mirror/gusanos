@@ -7,6 +7,7 @@
 
 //#include "game.h"
 #include "vec.h"
+#include "lua/types.h"
 //#include <allegro.h>
 
 struct Listener;
@@ -29,7 +30,7 @@ public:
 	
 	BITMAP* getBitmap() { return m_dest; }
 	
-	int luaReference;
+	LuaReference luaReference;
 	
 private:
 

@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <list>
+#include <set>
 #include <string>
 #include <iostream>
 
@@ -24,7 +25,7 @@ void separate_str_by(char ch, const std::string &src, std::string &left, std::st
 
 std::list< std::list<std::string> > text2Tree(const std::string &text);
 
-inline bool iStrCmp( const std::string &a, const std::string &b )
+inline bool istrCmp( const std::string &a, const std::string &b )
 {
 	std::string::const_iterator itA, itB;
 	
@@ -37,10 +38,11 @@ inline bool iStrCmp( const std::string &a, const std::string &b )
 		if(ca != cb)
 			return false;
 	}
-	return true;
+	
+	return (itA == a.end() && itB == b.end());
 }
 
-inline bool iStrCmp(
+inline bool iisPrefixOfOther(
 	std::string::const_iterator a,
 	std::string::const_iterator ae,
 	std::string::const_iterator b,
@@ -126,17 +128,29 @@ std::string shellComplete(
 	if ( len == 0 )
 		return std::string(b, e);
 
-	typename ContainerT::const_iterator item = items.lower_bound( std::string(b, e) );
-	if( item == items.end() )
-		return std::string(b, e);
+	//typename ContainerT::const_iterator item = );
+	typename ContainerT::const_iterator i = items.begin();
+	
+	typedef std::set<std::string, IStrCompare> SortedListT;
+	SortedListT sortedList;
+	
+	std::string s(b, e);
+	
+	for(; i != items.end(); ++i)
+		sortedList.insert(getText(i));
 		
-	if ( ! iStrCmp( b, e, getText(item).begin(), getText(item).begin() + len) )
-		return std::string(b, e);
+	typename SortedListT::const_iterator item = sortedList.lower_bound( s );
+	
+	if( item == sortedList.end() )
+		return s;
+		
+	if ( ! iisPrefixOfOther( b, e, item->begin(), item->end()) )
+		return s;
 
-	typename ContainerT::const_iterator firstMatch = item;
-	typename ContainerT::const_iterator lastMatch;
+	typename SortedListT::const_iterator firstMatch = item;
+	typename SortedListT::const_iterator lastMatch;
 		
-	while ( item != items.end() && iStrCmp( b, e, getText(item).begin(), getText(item).begin() + len) )
+	while ( item != sortedList.end() && iisPrefixOfOther( b, e, item->begin(), item->end()) )
 	{
 		lastMatch = item;
 		item++;
@@ -144,19 +158,19 @@ std::string shellComplete(
 	
 	if (lastMatch == firstMatch)
 	{
-		return getText(firstMatch) + ' ';
+		return *firstMatch + ' ';
 	}
 	else
 	{
 		lastMatch++;
 		bool differenceFound = false;
-		int i = len;
+		size_t i = len;
 		for(; ; ++i)
 		{
 			for (item = firstMatch; item != lastMatch; ++item)
 			{
-				if(getText(item).size() <= i
-				|| tolower(getText(item)[i]) != tolower(getText(firstMatch)[i]))
+				if(item->size() <= i
+				|| tolower((*item)[i]) != tolower((*firstMatch)[i]))
 				{
 					differenceFound = true;
 					break;
@@ -169,13 +183,13 @@ std::string shellComplete(
 		
 		if(i == len)
 		{
-			showAlternatives(firstMatch, lastMatch, getText);
+			showAlternatives(firstMatch, lastMatch);
 		}
 
-		return std::string(getText(firstMatch).begin(), getText(firstMatch).begin() + i);
+		return std::string(firstMatch->begin(), firstMatch->begin() + i);
 	}
 
-	return std::string(b, e);
+	return s;
 }
 
 #endif  // _TEXT_H_
