@@ -8,7 +8,7 @@
 #include "base_worm.h"
 #include "base_player.h"
 #include "glua.h"
-#include "lua/bindings.h"
+#include "lua/bindings-gfx.h"
 //#include "culling.h"
 #include <list>
 

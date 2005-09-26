@@ -1,0 +1,225 @@
+#include "bindings-game.h"
+
+#include "types.h"
+
+#include "../glua.h"
+#include "../game.h"
+#include "../base_player.h"
+#include "../player.h"
+#include "../base_worm.h"
+#include "../level.h"
+
+#include <cmath>
+#include <iostream>
+#include <list>
+#include <allegro.h>
+using std::cerr;
+using std::endl;
+#include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
+using boost::lexical_cast;
+
+namespace LuaBindings
+{
+	
+LuaReference playerIterator(0);
+LuaReference playerMetaTable(0);
+
+/*! game_players()
+
+	Returns an iterator object that returns a Player class
+	for every player in the game.
+	
+	Intended to use together
+	with a for loop, like this:
+	<code>
+	for p in game_players() do
+	    -- Do something with p here
+	end
+	</code>
+*/
+int l_game_players(lua_State* L)
+{
+	lua.pushReference(LuaBindings::playerIterator);
+	typedef std::list<BasePlayer*>::iterator iter;
+	iter& i = *(iter *)lua_newuserdata (L, sizeof(iter));
+	i = game.players.begin();
+	lua_pushnil(L);
+	
+	return 3;
+}
+
+/*! game_local_player(i)
+
+	Returns a Player object of the local player with index i.
+	If the index is invalid, nil is returned.
+*/
+int l_game_localPlayer(lua_State* L)
+{
+	int i = (int)lua_tonumber(L, 1);
+	if(i >= 0 && i < game.localPlayers.size())
+	{
+		lua.pushReference(game.localPlayers[i]->luaReference);
+		return 1;
+	}
+	else
+		return 0;
+}
+
+
+/*! Player:kills()
+
+	Returns the number of kills a player has made.
+*/
+int l_player_kills(lua_State* L)
+{
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->kills);
+
+	return 1;
+}
+
+/*! Player:deaths()
+
+	Returns the number of deaths a player has suffered.
+*/
+int l_player_deaths(lua_State* L)
+{
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
+	lua_pushnumber(L, p->deaths);
+
+	return 1;
+}
+
+/*! Player:name()
+
+	Returns the name of the player.
+*/
+int l_player_name(lua_State* L)
+{
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
+	lua_pushstring(L, p->m_name.c_str());
+
+	return 1;
+}
+
+/*! Player:say(text)
+
+	Makes the player send 'text' as a chat message.
+*/
+int l_player_say(lua_State* L)
+{
+	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
+	char const* s = lua_tostring(L, 2);
+	if(s)
+		p->sendChatMsg(s);
+
+	return 0;
+}
+
+
+int l_game_getClosestWorm(lua_State* L)
+{
+	Vec from((float)lua_tonumber(L, 1), (float)lua_tonumber(L, 2));
+	
+	BaseWorm* minWorm = 0;
+	float minDistSqr = 10000000.f;
+	
+	for(std::list<BasePlayer*>::iterator playerIter = game.players.begin(); playerIter != game.players.end(); ++playerIter)
+	{
+		BaseWorm* worm = (*playerIter)->getWorm();
+		
+		if(worm->isActive())
+		{
+			float distSqr = (worm->pos - from).lengthSqr();
+			if(distSqr < minDistSqr)
+			{
+				minDistSqr = distSqr;
+				minWorm = worm;
+			}
+		}
+	}
+	
+	if(!minWorm)
+		return 0;
+		
+	minWorm->pushLuaReference();
+	return 1;
+}
+
+int l_game_playerIterator(lua_State* L)
+{
+	typedef std::list<BasePlayer*>::iterator iter;
+	iter& i = *(iter *)lua_touserdata(L, 1);
+	if(i == game.players.end())
+		lua_pushnil(L);
+	else
+	{
+		lua.pushReference((*i)->luaReference);
+		++i;
+	}
+	
+	return 1;
+}
+
+
+/*! map_is_blocked(x1, y1, x2, y2)
+
+	Returns true if the line between (x1, y1) and (x2, y2) on the map is blocked for particles.
+	Otherwise false.
+*/
+int l_map_isBlocked(lua_State* L)
+{
+	int x1 = (int)lua_tonumber(L, 1);
+	int y1 = (int)lua_tonumber(L, 2);
+	int x2 = (int)lua_tonumber(L, 3);
+	int y2 = (int)lua_tonumber(L, 4);
+	lua_pushboolean(L, game.level.trace(x1, y1, x2, y2, Level::ParticleBlockPredicate()));
+	return 1;
+}
+
+/*! map_is_particle_pass(x1, y1)
+
+	Returns true if the point (x1, y1) on the map is passable by particles.
+*/
+
+int l_map_isParticlePass(lua_State* L)
+{
+	int x = (int)lua_tonumber(L, 1);
+	int y = (int)lua_tonumber(L, 2);
+
+	lua_pushboolean(L, game.level.getMaterial(x, y).particle_pass);
+	return 1;
+}
+
+void initGame()
+{
+	LuaContext& context = lua;
+	
+	context.function("game_players", l_game_players);
+	lua_pushcfunction(context, l_game_playerIterator);
+	playerIterator = context.createReference();
+	
+	context.function("game_local_player", l_game_localPlayer);
+	context.function("game_get_closest_worm", l_game_getClosestWorm);
+
+	context.function("map_is_blocked", l_map_isBlocked);
+	context.function("map_is_particle_pass", l_map_isParticlePass);
+
+	// Player method and metatable
+	
+	lua_newtable(context); 
+	lua_pushstring(context, "__index");
+	
+	lua_newtable(context);
+	
+	context.tableFunction("kills", l_player_kills);
+	context.tableFunction("deaths", l_player_deaths);
+	context.tableFunction("name", l_player_name);
+	context.tableFunction("say", l_player_say);
+	
+	lua_rawset(context, -3);
+	playerMetaTable = context.createReference();
+}
+
+}

@@ -2,7 +2,7 @@
 #include "vec.h"
 #include "base_player.h"
 #include "glua.h"
-#include "lua/bindings.h"
+#include "lua/bindings-objects.h"
 
 BaseObject::BaseObject( BasePlayer* owner, Vec pos_, Vec spd_ )
 : deleteMe(false), luaData(0), m_owner(owner)

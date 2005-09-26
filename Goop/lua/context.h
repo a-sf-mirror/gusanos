@@ -55,6 +55,20 @@ public:
 		lua_setmetatable(m_State, -2);
 	}
 	
+	template<class T>
+	void pushFullReference(T& x)
+	{
+		T** i = (T **)lua_newuserdata (m_State, sizeof(T*));
+		*i = &x;
+	}
+	
+	template<class T>
+	void pushObject(T const& x)
+	{
+		T* i = (T *)lua_newuserdata (m_State, sizeof(T));
+		*i = x;
+	}
+	
 	void* pushObject(LuaReference metatable, size_t count)
 	{
 		void* p = lua_newuserdata (m_State, count);
@@ -130,6 +144,8 @@ public:
 	// Add more when needed...
 	
 	void function(char const* name, lua_CFunction func);
+	
+	void tableFunction(char const* name, lua_CFunction func);
 	
 	LuaReference createReference();
 	

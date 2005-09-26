@@ -177,6 +177,13 @@ void LuaContext::function(char const* name, lua_CFunction func)
 	lua_settable(m_State, LUA_GLOBALSINDEX);
 }
 
+void LuaContext::tableFunction(char const* name, lua_CFunction func)
+{
+	lua_pushstring(m_State, name);
+	lua_pushcfunction(m_State, func);
+	lua_rawset(m_State, -3);
+}
+
 LuaReference LuaContext::createReference()
 {
 	int ref;

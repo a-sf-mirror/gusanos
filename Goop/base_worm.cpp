@@ -22,7 +22,7 @@
 #include "ninjarope.h"
 
 #include "glua.h"
-#include "lua/bindings.h"
+#include "lua/bindings-objects.h"
 
 #include <math.h>
 #include <string>

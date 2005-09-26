@@ -8,7 +8,7 @@
 #include "encoding.h"
 
 #include "glua.h"
-#include "lua/bindings.h"
+#include "lua/bindings-game.h"
 #include "game.h"
 
 #include <zoidcom.h>

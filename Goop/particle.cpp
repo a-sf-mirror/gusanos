@@ -14,7 +14,7 @@
 #include "blitters/blitters.h"
 #endif
 #include "glua.h"
-#include "lua/bindings.h"
+#include "lua/bindings-objects.h"
 #include "detect_event.h"
 
 
