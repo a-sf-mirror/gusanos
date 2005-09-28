@@ -36,11 +36,11 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 {
 	if ( _result != eZCom_ConnAccepted )
 	{
-		console.addLogMsg("* THE CONNECTION WAS REJECTED BY SERVER");
+		console.addLogMsg("* COULDNT ESTABLISH CONNECTION");
 	}
 	else
 	{
-		console.addLogMsg("* THE CONNECTION WAS ACCEPTED");
+		console.addLogMsg("* CONNECTION ACCEPTED");
 		network.setServerID(_id);
 		ZCom_requestZoidMode(_id, 1);
 		game.setMod( _reply.getStringStatic() );

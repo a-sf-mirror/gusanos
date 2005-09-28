@@ -61,6 +61,8 @@ struct Options
 	int maxRespawnTime;
 	int minRespawnTime;
 	int host;
+	int maxWeaponsVar;
+	size_t maxWeapons;
 	std::string rConPassword;
 };
 
@@ -169,6 +171,7 @@ public:
 #else
 	ObjectsList objects;
 #endif
+
 	void insertExplosion( Explosion* explosion );
 	
 	std::map< std::string, BaseAction*(*)( const std::vector< std::string > & ) > actionList;

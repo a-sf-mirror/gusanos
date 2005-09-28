@@ -16,6 +16,7 @@
 #include "glua.h"
 #include "lua/bindings-objects.h"
 #include "detect_event.h"
+#include "noise_line.h"
 
 
 #include <vector>
@@ -26,6 +27,8 @@
 using namespace std;
 
 static boost::pool<> particlePool(sizeof(Particle));
+
+NoiseLine mooo;
 
 void* Particle::operator new(size_t count)
 {
@@ -221,12 +224,16 @@ void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext
 		blitter.linewu(where, x, y, x2, y2, m_type->colour);
 	}
 	else
-	{
+	{	
 		int x = static_cast<int>(m_origin.x) - xOff;
 		int y = static_cast<int>(m_origin.y) - yOff;
 		int x2 = static_cast<int>(pos.x) - xOff;
 		int y2 = static_cast<int>(pos.y) - yOff;
 		line(where, x,y,x2,y2,m_type->colour); //TODO: Change to use blitter
+		//mooo.createPath( 7, 7);
+		//mooo.render(where, x,y,x2,y2, m_type->colour);
+		//mooo.createPath( 5, 10);
+		//mooo.render(where, x,y,x2,y2, m_type->colour);
 	}
 }
 
@@ -245,10 +252,10 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 				blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
 			else
 				blitter.putpixel(where, x, y, m_type->colour);
-				
-			if ( m_type->line2Origin )
-				drawLine2Origin( where, xOff, yOff, blitter );
 		}
+				
+		if ( m_type->line2Origin )
+			drawLine2Origin( where, xOff, yOff, blitter );
 	}
 	else
 	{

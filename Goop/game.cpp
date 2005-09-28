@@ -253,9 +253,12 @@ void Options::registerInConsole()
 		("SV_MIN_RESPAWN_TIME", &minRespawnTime, 100 )
 
 		("HOST", &host, 0)
+		
+		("SV_MAX_WEAPONS", &maxWeaponsVar, 5)
 			
 		("RCON_PASSWORD", &rConPassword, "" )
 	;
+	maxWeapons = 5;
 	
 	console.registerCommands()
 		(string("MAP"), mapCmd, mapCompleter)
@@ -483,11 +486,17 @@ void Game::loadWeapons()
 		
 		WeaponOrder comp;
 		std::sort(weaponList.begin(), weaponList.end(), comp); 
+		
+		for ( int i = 0; i < weaponList.size(); ++i )
+		{
+			weaponList[i]->setIndex(i);
+		}
 	}
 };
 
 void Game::loadMod()
 {
+	options.maxWeapons = options.maxWeaponsVar;
 	console.loadResources();
 	loadWeapons();
 	NRPartType = partTypeList.load("ninjarope.obj");

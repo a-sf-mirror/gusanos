@@ -83,6 +83,8 @@ public:
 	virtual void die();
 	virtual void changeWeaponTo( unsigned int weapIndex );
 	
+	void clearWeapons();
+	
 	Weapon* getCurrentWeapon(); // Where and what for is this used?
 	
 	// getWeaponIndexOffset can be used to get the currentWeapon index or 
@@ -90,7 +92,7 @@ public:
 	//right ( it will wrap the value so that its always inside the worm's weapons size )
 	int getWeaponIndexOffset( int offset );
 	Angle getAngle();
-	void setDir(int d); // Made by nym, may be evil, I think its not used and it can be removed -- Well, I'm using it now so ;o
+	void setDir(int d); // Only use this if you are going to sync it over netplay with an event
 	int getDir() { return m_dir; }
 	bool isCollidingWith( const Vec& point, float radius );
 	bool isActive();
@@ -135,6 +137,7 @@ protected:
 	size_t currentWeapon;
 	
 	std::vector<Weapon*> m_weapons;
+	int m_weaponCount;
 	
 	BasePlayer* m_lastHurt;
 	NinjaRope* m_ninjaRope;

@@ -4,6 +4,7 @@
 #include "sprite_set.h"
 #include "text.h"
 #include "parser.h"
+#include "resource_base.h"
 
 #include <string>
 #include <vector>
@@ -16,7 +17,7 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-WeaponType::WeaponType()
+WeaponType::WeaponType() : ResourceBase()
 {
 	ammo = 1;
 	reloadTime = 0;

@@ -3,6 +3,7 @@
 #include "vec.h"
 #include "game.h"
 #include "weapon.h"
+#include "weapon_type.h"
 #include "base_worm.h"
 #include "base_object.h"
 #include "base_player.h"
@@ -157,15 +158,15 @@ void NetWorm::think()
 					case ChangeWeapon:
 					{
 						//size_t weapIndex = data->getInt(Encoding::bitsOf(game.weaponList.size() - 1));
-						size_t weapIndex = Encoding::decode(*data, game.weaponList.size());
+						size_t weapIndex = Encoding::decode(*data, m_weapons.size());
 						changeWeaponTo( weapIndex );
 					}
 					break;
 					case WeaponMessage:
 					{
 						//size_t weapIndex = data->getInt(Encoding::bitsOf(game.weaponList.size() - 1));
-						size_t weapIndex = Encoding::decode(*data, game.weaponList.size());
-						if ( weapIndex < m_weapons.size() )
+						size_t weapIndex = Encoding::decode(*data, m_weapons.size());
+						if ( weapIndex < m_weapons.size() && m_weapons[weapIndex] )
 							m_weapons[weapIndex]->recieveMessage( data );
 					}
 					break;
@@ -174,7 +175,14 @@ void NetWorm::think()
 						m_isActive = data->getBool();
 						m_ninjaRope->active = data->getBool();
 						//currentWeapon = data->getInt(Encoding::bitsOf(game.weaponList.size() - 1));
-						currentWeapon = Encoding::decode(*data, game.weaponList.size());
+						currentWeapon = Encoding::decode(*data, m_weapons.size());
+						clearWeapons();
+						while ( data->getBool() )
+						{
+							int index = Encoding::decode(*data, m_weapons.size());
+							int weapTypeIndex = Encoding::decode(*data, game.weaponList.size());
+							m_weapons[index] = new Weapon(game.weaponList[weapTypeIndex], this);
+						}
 					}
 					break;
 				}
@@ -225,7 +233,19 @@ void NetWorm::sendSyncMessage( ZCom_ConnID id )
 	data->addBool(m_isActive);
 	data->addBool(m_ninjaRope->active);
 	//data->addInt(currentWeapon, Encoding::bitsOf(game.weaponList.size() - 1));
-	Encoding::encode(*data, currentWeapon, game.weaponList.size());
+	Encoding::encode(*data, currentWeapon, m_weapons.size());
+	
+	for( int i = 0; i < m_weapons.size(); ++i )
+	{
+		if ( m_weapons[i] )
+		{
+			data->addBool(true);
+			Encoding::encode(*data, i, m_weapons.size());
+			Encoding::encode(*data, m_weapons[i]->getType()->getIndex(), game.weaponList.size());
+		}
+	}
+	data->addBool(false);
+	
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 
@@ -234,7 +254,7 @@ void NetWorm::sendWeaponMessage( int index, ZCom_BitStream* weaponData )
 	ZCom_BitStream *data = new ZCom_BitStream;
 	addEvent(data, WeaponMessage);
 	//data->addInt(index, Encoding::bitsOf(game.weaponList.size() - 1));
-	Encoding::encode(*data, index, game.weaponList.size());
+	Encoding::encode(*data, index, m_weapons.size());
 	data->addBitStream( weaponData );
 	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
 }
@@ -306,7 +326,7 @@ void NetWorm::changeWeaponTo( unsigned int weapIndex )
 	{
 		ZCom_BitStream *data = new ZCom_BitStream;
 		addEvent(data, ChangeWeapon);
-		data->addInt(weapIndex, Encoding::bitsOf(game.weaponList.size() - 1));
+		Encoding::encode(*data, weapIndex, m_weapons.size());
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH | ZCOM_REPRULE_AUTH_2_PROXY, data);
 		BaseWorm::changeWeaponTo( weapIndex );
 	}

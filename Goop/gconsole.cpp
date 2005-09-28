@@ -271,9 +271,7 @@ string restCmd(list<string> const& args)
 		std::list<string>::const_iterator i = args.begin();
 		
 		int t = cast<int>(*i);
-		
-		rest(t);
-		
+		rest(t);		
 		return "DONE";
 	}
 	

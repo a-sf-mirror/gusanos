@@ -48,6 +48,8 @@ public:
 	void delay( int time );
 	BaseWorm* getOwner();
 	
+	WeaponType* getType() { return m_type; }
+	
 	
 	bool reloading;
 

@@ -40,14 +40,12 @@ void Network::log(char const* msg)
 
 void Network::init()
 {
-	m_zcom = new ZoidCom("network.log");
-	m_zcom->setConnectionTimeout(30000);
+	m_zcom = new ZoidCom();
 	if ( !m_zcom->Init() )
 	{
 		console.addLogMsg("* ERROR: UNABLE TO INITIALIZE ZOIDCOM NETWORK LIB");
 	}else
 	{
-		m_zcom->setConnectionTimeout( 20000 );
 		console.addLogMsg("* ZOIDCOM NETWORK LIB INITIALIZED");
 		console.addLogMsg("* FOR MORE INFO VISIT WWW.ZOIDCOM.COM");
 	}

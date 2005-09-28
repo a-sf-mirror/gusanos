@@ -70,12 +70,21 @@ BaseWorm::BaseWorm()
 	
 	currentWeapon = 0;
 	
-	for(std::vector<WeaponType*>::iterator i = game.weaponList.begin();
+	m_weapons.insert(m_weapons.begin(), game.options.maxWeapons, 0 );
+	m_weaponCount = 0;
+	
+	for ( int i = 0; i < m_weapons.size(); ++i )
+	{
+		m_weapons[i] = new Weapon(game.weaponList[rndInt(game.weaponList.size())], this);
+		m_weaponCount++;
+	}
+	
+	/*for(std::vector<WeaponType*>::iterator i = game.weaponList.begin();
 	    i != game.weaponList.end();
 	    ++i)
 	{
 		m_weapons.push_back(new Weapon(*i, this));
-	}
+	}*/
 
 	m_ninjaRope = new NinjaRope(game.NRPartType, this);
 	movingLeft = false;
@@ -112,6 +121,14 @@ NinjaRope* BaseWorm::getNinjaRopeObj()
 Weapon* BaseWorm::getCurrentWeapon()
 {
 	return m_weapons[currentWeapon];
+}
+
+void BaseWorm::clearWeapons()
+{
+	for ( size_t i = 0; i < m_weapons.size(); i++)
+	{
+		delete m_weapons[i];
+	}
 }
 
 void BaseWorm::calculateReactionForce(BaseVec<long> origin, Direction d)
@@ -431,7 +448,8 @@ void BaseWorm::think()
 
 		for ( size_t i = 0; i < m_weapons.size(); ++i )
 		{
-			m_weapons[i]->think( i == currentWeapon, i );
+			if ( m_weapons[i] )
+				m_weapons[i]->think( i == currentWeapon, i );
 		}
 
 #ifndef DEDSERV
@@ -628,12 +646,32 @@ Angle BaseWorm::getAngle()
 
 int BaseWorm::getWeaponIndexOffset( int offset )
 {
-	// <basara> Glipic, why would using % with size_t crap it? answer on irc plz
-	
-	int returnValue = ( static_cast<int>(currentWeapon) + offset ) % static_cast<int>(m_weapons.size());
-	// For some reason c/c++ % will return negative values of the modulo for negative numbers
-	if ( returnValue < 0 ) returnValue += m_weapons.size(); // so I make it positive again :P
-	return returnValue;
+	if ( m_weaponCount > 0 )
+	{
+		int index = ( static_cast<int>(currentWeapon) + offset ) % m_weaponCount;
+		// For some reason c/c++ % will return negative values of the modulo for negative numbers
+		if ( index < 0 ) index += m_weaponCount; // so I make it positive again :P
+		
+		int returnValue = 0;
+		for( int i = 0, c = 0; i < m_weapons.size(); ++i )
+		{
+			if ( m_weapons[i] )
+			{
+				if ( c == index ) 
+				{
+					returnValue = i;
+					break;
+				}else
+					++c;
+			}
+		}
+		
+		return returnValue;
+	}
+	else 
+	{
+		return currentWeapon;
+	}
 }
 
 void BaseWorm::setDir(int d)
@@ -755,7 +793,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			int renderX = x;
 			int renderY = y;
 			
-			if ( m_weapons[currentWeapon]->reloading )
+			if ( m_weapons[currentWeapon] && m_weapons[currentWeapon]->reloading )
 			{
 				Vec crosshair = Vec(getAngle(), 25.0) + renderPos - Vec(xOff, yOff);
 				float radius = m_weapons[currentWeapon]->reloadTime / (float)m_weapons[currentWeapon]->m_type->reloadTime;
@@ -779,7 +817,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 					, m_ninjaRope->getColour());
 			}
 			
-			m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
+			if ( m_weapons[currentWeapon] ) m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
 			
 			skin->getSprite(m_animator->getFrame(), aimAngle)->draw(where, renderX, renderY, flipped);
 			
@@ -790,7 +828,7 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 						draw(where, renderX+static_cast<int>(distance.x)*m_dir, renderY+static_cast<int>(distance.y), flipped);
 			}
 				
-			if(changing)
+			if(changing && m_weapons[currentWeapon])
 			{
 				std::string const& weaponName = m_weapons[currentWeapon]->m_type->name;
 				std::pair<int, int> dim = game.infoFont->getDimensions(weaponName);
@@ -848,7 +886,8 @@ void BaseWorm::respawn( const Vec& newPos)
 	m_lastHurt = NULL;
 	for ( size_t i = 0; i < m_weapons.size(); ++i )
 	{
-		m_weapons[i]->reset();
+		if ( m_weapons[i] )
+			m_weapons[i]->reset();
 	}
 }
 
@@ -885,9 +924,12 @@ void BaseWorm::die()
 
 void BaseWorm::changeWeaponTo( unsigned int weapIndex )
 {
-	m_weapons[currentWeapon]->actionStop( Weapon::PRIMARY_TRIGGER );
-	m_weapons[currentWeapon]->actionStop( Weapon::SECONDARY_TRIGGER );
-	if ( weapIndex < m_weapons.size() )
+	if ( m_weapons[currentWeapon] )
+	{
+		m_weapons[currentWeapon]->actionStop( Weapon::PRIMARY_TRIGGER );
+		m_weapons[currentWeapon]->actionStop( Weapon::SECONDARY_TRIGGER );
+	}
+	if ( weapIndex < m_weapons.size() && m_weapons[weapIndex] )
 		currentWeapon = weapIndex;
 }
 
@@ -939,7 +981,7 @@ void BaseWorm::actionStart( Actions action )
 		break;
 		
 		case FIRE:
-			if ( m_isActive )
+			if ( m_isActive && m_weapons[currentWeapon] )
 			m_weapons[currentWeapon]->actionStart( Weapon::PRIMARY_TRIGGER );
 		break;
 		
@@ -975,8 +1017,8 @@ void BaseWorm::actionStop( Actions action )
 		break;
 		
 		case FIRE:
-			if ( m_isActive )
-			m_weapons[currentWeapon]->actionStop( Weapon::PRIMARY_TRIGGER );
+			if ( m_isActive && m_weapons[currentWeapon] )
+				m_weapons[currentWeapon]->actionStop( Weapon::PRIMARY_TRIGGER );
 		break;
 		
 		case JUMP:

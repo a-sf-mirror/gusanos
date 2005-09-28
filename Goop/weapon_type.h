@@ -2,6 +2,7 @@
 #define WEAPON_TYPE_H
 
 #include "gfx.h"
+#include "resource_base.h"
 
 #include <string>
 #include <vector>
@@ -14,7 +15,7 @@ class SpriteSet;
 #endif
 class Event;
 
-class WeaponType
+class WeaponType : public ResourceBase
 {
 	public:
 		
