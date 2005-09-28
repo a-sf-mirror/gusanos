@@ -347,7 +347,7 @@ void Game::init(int argc, char** argv)
 	
 	for ( int i = 0; i< MAX_LOCAL_PLAYERS; ++i)
 	{
-		PlayerOptions *options = new PlayerOptions;
+		shared_ptr<PlayerOptions> options(new PlayerOptions);
 		options->registerInConsole(i);
 		playerOptions.push_back(options);
 	}
@@ -662,7 +662,7 @@ bool Game::changeLevelCmd(const std::string& levelName )
 				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
 				BaseWorm* worm = addWorm(true); 
 				BasePlayer* player = addPlayer ( OWNER );
-				player->changeName( playerOptions[0]->name );
+				//player->changeName( player->getOptions()->name );
 				player->assignNetworkRole(true);
 				player->assignWorm(worm);
 			}
@@ -672,7 +672,7 @@ bool Game::changeLevelCmd(const std::string& levelName )
 			{
 				BaseWorm* worm = addWorm(true);
 				BasePlayer* player = addPlayer ( OWNER );
-				player->changeName( playerOptions[0]->name );
+				//player->changeName( player->getOptions()->name );
 				player->assignWorm(worm);
 			}
 		}
@@ -841,31 +841,40 @@ void Game::insertExplosion( Explosion* explosion )
 
 BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 {
-	BasePlayer *retPlayer = NULL;
-	if( type == OWNER )
+	switch(type)
 	{
-		Player* player = new Player(playerOptions[0]);
+		
+		case OWNER:
+		{
+			Player* player = new Player(playerOptions[0]);
 #ifndef DEDSERV
-		Viewport* viewport = new Viewport;
-		viewport->setDestination(gfx.buffer,0,0,320,240);
-		player->assignViewport(viewport);
+			Viewport* viewport = new Viewport;
+			viewport->setDestination(gfx.buffer,0,0,320,240);
+			player->assignViewport(viewport);
 #endif
-		players.push_back( player );
-		localPlayers.push_back( player );
-		retPlayer = player;
-	}else if ( type == PROXY )
-	{
-		ProxyPlayer* player = new ProxyPlayer();
-		players.push_back( player );
-		retPlayer = player;
-	}else if ( type == AI )
-	{
-		PlayerAI* player = new PlayerAI();
-		players.push_back( player );
-		player->changeName( "bot" );
-		retPlayer = player;
+			players.push_back( player );
+			localPlayers.push_back( player );
+			return player;
+		}
+		break;
+				
+		case PROXY:
+		{
+			ProxyPlayer* player = new ProxyPlayer();
+			players.push_back( player );
+			return player;
+		}
+		break;
+		
+		case AI:
+		{
+			PlayerAI* player = new PlayerAI();
+			players.push_back( player );
+			return player;
+		}
 	}
-	return retPlayer;
+	
+	return 0;
 }
 
 BaseWorm* Game::addWorm(bool isAuthority)

@@ -33,18 +33,17 @@ void BasePlayer::operator delete(void* block)
 	lua.destroyReference(p->luaReference);
 }
 
-BasePlayer::BasePlayer()
+BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options)
+: m_options(options), deaths(0)
+, kills(0), deleteMe(false)
+, m_worm(0), m_id(0) // TODO: make a invalid_connection_id define thingy
+, m_wormID(INVALID_NODE_ID)
+, m_node(0), m_interceptor(0)
+, m_isAuthority(false)
+, colour(options->colour)
 {
-	deaths = 0;
-	kills = 0;
-	
-	deleteMe = false;
-	m_worm = NULL;
-	m_id = 0; // TODO: make a invalid_connection_id define thingy
-	m_wormID = INVALID_NODE_ID;
-	m_node = NULL;
-	m_interceptor = NULL;
-	m_isAuthority = false;
+	localChangeName(m_options->name);
+	m_options->clearChangeFlags();
 }
 
 BasePlayer::~BasePlayer()
@@ -61,6 +60,15 @@ void BasePlayer::removeWorm()
 		if ( m_worm->getNinjaRopeObj() ) 
 			m_worm->getNinjaRopeObj()->deleteMe = true;
 	}
+}
+
+inline void addEvent(ZCom_BitStream* data, int event)
+{
+#ifdef COMPACT_EVENTS
+	data->addInt(event, Encoding::bitsOf(BasePlayer::EVENT_COUNT - 1));
+#else
+	data->addInt(static_cast<int>(event),8 );
+#endif
 }
 
 void BasePlayer::think()
@@ -127,18 +135,22 @@ void BasePlayer::think()
 							kills = data->getInt(32);
 							deaths = data->getInt(32);
 							m_name = data->getStringStatic();
+							colour = data->getInt(24);
 						}
 						break;
+						
 						case NAME_CHANGE:
 						{
-							changeName( data->getStringStatic(), true );
+							changeName_( data->getStringStatic() );
 						}
 						break;
-						case NAME_PETITION:
+											
+						case COLOR_CHANGE:
 						{
-							changeName( data->getStringStatic() );
+							changeColor_(data->getInt(24));
 						}
 						break;
+						
 						case CHAT_MSG:
 						{
 							sendChatMsg( data->getStringStatic() );
@@ -171,27 +183,35 @@ void BasePlayer::think()
 		{
 			if ( m_isAuthority )
 			{
-				changeName( m_options->name );
-			}else
+				changeName_( m_options->name );
+			}
+			else
 			{
 				nameChangePetition();
 			}
-		}else
-		{
-			changeName(m_options->name);
 		}
+		else
+		{
+			changeName_(m_options->name);
+		}
+	}
+	
+	if( m_options->colorChanged() )
+	{
+		if ( m_node )
+		{
+			if(m_isAuthority)
+				changeColor_(m_options->colour);
+			else
+				colorChangePetition_(m_options->colour);
+		}
+		else
+			changeColor_(m_options->colour);
 	}
 }
 
 
-inline void addEvent(ZCom_BitStream* data, int event)
-{
-#ifdef COMPACT_EVENTS
-	data->addInt(event, Encoding::bitsOf(BasePlayer::EVENT_COUNT - 1));
-#else
-	data->addInt(static_cast<int>(event),8 );
-#endif
-}
+
 
 inline void addActionStart(ZCom_BitStream* data, int action)
 {
@@ -226,26 +246,50 @@ bool nameIsTaken( const std::string& name )
 	return false;
 }
 
-void BasePlayer::changeName( const std::string& name, bool forceChange )
+void BasePlayer::changeName( std::string const& name)
 {
+	m_options->changeName(name);
+}
+
+void BasePlayer::localChangeName(std::string const& name, bool forceChange)
+{
+	if(m_name == name)
+		return;
+	
 	string nameToUse = name;
 	
-	int nameSuffix = 0;
-	while ( nameIsTaken( nameToUse ) && !forceChange )
+	if(!forceChange)
 	{
-		++nameSuffix;
-		nameToUse = name + "(" + cast<string>(nameSuffix) + ")";
+		int nameSuffix = 0;
+		while ( nameIsTaken( nameToUse ) )
+		{
+			++nameSuffix;
+			nameToUse = name + "(" + cast<string>(nameSuffix) + ")";
+		}
 	}
 	
 	if(!m_name.empty())
 		console.addLogMsg( "* " + m_name + " CHANGED NAME TO " + nameToUse );
+
 	m_name = nameToUse;
-	if ( m_node && m_isAuthority )
+}
+
+void BasePlayer::changeName_( const std::string& name )
+{
+	if(m_isAuthority)
 	{
-		ZCom_BitStream *data = new ZCom_BitStream;
-		addEvent(data, NAME_CHANGE);
-		data->addString( nameToUse.c_str() );
-		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		localChangeName(name);
+		if ( m_node )
+		{
+			ZCom_BitStream *data = new ZCom_BitStream;
+			addEvent(data, NAME_CHANGE);
+			data->addString( m_name.c_str() );
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		}
+	}
+	else
+	{
+		localChangeName(name, true);
 	}
 }
 
@@ -254,8 +298,38 @@ void BasePlayer::nameChangePetition()
 	if ( m_node )
 	{
 		ZCom_BitStream *data = new ZCom_BitStream;
-		addEvent(data, NAME_PETITION);
+		addEvent(data, NAME_CHANGE);
 		data->addString( m_options->name.c_str() );
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, data);
+	}
+}
+
+void BasePlayer::changeColor_( int colour_ )
+{
+	if(m_isAuthority)
+	{
+		colour = colour_;
+		if ( m_node )
+		{
+			ZCom_BitStream *data = new ZCom_BitStream;
+			addEvent(data, COLOR_CHANGE);
+			data->addInt( colour, 24 );
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		}
+	}
+	else
+	{
+		colour = colour_;
+	}
+}
+
+void BasePlayer::colorChangePetition_( int colour_ )
+{
+	if ( m_node )
+	{
+		ZCom_BitStream *data = new ZCom_BitStream;
+		addEvent(data, COLOR_CHANGE);
+		data->addInt( colour_, 24 );
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, data);
 	}
 }
@@ -282,7 +356,7 @@ void BasePlayer::assignWorm(BaseWorm* worm)
 	}
 }
 
-PlayerOptions *BasePlayer::getOptions()
+shared_ptr<PlayerOptions> BasePlayer::getOptions()
 {
 	return m_options;
 }
@@ -332,9 +406,10 @@ void BasePlayer::sendSyncMessage( ZCom_ConnID id )
 {
 	ZCom_BitStream *data = new ZCom_BitStream;
 	addEvent(data, SYNC);
-	data->addInt(kills,32);
-	data->addInt(deaths,32);
+	data->addInt(kills, 32);
+	data->addInt(deaths, 32);
 	data->addString( m_name.c_str() );
+	data->addInt(colour, 24);
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 

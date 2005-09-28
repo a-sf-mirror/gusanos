@@ -15,6 +15,8 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <boost/shared_ptr.hpp>
+using boost::shared_ptr;
 #include <zoidcom.h>
 
 class BasePlayer;
@@ -162,7 +164,7 @@ public:
 	Level level;
 	std::vector<WeaponType*> weaponList;
 	Options options;
-	std::vector<PlayerOptions*> playerOptions;
+	std::vector<shared_ptr<PlayerOptions> > playerOptions;
 	
 	std::vector<Player*> localPlayers;
 	std::list<BasePlayer*> players;

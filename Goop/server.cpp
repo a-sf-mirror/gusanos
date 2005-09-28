@@ -4,6 +4,7 @@
 #include "net_worm.h"
 #include "base_worm.h"
 #include "base_player.h"
+#include "player_options.h"
 #include "network.h"
 
 #ifndef DISABLE_ZOIDCOM
@@ -40,15 +41,17 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 		case Network::PLAYER_REQUEST:
 		{
 			std::string name = _data.getStringStatic();
-			
-			console.addLogMsg( "* " + name + " HAS JOINED THE GAME");
+			int colour = _data.getInt(24);
+
 			BaseWorm* worm = game.addWorm(true);
 			if ( NetWorm* netWorm = dynamic_cast<NetWorm*>(worm) )
 			{
 				netWorm->setOwnerId(_id);
 			}
 			BasePlayer* player = game.addPlayer ( Game::PROXY );
-			player->changeName( name );
+			player->getOptions()->colour = colour;
+			player->localChangeName( name );
+			console.addLogMsg( "* " + player->m_name + " HAS JOINED THE GAME");
 			player->assignNetworkRole(true);
 			player->setOwnerId(_id);
 			player->assignWorm(worm);
@@ -70,11 +73,12 @@ bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request
 {
 	if ( !m_preShutdown )
 	{
-	console.addLogMsg("* CONNECTION REQUESTED");
-	_reply.addString( game.getMod().c_str() );
-	_reply.addString( game.level.getName().c_str() );
-	return true;
-	} else
+		console.addLogMsg("* CONNECTION REQUESTED");
+		_reply.addString( game.getMod().c_str() );
+		_reply.addString( game.level.getName().c_str() );
+		return true;
+	}
+	else
 	{
 		return false;
 	}

@@ -92,19 +92,19 @@ bool check_materials( int x1, int y1, int x2, int y2 )
 }
 
 PlayerAI::PlayerAI()
-	: m_pathSteps(100), m_thinkTime(0)
+: BasePlayer(shared_ptr<PlayerOptions>(new PlayerOptions("bot")))
+, m_pathSteps(100), m_thinkTime(0)
+, m_target(0)
+, m_movingRight(false)
+, m_movingLeft(false)
+, m_shooting(false)
 {
-	m_options = new PlayerOptions;
-	m_target = NULL;
-	
-	m_movingRight = false;
-	m_movingLeft = false;
-	m_shooting = false;
+
 }
 
 PlayerAI::~PlayerAI()
 {
-	delete m_options;
+	
 }
 
 bool PlayerAI::checkMaterialsTo( const Vec& pos )

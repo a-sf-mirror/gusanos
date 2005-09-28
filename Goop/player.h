@@ -26,7 +26,7 @@ public:
 		CHANGE
 	};
 		
-	Player(PlayerOptions* options);
+	Player(shared_ptr<PlayerOptions> options);
 	~Player();
 	
 	void subThink();

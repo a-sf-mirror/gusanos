@@ -3,10 +3,13 @@
 #include <boost/bind.hpp>
 #include "text.h"
 #include <cmath>
+#include <list>
+#include <allegro.h>
 
 using namespace std;
 
-PlayerOptions::PlayerOptions()
+PlayerOptions::PlayerOptions(std::string const& name_)
+: name(name_), m_nameChanged(false), m_colorChanged(false)
 {
 	aimAcceleration = AngleDiff(0.1);
 	//aimFriction = 0.05;
@@ -14,27 +17,54 @@ PlayerOptions::PlayerOptions()
 	aimMaxSpeed = AngleDiff(1);
 	viewportFollowFactor = 1;
 	ropeAdjustSpeed = 0.5;
-	colour = 0;
-	name = "GusPlayer";
-	m_nameChanged = false;
+	colour = universalColor(100, 100, 250);
+	
 }
 
 void PlayerOptions::registerInConsole(int index)
 {
+	std::string sindex = cast<string>(index);
+	
 	console.registerVariables()
-		("P" + cast<string>(index) +"_AIM_ACCEL", &aimAcceleration, AngleDiff(0.17))
-		("P" + cast<string>(index) +"_AIM_FRICTION", &aimFriction, pow(0.89, 0.7))
-		("P" + cast<string>(index) +"_AIM_SPEED", &aimMaxSpeed, AngleDiff(1.7))
-		("P" + cast<string>(index) +"_VIEWPORT_FOLLOW", &viewportFollowFactor, 0.1)
-		("P" + cast<string>(index) +"_ROPE_ADJUST_SPEED", &ropeAdjustSpeed, 0.5)
-		("P" + cast<string>(index) +"_NAME", &name, "GusPlayer",
+		("P" + sindex + "_AIM_ACCEL", &aimAcceleration, AngleDiff(0.17))
+		("P" + sindex + "_AIM_FRICTION", &aimFriction, pow(0.89, 0.7))
+		("P" + sindex + "_AIM_SPEED", &aimMaxSpeed, AngleDiff(1.7))
+		("P" + sindex + "_VIEWPORT_FOLLOW", &viewportFollowFactor, 0.1)
+		("P" + sindex + "_ROPE_ADJUST_SPEED", &ropeAdjustSpeed, 0.5)
+		("P" + sindex + "_NAME", &name, "GusPlayer",
 		 boost::bind( &PlayerOptions::nameChange, this ) )
 	;
+	
+	console.registerCommands()
+		//("P" + sindex + "_COLOR", boost::bind(&PlayerOptions::setColour, this, _1))
+		("P" + sindex + "_COLOUR", boost::bind(&PlayerOptions::setColour, this, _1))
+	;
+}
+
+string PlayerOptions::setColour(list<string> const& args)
+{
+	if(args.size() >= 3)
+	{
+		list<string>::const_iterator i = args.begin();
+		int r = cast<int>(*i++);
+		int g = cast<int>(*i++);
+		int b = cast<int>(*i++);
+		colour = universalColor(r, g, b);
+		m_colorChanged = true;
+		return "";
+	}
+	return "PX_COLOUR <R> <G> <B> : SETS THE COLOUR OF THE WORM BELONGING TO THIS PLAYER";
 }
 
 void PlayerOptions::nameChange()
 {
 	m_nameChanged = true;
+}
+
+void PlayerOptions::clearChangeFlags()
+{
+	m_nameChanged = false;
+	m_colorChanged = false;
 }
 
 bool PlayerOptions::nameChanged()
@@ -45,4 +75,19 @@ bool PlayerOptions::nameChanged()
 		return true;
 	}
 	return false;
+}
+
+bool PlayerOptions::colorChanged()
+{
+	bool res = m_colorChanged;
+	m_colorChanged = false;
+	return res;
+}
+
+void PlayerOptions::changeName(std::string const& name_)
+{
+	if(name_ == name)
+		return;
+	name = name_;
+	nameChange();
 }

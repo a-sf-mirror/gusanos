@@ -6,12 +6,15 @@
 using std::cerr;
 using std::endl;
 
-PosSpdReplicator::PosSpdReplicator(ZCom_ReplicatorSetup *_setup, Vec *pos, Vec *spd, Encoding::VectorEncoding& encoding_) : 
-	ZCom_ReplicatorBasic(cZCom_RType_boolp, _setup),
-	m_posPtr(pos), 
-	m_spdPtr(spd),
-	m_repCount(0),
-	encoding(encoding_)
+PosSpdReplicator::PosSpdReplicator(ZCom_ReplicatorSetup *_setup,
+	Vec *pos, Vec *spd, Encoding::VectorEncoding& encoding_,
+	Encoding::DiffVectorEncoding& diffEncoding_)
+: ZCom_ReplicatorBasic(cZCom_RType_boolp, _setup)
+, m_posPtr(pos)
+, m_spdPtr(spd)
+, m_repCount(0)
+, encoding(encoding_)
+, diffEncoding(diffEncoding_)
 {
 	m_flags |= ZCOM_REPLICATOR_INITIALIZED;
 }
@@ -46,8 +49,10 @@ zU32 PosSpdReplicator::packData(ZCom_BitStream *_stream)
 	{
 		m_repCount = 0;
 		_stream->addBool(true);
+/*
 		_stream->addFloat(m_spdPtr->x,speedPrec);
-		_stream->addFloat(m_spdPtr->y,speedPrec);
+		_stream->addFloat(m_spdPtr->y,speedPrec);*/
+		diffEncoding.encode(*_stream, *m_spdPtr);
 	}else
 	{
 		++m_repCount;
@@ -73,8 +78,10 @@ zU32 PosSpdReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 _es
 
 		if ( _stream->getBool() )
 		{
+			/*
 			m_spdPtr->x = _stream->getFloat(speedPrec);
-			m_spdPtr->y = _stream->getFloat(speedPrec);
+			m_spdPtr->y = _stream->getFloat(speedPrec);*/
+			*m_spdPtr = diffEncoding.decode<Vec>(*_stream);
 		}
 
 	}
@@ -90,8 +97,10 @@ zU32 PosSpdReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 _es
 
 		if ( _stream->getBool() )
 		{
+			/*
 			_stream->getFloat(speedPrec);
-			_stream->getFloat(speedPrec);
+			_stream->getFloat(speedPrec);*/
+			*m_spdPtr = diffEncoding.decode<Vec>(*_stream);
 		}
 	}
 	return 1;

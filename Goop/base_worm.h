@@ -144,6 +144,7 @@ protected:
 	
 #ifndef DEDSERV
 	SpriteSet *skin;
+	SpriteSet *skinMask;
 	SpriteSet *m_currentFirecone;
 	BaseAnimator* m_fireconeAnimator;
 	

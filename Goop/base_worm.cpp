@@ -53,6 +53,7 @@ BaseWorm::BaseWorm()
 	m_lastHurt = NULL;
 #ifndef DEDSERV
 	skin = spriteList.load("skin");
+	skinMask = spriteList.load("skin-mask");
 	m_animator = new AnimLoopRight(skin,35);
 
 	m_fireconeTime = 0;
@@ -781,6 +782,9 @@ void BaseWorm::removeRefsToPlayer(BasePlayer* player)
 
 void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 {
+	if(!m_owner)
+		return;
+	
 	if (m_isActive)
 	{
 		bool flipped = false;
@@ -819,7 +823,8 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			if ( m_weapons[currentWeapon] ) m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
 			
-			skin->getSprite(m_animator->getFrame(), aimAngle)->draw(where, renderX, renderY, flipped);
+			int colour = universalToLocalColor(m_owner->colour);
+			skin->getColoredSprite(m_animator->getFrame(), skinMask, colour, aimAngle)->draw(where, renderX, renderY, flipped);
 			
 			if ( m_currentFirecone )
 			{

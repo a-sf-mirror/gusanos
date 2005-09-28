@@ -7,6 +7,7 @@
 #include "omfggui.h" // For Rect
 #include "zoidcom.h"
 #include <iostream>
+#include <stdexcept>
 
 //using boost::dynamic_bitset;
 using std::cerr;
@@ -14,6 +15,9 @@ using std::endl;
 
 namespace Encoding
 {
+	
+extern unsigned int eliasCodedBits;
+extern unsigned int eliasInvokations;
 	
 inline unsigned int bitsOf(unsigned long n)
 {
@@ -37,12 +41,80 @@ inline int decode(ZCom_BitStream& stream, int count)
 	return stream.getInt(bitsOf(count - 1));
 }
 
+inline unsigned int signedToUnsigned(int n)
+{
+	if(n < 0)
+		return ((-n) << 1) | 1;
+	else
+		return n << 1;
+}
+
+inline int unsignedToSigned(unsigned int n)
+{
+	if(n & 1)
+		return -(n >> 1);
+	else
+		return (n >> 1);
+}
+
+inline void encodeBit(ZCom_BitStream& stream, int bit)
+{
+	stream.addInt(bit, 1);
+}
+
+inline int decodeBit(ZCom_BitStream& stream)
+{
+	return stream.getInt(1);
+}
+
+inline void encodeEliasGamma(ZCom_BitStream& stream, unsigned int n)
+{
+	if(n < 1)
+		throw std::runtime_error("encodeEliasGamma can't encode 0");
+		
+	int prefix = bitsOf(n);
+	stream.addInt(0, prefix - 1);
+		
+	eliasCodedBits += prefix*2 - 1;
+	++eliasInvokations;
+
+	encodeBit(stream, 1);
+	stream.addInt(n, prefix - 1);
+}
+
+inline unsigned int decodeEliasGamma(ZCom_BitStream& stream)
+{
+	int prefix = 0;
+	for(; decodeBit(stream) == 0; )
+		++prefix;
+		
+	// prefix = number of prefixed zeroes
+	
+	return stream.getInt(prefix) | (1 << prefix);
+}
+
+inline void encodeEliasDelta(ZCom_BitStream& stream, unsigned int n)
+{
+	assert(n >= 1);
+	int prefix = bitsOf(n);
+	encodeEliasGamma(stream, prefix);
+	eliasCodedBits += prefix - 1;
+	stream.addInt(n, prefix - 1);
+}
+
+inline unsigned int decodeEliasDelta(ZCom_BitStream& stream)
+{
+	int prefix = decodeEliasGamma(stream) - 1;
+	
+	return stream.getInt(prefix) | (1 << prefix);
+}
+
 struct VectorEncoding
 {
 	VectorEncoding();
 	
 	VectorEncoding(Rect area_, unsigned int subPixelAcc_ = 1);
-	
+		
 	template<class T>
 	std::pair<long, long> quantize(T const& v)
 	{
@@ -75,7 +147,7 @@ struct VectorEncoding
 			x = 0;
 		else if(x > width)
 			x = width - 1;
-			
+		
 		stream.addInt(x, bitsX);
 		stream.addInt(y, bitsY);
 	}
@@ -105,6 +177,43 @@ struct VectorEncoding
 	
 	unsigned int subPixelAcc;
 	double isubPixelAcc;
+};
+
+struct DiffVectorEncoding
+{
+	DiffVectorEncoding(unsigned int subPixelAcc_ = 1);
+	
+	template<class T>
+	std::pair<long, long> quantize(T const& v)
+	{
+		long y = static_cast<long>(v.y * subPixelAcc + 0.5);	
+		long x = static_cast<long>(v.x * subPixelAcc + 0.5);
+
+		return std::make_pair(x, y);
+	}
+	
+	template<class T>
+	void encode(ZCom_BitStream& stream, T const& v)
+	{
+		long y = static_cast<long>(v.y * subPixelAcc + 0.5);	
+		long x = static_cast<long>(v.x * subPixelAcc + 0.5);
+		
+		encodeEliasDelta(stream, signedToUnsigned(x) + 1);
+		encodeEliasDelta(stream, signedToUnsigned(y) + 1);
+	}
+	
+	template<class T>
+	T decode(ZCom_BitStream& stream)
+	{
+		typedef typename T::manip_t manip_t;
+		
+		long x = unsignedToSigned(decodeEliasDelta(stream) - 1);
+		long y = unsignedToSigned(decodeEliasDelta(stream) - 1);
+		
+		return T(manip_t(x) / subPixelAcc, manip_t(y) / subPixelAcc);
+	}
+
+	unsigned int subPixelAcc;
 };
 
 /*

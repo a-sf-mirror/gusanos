@@ -5,16 +5,19 @@
 
 #include <zoidcom.h>
 
+class PlayerOptions;
+
 class Client : public ZCom_Control
 {
-	public:
+public:
 	
 	Client( int _udpport );
 	~Client();
 	
+	void requestPlayer(PlayerOptions const& playerOptions);
 	void requestPlayers();
 
-	protected:
+protected:
 
 	// called when initiated connection process yields a result
 	void ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply );

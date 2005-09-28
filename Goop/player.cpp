@@ -10,19 +10,19 @@
 
 using namespace std;
 
-Player::Player(PlayerOptions* options) : BasePlayer()
-{
-	aimingUp = false;
-	aimingDown = false;
-	changing = false;
-	jumping = false;
-	walkingRight = false;
-	walkingLeft = false;
-	
-	m_options = options;
+Player::Player(shared_ptr<PlayerOptions> options)
+: BasePlayer(options)
+, aimingUp(false)
+, aimingDown(false)
+, changing(false)
+, jumping(false)
+, walkingRight(false)
+, walkingLeft(false)
 #ifndef DEDSERV
-	m_viewport = NULL;
+, m_viewport(0)
 #endif
+{
+
 }
 
 Player::~Player()

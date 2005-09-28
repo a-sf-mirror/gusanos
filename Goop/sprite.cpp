@@ -10,14 +10,87 @@
 
 using namespace std;
 
-Sprite::Sprite( BITMAP* bitmap, int xPivot, int yPivot) : m_bitmap(bitmap)
+Sprite::Sprite( BITMAP* bitmap, int xPivot, int yPivot)
+: m_bitmap(bitmap), m_mirror(0)
 {
 	if ( xPivot == -1 ) m_xPivot = m_bitmap->w / 2;
 	else m_xPivot = xPivot;
 	if ( yPivot == -1 ) m_yPivot = m_bitmap->h / 2;
 	else m_yPivot = yPivot;
-	m_mirror = NULL;
 }
+
+inline int scaleColor(int a, int b, int bmax)
+{
+	return makecol(
+		getr(a) * b / bmax,
+		getg(a) * b / bmax,
+		getb(a) * b / bmax);
+}
+
+inline int brightenColor(int a, int b)
+{
+	return makecol(
+		getr(a) + b,
+		getg(a) + b,
+		getb(a) + b);
+}
+
+#ifndef DEDSERV
+
+Sprite::Sprite(Sprite const& b, Sprite const& mask, int color)
+: m_bitmap(
+	create_bitmap_ex(
+		bitmap_color_depth(b.m_bitmap),
+		b.m_bitmap->w,
+		b.m_bitmap->h
+	)
+), m_mirror(0), m_xPivot(b.m_xPivot), m_yPivot(b.m_yPivot)
+{
+	int colorDepth = bitmap_color_depth(b.m_bitmap);
+	LocalSetColorDepth cd(colorDepth);
+
+	int unchanged = makecol(255, 0, 255);
+	int wormColor = makecol(0, 0, 0);
+	
+	BITMAP* maskBitmap = mask.m_bitmap;
+	BITMAP* srcBitmap = b.m_bitmap;
+	
+	/*
+	for(int y = 0; y < m_bitmap->h; ++y)
+	for(int x = 0; x < m_bitmap->w; ++x)
+	{
+		int col = getpixel_solid(srcBitmap, x, y);
+		int m = getpixel(maskBitmap, x, y);
+		if(m == wormColor)
+			col = specialTint(colorDepth, color, lightness(colorDepth, col));
+
+		putpixel_solid(m_bitmap, x, y, col);			
+	}*/
+	
+	int limit = 104;
+	
+	for(int y = 0; y < m_bitmap->h; ++y)
+	for(int x = 0; x < m_bitmap->w; ++x)
+	{
+		int col = getpixel(srcBitmap, x, y);
+		int m = getpixel(maskBitmap, x, y);
+		if(m == wormColor)
+		{
+			int scale;
+			int magn = getr(col);
+			if(magn <= limit)
+				col = scaleColor(color, magn, limit);
+			else
+			{
+				int fact = 256*limit / magn;
+				col = brightenColor(scaleColor(color, fact, 256), 256-fact);
+			}
+		}
+
+		putpixel_solid(m_bitmap, x, y, col);			
+	}
+}
+#endif
 
 Sprite::~Sprite()
 {

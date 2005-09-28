@@ -71,7 +71,7 @@ public:
 	
 	// IMPORTANT: The pos and spd vectors should be used as read only. ( Because of netplay needs )
 	// To change their values use the setters provided.
-	Vec pos; 
+	Vec pos;
 	Vec spd;
 	
 	LuaReference luaData;

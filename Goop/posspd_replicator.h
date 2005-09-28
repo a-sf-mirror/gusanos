@@ -31,7 +31,7 @@ class PosSpdReplicator : public ZCom_ReplicatorBasic
 	
 	public:
 
-		PosSpdReplicator(ZCom_ReplicatorSetup *_setup, Vec *pos, Vec *spd, Encoding::VectorEncoding& encoding_);
+		PosSpdReplicator(ZCom_ReplicatorSetup *_setup, Vec *pos, Vec *spd, Encoding::VectorEncoding& encoding_, Encoding::DiffVectorEncoding& diffEncoding_);
 	
 	// TODO: Implement this for safeness sake
 		ZCom_Replicator* Duplicate(ZCom_Replicator *_dest) { return NULL; } 
@@ -54,6 +54,7 @@ class PosSpdReplicator : public ZCom_ReplicatorBasic
 	
 	private:
 		Encoding::VectorEncoding& encoding;
+		Encoding::DiffVectorEncoding& diffEncoding;
 };
 
 #endif

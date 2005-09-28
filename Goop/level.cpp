@@ -290,5 +290,6 @@ void Level::loaderSucceeded()
 	// can get slightly outside the level and attach.
 	vectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 2048);
 	intVectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 1);
+	diffVectorEncoding = Encoding::DiffVectorEncoding(1024);
 	cerr << "vectorEncoding: " << vectorEncoding.totalBits() << endl;
 }

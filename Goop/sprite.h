@@ -21,6 +21,9 @@ class Sprite
 public:
 		
 	Sprite(BITMAP* bitmap, int xPivot, int yPivot);
+#ifndef DEDSERV
+	Sprite(Sprite const&, Sprite const&, int);
+#endif
 	~Sprite();
 	
 #ifndef DEDSERV

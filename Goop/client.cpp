@@ -24,13 +24,19 @@ Client::~Client()
 {
 }
 
-void Client::requestPlayers()
+void Client::requestPlayer(PlayerOptions const& playerOptions)
 {
 	ZCom_BitStream *req = new ZCom_BitStream;
 	req->addInt(Network::PLAYER_REQUEST,8);
-	req->addString( game.playerOptions[0]->name.c_str() );
+	req->addString( playerOptions.name.c_str() );
+	req->addInt(playerOptions.colour, 24);
 	ZCom_sendData( network.getServerID(), req, eZCom_ReliableOrdered );
-};
+}
+
+void Client::requestPlayers()
+{
+	requestPlayer(*game.playerOptions[0]);
+}
 
 void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply )
 {

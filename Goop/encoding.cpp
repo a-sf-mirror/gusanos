@@ -6,6 +6,9 @@ using std::endl;
 namespace Encoding
 {
 	
+unsigned int eliasCodedBits = 0;
+unsigned int eliasInvokations = 0;
+	
 VectorEncoding::VectorEncoding()
 : area(0, 0, 0, 0), total(0), width(0), height(0), bitsX(0), bitsY(0), subPixelAcc(1), isubPixelAcc(0.0)
 {
@@ -19,9 +22,13 @@ VectorEncoding::VectorEncoding(Rect area_, unsigned int subPixelAcc_)
 	total = width * height;
 	bitsX = bitsOf(width - 1);
 	bitsY = bitsOf(height - 1);
-	
-	//cerr << "Vector encoding: " << width << ", " << height << endl;
-	
+
+}
+
+DiffVectorEncoding::DiffVectorEncoding(unsigned int subPixelAcc_)
+: subPixelAcc(subPixelAcc_)
+{
+
 }
 
 /*

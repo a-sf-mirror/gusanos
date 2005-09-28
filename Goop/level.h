@@ -90,6 +90,7 @@ class Level
 	array<Material, 256> m_materialList;
 	Encoding::VectorEncoding vectorEncoding;
 	Encoding::VectorEncoding intVectorEncoding;
+	Encoding::DiffVectorEncoding diffVectorEncoding;
 	
 	struct ParticleBlockPredicate
 	{

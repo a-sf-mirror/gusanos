@@ -379,6 +379,7 @@ int main(int argc, char **argv)
 #endif
 	}
 	
+	cerr << Encoding::eliasCodedBits << " bits for " << Encoding::eliasInvokations << " invokations." << endl;
 	
 	network.disconnect();
 	network.shutDown();

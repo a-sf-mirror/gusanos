@@ -1,14 +1,15 @@
 #include "proxy_player.h"
 #include "player_options.h"
 
-ProxyPlayer::ProxyPlayer() : BasePlayer()
+ProxyPlayer::ProxyPlayer()
+: BasePlayer(shared_ptr<PlayerOptions>(new PlayerOptions))
 {
-	m_options = new PlayerOptions();
+
 }
 
 ProxyPlayer::~ProxyPlayer()
 {
-	delete m_options;
+
 }
 
 void ProxyPlayer::subThink()
