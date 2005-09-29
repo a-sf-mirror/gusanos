@@ -17,6 +17,8 @@ class ResourceList
 {
 public:
 
+	typedef std::map<fs::path, T1*> MapT;
+	
 	ResourceList( fs::path const& subFolder)
 	{
 		m_subFolder = subFolder;
@@ -26,11 +28,10 @@ public:
 	void clear()
 	{
 		m_paths.clear();
-		typename std::map<fs::path, T1*>::iterator item = m_resItems.begin();
-		while (item != m_resItems.end())
+		typename MapT::iterator item = m_resItems.begin();
+		for (; item != m_resItems.end(); ++item)
 		{
 			delete item->second;
-			++item;
 		}
 		m_resItems.clear();
 		m_locked = false;
@@ -59,7 +60,7 @@ public:
 		if ( m_locked )
 			return NULL;
 
-		typename std::map<fs::path, T1*>::iterator item = m_resItems.find(filename);
+		typename MapT::iterator item = m_resItems.find(filename);
 		if (item != m_resItems.end())
 		{
 			return item->second;
@@ -85,10 +86,19 @@ public:
 		}
 	}
 	
+	void think()
+	{
+		typename MapT::iterator i = m_resItems.begin();
+		for (; i != m_resItems.end(); ++i)
+		{
+			i->second->think();
+		}
+	}
+	
 	void indexate()
 	{
 		m_locked = true;
-		typename std::map<fs::path, T1*>::iterator item = m_resItems.begin();
+		typename MapT::iterator item = m_resItems.begin();
 		for( size_t i = 0; item != m_resItems.end() ; ++item, ++i )
 		{
 			m_resItemsIndex.push_back( item->second );
@@ -106,8 +116,9 @@ public:
 		if( index < m_resItemsIndex.size() )
 		{
 			return m_resItemsIndex[index];
-		}else
-			return NULL;
+		}
+		else
+			return 0;
 	}
 	
 private:
@@ -115,7 +126,7 @@ private:
 	bool m_locked;
 	fs::path m_subFolder;
 	std::vector<T1*> m_resItemsIndex;
-	std::map<fs::path, T1*> m_resItems;
+	MapT m_resItems;
 	std::list<fs::path>     m_paths; // Paths to scan
 };
 

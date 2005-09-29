@@ -33,12 +33,9 @@ public:
 	{
 		typename MapT::iterator i = m_map.find(k);
 		if(i == m_map.end())
-		{
-			think();
-			i = m_map.insert(std::make_pair(k, Item(construct(k), 2))).first;
-		}
+			i = m_map.insert(std::make_pair(k, Item(construct(k), 500))).first;
 		else
-			i->second.lifetime = 2;
+			i->second.lifetime = 500;
 		
 		return i->second.value;
 	}

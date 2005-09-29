@@ -18,6 +18,9 @@ public:
 		m_index = index;
 	}
 	
+	void think()
+	{}
+	
 private:
 	
 	size_t m_index;

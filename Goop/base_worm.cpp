@@ -270,6 +270,8 @@ void BaseWorm::processPhysics()
 		spd.x *= game.options.worm_friction;
 	}
 	
+	spd *= game.options.worm_airFriction;
+	
 	if(spd.x > 0.f)
 	{
 		if(reacts[Left] > 0)
@@ -375,12 +377,16 @@ void BaseWorm::processMoveAndDig(void)
 	//if(movable)
 	if( true )
 	{
+		float acc = game.options.worm_acceleration;
+		
+		if(reacts[Up] <= 0)
+			acc *= game.options.worm_airAccelerationFactor;
 		if(movingLeft && !movingRight)
 		{
 			//TODO: Air acceleration
 			if(spd.x > -game.options.worm_maxSpeed)
 			{
-				spd.x -= game.options.worm_acceleration;
+				spd.x -= acc;
 			}
 			
 			if(m_dir > 0)
@@ -396,7 +402,7 @@ void BaseWorm::processMoveAndDig(void)
 			//TODO: Air acceleration
 			if(spd.x < game.options.worm_maxSpeed)
 			{
-				spd.x += game.options.worm_acceleration;
+				spd.x += acc;
 			}
 			
 			if(m_dir < 0)
@@ -410,7 +416,7 @@ void BaseWorm::processMoveAndDig(void)
 		else if(movingRight && movingLeft)
 		{
 			// TODO: Digging
-			
+			animate = false;
 		}
 		else
 		{
@@ -651,6 +657,7 @@ int BaseWorm::getWeaponIndexOffset( int offset )
 	{
 		int index = ( static_cast<int>(currentWeapon) + offset ) % m_weaponCount;
 		// For some reason c/c++ % will return negative values of the modulo for negative numbers
+		// <Gliptic> Well, that's because modulo works like that
 		if ( index < 0 ) index += m_weaponCount; // so I make it positive again :P
 		
 		int returnValue = 0;

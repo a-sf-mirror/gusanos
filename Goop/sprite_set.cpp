@@ -157,6 +157,11 @@ Sprite* SpriteSet::getSprite( size_t frame, Angle angle )
 	return getSprite_(frame, angleFrame);
 }
 
+void SpriteSet::think()
+{
+	m_coloredCache.think();
+}
+
 #ifndef DEDSERV
 SpriteSet* SpriteSet::ColorSpriteSet::operator()(ColorKey const& key)
 {
@@ -172,8 +177,10 @@ void SpriteSet::DeleteSpriteSet::operator()(SpriteSet* spriteSet)
 
 Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, Angle angle )
 {
-	if(!mask
-	|| mask->frameCount != frameCount
+	if(!mask)
+		return getSprite(frame, angle);
+	
+	if(mask->frameCount != frameCount
 	|| mask->angleCount != angleCount)
 		return 0;
 		
@@ -182,19 +189,6 @@ Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, A
 	SpriteSet* s = m_coloredCache[key];
 	
 	return s->getSprite(frame, angle);
-	
-	/*
-	std::map<ColorKey, SpriteSet*>::iterator i
-		= m_coloredCache.find(key);
-		
-	if(i == m_coloredCache.end())
-	{
-		i = m_coloredCache.insert(
-			std::make_pair(key,
-				new SpriteSet(*this, *mask, color))).first;
-	}
-
-	return i->second->getSprite(frame, angle);*/
 }
 #endif
 

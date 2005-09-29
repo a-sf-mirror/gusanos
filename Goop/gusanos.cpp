@@ -21,6 +21,7 @@
 #include "distortion.h"
 #include "keyboard.h"
 #endif
+#include "sprite_set.h"
 #include "player_ai.h"
 #include "network.h"
 
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
 	while (!quit)
 	{
 
-		while ( logicLast+1 <= _timer )
+		while ( logicLast + 1 <= _timer )
 		{
 			
 #ifdef USE_GRID
@@ -198,7 +199,9 @@ int main(int argc, char **argv)
 #endif
 			console.think();
 			
-			logicLast+=1;
+			spriteList.think();
+			
+			++logicLast;
 		}
 		
 #ifdef WINDOWS

@@ -27,6 +27,8 @@ public:
 
 	bool load(fs::path const& filename);
 	
+	void think();
+	
 	Sprite* getSprite( size_t frame, Angle angle );
 	Sprite* getSprite( size_t frame = 0 );
 #ifndef DEDSERV

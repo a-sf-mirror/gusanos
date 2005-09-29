@@ -3,21 +3,29 @@
 #include <console.h>
 #include <string>
 #include <vector>
+#include <iostream>
+
+#include <allegro.h>
+#include <boost/static_assert.hpp>
 
 using namespace std;
 
+BOOST_STATIC_ASSERT(KEY_MAX == 127);
+BOOST_STATIC_ASSERT(KEY_CAPSLOCK == 126);
+
 int kName2Int(const string &name)
 {
-	int i;
-	for (int i = 0; i < 120; ++i)
+	for (int i = 0; i < KEY_MAX; ++i)
 	{
 		if(istrCmp( name, keyNames[i] ))
+		{
 			return i;
+		}
 	}
 	return -1;
 }
 
-array<std::string, 256> keyNames =
+array<std::string, KEY_MAX+1> keyNames =
 {
 	"NULL",
 	"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
@@ -72,7 +80,15 @@ array<std::string, 256> keyNames =
 	"BACKQUOTE",
 	"SEMICOLON",
 	"COMMAND",
-	"LSHIFT",
+	"UNKNOWN1",
+	"UNKNOWN2",
+	"UNKNOWN3",
+	"UNKNOWN4",
+	"UNKNOWN5",
+	"UNKNOWN6",
+	"UNKNOWN7",
+	"UNKNOWN8",
+	"LSHIFT", //115
 	"RSHIFT",
 	"LCONTROL",
 	"RCONTROL",
