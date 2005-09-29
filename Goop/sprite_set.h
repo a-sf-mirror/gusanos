@@ -3,6 +3,7 @@
 
 #include "resource_list.h"
 #include "angle.h"
+#include "cache.h"
 #include <allegro.h>
 #include <string>
 #include <vector>
@@ -47,13 +48,28 @@ private:
 	
 	typedef std::pair<SpriteSet*, int> ColorKey;
 	
+	struct ColorSpriteSet
+	{
+		ColorSpriteSet(SpriteSet& parent_)
+		: parent(parent_)
+		{
+		}
+		
+		SpriteSet* operator()(ColorKey const& key);
+		
+		SpriteSet& parent;
+	};
 	
-	//std::vector< std::vector< Sprite* > > m_frame;
+	struct DeleteSpriteSet
+	{
+		void operator()(SpriteSet* spriteSet);
+	};
+	
 	std::vector< Sprite* > m_frame;
 	size_t frameCount;
 	size_t angleCount;
-	std::map<ColorKey, SpriteSet*> m_coloredCache;
-	//TODO: Cache<ColorKey, SpriteSet*, ColorSpriteSet> m_coloredCache;
+	//std::map<ColorKey, SpriteSet*> m_coloredCache;
+	Cache<ColorKey, SpriteSet*, ColorSpriteSet, DeleteSpriteSet> m_coloredCache;
 	long m_angleFactor;
 	long m_halfAngleDivisonSize;
 };

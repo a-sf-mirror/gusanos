@@ -108,7 +108,7 @@ elif conf == 'darka':
 		env.Append(CPPFLAGS = '-O0 -g -DDEBUG -DDEDSERV ')
 elif conf == 'lucas':
 	env.Append(
-		CPPPATH = ['/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_33'],
+		CPPPATH = ['/usr/local/include', '/usr/local/include/zoidcom', '/usr/local/include/fmod', '/usr/local/include/boost-1_33'],
 		LIBPATH = ['/usr/local/lib', '/usr/X11R6/lib'],
 		CPPFLAGS = '-Wall ',
 		)

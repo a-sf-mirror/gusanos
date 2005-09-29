@@ -37,11 +37,9 @@ elif conf == 'darka':
 elif conf == 'lucas':
 	env.Append(LIBS = Split("""
 	        png12 z fmod-3.74.1
-	        alleg-4.1.15 m
-	        pthread 
-	        Xpm
-	        Xext X11 dl
-	        loadpng zoidcom boost_filesystem-gcc boost_signals-gcc""")
+	        alleg-4.2.0 alleg_unsharable
+	        zoidcom boost_filesystem-gcc boost_signals-gcc"""),
+			LINKFLAGS = '-Wl,--export-dynamic'
 		)
 		
 	        

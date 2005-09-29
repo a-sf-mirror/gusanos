@@ -17,6 +17,7 @@ using namespace std;
 ResourceList<SpriteSet> spriteList("sprites/");
 
 SpriteSet::SpriteSet()
+: m_coloredCache(ColorSpriteSet(*this))
 {
 	
 }
@@ -28,6 +29,7 @@ SpriteSet::SpriteSet(SpriteSet const& b, SpriteSet const& mask, int color)
 , m_halfAngleDivisonSize(b.m_halfAngleDivisonSize)
 , frameCount(b.frameCount)
 , angleCount(b.angleCount)
+, m_coloredCache(ColorSpriteSet(*this))
 {
 	std::vector<Sprite *>::const_iterator srci = b.m_frame.begin();
 	std::vector<Sprite *>::const_iterator maski = mask.m_frame.begin();
@@ -52,11 +54,12 @@ SpriteSet::~SpriteSet()
 		delete *frame;
 	}
 	
+/*
 	std::map<ColorKey, SpriteSet*>::iterator i = m_coloredCache.begin();
 	for(; i != m_coloredCache.end(); ++i)
 	{
 		delete i->second;
-	}
+	}*/
 }
 
 bool SpriteSet::load(fs::path const& filename)
@@ -155,6 +158,18 @@ Sprite* SpriteSet::getSprite( size_t frame, Angle angle )
 }
 
 #ifndef DEDSERV
+SpriteSet* SpriteSet::ColorSpriteSet::operator()(ColorKey const& key)
+{
+	cerr << "Coloring sprite set" << endl;
+	return new SpriteSet(parent, *key.first, key.second);
+}
+
+void SpriteSet::DeleteSpriteSet::operator()(SpriteSet* spriteSet)
+{
+	cerr << "Deleting sprite set" << endl;
+	delete spriteSet;
+}
+
 Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, Angle angle )
 {
 	if(!mask
@@ -163,7 +178,12 @@ Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, A
 		return 0;
 		
 	ColorKey key = std::make_pair(mask, color);
-		
+	
+	SpriteSet* s = m_coloredCache[key];
+	
+	return s->getSprite(frame, angle);
+	
+	/*
 	std::map<ColorKey, SpriteSet*>::iterator i
 		= m_coloredCache.find(key);
 		
@@ -174,7 +194,7 @@ Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, A
 				new SpriteSet(*this, *mask, color))).first;
 	}
 
-	return i->second->getSprite(frame, angle);
+	return i->second->getSprite(frame, angle);*/
 }
 #endif
 

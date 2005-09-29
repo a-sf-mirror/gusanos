@@ -99,7 +99,7 @@ PlayerAI::PlayerAI()
 , m_movingLeft(false)
 , m_shooting(false)
 {
-
+	colour = universalColor(rndInt(256), rndInt(256), rndInt(256));
 }
 
 PlayerAI::~PlayerAI()
