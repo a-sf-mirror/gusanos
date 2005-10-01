@@ -14,10 +14,12 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-ResourceList<SpriteSet> spriteList("sprites/");
+ResourceList<SpriteSet> spriteList;
 
 SpriteSet::SpriteSet()
+#ifndef DEDSERV
 : m_coloredCache(ColorSpriteSet(*this))
+#endif
 {
 	
 }
@@ -159,21 +161,22 @@ Sprite* SpriteSet::getSprite( size_t frame, Angle angle )
 
 void SpriteSet::think()
 {
+#ifndef DEDSERV
 	m_coloredCache.think();
+#endif
 }
 
 #ifndef DEDSERV
 SpriteSet* SpriteSet::ColorSpriteSet::operator()(ColorKey const& key)
 {
-	cerr << "Coloring sprite set" << endl;
 	return new SpriteSet(parent, *key.first, key.second);
 }
 
 void SpriteSet::DeleteSpriteSet::operator()(SpriteSet* spriteSet)
 {
-	cerr << "Deleting sprite set" << endl;
 	delete spriteSet;
 }
+
 
 Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, Angle angle )
 {
@@ -184,9 +187,7 @@ Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, A
 	|| mask->angleCount != angleCount)
 		return 0;
 		
-	ColorKey key = std::make_pair(mask, color);
-	
-	SpriteSet* s = m_coloredCache[key];
+	SpriteSet* s = m_coloredCache[std::make_pair(mask, color)];
 	
 	return s->getSprite(frame, angle);
 }

@@ -4,6 +4,7 @@
 #include <string>
 #include "vec.h"
 #include "lua/types.h"
+#include <stdexcept>
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
@@ -64,6 +65,8 @@ public:
 		WormID,
 		Other
 	};
+	
+	static LuaReference metaTable();
 
 	// ClassID is Used by zoidcom to identify the class over the network,
 	// do not confuse with the node ID which identifies instances of the class.
@@ -103,7 +106,20 @@ public:
 	BaseWorm* getWorm() { return m_worm; }
 	
 	void* operator new(size_t count);
-	void operator delete(void* block);
+	/*
+	{
+		throw std::runtime_error("Don't use BasePlayer::operator new >:O");
+	}*/
+	
+	void operator delete(void* block)
+	{
+
+	}
+	
+	void* operator new(size_t count, void* space)
+	{
+		return space;
+	}
 	
 	int deaths;
 	int kills;
@@ -114,6 +130,7 @@ public:
 	int colour;
 	
 	LuaReference luaReference;
+	LuaReference luaData;
 	
 	void changeName( std::string const& name);
 	

@@ -98,7 +98,7 @@ int l_font_render(lua_State* L)
 	if(!f || lua_gettop(L) < 5)
 		return 0;
 		
-	BITMAP* b = (BITMAP *)lua_touserdata(L, 2);
+	BITMAP* b = *(BITMAP **)lua_touserdata(L, 2);
 	
 	char const* s = lua_tostring(L, 3);
 	if(!s)

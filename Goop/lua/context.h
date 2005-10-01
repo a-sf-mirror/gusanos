@@ -19,6 +19,38 @@ using std::string;
 class LuaContext
 {
 public:
+	struct FunctionProxy
+	{
+		FunctionProxy(LuaContext& context)
+		: m_context(context)
+		{
+		}
+		
+		FunctionProxy const& operator()(char const* name, lua_CFunction func) const
+		{
+			m_context.function(name, func);
+			return *this;
+		}
+
+		LuaContext& m_context;
+	};
+	
+	struct TableFunctionProxy
+	{
+		TableFunctionProxy(LuaContext& context)
+		: m_context(context)
+		{
+		}
+		
+		TableFunctionProxy const& operator()(char const* name, lua_CFunction func) const
+		{
+			m_context.tableFunction(name, func);
+			return *this;
+		}
+
+		LuaContext& m_context;
+	};
+	
 	LuaContext();
 	
 	LuaContext(istream& stream);
@@ -44,6 +76,8 @@ public:
 	void push(LuaReference v);
 	
 	void push(bool v);
+	
+	void push(int v);
 	
 	template<class T>
 	void pushFullReference(T& x, LuaReference metatable)
@@ -146,6 +180,16 @@ public:
 	void function(char const* name, lua_CFunction func);
 	
 	void tableFunction(char const* name, lua_CFunction func);
+	
+	FunctionProxy functions()
+	{
+		return FunctionProxy(*this);
+	}
+	
+	TableFunctionProxy tableFunctions()
+	{
+		return TableFunctionProxy(*this);
+	}
 	
 	LuaReference createReference();
 	

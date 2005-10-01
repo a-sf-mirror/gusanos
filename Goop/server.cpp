@@ -49,7 +49,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 				netWorm->setOwnerId(_id);
 			}
 			BasePlayer* player = game.addPlayer ( Game::PROXY );
-			player->getOptions()->colour = colour;
+			player->colour = colour;
 			player->localChangeName( name );
 			console.addLogMsg( "* " + player->m_name + " HAS JOINED THE GAME");
 			player->assignNetworkRole(true);

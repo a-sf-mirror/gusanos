@@ -49,7 +49,12 @@ private:
 	}
 	
 	typedef std::pair<SpriteSet*, int> ColorKey;
+
+	std::vector< Sprite* > m_frame;
+	size_t frameCount;
+	size_t angleCount;
 	
+#ifndef DEDSERV
 	struct ColorSpriteSet
 	{
 		ColorSpriteSet(SpriteSet& parent_)
@@ -66,12 +71,9 @@ private:
 	{
 		void operator()(SpriteSet* spriteSet);
 	};
-	
-	std::vector< Sprite* > m_frame;
-	size_t frameCount;
-	size_t angleCount;
-	//std::map<ColorKey, SpriteSet*> m_coloredCache;
+
 	Cache<ColorKey, SpriteSet*, ColorSpriteSet, DeleteSpriteSet> m_coloredCache;
+#endif
 	long m_angleFactor;
 	long m_halfAngleDivisonSize;
 };

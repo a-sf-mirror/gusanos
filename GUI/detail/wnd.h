@@ -31,8 +31,8 @@ public:
 	Wnd(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes,
 	  std::string const& text = std::string(""))
-	: m_focusable(true), m_text(text), m_parent(parent), m_font(0)
-	, m_tagLabel(tagLabel), m_className(className), m_id(id)
+	: m_focusable(true), m_text(text), m_parent(parent), m_lastChildFocus(0)
+	, m_font(0), m_tagLabel(tagLabel), m_className(className), m_id(id)
 	, m_attributes(attributes), m_visible(true), m_active(false)
 	{
 		if(m_parent)
@@ -175,6 +175,7 @@ protected:
 	Rect                 m_rect;
 	std::list<Wnd *>     m_children;
 	Wnd                 *m_parent;
+	Wnd                 *m_lastChildFocus;
 	Context             *m_context;
 	BaseFont            *m_font;
 	

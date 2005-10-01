@@ -17,15 +17,16 @@ public:
 	
 	enum Actions
 	{
-		LEFT,
+		LEFT = 0,
 		RIGHT,
 		UP,
 		DOWN,
 		FIRE,
 		JUMP,
-		CHANGE
+		CHANGE,
+		ACTION_COUNT,
 	};
-		
+			
 	Player(shared_ptr<PlayerOptions> options);
 	~Player();
 	

@@ -17,9 +17,10 @@ NoiseLine::~NoiseLine()
 
 void NoiseLine::createPath( int iterations, float variation )
 {
-	m_nodes.clear();
 	int N = ( 1 << iterations ) + 1;
-	m_nodes.insert(m_nodes.begin(), N, 0);
+	m_nodes.resize(N);
+	m_nodes.front() = 0.f;
+	m_nodes.back() = 0.f;
 	for ( int i = iterations; i > 0; --i )
 	{
 		int offset = ( 1 << (i - 1) );
@@ -28,7 +29,7 @@ void NoiseLine::createPath( int iterations, float variation )
 		for ( int x = offset; x < N; x += step )
 		{
 			//m_nodes[x] = ( m_nodes[x-offset] + m_nodes[x+offset] )/2 + variation*(midrnd()*i)/iterations;
-			m_nodes[x] = ( m_nodes[x-offset] + m_nodes[x+offset] )/2 + variation*(midrnd()*i);
+			m_nodes[x] = ( m_nodes[x-offset] + m_nodes[x+offset] )/2.f + variation*(midrnd()*i);
 		}
 	}
 }

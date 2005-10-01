@@ -162,6 +162,11 @@ void LuaContext::push(bool v)
 	lua_pushboolean(m_State, v);
 }
 
+void LuaContext::push(int v)
+{
+	lua_pushnumber(m_State, (lua_Number)v);
+}
+
 int LuaContext::callReference(LuaReference ref)
 {
 	pushReference(ref);
@@ -211,7 +216,7 @@ LuaReference LuaContext::createReference()
 
 void LuaContext::destroyReference(LuaReference ref)
 {
-	if (ref.idx >= 0)
+	if (ref.idx > 2)
 	{
     	int t = LUA_REGISTRYINDEX;
 		lua_rawgeti(m_State, t, FREELIST_REF);

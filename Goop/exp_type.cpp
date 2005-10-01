@@ -26,7 +26,7 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-ResourceList<ExpType> expTypeList("objects/");
+ResourceList<ExpType> expTypeList;
 
 ExpType::ExpType()
 : wupixels(0), invisible(false)
@@ -214,6 +214,7 @@ bool ExpType::load(fs::path const& filename)
 				
 			}
 		}
+		
 		//fileStream.close(); // Use RAII ffs >:o
 		return true;
 	} else

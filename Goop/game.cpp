@@ -545,7 +545,7 @@ void Game::unload()
 	// Delete all players
 	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
 	{
-		delete (*iter);
+		delete *iter;
 	}
 	players.clear();
 	localPlayers.clear();
@@ -846,7 +846,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 		
 		case OWNER:
 		{
-			Player* player = new Player(playerOptions[0]);
+			Player* player = LUA_NEW(Player, (playerOptions[0]));
 #ifndef DEDSERV
 			Viewport* viewport = new Viewport;
 			viewport->setDestination(gfx.buffer,0,0,320,240);
@@ -854,13 +854,17 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 #endif
 			players.push_back( player );
 			localPlayers.push_back( player );
+			EACH_CALLBACK(i, localplayerInit)
+			{
+				lua.callReference(*i, player->luaReference);
+			}
 			return player;
 		}
 		break;
 				
 		case PROXY:
 		{
-			ProxyPlayer* player = new ProxyPlayer();
+			ProxyPlayer* player = LUA_NEW(ProxyPlayer, ());
 			players.push_back( player );
 			return player;
 		}
@@ -868,7 +872,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 		
 		case AI:
 		{
-			PlayerAI* player = new PlayerAI();
+			PlayerAI* player = LUA_NEW(PlayerAI, ());
 			players.push_back( player );
 			return player;
 		}
@@ -882,11 +886,11 @@ BaseWorm* Game::addWorm(bool isAuthority)
 	BaseWorm* returnWorm = NULL;
 	if ( network.isHost() || network.isClient() )
 	{
-		NetWorm* netWorm = new NetWorm(isAuthority);
+		NetWorm* netWorm = LUA_NEW(NetWorm, (isAuthority));
 		returnWorm = netWorm;
 	}else
 	{
-		Worm* worm = new Worm();
+		Worm* worm = LUA_NEW(Worm, ());
 		returnWorm = worm;
 	}
 #ifdef USE_GRID

@@ -18,7 +18,7 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-ResourceList<LevelEffect> levelEffectList("mapeffects/");
+ResourceList<LevelEffect> levelEffectList;
 
 LevelEffect::LevelEffect()
 : ResourceBase()

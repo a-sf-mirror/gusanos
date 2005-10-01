@@ -96,12 +96,31 @@ void Context::process()
 
 void Context::setFocus(Wnd* aWnd)
 {
+	if(aWnd)
+	{
+		while(aWnd->m_lastChildFocus)
+		{
+			aWnd = aWnd->m_lastChildFocus;
+		}
+	}
+	
 	Wnd* oldFocus = m_keyboardFocusWnd;
 	m_keyboardFocusWnd = aWnd;
 	if(oldFocus)
 		oldFocus->applyGSS(m_gss);
 	if(m_keyboardFocusWnd)
 		m_keyboardFocusWnd->applyGSS(m_gss);
+	
+	if(aWnd)
+	{
+		aWnd->m_lastChildFocus = 0;
+		Wnd* lastChild = aWnd;
+		for(Wnd* p = aWnd->m_parent; p; p = p->m_parent)
+		{
+			p->m_lastChildFocus = lastChild;
+			lastChild = p;
+		}
+	}
 }
 
 void Context::registerWindow(Wnd* wnd)

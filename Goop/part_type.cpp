@@ -30,7 +30,7 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-ResourceList<PartType> partTypeList("objects/");
+ResourceList<PartType> partTypeList;
 
 TimerEvent::TimerEvent(int _delay, int _delayVariation, int _triggerTimes)
 {
@@ -63,7 +63,11 @@ template<class T>
 void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
 	int timeout = type->simpleParticle_timeout + rndInt(type->simpleParticle_timeoutVariation);
+	
 	BaseObject* particle = new T(pos_, spd_, owner, timeout, type->gravity, type->colour);
+	
+	if(type->creation)
+		type->creation->run(particle);
 	
 	USE_GRID // If this errors out, USE_GRID isn't defined, so define it ffs! >:o
 	game.objects.insert( particle, type->colLayer, type->renderLayer);
@@ -72,7 +76,11 @@ void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec sp
 #ifdef DEDSERV
 void newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
-	// dummy
+	if(type->creation)
+	{
+		BaseObject particle(owner, pos_, spd_);
+		type->creation->run(&particle);
+	}
 }
 #endif
 
@@ -156,18 +164,18 @@ bool PartType::isSimpleParticleType()
 			return false; // groundCollision contains non-remove actions
 	}
 	
-	if(timer.size() > 0)
+	if(timer.size() == 1)
 	{
 		// triggerTimes is irrelevant since it will only trigger once anyway
 		
-		if(timer[0]->event->actions.size() == 0)
+		if(timer[0]->event->actions.size() != 1)
 			return false;
 			
 		Remove* event = dynamic_cast<Remove *>(timer[0]->event->actions[0]);
 		if(!event)
 			return false; // timer event contains non-remove actions
 		
-		// One timer with one remove acton
+		// One timer with one remove action
 
 		simpleParticle_timeout = timer[0]->delay;
 		simpleParticle_timeoutVariation = timer[0]->delayVariation;

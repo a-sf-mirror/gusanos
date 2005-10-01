@@ -20,17 +20,9 @@ using namespace std;
 
 ZCom_ClassID BasePlayer::classID = ZCom_Invalid_ID;
 
-void* BasePlayer::operator new(size_t count)
+LuaReference BasePlayer::metaTable()
 {
-	BasePlayer* p = (BasePlayer *)lua.pushObject(LuaBindings::playerMetaTable, count);
-	p->luaReference = lua.createReference();
-	return (void *)p;
-}
-
-void BasePlayer::operator delete(void* block)
-{
-	BasePlayer* p = (BasePlayer *)block;
-	lua.destroyReference(p->luaReference);
+	return LuaBindings::playerMetaTable;
 }
 
 BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options)
@@ -41,6 +33,7 @@ BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options)
 , m_node(0), m_interceptor(0)
 , m_isAuthority(false)
 , colour(options->colour)
+, luaData(0)
 {
 	localChangeName(m_options->name);
 	m_options->clearChangeFlags();
@@ -50,6 +43,8 @@ BasePlayer::~BasePlayer()
 {
 	delete m_node; m_node = 0;
 	delete m_interceptor; m_interceptor = 0;
+	
+	lua.destroyReference(luaReference);
 }
 
 void BasePlayer::removeWorm()
@@ -65,7 +60,8 @@ void BasePlayer::removeWorm()
 inline void addEvent(ZCom_BitStream* data, int event)
 {
 #ifdef COMPACT_EVENTS
-	data->addInt(event, Encoding::bitsOf(BasePlayer::EVENT_COUNT - 1));
+//	data->addInt(event, Encoding::bitsOf(BasePlayer::EVENT_COUNT - 1));
+	Encoding::encode(*data, event, BasePlayer::EVENT_COUNT);
 #else
 	data->addInt(static_cast<int>(event),8 );
 #endif

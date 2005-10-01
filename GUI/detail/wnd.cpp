@@ -21,31 +21,24 @@ Wnd::~Wnd()
 	
 	if(m_parent)
 	{
+		for(Wnd* p = m_parent; m_parent && m_parent->m_lastChildFocus == this; p = p->m_parent)
+		{
+			p->m_lastChildFocus = 0;
+		}
+		
 		m_parent->m_children.remove(this);
 	}
 
-	//cerr << "I'm (" << this << ", '" << m_id << "') being deleted :OOO , and my children too :<<<" << endl;
-
 	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
-/*
-	if(i == e)
-		cerr << "Oh, I have no children :o" << endl;
-*/
+
 	for(; i != e;)
 	{
-		//cerr << "I'm going to lose " << *i << " :OOO" << endl;
 		std::list<Wnd *>::iterator next = i; ++next;
 		delete (*i);
-		//cerr << "I lost " << *i << " :(" << endl;
 		i = next;
 	}
 	
-	/*if(m_font)
-		cerr << "I have a font (" << m_font << ") :O, they're taking it away from me :(" << endl;
-	*/
 	delete m_font;
-	
-	//cerr << "I'm (" << this << ", '" << m_id << "') gone :((" << endl;
 }
 
 void Wnd::getCoord(int& dx, int& dy, int x, int y)

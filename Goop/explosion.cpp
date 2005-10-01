@@ -44,8 +44,6 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 		m_animator = new AnimRightOnce( m_sprite, m_timeout+2);
 	}
 	else m_animator = 0;
-#else
-	deleteMe = true; // We have no use of explosions except for the first frame
 #endif
 
 	if ( type->creation )
@@ -58,8 +56,12 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 		(*t)->check(this);
 	}
 	
+#ifdef DEDSERV
+	deleteMe = true; // We have no use of explosions except for the first frame
+#else
 	if(type->invisible)
 		deleteMe = true;
+#endif
 }
 
 #ifndef DEDSERV

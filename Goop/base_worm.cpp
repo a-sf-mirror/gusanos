@@ -29,18 +29,18 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
+/*
 void* BaseWorm::operator new(size_t count)
 {
 	//BaseWorm* p = (BaseWorm *)lua_newuserdata (lua, count);
 	BaseWorm* p = (BaseWorm *)lua.pushObject(LuaBindings::wormMetaTable, count);
 	p->luaReference = lua.createReference();
 	return (void *)p;
-}
+}*/
 
-void BaseWorm::operator delete(void* block)
+LuaReference BaseWorm::metaTable()
 {
-	BaseWorm* p = (BaseWorm *)block;
-	lua.destroyReference(p->luaReference);
+	return LuaBindings::wormMetaTable;
 }
 
 BaseWorm::BaseWorm()
@@ -101,6 +101,8 @@ BaseWorm::~BaseWorm()
 	delete m_animator; m_animator = 0;
 	delete m_fireconeAnimator; m_fireconeAnimator = 0;
 #endif
+
+	lua.destroyReference(luaReference);
 
 	//m_ninjaRope->deleteMe = true;
 	for ( size_t i = 0; i < m_weapons.size(); i++)

@@ -71,51 +71,57 @@ int l_game_localPlayer(lua_State* L)
 
 	Returns the number of kills a player has made.
 */
-int l_player_kills(lua_State* L)
-{
-	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
-	lua_pushnumber(L, p->kills);
-
+LMETHOD(BasePlayer, player_kills,
+	lua_pushnumber(context, p->kills);
 	return 1;
-}
+)
+
 
 /*! Player:deaths()
 
 	Returns the number of deaths a player has suffered.
 */
-int l_player_deaths(lua_State* L)
-{
-	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
-	lua_pushnumber(L, p->deaths);
-
+LMETHOD(BasePlayer, player_deaths,
+	lua_pushnumber(context, p->deaths);
 	return 1;
-}
+)
 
 /*! Player:name()
 
 	Returns the name of the player.
 */
-int l_player_name(lua_State* L)
-{
-	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
-	lua_pushstring(L, p->m_name.c_str());
-
+LMETHOD(BasePlayer, player_name,
+	lua_pushstring(context, p->m_name.c_str());
 	return 1;
-}
+)
+
+/*! Player:data()
+
+	Returns a lua table associated with this player.
+*/
+LMETHOD(BasePlayer, player_data,
+	if(p->luaData)
+		context.pushReference(p->luaData);
+	else
+	{
+		lua_newtable(context);
+		lua_pushvalue(context, -1);
+		p->luaData = context.createReference();
+	}
+	
+	return 1;
+)
 
 /*! Player:say(text)
 
 	Makes the player send 'text' as a chat message.
 */
-int l_player_say(lua_State* L)
-{
-	BasePlayer* p = static_cast<BasePlayer *>(lua_touserdata (L, 1));
-	char const* s = lua_tostring(L, 2);
+LMETHOD(BasePlayer, player_say,
+	char const* s = lua_tostring(context, 2);
 	if(s)
 		p->sendChatMsg(s);
-
 	return 0;
-}
+)
 
 
 int l_game_getClosestWorm(lua_State* L)
@@ -208,6 +214,15 @@ void initGame()
 
 	// Player method and metatable
 	
+	CLASS(player,
+		("kills", l_player_kills)
+		("deaths", l_player_deaths)
+		("name", l_player_name)
+		("say", l_player_say)
+		("data", l_player_data)
+	)
+	
+/*
 	lua_newtable(context); 
 	lua_pushstring(context, "__index");
 	
@@ -219,7 +234,7 @@ void initGame()
 	context.tableFunction("say", l_player_say);
 	
 	lua_rawset(context, -3);
-	playerMetaTable = context.createReference();
+	playerMetaTable = context.createReference();*/
 }
 
 }

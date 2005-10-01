@@ -56,7 +56,7 @@ void DetectEvent::check( BaseObject* ownerObject )
 			}
 		}
 	}
-	
+		
 	for ( int customFilter = Grid::CustomColLayerStart, filterFlag = 2; customFilter < Grid::ColLayerCount; ++customFilter, filterFlag*=2 )
 	{
 		if ( m_detectFilter & filterFlag )

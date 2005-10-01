@@ -241,55 +241,7 @@ int main(int argc, char **argv)
 				game.infoFont->draw(gfx.buffer, "PLAYERS: \01303" + cast<string>(game.players.size()), 5, 15, 0, 255, 255, 255, 255, Font::Formatting);
 				game.infoFont->draw(gfx.buffer, "PING:    \01303" + cast<string>(network.getServerPing()), 5, 20, 0, 255, 255, 255, 255, Font::Formatting);
 			}
-			/*
-			int y = 235;
-			int w = 0;
-			std::list<ScreenMessage>::reverse_iterator rmsgiter = game.messages.rbegin();
-			for(; rmsgiter != game.messages.rend() && y > 150;
-			    ++rmsgiter)
-			{
-				ScreenMessage const& msg = *rmsgiter;
-				
-				pair<int, int> dim = game.infoFont->getDimensions(msg.str, 0, Font::Formatting);
-				
-				y -= dim.second;
-				
-				if(dim.first > w)
-					w = dim.first;
-			}
-			
-			rectfill_blend(gfx.buffer, 3, y-2, 3+w+5, 237, 0, 130);
-			
-			for(std::list<ScreenMessage>::iterator msgiter = rmsgiter.base();
-			    msgiter != game.messages.end() && y < 240;
-			    ++msgiter)
-			{
-				ScreenMessage const& msg = *msgiter;
-				
-				pair<int, int> dim = game.infoFont->getDimensions(msg.str, 0, Font::Formatting);
-				
-				int fact = 150;
-				if(msg.timeOut < 100)
-					fact = msg.timeOut * 150 / 100;
-					
-				Font::CharFormatting format;
-				switch(msg.type)
-				{
-					case ScreenMessage::Chat:
-						format.cur.color = Font::Color(255, 255, 255);
-					break;
-					
-					case ScreenMessage::Death:
-						format.cur.color = Font::Color(200, 255, 200);
-					break;
-				}
-				
-				game.infoFont->draw(gfx.buffer, msg.str, 5, y, format, 0, fact, Font::Formatting | Font::Shadow);
-				
-				y += dim.second;
-			}
-			*/
-			
+						
 			int miny = 150;
 			int maxw = 160;
 			int y = 235;

@@ -44,6 +44,8 @@ public:
 		
 		DirMax
 	};
+	
+	static LuaReference metaTable();
 		
 	BaseWorm();
 	virtual ~BaseWorm();
@@ -112,8 +114,20 @@ public:
 	virtual void pushLuaReference();
 	
 	void* operator new(size_t count);
+	/*
+	{
+		throw std::runtime_error("Don't use BaseWorm::operator new >:O");
+	}*/
 	
-	void operator delete(void* block);
+	void operator delete(void* block)
+	{
+		// Lua frees the memory
+	}
+	
+	void* operator new(size_t count, void* space)
+	{
+		return space;
+	}
 	
 protected:
 

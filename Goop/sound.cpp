@@ -20,7 +20,7 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-ResourceList<Sound> soundList("sounds/");
+ResourceList<Sound> soundList;
 
 Sound::Sound()
 {

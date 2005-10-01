@@ -19,10 +19,10 @@ public:
 
 	typedef std::map<fs::path, T1*> MapT;
 	
-	ResourceList( fs::path const& subFolder)
+	ResourceList()
+	: m_locked(false)
 	{
-		m_subFolder = subFolder;
-		m_locked = false;
+		
 	}
 	
 	void clear()
@@ -124,7 +124,6 @@ public:
 private:
 	
 	bool m_locked;
-	fs::path m_subFolder;
 	std::vector<T1*> m_resItemsIndex;
 	MapT m_resItems;
 	std::list<fs::path>     m_paths; // Paths to scan

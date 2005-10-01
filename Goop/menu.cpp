@@ -305,7 +305,7 @@ void GContext::hiddenFocus()
 
 void GContext::shownFocus()
 {
-	console.releaseBindings(bindingLock);
+	console.lockBindings(bindingLock);
 }
 
 void GContext::clear()
