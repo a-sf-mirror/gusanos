@@ -2,7 +2,7 @@
 
 #include "events.h"
 #include "sprite_set.h"
-#include "text.h"
+#include "omfgutil_text.h"
 #include "parser.h"
 #include "resource_base.h"
 

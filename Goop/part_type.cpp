@@ -9,7 +9,7 @@
 #include "distortion.h"
 #include "animators.h"
 #endif
-#include "text.h"
+#include "omfgutil_text.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "timer_event.h"

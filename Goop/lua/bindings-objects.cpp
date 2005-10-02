@@ -105,6 +105,14 @@ int l_worm_getHealth(lua_State* L)
 	return 1;
 }
 
+/*! Worm:set_weapon(slot, weapon)
+
+	Sets the weapon of a slot in [1, max] to the WeaponType //weapon//.
+*/
+/* TODO
+LMETHOD(BaseWorm, worm_setWeapon,
+	p->m_weapons*/
+	
 
 int l_worm_remove(lua_State* L)
 {

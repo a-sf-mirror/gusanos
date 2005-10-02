@@ -3,7 +3,8 @@
 #include "sfx.h"
 #include "gconsole.h"
 #include "base_object.h"
-#include "text.h" //For cast<>
+//#include "text.h" //For cast<>
+#include "omfgutil_macros.h"
 #include <boost/assign/list_inserter.hpp>
 using namespace boost::assign;
 
@@ -117,11 +118,16 @@ void Sfx::think()
 	}
 	
 	//Update 3d channel that follow objects positions
+	/*
 	list< pair< int, BaseObject* > >::iterator obj, next;
 	for ( obj = chanObject.begin(); obj != chanObject.end(); obj = next)
 	{
 		next = boost::next(obj);
-		
+
+	*/
+	foreach_delete(obj, chanObject)
+	{
+
 		if( !obj->second
 		||  obj->second->deleteMe
 		||  !FSOUND_IsPlaying( obj->first ) )

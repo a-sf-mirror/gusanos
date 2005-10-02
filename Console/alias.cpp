@@ -1,5 +1,5 @@
 #include "alias.h"
-#include "text.h"
+#include "omfgutil_text.h"
 
 using namespace std;
 

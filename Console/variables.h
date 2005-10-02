@@ -2,7 +2,7 @@
 #define VARIABLES_H
 
 #include "consoleitem.h"
-#include "text.h"
+#include "omfgutil_text.h"
 #include <boost/function.hpp>
 //#include <boost/lexical_cast.hpp>
 //using boost::lexical_cast;
@@ -131,7 +131,7 @@ typedef TVariable<std::string> StringVariable;
 
 class EnumVariable : public Variable
 {
-	public:
+public:
 	
 	typedef std::map<std::string, int, IStrCompare> MapType;
 	typedef std::map<int, std::string> ReverseMapType;
@@ -146,7 +146,7 @@ class EnumVariable : public Variable
 	
 	virtual std::string completeArgument(int idx, std::string const& beginning);
 	
-	private:
+private:
 	
 	int* m_src;
 	int m_defaultValue;	

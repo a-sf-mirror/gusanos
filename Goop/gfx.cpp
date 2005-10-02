@@ -1,5 +1,5 @@
 #include "gfx.h"
-#include "text.h"
+//#include "text.h"
 #include "gconsole.h"
 
 #ifndef DEDSERV

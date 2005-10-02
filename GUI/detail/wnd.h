@@ -2,7 +2,7 @@
 #define OMFG_GUI_WND_H
 
 #include <string>
-#include "common.h"
+#include "omfgutil_common.h"
 #include "renderer.h"
 #include "context.h"
 

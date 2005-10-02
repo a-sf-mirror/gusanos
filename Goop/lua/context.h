@@ -8,6 +8,7 @@ extern "C"
 
 #include "types.h"
 #include <iostream>
+#include <vector>
 #include <string>
 using std::istream;
 using std::cerr;
@@ -78,6 +79,23 @@ public:
 	void push(bool v);
 	
 	void push(int v);
+			
+	template<class T>
+	void push(T* v)
+	{
+		v->pushLuaReference();
+	}
+	
+	template<class T>
+	void push(std::vector<T> const& v)
+	{
+		lua_newtable(m_State);
+		for(size_t n = 0; n < v.size(); ++n)
+		{
+			push(v[n]);
+			lua_rawseti(m_State, -2, n + 1);
+		}
+	}
 	
 	template<class T>
 	void pushFullReference(T& x, LuaReference metatable)
@@ -116,53 +134,53 @@ public:
 	int callReference(LuaReference ref);
 	
 	template<class T1>
-	int callReference(LuaReference ref, T1 const& p1)
+	int callReference(int ret, LuaReference ref, T1 const& p1)
 	{
 		pushReference(ref);
 		push(p1);
-		int result = call(1, 0);
+		int result = call(1, ret);
 		
 		return result;
 	}
 	
 	template<class T1, class T2>
-	int callReference(LuaReference ref, T1 const& p1, T2 const& p2)
+	int callReference(int ret, LuaReference ref, T1 const& p1, T2 const& p2)
 	{
 		pushReference(ref);
 		push(p1);
 		push(p2);
-		int result = call(2, 0);
+		int result = call(2, ret);
 		
 		return result;
 	}
 	
 	template<class T1, class T2, class T3>
-	int callReference(LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3)
+	int callReference(int ret, LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3)
 	{
 		pushReference(ref);
 		push(p1);
 		push(p2);
 		push(p3);
-		int result = call(3, 0);
+		int result = call(3, ret);
 		
 		return result;
 	}
 	
 	template<class T1, class T2, class T3, class T4>
-	int callReference(LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4)
+	int callReference(int ret, LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4)
 	{
 		pushReference(ref);
 		push(p1);
 		push(p2);
 		push(p3);
 		push(p4);
-		int result = call(4, 0);
+		int result = call(4, ret);
 		
 		return result;
 	}
 	
 	template<class T1, class T2, class T3, class T4, class T5>
-	int callReference(LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4, T5 const& p5)
+	int callReference(int ret, LuaReference ref, T1 const& p1, T2 const& p2, T3 const& p3, T4 const& p4, T5 const& p5)
 	{
 		pushReference(ref);
 		push(p1);
@@ -170,12 +188,40 @@ public:
 		push(p3);
 		push(p4);
 		push(p5);
-		int result = call(5, 0);
+		int result = call(5, ret);
 		
 		return result;
 	}
 	
 	// Add more when needed...
+	
+	template<class T>
+	inline T get(int idx)
+	{
+		return T();
+	}
+		
+	void pop(int num)
+	{
+		lua_settop(m_State, -1-num);
+	}
+	
+	template<class T>
+	void tableToVector(std::vector<T> const& v)
+	{
+		v.clear();
+		for(size_t n = 1; ; ++n)
+		{
+			lua_rawgeti(m_State, -1, n + 1);
+			if(lua_isnil(m_State, -1))
+			{
+				lua_settop(m_State, -3); // Pop nil and table
+				return;
+			}
+			//TODO: v.push_back(get<T>(-1));
+			lua_settop(m_State, -2); // Pop value
+		}
+	}
 	
 	void function(char const* name, lua_CFunction func);
 	
@@ -209,5 +255,10 @@ private:
 	bool m_borrowed;
 };
 
+template<>
+inline bool LuaContext::get<bool>(int idx)
+{
+	return lua_toboolean(m_State, idx);
+}
 
 #endif //LUA_CONTEXT_H

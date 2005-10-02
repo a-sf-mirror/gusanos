@@ -157,6 +157,9 @@ void BasePlayer::think()
 						case SELECT_WEAPONS:
 						{
 							size_t size = Encoding::decode(*data, game.options.maxWeapons+1);
+							if(size > game.options.maxWeapons)
+								break; // Avoid horrible crashes etc.
+								
 							vector<WeaponType*> weaps(size,0);
 							for ( size_t i = 0; i < size; ++i )
 							{
@@ -363,6 +366,12 @@ void BasePlayer::selectWeapons( vector< WeaponType* > const& weaps )
 	}
 	if ( network.isClient() && m_node )
 	{
+		if(weaps.size() > game.options.maxWeapons)
+		{
+			cerr << "ERROR: Requested a too large weapon selection" << endl;
+			return;
+		}
+			
 		ZCom_BitStream *data = new ZCom_BitStream;
 		addEvent(data, SELECT_WEAPONS );
 		

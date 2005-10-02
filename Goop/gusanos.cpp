@@ -11,7 +11,8 @@
 #include "particle.h"
 #include "worm.h"
 #include "player.h"
-#include "text.h"
+#include "omfgutil_macros.h"
+//#include "text.h"
 #ifndef DEDSERV
 #include "viewport.h"
 #include "font.h"
@@ -163,7 +164,8 @@ int main(int argc, char **argv)
 			sfx.think(); // WARNING: THIS ¡MUST! BE PLACED BEFORE THE OBJECT DELETE LOOP
 #endif
 			
-			for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end();)
+			//for ( list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end();)
+			foreach_delete(iter, game.players)
 			{
 				if ( (*iter)->deleteMe )
 				{
@@ -179,12 +181,9 @@ int main(int argc, char **argv)
 					}
 #endif
 					(*iter)->removeWorm();
-					list<BasePlayer*>::iterator tmp = iter;
-					++iter;
-					delete *tmp;
-					game.players.erase(tmp);
-				}else
-					++iter;
+					delete *iter;
+					game.players.erase(iter);
+				}
 			}
 
 

@@ -1,7 +1,7 @@
 #ifndef OMFG_GUI_EDIT
 #define OMFG_GUI_EDIT
 
-#include "common.h"
+#include "omfgutil_common.h"
 #include <string>
 #include "wnd.h"
 

@@ -3,7 +3,7 @@
 #include "command.h"
 #include "special_command.h"
 #include "alias.h"
-#include "text.h"
+#include "omfgutil_text.h"
 #include "consoleitem.h"
 
 #include "console-grammar.h"

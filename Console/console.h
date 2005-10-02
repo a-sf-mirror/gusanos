@@ -7,7 +7,7 @@
 // PROJECT INCLUDES
 //
 #include "bindings.h"
-#include "text.h"
+#include "omfgutil_text.h"
 #include "variables.h"
 #include "command.h"
 

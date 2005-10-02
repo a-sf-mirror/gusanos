@@ -4,7 +4,7 @@
 #include "client.h"
 #include "game.h"
 #include "gconsole.h"
-#include "text.h"
+//#include "text.h"
 #include "net_worm.h"
 #include "base_player.h"
 

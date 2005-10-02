@@ -1,5 +1,5 @@
-#ifndef OMFG_GUI_COMMON_H
-#define OMFG_GUI_COMMON_H
+#ifndef OMFGUTIL_DETAIL_COMMON_H
+#define OMFGUTIL_DETAIL_COMMON_H
 
 typedef unsigned char uchar;
 typedef unsigned long ulong;
@@ -113,4 +113,4 @@ public:
 typedef BasicRect<int> Rect;
 typedef BasicRect<float> FRect;
 
-#endif //OMFG_GUI_COMMON_H
+#endif //OMFGUTIL_DETAIL_COMMON_H

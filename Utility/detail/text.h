@@ -1,5 +1,5 @@
-#ifndef TEXT_H
-#define TEXT_H
+#ifndef OMFGUTIL_TEXT_COMMON_H
+#define OMFGUTIL_TEXT_COMMON_H
 
 #include <sstream>
 #include <list>
@@ -192,4 +192,4 @@ std::string shellComplete(
 	return s;
 }
 
-#endif  // _TEXT_H_
+#endif  // OMFGUTIL_TEXT_COMMON_H

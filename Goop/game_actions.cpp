@@ -9,7 +9,7 @@
 #include "sound.h"
 #include "sprite_set.h"
 #endif
-#include "text.h"
+#include "omfgutil_text.h"
 #include "base_object.h"
 #include "weapon.h"
 #include "worm.h"

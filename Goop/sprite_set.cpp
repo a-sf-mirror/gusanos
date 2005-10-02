@@ -3,6 +3,7 @@
 #include "resource_list.h"
 #include "gfx.h"
 #include "sprite.h"
+#include "omfgutil_macros.h"
 
 #include <allegro.h>
 #include <string>
@@ -50,18 +51,8 @@ SpriteSet::SpriteSet(SpriteSet const& b, SpriteSet const& mask, int color)
 
 SpriteSet::~SpriteSet()
 {
-	std::vector<Sprite *>::iterator frame = m_frame.begin();
-	for (; frame != m_frame.end(); frame++)
-	{
+	foreach(frame, m_frame)
 		delete *frame;
-	}
-	
-/*
-	std::map<ColorKey, SpriteSet*>::iterator i = m_coloredCache.begin();
-	for(; i != m_coloredCache.end(); ++i)
-	{
-		delete i->second;
-	}*/
 }
 
 bool SpriteSet::load(fs::path const& filename)

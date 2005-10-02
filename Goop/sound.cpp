@@ -14,7 +14,7 @@
 namespace fs = boost::filesystem;
 
 #include <allegro.h>
-#include "text.h"
+//#include "text.h"
 
 #include <fmod.h>
 

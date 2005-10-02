@@ -856,7 +856,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 			localPlayers.push_back( player );
 			EACH_CALLBACK(i, localplayerInit)
 			{
-				lua.callReference(*i, player->luaReference);
+				lua.callReference(0, *i, player->luaReference);
 			}
 			return player;
 		}

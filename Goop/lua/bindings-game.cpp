@@ -123,6 +123,35 @@ LMETHOD(BasePlayer, player_say,
 	return 0;
 )
 
+/*! Player:select_weapons(weapons)
+
+	Tries to change the player's weapons to the WeaponType objects
+	in the array //weapons//.
+*/
+LMETHOD(BasePlayer, player_selectWeapons,
+	
+	std::vector<WeaponType *> weapons;
+	for(size_t i = 1;; ++i)
+	{
+		lua_rawgeti(context, 2, i);
+		if(lua_isnil(context, -1))
+		{
+			break;
+		}
+		else
+		{
+			//TODO: Check if this is really a weapon type!
+			WeaponType* weapon = *static_cast<WeaponType **>(lua_touserdata(context, -1));
+			weapons.push_back(weapon);
+			lua_settop(context, -2); // Pop value
+		}
+	}
+	
+	p->selectWeapons(weapons);
+	
+	return 0;
+)
+
 
 int l_game_getClosestWorm(lua_State* L)
 {
@@ -220,6 +249,7 @@ void initGame()
 		("name", l_player_name)
 		("say", l_player_say)
 		("data", l_player_data)
+		("select_weapons", l_player_selectWeapons)
 	)
 	
 /*

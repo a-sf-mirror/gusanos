@@ -1,5 +1,5 @@
 #include "variables.h"
-#include "text.h"
+#include "omfgutil_text.h"
 #include "console.h"
 
 using namespace std;

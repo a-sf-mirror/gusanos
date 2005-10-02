@@ -15,6 +15,7 @@ build = ARGUMENTS.get('build', 'release')
 subfolder = os.path.join(conf, build)
 
 sconscript = ['./GUI/detail/SConscript',
+			'./Utility/detail/SConscript',
             './Console/SConscript',
             './loadpng/SConscript',
             './Goop/SConscript',
@@ -27,7 +28,7 @@ sconscript = ['./GUI/detail/SConscript',
 			]
 			
 env = Environment(
-		CPPPATH = ['.', '#loadpng', '#lua', '#Console', '#GUI'],
+		CPPPATH = ['.', '#loadpng', '#lua', '#Console', '#GUI', '#Utility'],
 		LIBPATH = [os.path.join('#lib/', subfolder)],
 	)
 	

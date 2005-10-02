@@ -5,7 +5,7 @@
 #include "player.h"
 #include "gconsole.h"
 #include "glua.h"
-#include "text.h"
+#include "omfgutil_text.h"
 #include <boost/bind.hpp>
 
 #include <string>
@@ -20,12 +20,18 @@ string eventStart(size_t index, Player::Actions action, list<string> const& args
 	{
 		Player& player = *game.localPlayers[index];
 		
+		bool ignore = false;
+		
 		EACH_CALLBACK(i, localplayerEvent[action])
 		{
-			lua.callReference(*i, player.luaReference, true);
+			int n = lua.callReference(1, *i, player.luaReference, true);
+			if(n > 0 && lua.get<bool>(-1))
+				ignore = true;
+			lua.pop(n);
 		}
 		
-		player.actionStart(action);
+		if(!ignore)
+			player.actionStart(action);
 	}
 	return "";
 }
@@ -36,12 +42,18 @@ string eventStop(size_t index, Player::Actions action, list<string> const& args)
 	{
 		Player& player = *game.localPlayers[index];
 		
+		bool ignore = false;
+		
 		EACH_CALLBACK(i, localplayerEvent[action])
 		{
-			lua.callReference(*i, player.luaReference, false);
+			int n = lua.callReference(1, *i, player.luaReference, false);
+			if(n > 0 && lua.get<bool>(-1))
+				ignore = true;
+			lua.pop(n);
 		}
 		
-		player.actionStop(action);
+		if(!ignore)
+			player.actionStop(action);
 	}
 	return "";
 }

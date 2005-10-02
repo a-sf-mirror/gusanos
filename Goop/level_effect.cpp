@@ -3,7 +3,7 @@
 #include "resource_list.h"
 
 #include "gfx.h"
-#include "text.h"
+#include "omfgutil_text.h"
 #include "parser.h"
 #include "sprite_set.h"
 

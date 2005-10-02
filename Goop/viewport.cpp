@@ -70,12 +70,15 @@ struct TestCuller
 
 void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height)
 {
-
+	if(width > where->w
+	|| height > where->h)
+		return;
+	
 	destroy_bitmap(m_dest);
 	if ( x < 0 ) x = 0;
 	if ( y < 0 ) y = 0;
-	if ( x + width > where->w ) x = where->w - x;
-	if ( y + height > where->h ) y = where->h - y;
+	if ( x + width > where->w ) x = where->w - width;
+	if ( y + height > where->h ) y = where->h - height;
 	m_dest = create_sub_bitmap(where,x,y,width,height);
 	
 	m_listener = sfx.newListener();
@@ -141,7 +144,7 @@ void Viewport::render(BasePlayer* player)
 				int x = (int)renderPos.x - offX;
 				int y = (int)renderPos.y - offY;
 				bool ownViewport = (*playerIter == player);
-				lua.callReference(*i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
+				lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
 			}
 		}
 		
@@ -151,7 +154,7 @@ void Viewport::render(BasePlayer* player)
 	{
 		EACH_CALLBACK(i, viewportRender)
 		{
-			lua.callReference(*i, luaReference, worm->luaReference);
+			lua.callReference(0, *i, luaReference, worm->luaReference);
 		}
 	}
 }

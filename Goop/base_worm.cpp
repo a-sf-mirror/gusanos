@@ -72,7 +72,7 @@ BaseWorm::BaseWorm()
 	
 	currentWeapon = 0;
 	
-	m_weapons.insert(m_weapons.begin(), game.options.maxWeapons, 0 );
+	m_weapons.assign(game.options.maxWeapons, 0 );
 	m_weaponCount = 0;
 	
 	for ( int i = 0; i < m_weapons.size(); ++i )
@@ -129,17 +129,21 @@ Weapon* BaseWorm::getCurrentWeapon()
 
 void BaseWorm::setWeapon( size_t index, WeaponType* type )
 {
-	if ( m_weapons[index] )
-	{
-		delete m_weapons[index];
-		m_weapons[index] = 0;
-	}
+	if(index >= m_weapons.size())
+		return;
+		
+	delete m_weapons[index];
+	m_weapons[index] = 0;
+
 	if ( type )
 		m_weapons[index] = new Weapon( type, this );
 }
 
 void BaseWorm::setWeapons( std::vector<WeaponType*> const& weaps )
 {
+	if(weaps.size() > m_weapons.size())
+		return;
+	
 	// Here is where the interception of the server can be done on the weapon selection
 	clearWeapons();
 	for ( int i = 0; i < weaps.size(); ++i )
@@ -152,7 +156,7 @@ void BaseWorm::clearWeapons()
 {
 	for ( size_t i = 0; i < m_weapons.size(); i++)
 	{
-		delete m_weapons[i];
+		delete m_weapons[i]; m_weapons[i] = 0;
 	}
 }
 

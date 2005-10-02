@@ -8,7 +8,7 @@
 #include "distortion.h"
 #include "gfx.h"
 #endif //DEDSERV
-#include "text.h"
+#include "omfgutil_text.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "object_grid.h"

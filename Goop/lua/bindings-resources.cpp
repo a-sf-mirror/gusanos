@@ -7,6 +7,7 @@
 #include "../gfx.h"
 #include "../script.h"
 #include "../part_type.h"
+#include "../weapon_type.h"
 #include "../glua.h"
 
 //TEMP:
@@ -34,6 +35,7 @@ namespace LuaBindings
 LuaReference fontMetaTable(0);
 #endif
 LuaReference partTypeMetaTable(0);
+LuaReference weaponTypeMetaTable(0);
 
 int l_sprites_load(lua_State* L)
 {
@@ -170,44 +172,72 @@ int l_load_particle(lua_State* L)
 	return 1;
 }
 
+/*! weapon_random()
+
+	Returns a random WeaponType object.
+*/
+int l_weapon_random(lua_State* L)
+{
+	LuaContext context(L);
+	WeaponType* p = game.weaponList[rndInt(game.weaponList.size())];
+	context.pushFullReference(*p, weaponTypeMetaTable);
+	return 1;
+}
+
+METHOD(WeaponType, weapon_next,
+	size_t n = p->getIndex() + 1;
+	if(n >= game.weaponList.size())
+		n = 0;
+	context.pushFullReference(*game.weaponList[n], weaponTypeMetaTable);
+	return 1;
+)
+
+METHOD(WeaponType, weapon_prev,
+	size_t n = p->getIndex();
+	if(n == 0)
+		n = game.weaponList.size() - 1;
+	else
+		--n;
+	context.pushFullReference(*game.weaponList[n], weaponTypeMetaTable);
+	return 1;
+)
+
+METHOD(WeaponType, weapon_name,
+	lua_pushstring(context, p->name.c_str());
+	return 1;
+)
+
 void initResources()
 {
 	LuaContext& context = lua;
 	
-	context.function("sprites_load", l_sprites_load);
-	context.function("sprites_render", l_sprites_render);
-	
-	context.function("load_particle", l_load_particle);
-	
+	context.functions()
+		("sprites_load", l_sprites_load)
+		("sprites_render", l_sprites_render)
+		("load_particle", l_load_particle)
+		("weapon_random", l_weapon_random)
 #ifndef DEDSERV
-	context.function("font_load", l_font_load);
+		("font_load", l_font_load)
 #endif
+		("map_is_loaded", l_map_is_loaded)
+	;
 	
-	context.function("map_is_loaded", l_map_is_loaded);
+	CLASS(partType,
+		/* Insert stuff here */
+	)
 	
-	
-	// Particle type method and metatable
-	
-	lua_newtable(context); 
-	lua_pushstring(context, "__index");
-	
-	lua_newtable(context);
-
-	lua_rawset(context, -3);
-	partTypeMetaTable = context.createReference();
+	CLASS(weaponType,
+		("next", l_weapon_next)
+		("prev", l_weapon_prev)
+		("name", l_weapon_name)
+	)
 
 #ifndef DEDSERV
 	// Font method and metatable
 
-	lua_newtable(context); 
-	lua_pushstring(context, "__index");
-	
-	lua_newtable(context);
-	
-	context.tableFunction("render", l_font_render);
-		
-	lua_rawset(context, -3);
-	fontMetaTable = context.createReference();
+	CLASS(font,
+		("render", l_font_render)
+	)
 
 #endif
 	// Global metatable
