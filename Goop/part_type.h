@@ -23,19 +23,8 @@ class BaseAnimator;
 #endif
 class DetectEvent;
 class BasePlayer;
-//struct Distortion;
-
-struct TimerEvent
-{
-	TimerEvent(int _delay, int _delayVariation, int _triggerTimes);
-	~TimerEvent();
-	Event* event;
-	int delay;
-	int delayVariation;
-	int triggerTimes;
-};
-
 class PartType;
+class TimerEvent;
 
 typedef void (*NewParticleFunc)(PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle);
 

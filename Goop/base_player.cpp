@@ -6,6 +6,7 @@
 #include "objects_list.h"
 #include "gconsole.h"
 #include "encoding.h"
+#include "weapon_type.h"
 
 #include "glua.h"
 #include "lua/bindings-game.h"
@@ -150,6 +151,18 @@ void BasePlayer::think()
 						case CHAT_MSG:
 						{
 							sendChatMsg( data->getStringStatic() );
+						}
+						break;
+						
+						case SELECT_WEAPONS:
+						{
+							size_t size = Encoding::decode(*data, game.options.maxWeapons+1);
+							vector<WeaponType*> weaps(size,0);
+							for ( size_t i = 0; i < size; ++i )
+							{
+								weaps[i] = game.weaponList[Encoding::decode(*data, game.weaponList.size())];
+							}
+							selectWeapons(weaps);
 						}
 						break;
 						
@@ -339,6 +352,26 @@ void BasePlayer::sendChatMsg( std::string const& message )
 		addEvent(data, CHAT_MSG);
 		data->addString( message.c_str() );
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY, data);
+	}
+}
+
+void BasePlayer::selectWeapons( vector< WeaponType* > const& weaps )
+{
+	if ( !network.isClient() && m_worm )
+	{
+		m_worm->setWeapons( weaps );
+	}
+	if ( network.isClient() && m_node )
+	{
+		ZCom_BitStream *data = new ZCom_BitStream;
+		addEvent(data, SELECT_WEAPONS );
+		
+		Encoding::encode(*data, weaps.size(), game.options.maxWeapons+1 );
+		for( vector<WeaponType*>::const_iterator iter = weaps.begin(); iter != weaps.end(); ++iter )
+		{
+			Encoding::encode(*data, (*iter)->getIndex(), game.weaponList.size());
+		}
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, data);
 	}
 }
 

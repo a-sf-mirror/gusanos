@@ -22,6 +22,8 @@ class NetWorm : public BaseWorm
 		Die,
 		ChangeWeapon,
 		WeaponMessage,
+		SetWeapon,
+		ClearWeapons,
 		SYNC,
 		EVENT_COUNT,
 	};
@@ -54,6 +56,8 @@ class NetWorm : public BaseWorm
 	void die();
 	void changeWeaponTo( unsigned int weapIndex );
 	void damage( float amount, BasePlayer* damager );
+	void setWeapon(size_t index, WeaponType* type );
+	void clearWeapons();
 	
 	Vec lastPosUpdate;
 	int timeSinceLastUpdate;

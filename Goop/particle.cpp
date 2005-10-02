@@ -72,7 +72,7 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 	
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
 	{
-		timer.push_back( PartTimer(*i) );
+		timer.push_back( (*i)->createState() );
 	}
 	
 	
@@ -80,6 +80,10 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 
 Particle::~Particle()
 {
+	for ( vector< TimerEvent::State* >::iterator i = timer.begin(); i != timer.end(); ++i)
+	{
+		delete (*i);
+	}
 #ifndef DEDSERV
 	delete m_animator;
 #endif
@@ -139,11 +143,11 @@ void Particle::think()
 		}
 		if ( deleteMe ) break;
 		
-		for ( vector< PartTimer >::iterator t = timer.begin(); t != timer.end(); t++)
+		for ( vector< TimerEvent::State* >::iterator t = timer.begin(); t != timer.end(); t++)
 		{
-			if ( t->tick() )
+			if ( (*t)->tick() )
 			{
-				t->m_tEvent->event->run(this);
+				(*t)->event->run(this);
 			}
 			if ( deleteMe ) break;
 		}

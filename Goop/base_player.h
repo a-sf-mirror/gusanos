@@ -6,6 +6,7 @@
 #include "lua/types.h"
 #include <stdexcept>
 #include <boost/shared_ptr.hpp>
+#include <vector>
 using boost::shared_ptr;
 
 #include <zoidcom.h>
@@ -13,6 +14,7 @@ using boost::shared_ptr;
 struct PlayerOptions;
 class BaseWorm;
 class BasePlayerInterceptor;
+class WeaponType;
 
 // Note: None of the BaseActions should assume a combination of keys.
 // For example: Activating JUMP and CHANGE does nothing here ( instead 
@@ -56,6 +58,7 @@ public:
 		NAME_CHANGE,
 		CHAT_MSG,
 		COLOR_CHANGE,
+		SELECT_WEAPONS,
 		//
 		EVENT_COUNT,
 	};
@@ -131,6 +134,8 @@ public:
 	
 	LuaReference luaReference;
 	LuaReference luaData;
+	
+	void selectWeapons( std::vector< WeaponType* > const& weaps );
 	
 	void changeName( std::string const& name);
 	

@@ -83,6 +83,7 @@ class Level
 #ifndef DEDSERV
 	BITMAP* image;
 	BITMAP* background;
+	BITMAP* paralax;
 #endif
 	BITMAP* material;
 	std::string name;

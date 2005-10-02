@@ -26,6 +26,7 @@ Level::Level()
 #ifndef DEDSERV
 	image = NULL;
 	background = NULL;	
+	paralax = NULL;
 #endif
 	material = NULL;
 
@@ -166,6 +167,7 @@ void Level::unload()
 #ifndef DEDSERV
 	destroy_bitmap(image); image = NULL;
 	destroy_bitmap(background); material = NULL;
+	destroy_bitmap(paralax); paralax = NULL;
 	destroy_bitmap(material); background = NULL;
 #endif
 
@@ -182,7 +184,16 @@ void Level::draw(BITMAP* where, int x, int y)
 {
 	if (image)
 	{
-		blit(image,where,x,y,0,0,where->w,where->h);
+		if (!paralax)
+		{
+			blit(image,where,x,y,0,0,where->w,where->h);
+		}else
+		{
+			int px = x * (paralax->w - where->w) / (float)( material->w - where->w );
+			int py = y * (paralax->h - where->h) / (float)( material->h - where->h );
+			blit(paralax,where,px,py,0,0,where->w,where->h);
+			masked_blit(image,where,x,y,0,0,where->w,where->h);
+		}
 	}
 }
 

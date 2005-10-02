@@ -26,6 +26,7 @@
 
 #include <math.h>
 #include <string>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
@@ -124,6 +125,27 @@ NinjaRope* BaseWorm::getNinjaRopeObj()
 Weapon* BaseWorm::getCurrentWeapon()
 {
 	return m_weapons[currentWeapon];
+}
+
+void BaseWorm::setWeapon( size_t index, WeaponType* type )
+{
+	if ( m_weapons[index] )
+	{
+		delete m_weapons[index];
+		m_weapons[index] = 0;
+	}
+	if ( type )
+		m_weapons[index] = new Weapon( type, this );
+}
+
+void BaseWorm::setWeapons( std::vector<WeaponType*> const& weaps )
+{
+	// Here is where the interception of the server can be done on the weapon selection
+	clearWeapons();
+	for ( int i = 0; i < weaps.size(); ++i )
+	{
+		setWeapon( i, weaps[i] );
+	}
 }
 
 void BaseWorm::clearWeapons()

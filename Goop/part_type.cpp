@@ -12,6 +12,7 @@
 #include "text.h"
 #include "parser.h"
 #include "detect_event.h"
+#include "timer_event.h"
 
 
 #include "particle.h"
@@ -31,19 +32,6 @@ namespace fs = boost::filesystem;
 using namespace std;
 
 ResourceList<PartType> partTypeList;
-
-TimerEvent::TimerEvent(int _delay, int _delayVariation, int _triggerTimes)
-{
-	delay=_delay;
-	delayVariation = _delayVariation;
-	triggerTimes = _triggerTimes;
-	event = new Event;
-}
-
-TimerEvent::~TimerEvent()
-{
-	delete event;
-}
 
 void newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
@@ -168,10 +156,10 @@ bool PartType::isSimpleParticleType()
 	{
 		// triggerTimes is irrelevant since it will only trigger once anyway
 		
-		if(timer[0]->event->actions.size() != 1)
+		if(timer[0]->actions.size() != 1)
 			return false;
 			
-		Remove* event = dynamic_cast<Remove *>(timer[0]->event->actions[0]);
+		Remove* event = dynamic_cast<Remove *>(timer[0]->actions[0]);
 		if(!event)
 			return false; // timer event contains non-remove actions
 		
@@ -348,7 +336,7 @@ bool PartType::load(fs::path const& filename)
 							triggerTimes = cast<int>(*iter);
 						}
 						timer.push_back(new TimerEvent(delay, delayVariation, triggerTimes));
-						currEvent = timer.back()->event;
+						currEvent = timer.back();
 						
 					}
 					else if ( eventName == "detect_range" )

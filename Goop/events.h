@@ -16,7 +16,7 @@ struct Event
 	public:
 		
 	Event();
-	~Event();
+	virtual ~Event();
 
 	void addAction( const std::string& name, const std::vector<std::string>& params );
 	void run( BaseObject *object, BaseObject *object2 = NULL, BaseWorm *worm = NULL, Weapon *weapon = NULL );

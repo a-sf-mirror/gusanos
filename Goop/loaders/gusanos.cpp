@@ -56,6 +56,9 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 				solid_mode();
 			}
 			
+			std::string paralaxPath = (path / "paralax").native_file_string();
+			level->paralax = gfx.loadBitmap(paralaxPath.c_str(),0);
+			
 			level->loaderSucceeded();
 			return true;
 		}

@@ -18,17 +18,6 @@
 
 using namespace std;
 
-NRTimer::NRTimer( TimerEvent* tEvent)
-{
-	m_tEvent = tEvent;
-	count = m_tEvent->delay + (int)(rnd() * m_tEvent->delayVariation);
-}
-
-void NRTimer::reset()
-{
-	count = m_tEvent->delay + (int)(rnd() * m_tEvent->delayVariation);
-}
-
 NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 : m_worm(worm)
 {
@@ -50,7 +39,7 @@ NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 	// Why this?? :OO // Re: Modders may want to make the rope leave trails or sth :o
 	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
 	{
-		timer.push_back( NRTimer(*i) );
+		timer.push_back( (*i)->createState() );
 	}
 }
 
@@ -67,9 +56,9 @@ void NinjaRope::shoot(Vec _pos, Vec _spd)
 	m_angle = spd.getAngle();
 	m_angleSpeed = 0;
 	
-	for ( vector< NRTimer >::iterator t = timer.begin(); t != timer.end(); t++)
+	for ( vector< TimerEvent::State* >::iterator t = timer.begin(); t != timer.end(); t++)
 	{
-		(*t).reset();
+		(*t)->reset();
 	}
 }
 

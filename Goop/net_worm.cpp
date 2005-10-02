@@ -170,13 +170,31 @@ void NetWorm::think()
 							m_weapons[weapIndex]->recieveMessage( data );
 					}
 					break;
+					case SetWeapon:
+					{
+						size_t index = Encoding::decode(*data, game.options.maxWeapons);
+						if ( data->getBool() )
+						{
+							size_t weaponIndex = Encoding::decode(*data, game.weaponList.size());
+							BaseWorm::setWeapon( index, game.weaponList[weaponIndex] );
+						}else
+						{
+							BaseWorm::setWeapon( index, 0 );
+						}
+					}
+					break;
+					case ClearWeapons:
+					{
+						BaseWorm::clearWeapons();
+					}
+					break;
 					case SYNC:
 					{
 						m_isActive = data->getBool();
 						m_ninjaRope->active = data->getBool();
 						//currentWeapon = data->getInt(Encoding::bitsOf(game.weaponList.size() - 1));
 						currentWeapon = Encoding::decode(*data, m_weapons.size());
-						clearWeapons();
+						BaseWorm::clearWeapons();
 						while ( data->getBool() )
 						{
 							int index = Encoding::decode(*data, m_weapons.size());
@@ -329,6 +347,41 @@ void NetWorm::changeWeaponTo( unsigned int weapIndex )
 		Encoding::encode(*data, weapIndex, m_weapons.size());
 		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH | ZCOM_REPRULE_AUTH_2_PROXY, data);
 		BaseWorm::changeWeaponTo( weapIndex );
+	}
+}
+
+void NetWorm::setWeapon( size_t index, WeaponType* type )
+{
+	if ( !network.isClient() )
+	{
+		BaseWorm::setWeapon( index, type );
+		if ( m_node )
+		{
+			ZCom_BitStream *data = new ZCom_BitStream;
+			addEvent(data, SetWeapon);
+			Encoding::encode(*data, index, game.options.maxWeapons);
+			if ( type )
+			{
+				data->addBool(true);
+				Encoding::encode(*data, type->getIndex(), game.weaponList.size());
+			}else
+				data->addBool(false);
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		}
+	}
+}
+
+void NetWorm::clearWeapons()
+{
+	if ( !network.isClient() )
+	{
+		BaseWorm::clearWeapons();
+		if ( m_node )
+		{
+			ZCom_BitStream *data = new ZCom_BitStream;
+			addEvent(data, ClearWeapons);
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		}
 	}
 }
 

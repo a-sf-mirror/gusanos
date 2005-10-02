@@ -3,10 +3,9 @@
 
 #include "base_object.h"
 #include "events.h"
-//#include "part_type.h"
 #include "vec.h"
 #include "angle.h"
-//#include "animators.h"
+#include "timer_event.h"
 #include <vector>
 //#include <boost/variant.hpp>
 
@@ -15,18 +14,7 @@ class SpriteSet;
 class BaseAnimator;
 #endif
 class PartType;
-class TimerEvent;
 //class BaseWorm;
-
-struct NRTimer
-{
-	NRTimer( TimerEvent* tEvent);
-	
-	void reset();
-	
-	int count;
-	TimerEvent* m_tEvent;
-};
 
 class NinjaRope : public BaseObject
 {
@@ -59,7 +47,7 @@ public:
 	
 private:
 	
-	std::vector< NRTimer > timer;
+	std::vector< TimerEvent::State* > timer;
 	PartType* m_type;
 	Angle m_angle;
 	AngleDiff m_angleSpeed;

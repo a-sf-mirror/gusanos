@@ -11,6 +11,7 @@
 class BasePlayer;
 class NinjaRope;
 class Weapon;
+class WeaponType;
 #ifndef DEDSERV
 class SpriteSet;
 class BaseAnimator;
@@ -85,7 +86,9 @@ public:
 	virtual void die();
 	virtual void changeWeaponTo( unsigned int weapIndex );
 	
-	void clearWeapons();
+	virtual void setWeapon(size_t index, WeaponType* type );
+	virtual void setWeapons( std::vector<WeaponType*> const& weaps);
+	virtual void clearWeapons();
 	
 	Weapon* getCurrentWeapon(); // Where and what for is this used?
 	
