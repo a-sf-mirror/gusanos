@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
 	console.registerVariables()
 		("CL_SHOWFPS", &showFps, 1)
-		("CL_SHOWDEBUG", &showDebug, 1)
+		("CL_SHOWDEBUG", &showDebug, 0)
 	;
 	
 	console.registerCommands()

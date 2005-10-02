@@ -65,6 +65,8 @@ struct Options
 	int host;
 	int maxWeaponsVar;
 	size_t maxWeapons;
+	int splitScreenVar;
+	bool splitScreen;
 	std::string rConPassword;
 };
 

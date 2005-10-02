@@ -36,6 +36,8 @@ void Client::requestPlayer(PlayerOptions const& playerOptions)
 void Client::requestPlayers()
 {
 	requestPlayer(*game.playerOptions[0]);
+	if ( game.options.splitScreen )
+		requestPlayer(*game.playerOptions[1]);
 }
 
 void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply )

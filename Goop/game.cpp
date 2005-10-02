@@ -255,10 +255,12 @@ void Options::registerInConsole()
 		("HOST", &host, 0)
 		
 		("SV_MAX_WEAPONS", &maxWeaponsVar, 5)
+		("CL_SPLITSCREEN", &splitScreenVar, 0)
 			
 		("RCON_PASSWORD", &rConPassword, "" )
 	;
 	maxWeapons = 5;
+	splitScreen = false;
 	
 	console.registerCommands()
 		(string("MAP"), mapCmd, mapCompleter)
@@ -497,6 +499,7 @@ void Game::loadWeapons()
 void Game::loadMod()
 {
 	options.maxWeapons = options.maxWeaponsVar;
+	options.splitScreen = ( options.splitScreenVar != 0 );
 	console.loadResources();
 	loadWeapons();
 	NRPartType = partTypeList.load("ninjarope.obj");
@@ -662,7 +665,14 @@ bool Game::changeLevelCmd(const std::string& levelName )
 				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
 				BaseWorm* worm = addWorm(true); 
 				BasePlayer* player = addPlayer ( OWNER );
-				//player->changeName( player->getOptions()->name );
+				player->assignNetworkRole(true);
+				player->assignWorm(worm);
+			}
+			if(options.splitScreen)
+			{
+				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
+				BaseWorm* worm = addWorm(true); 
+				BasePlayer* player = addPlayer ( OWNER );
 				player->assignNetworkRole(true);
 				player->assignWorm(worm);
 			}
@@ -672,7 +682,12 @@ bool Game::changeLevelCmd(const std::string& levelName )
 			{
 				BaseWorm* worm = addWorm(true);
 				BasePlayer* player = addPlayer ( OWNER );
-				//player->changeName( player->getOptions()->name );
+				player->assignWorm(worm);
+			}
+			if(options.splitScreen)
+			{
+				BaseWorm* worm = addWorm(true);
+				BasePlayer* player = addPlayer ( OWNER );
 				player->assignWorm(worm);
 			}
 		}
@@ -846,10 +861,17 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 		
 		case OWNER:
 		{
-			Player* player = LUA_NEW(Player, (playerOptions[0]));
+			if ( localPlayers.size() >= MAX_LOCAL_PLAYERS ) allegro_message("OMFG Too much local players");
+			Player* player = LUA_NEW(Player, ( playerOptions[localPlayers.size()] ));
 #ifndef DEDSERV
 			Viewport* viewport = new Viewport;
-			viewport->setDestination(gfx.buffer,0,0,320,240);
+			if ( options.splitScreen )
+			{
+				viewport->setDestination(gfx.buffer,localPlayers.size()*160,0,160,240);
+			}else
+			{
+				viewport->setDestination(gfx.buffer,0,0,320,240);
+			}
 			player->assignViewport(viewport);
 #endif
 			players.push_back( player );
