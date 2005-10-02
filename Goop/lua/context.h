@@ -52,6 +52,25 @@ public:
 		LuaContext& m_context;
 	};
 	
+	struct TableItemProxy
+	{
+		TableItemProxy(LuaContext& context)
+		: m_context(context)
+		{
+		}
+		
+		template<class T>
+		TableItemProxy const& operator()(char const* name, T v) const
+		{
+			lua_pushstring(m_context, name);
+			m_context.push(v);
+			lua_rawset(m_context, -3);
+			return *this;
+		}
+
+		LuaContext& m_context;
+	};
+	
 	LuaContext();
 	
 	LuaContext(istream& stream);
@@ -235,6 +254,11 @@ public:
 	TableFunctionProxy tableFunctions()
 	{
 		return TableFunctionProxy(*this);
+	}
+	
+	TableItemProxy tableItems()
+	{
+		return TableItemProxy(*this);
 	}
 	
 	LuaReference createReference();

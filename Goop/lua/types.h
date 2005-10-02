@@ -44,4 +44,10 @@ struct LuaReference
 	lua_rawset(context, -3); \
 	name_##MetaTable = context.createReference(); }
 
+#define ENUM(name_, body_) { \
+	lua_pushstring(context, #name_); \
+	lua_newtable(context); \
+	context.tableItems() \
+		body_ ; \
+	lua_rawset(context, LUA_GLOBALSINDEX); }
 #endif //LUA_TYPES_H

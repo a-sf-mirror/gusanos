@@ -37,6 +37,15 @@ LuaReference fontMetaTable(0);
 LuaReference partTypeMetaTable(0);
 LuaReference weaponTypeMetaTable(0);
 
+enum FontFlags
+{
+	None        = 0,
+	CenterV     = (1<<0),
+	CenterH     = (1<<1),
+	Shadow      = (1<<2),
+	Formatting  = (1<<3),
+};
+
 int l_sprites_load(lua_State* L)
 {
 	const char* n = lua_tostring(L, 1);
@@ -102,22 +111,48 @@ int l_font_render(lua_State* L)
 		
 	BITMAP* b = *(BITMAP **)lua_touserdata(L, 2);
 	
-	char const* s = lua_tostring(L, 3);
-	if(!s)
+	char const* sc = lua_tostring(L, 3);
+	if(!sc)
 		return 0;
+		
+	std::string s(sc);
 		
 	int x = static_cast<int>(lua_tonumber(L, 4));
 	int y = static_cast<int>(lua_tonumber(L, 5));
 	
+	int cr = 255, cg = 255, cb = 255;
+	int flags = 0;
+	
 	if(lua_gettop(L) >= 8)
 	{
-		int cr = static_cast<int>(lua_tonumber(L, 6));
-		int cg = static_cast<int>(lua_tonumber(L, 7));
-		int cb = static_cast<int>(lua_tonumber(L, 8));
-		f->draw(b, s, x, y, 0, 255, cr, cg, cb);
+		cr = static_cast<int>(lua_tonumber(L, 6));
+		cg = static_cast<int>(lua_tonumber(L, 7));
+		cb = static_cast<int>(lua_tonumber(L, 8));
+		
+		if(lua_gettop(L) >= 9)
+		{
+			flags = static_cast<int>(lua_tonumber(L, 9));
+		}
 	}
-	else
-		f->draw(b, s, x, y, 0);
+	
+	int realFlags = 0;
+	
+	if(flags & Shadow)
+		realFlags |= Font::Shadow;
+	if(flags & Formatting)
+		realFlags |= Font::Formatting;
+	
+	if(flags & (CenterV | CenterH))
+	{
+		std::pair<int, int> dim = f->getDimensions(s, 0, realFlags);
+
+		if(flags & CenterH)
+			x -= (dim.first - 1) / 2;
+		if(flags & CenterV)
+			y -= (dim.second - 1) / 2;
+	}
+
+	f->draw(b, s, x, y, 0, 256, cr, cg, cb, realFlags);
 	
 	return 0;
 }
@@ -237,6 +272,14 @@ void initResources()
 
 	CLASS(font,
 		("render", l_font_render)
+	)
+	
+	ENUM(Font,
+		("None", None)
+		("CenterV", CenterV)
+		("CenterH", CenterH)
+		("Shadow", Shadow)
+		("Formatting", Formatting)
 	)
 
 #endif
