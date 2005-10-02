@@ -81,7 +81,7 @@ NetWorm::~NetWorm()
 	delete m_interceptor;
 }
 
-inline void addEvent(ZCom_BitStream* data, int event)
+void NetWorm::addEvent(ZCom_BitStream* data, NetWorm::NetEvents event)
 {
 #ifdef COMPACT_EVENTS
 	//data->addInt(event, Encoding::bitsOf(NetWorm::EVENT_COUNT - 1));

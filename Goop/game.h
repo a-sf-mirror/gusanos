@@ -222,7 +222,7 @@ private:
 		NetEventsCount,
 	};
 	
-	friend inline void addEvent(ZCom_BitStream* data, NetEvents event);
+	void addEvent(ZCom_BitStream* data, NetEvents event);
 	
 	std::list<LevelEffectEvent> appliedLevelEffects;
 

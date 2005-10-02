@@ -143,6 +143,10 @@ public:
 	void localChangeName(std::string const& name, bool forceChange = false);
 	
 protected:
+	void addEvent(ZCom_BitStream* data, NetEvents event);
+	void addActionStart(ZCom_BitStream* data, BaseActions action);
+	void addActionStop(ZCom_BitStream* data, BaseActions action);
+	
 	void changeName_( const std::string& name ); // Changes the name and if its server it will tell all clients about it.	
 	
 	void changeColor_( int colour_ );

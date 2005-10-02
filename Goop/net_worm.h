@@ -12,7 +12,7 @@ class NetWormInterceptor;
 
 class NetWorm : public BaseWorm
 {	
-	public:
+public:
 		
 	enum NetEvents
 	{
@@ -62,7 +62,9 @@ class NetWorm : public BaseWorm
 	Vec lastPosUpdate;
 	int timeSinceLastUpdate;
 	
-	private:
+private:
+	
+	void addEvent(ZCom_BitStream* data, NetEvents event);
 		
 	bool m_isAuthority;
 	ZCom_Node *m_node;

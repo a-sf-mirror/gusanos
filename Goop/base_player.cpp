@@ -58,7 +58,7 @@ void BasePlayer::removeWorm()
 	}
 }
 
-inline void addEvent(ZCom_BitStream* data, int event)
+void BasePlayer::addEvent(ZCom_BitStream* data, BasePlayer::NetEvents event)
 {
 #ifdef COMPACT_EVENTS
 //	data->addInt(event, Encoding::bitsOf(BasePlayer::EVENT_COUNT - 1));
@@ -222,10 +222,7 @@ void BasePlayer::think()
 	}
 }
 
-
-
-
-inline void addActionStart(ZCom_BitStream* data, int action)
+void BasePlayer::addActionStart(ZCom_BitStream* data, BasePlayer::BaseActions action)
 {
 	addEvent(data, BasePlayer::ACTION_START);
 #ifdef COMPACT_ACTIONS
@@ -235,7 +232,7 @@ inline void addActionStart(ZCom_BitStream* data, int action)
 #endif
 }
 
-inline void addActionStop(ZCom_BitStream* data, int action)
+void BasePlayer::addActionStop(ZCom_BitStream* data, BasePlayer::BaseActions action)
 {
 	addEvent(data, BasePlayer::ACTION_STOP);
 #ifdef COMPACT_ACTIONS

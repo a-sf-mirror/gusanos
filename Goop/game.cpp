@@ -376,9 +376,9 @@ void Game::init(int argc, char** argv)
 #endif
 }
 
-inline void addEvent(ZCom_BitStream* data, Game::NetEvents event)
+void Game::addEvent(ZCom_BitStream* data, Game::NetEvents event)
 {
-	Encoding::encode( *data, static_cast<int>(event), Game::NetEventsCount );
+	Encoding::encode( *data, static_cast<int>(event), NetEventsCount );
 }
 
 void Game::think()
