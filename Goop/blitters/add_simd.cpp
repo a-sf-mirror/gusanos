@@ -57,6 +57,47 @@ void rectfill_add_32_mmx(BITMAP* where, int x1, int y1, int x2, int y2, Pixel co
 	emms();
 }
 
+void hline_add_32_mmx(BITMAP* where, int x1, int y1, int x2, Pixel colour, int fact)
+{
+	typedef Pixel32 pixel_t_1;
+	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
+	
+	if(fact <= 0)
+		return;
+	Pixel col = scaleColor_32(colour, fact);
+	
+	movd_rm(mm7, col);       //  -  col
+	punpckldq_rr(mm7, mm7);  // col col
+	
+	RECT_X_LOOP_NOALIGN(14,
+		*p = addColorsCrude_32(*p, col)
+	,
+		movq_rm(mm0, p[0]);
+		movq_rm(mm1, p[2]);
+		movq_rm(mm2, p[4]);
+		movq_rm(mm3, p[6]);
+		movq_rm(mm4, p[8]);
+		movq_rm(mm5, p[10]);
+		movq_rm(mm6, p[12]);
+		paddusb_rr(mm0, mm7);
+		paddusb_rr(mm1, mm7);
+		paddusb_rr(mm2, mm7);
+		paddusb_rr(mm3, mm7);
+		paddusb_rr(mm4, mm7);
+		paddusb_rr(mm5, mm7);
+		paddusb_rr(mm6, mm7);
+		movq_mr(p[0], mm0);
+		movq_mr(p[2], mm1);
+		movq_mr(p[4], mm2);
+		movq_mr(p[6], mm3);
+		movq_mr(p[8], mm4);
+		movq_mr(p[10], mm5);
+		movq_mr(p[12], mm6);
+	)
+
+	emms();
+}
+
 void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;

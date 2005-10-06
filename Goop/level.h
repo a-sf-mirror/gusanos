@@ -3,7 +3,7 @@
 
 #include "material.h"
 #include "resource_locator.h"
-#include "vec.h"
+#include "omfgutil_math.h"
 //#include "sprite.h"
 
 #include "encoding.h"

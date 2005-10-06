@@ -7,8 +7,8 @@
 #include "../base_worm.h"
 #include "../particle.h"
 #include "../game.h" //Do we need this?
-#include "../vec.h"
 #include "../glua.h"
+#include "omfgutil_math.h"
 
 #include <cmath>
 #include <iostream>

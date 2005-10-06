@@ -7,7 +7,7 @@ def getLibName(lib):
 	
 def getBinName(bin):
 	if conf == 'mingw-cross':
-		bin += '.exe'
+		bin += '-crap.exe'
 	return os.path.join('#bin', conf, bin) # Put executable here so not to confuse
 
 conf = ARGUMENTS.get('conf', 'posix')

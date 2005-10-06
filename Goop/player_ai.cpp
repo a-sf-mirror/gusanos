@@ -4,7 +4,7 @@
 #include "worm.h"
 #include "game.h"
 #include "weapon.h"
-#include "math_func.h"
+#include "omfgutil_math.h"
 #include <vector>
 #include <list>
 #include <cmath>

@@ -2,7 +2,7 @@
 #define BASE_PLAYER_H
 
 #include <string>
-#include "vec.h"
+//#include "vec.h"
 #include "lua/types.h"
 #include <stdexcept>
 #include <boost/shared_ptr.hpp>

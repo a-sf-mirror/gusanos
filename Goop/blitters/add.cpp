@@ -143,6 +143,34 @@ void rectfill_add_32(BITMAP* where, int x1, int y1, int x2, int y2, Pixel colour
 	)
 }
 
+void hline_add_16(BITMAP* where, int x1, int y1, int x2, Pixel colour, int fact)
+{
+	typedef Pixel16 pixel_t_1;
+	typedef Pixel16_2 pixel_t_2;
+
+	fact = (fact + 7) / 8;
+	
+	Pixel col = duplicateColor_16(scaleColor_16(colour, fact));
+	Pixel colA, colB;
+	prepareAddColors_16_2(col, colA, colB);
+	
+	RECT_X_LOOP_ALIGN(2, 4,
+		*p = addColors_16_2(*p, colA, colB),
+		*p = addColors_16_2(*p, colA, colB)
+	)
+}
+
+void hline_add_32(BITMAP* where, int x1, int y1, int x2, Pixel colour, int fact)
+{
+	typedef Pixel32 pixel_t_1;
+	
+	Pixel col = scaleColor_32(colour, fact);
+
+	RECT_X_LOOP(
+		*p = addColorsCrude_32(*p, col)
+	)
+}
+
 bool linewu_add(BITMAP* where, float x, float y, float destx, float desty, Pixel colour, int fact)
 {
 	const long prec = 8;
@@ -253,6 +281,68 @@ void drawSprite_add_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int 
 		)
 	}
 	
+}
+
+void drawSpriteLine_add_32(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact)
+{
+	typedef Pixel32 pixel_t_1;
+	
+	if(bitmap_color_depth(from) != 32)
+		return;
+		
+	CLIP_HLINE();
+
+	
+	if(fact >= 255)
+	{
+		SPRITE_X_LOOP(
+			Pixel s = *src;
+			if(s != maskcolor_32)
+				*dest = addColorsCrude_32(*dest, s);
+		)
+	}
+	else if(fact > 0)
+	{
+		SPRITE_X_LOOP(
+			Pixel s = *src;
+			if(s != maskcolor_32)
+				*dest = addColorsCrude_32(*dest, scaleColor_32(s, fact));
+		)
+	}
+}
+
+void drawSpriteLine_add_16(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact)
+{
+	typedef Pixel16 pixel_t_1;
+	typedef Pixel16_2 pixel_t_2;
+
+	if(bitmap_color_depth(from) != 16)
+		return;
+		
+	CLIP_HLINE();
+
+	fact = (fact + 4) / 8;
+	
+	if(fact >= 31)
+	{
+		SPRITE_X_LOOP_ALIGN(2, 4,
+			Pixel s = *src;
+			if(s != maskcolor_16)
+				*dest = addColors_16_2(*dest, *src)
+		,
+			*dest = addColors_16_2(*dest, add_mask_16_2(*src))
+		)
+	}
+	else if(fact > 0)
+	{
+		SPRITE_X_LOOP_ALIGN(2, 4,
+			Pixel s = *src;
+			if(s != maskcolor_16)
+				*dest = addColors_16_2(*dest, scaleColor_16(s, fact))
+		,
+			*dest = addColors_16_2(*dest, scaleColor_16_2(add_mask_16_2(*src), fact));
+		)
+	}
 }
 
 } //namespace Blitters

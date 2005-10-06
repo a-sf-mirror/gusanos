@@ -1,6 +1,5 @@
 #include "particle.h"
 
-#include "vec.h"
 #include "game.h"
 #include "base_object.h"
 #include "base_worm.h"
@@ -17,7 +16,8 @@
 #include "lua/bindings-objects.h"
 #include "detect_event.h"
 #include "noise_line.h"
-
+#include "omfgutil_macros.h"
+#include "omfgutil_math.h"
 
 #include <vector>
 #include <iostream>
@@ -70,7 +70,8 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 			return;
 	}
 	
-	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
+	//for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
+	foreach(i, m_type->timer)
 	{
 		timer.push_back( (*i)->createState() );
 	}
@@ -80,10 +81,6 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 
 Particle::~Particle()
 {
-	for ( vector< TimerEvent::State* >::iterator i = timer.begin(); i != timer.end(); ++i)
-	{
-		delete (*i);
-	}
 #ifndef DEDSERV
 	delete m_animator;
 #endif
@@ -137,17 +134,19 @@ void Particle::think()
 #endif
 		}
 
-		for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
+		//for ( vector< DetectEvent* >::iterator t = m_type->detectRanges.begin(); t != m_type->detectRanges.end(); ++t )
+		foreach(t, m_type->detectRanges)
 		{
 			(*t)->check(this);
 		}
 		if ( deleteMe ) break;
 		
-		for ( vector< TimerEvent::State* >::iterator t = timer.begin(); t != timer.end(); t++)
+		//for ( vector< TimerEvent::State* >::iterator t = timer.begin(); t != timer.end(); t++)
+		foreach(t, timer)
 		{
-			if ( (*t)->tick() )
+			if ( t->tick() )
 			{
-				(*t)->event->run(this);
+				t->event->run(this);
 			}
 			if ( deleteMe ) break;
 		}

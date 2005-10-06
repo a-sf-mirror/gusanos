@@ -3,13 +3,11 @@
 
 #include <utility>
 #include <cassert>
-//#include <boost/dynamic_bitset.hpp>
 #include "omfggui.h" // For Rect
 #include "zoidcom.h"
 #include <iostream>
 #include <stdexcept>
 
-//using boost::dynamic_bitset;
 using std::cerr;
 using std::endl;
 
@@ -215,12 +213,6 @@ struct DiffVectorEncoding
 
 	unsigned int subPixelAcc;
 };
-
-/*
-void writeBitset(ZCom_BitStream& stream, dynamic_bitset<> b);
-
-dynamic_bitset<> readBitset(ZCom_BitStream& stream, zU8 bits);
-*/
 
 }
 

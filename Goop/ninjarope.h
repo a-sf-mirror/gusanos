@@ -3,8 +3,7 @@
 
 #include "base_object.h"
 #include "events.h"
-#include "vec.h"
-#include "angle.h"
+#include "omfgutil_math.h"
 #include "timer_event.h"
 #include <vector>
 //#include <boost/variant.hpp>
@@ -47,7 +46,7 @@ public:
 	
 private:
 	
-	std::vector< TimerEvent::State* > timer;
+	std::vector< TimerEvent::State > timer;
 	PartType* m_type;
 	Angle m_angle;
 	AngleDiff m_angleSpeed;

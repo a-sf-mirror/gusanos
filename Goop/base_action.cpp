@@ -1,6 +1,7 @@
 #include "base_action.h"
 
-BaseAction::BaseAction()
+BaseAction::BaseAction(int flags_)
+: flags(flags_)
 {
 }
 

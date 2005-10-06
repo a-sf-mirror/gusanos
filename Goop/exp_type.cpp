@@ -164,7 +164,7 @@ bool ExpType::load(fs::path const& filename)
 					string eventName = *iter;
 					if ( eventName == "creation" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesObject);
 						creation = currEvent;
 					}
 					else if ( eventName == "detect_range" )
@@ -194,7 +194,7 @@ bool ExpType::load(fs::path const& filename)
 						}
 						if ( !detectFilter ) detectFilter = 1;
 						detectRanges.push_back( new DetectEvent(range, detectOwner, detectFilter));
-						currEvent = detectRanges.back()->m_event;
+						currEvent = detectRanges.back();
 					}
 					else
 					{
@@ -209,7 +209,11 @@ bool ExpType::load(fs::path const& filename)
 				
 				if ( lineID == Parser::ACTION && currEvent != NULL)
 				{
-					currEvent->addAction(*iter, Parser::getActionParams( tokens ));
+					if(!currEvent->addAction(*iter, Parser::getActionParams( tokens )))
+					{
+						//TODO: Add more info here
+						cerr << "Couldn't add action to event" << endl;
+					}
 				}
 				
 			}

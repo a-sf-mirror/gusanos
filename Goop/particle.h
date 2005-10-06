@@ -3,9 +3,7 @@
 
 #include "base_object.h"
 #include "part_type.h"
-#include "vec.h"
-#include "angle.h"
-#include "math_func.h"
+#include "omfgutil_math.h"
 #include "timer_event.h"
 #include <vector>
 
@@ -55,7 +53,7 @@ private:
 #endif
 	
 	int m_dir;
-	std::vector< TimerEvent::State* > timer; // This could cause a penalty
+	std::vector< TimerEvent::State > timer; // This could cause a penalty
 	PartType* m_type;
 	float m_health;
 	Angle m_angle;

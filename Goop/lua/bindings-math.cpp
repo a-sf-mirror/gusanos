@@ -1,10 +1,8 @@
 #include "bindings-math.h"
 
 #include "types.h"
-#include "../vec.h"
-#include "../angle.h"
 #include "../glua.h"
-#include "../math_func.h"
+#include "omfgutil_math.h"
 
 #include <cmath>
 #include <string>

@@ -10,15 +10,15 @@
 #include "animators.h"
 #endif
 #include "omfgutil_text.h"
+#include "omfgutil_math.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "timer_event.h"
 
-
 #include "particle.h"
 #include "simple_particle.h"
 #include "game_actions.h"
-#include "math_func.h"
+
 
 #include <allegro.h>
 #include <string>
@@ -73,7 +73,7 @@ void newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(
 #endif
 
 PartType::PartType()
-: newParticle(0), wupixels(0)
+: newParticle(0), wupixels(1)
 , invisible(false)
 {
 	gravity = 0;
@@ -302,17 +302,17 @@ bool PartType::load(fs::path const& filename)
 					string eventName = *iter;
 					if ( eventName == "ground_collision" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesObject);
 						groundCollision = currEvent;
 					}
 					else if ( eventName == "creation" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesObject);
 						creation = currEvent;
 					}
 					else if ( eventName == "death" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesObject);
 						death = currEvent;
 					}
 					else if ( eventName == "timer" )
@@ -366,7 +366,7 @@ bool PartType::load(fs::path const& filename)
 						}
 						if ( !detectFilter ) detectFilter = 1;
 						detectRanges.push_back( new DetectEvent(range, detectOwner, detectFilter));
-						currEvent = detectRanges.back()->m_event;
+						currEvent = detectRanges.back();
 					}
 					else if ( eventName == "custom_event" && iter!= tokens.end() )
 					{
@@ -374,7 +374,7 @@ bool PartType::load(fs::path const& filename)
 						size_t eventIndex = cast<size_t>(*iter);
 						if ( eventIndex < customEvents.size() )
 						{
-							currEvent = new Event;
+							currEvent = new Event(Event::ProvidesObject | Event::ProvidesObject2);
 							customEvents[eventIndex] = currEvent;
 						}
 					}
@@ -384,14 +384,18 @@ bool PartType::load(fs::path const& filename)
 						std::cout << "\t" << parseLine << std::endl;
 						std::cout << "Event name given: \"" << eventName << "\"" << std::endl;
 						std::cout << "----------------" << std::endl;
-						currEvent = NULL;
+						currEvent = 0;
 					}
 
 				}
 				
-				if ( lineID == Parser::ACTION && currEvent != NULL)
+				if ( lineID == Parser::ACTION && currEvent )
 				{
-					currEvent->addAction(*iter, Parser::getActionParams( tokens ));
+					if(!currEvent->addAction(*iter, Parser::getActionParams( tokens )))
+					{
+						//TODO: Add more info here
+						cerr << "Couldn't add action to event" << endl;
+					}
 				}
 				
 			}

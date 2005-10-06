@@ -4,9 +4,8 @@
 
 #include "sfx.h"
 #include "resource_list.h"
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "base_object.h"
-#include "math_func.h"
 
 #include <string>
 #include <iostream>

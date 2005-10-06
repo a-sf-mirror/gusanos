@@ -1,5 +1,5 @@
 #include "base_object.h"
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "base_player.h"
 #include "glua.h"
 #include "lua/bindings-objects.h"

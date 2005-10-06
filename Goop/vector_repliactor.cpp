@@ -2,7 +2,7 @@
 
 #include <zoidcom.h>
 #include <iostream>
-#include "vec.h"
+#include "omfgutil_math.h"
 using std::cerr;
 using std::endl;
 

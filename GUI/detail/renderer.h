@@ -1,6 +1,7 @@
 #ifndef OMFG_GUI_RENDERER_H
 #define OMFG_GUI_RENDERER_H
 
+#include "omfgutil_math.h"
 #include "omfgutil_common.h"
 #include <string>
 #include <algorithm>

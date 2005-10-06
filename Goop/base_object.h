@@ -1,8 +1,7 @@
 #ifndef base_object_h
 #define base_object_h
 
-#include "vec.h"
-#include "angle.h"
+#include "omfgutil_math.h"
 #include "lua/types.h"
 
 //#include <allegro.h>

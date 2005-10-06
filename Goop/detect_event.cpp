@@ -3,16 +3,18 @@
 #include "events.h"
 #include "base_object.h"
 #include "game.h"
+#include "omfgutil_macros.h"
 
 DetectEvent::DetectEvent( float range, bool detectOwner, int detectFilter)
-: m_range(range), m_detectOwner(detectOwner), m_detectFilter(detectFilter)
+: Event(Event::ProvidesObject | Event::ProvidesObject2)
+, m_range(range), m_detectOwner(detectOwner), m_detectFilter(detectFilter)
 {
-	m_event = new Event;
+	//m_event = new Event;
 }
 
 DetectEvent::~DetectEvent()
 {
-	delete m_event;
+	//delete m_event;
 }
 
 void DetectEvent::check( BaseObject* ownerObject )
@@ -44,14 +46,16 @@ void DetectEvent::check( BaseObject* ownerObject )
 		}*/
 		
 
-		for ( Grid::iterator worm = game.objects.beginColLayer(Grid::WormColLayer); worm; ++worm)
+		//for ( Grid::iterator worm = game.objects.beginColLayer(Grid::WormColLayer); worm; ++worm)
+		forrange_bool(worm, game.objects.beginColLayer(Grid::WormColLayer))
 		{
 			if(&*worm != ownerObject)
 			{
 				if ( m_detectOwner || worm->getOwner() != ownerObject->getOwner() )
 				if ( worm->isCollidingWith( ownerObject->pos, m_range) )
 				{
-					m_event->run( ownerObject, &*worm );
+					//m_event->run( ownerObject, &*worm );
+					run( ownerObject, &*worm );
 				}
 			}
 		}
@@ -61,7 +65,8 @@ void DetectEvent::check( BaseObject* ownerObject )
 	{
 		if ( m_detectFilter & filterFlag )
 		{
-			for ( Grid::area_iterator object = game.objects.beginArea(x1, y1, x2, y2, customFilter); object; ++object)
+			//for ( Grid::area_iterator object = game.objects.beginArea(x1, y1, x2, y2, customFilter); object; ++object)
+			forrange_bool(object, game.objects.beginArea(x1, y1, x2, y2, customFilter))
 			{
 				//cerr << "Found: " << &*worm << endl;
 				if(&*object != ownerObject)
@@ -70,7 +75,8 @@ void DetectEvent::check( BaseObject* ownerObject )
 					if ( !object->deleteMe && (m_detectOwner || object->getOwner() != ownerObject->getOwner() ) )
 					if ( object->isCollidingWith( ownerObject->pos, m_range) )
 					{
-						m_event->run( ownerObject, &*object );
+						//m_event->run( ownerObject, &*object );
+						run( ownerObject, &*object );
 					}
 				}
 			}
@@ -85,7 +91,8 @@ void DetectEvent::check( BaseObject* ownerObject )
 			if ( m_detectOwner || (*worm)->getOwner() != ownerObject->getOwner() )
 				if ( (*worm)->isCollidingWith( ownerObject->pos, m_range) )
 			{
-				m_event->run( ownerObject, (*worm) );
+				//m_event->run( ownerObject, (*worm) );
+				run( ownerObject, (*worm) );
 			}
 		}
 	}
@@ -102,7 +109,8 @@ void DetectEvent::check( BaseObject* ownerObject )
 				if ( !(*object)->deleteMe && (m_detectOwner || (*object)->getOwner() != ownerObject->getOwner() ) )
 				if ( (*object)->isCollidingWith( ownerObject->pos, m_range) )
 				{
-					m_event->run( ownerObject,(*object) );
+					//m_event->run( ownerObject,(*object) );
+					run( ownerObject,(*object) );
 				}
 			}
 		}

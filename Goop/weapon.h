@@ -2,7 +2,7 @@
 #define WEAPON_H
 
 #include <zoidcom.h>
-#include <stddef.h>
+//#include <cstddef>
 
 class BITMAP;
 class BaseWorm;

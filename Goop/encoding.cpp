@@ -31,15 +31,4 @@ DiffVectorEncoding::DiffVectorEncoding(unsigned int subPixelAcc_)
 
 }
 
-/*
-void writeBitset(ZCom_BitStream& stream, dynamic_bitset<> b)
-{
-	stream.addInt(b.to_ulong(), b.size());
-}
-
-dynamic_bitset<> readBitset(ZCom_BitStream& stream, zU8 bits)
-{
-	return dynamic_bitset<>((dynamic_bitset<>::size_type)bits, stream.getInt(bits));
-}
-*/
 }

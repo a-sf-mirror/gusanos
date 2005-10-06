@@ -4,5 +4,6 @@
 #include "omfgutil_common.h"
 #include "omfgutil_text.h"
 #include "omfgutil_macros.h"
+#include "omfgutil_math.h"
 
-#endif //OMFGUTIL_UTILITY_H
+#endif //OMFGUTIL_H

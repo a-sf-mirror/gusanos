@@ -9,8 +9,7 @@
 #include <allegro.h>
 #endif
 #include "events.h"
-#include "angle.h"
-#include "vec.h"
+#include "omfgutil_math.h"
 
 #include <string>
 #include <vector>

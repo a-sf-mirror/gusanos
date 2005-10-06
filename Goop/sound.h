@@ -6,12 +6,11 @@
 #endif //DEDSERV
 
 #include "resource_list.h"
-#include "vec.h"
+#include "omfgutil_math.h"
 #include <string>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
 
-//class Vec;
 class BaseObject;
 struct FSOUND_SAMPLE;
 

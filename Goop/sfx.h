@@ -5,7 +5,7 @@
 #error "Can't use this in dedicated server"
 #endif //DEDSERV
 
-#include "vec.h"
+#include "omfgutil_math.h"
 #include <list>
 #include <vector>
 

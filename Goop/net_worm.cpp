@@ -1,6 +1,6 @@
 #include "net_worm.h"
 
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "game.h"
 #include "weapon.h"
 #include "weapon_type.h"

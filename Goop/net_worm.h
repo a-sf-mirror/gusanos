@@ -1,8 +1,8 @@
 #ifndef NET_WORM_H
 #define NET_WORM_H
 
-#include "vec.h"
-#include "base_object.h"
+//#include "vec.h"
+//#include "base_object.h"
 #include "base_worm.h"
 //#include "sprite.h"
 

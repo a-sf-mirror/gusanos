@@ -1,6 +1,6 @@
 #include "explosion.h"
 
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "game.h"
 #include "base_object.h"
 #include "base_worm.h"

@@ -2,9 +2,8 @@
 #define BASE_WORM_H
 
 #include "zoidcom.h"
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "base_object.h"
-#include "angle.h"
 #include <vector>
 #include "lua/types.h"
 

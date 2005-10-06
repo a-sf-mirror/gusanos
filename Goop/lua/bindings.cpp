@@ -9,9 +9,9 @@
 #include "bindings-game.h"
 
 #include "../gconsole.h"
-#include "../game.h"
-#include "../vec.h"
-#include "../gfx.h"
+//#include "../game.h"
+//#include "../vec.h"
+//#include "../gfx.h"
 #include "../network.h"
 #include "../glua.h"
 

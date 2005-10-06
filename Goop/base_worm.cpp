@@ -1,7 +1,6 @@
 #include "base_worm.h"
 
-#include "vec.h"
-#include "math_func.h"
+#include "omfgutil_math.h"
 #include "game.h"
 #include "base_object.h"
 #include "base_player.h"

@@ -11,12 +11,12 @@
 	if(x1 > x2 || y1 > y2) return
 	
 #define RECT_Y_LOOP(ops_) \
-	for(int y = y1; y <= y2; ++y) { \
+	for(; y1 <= y2; ++y1) { \
 		ops_ }
 		
 #define RECT_X_LOOP_ALIGN(par_, align_, op_1, op_2) { \
 	int c_ = x2 - x1; \
-	pixel_t_1* p_ = (pixel_t_1 *)where->line[y] + x1; \
+	pixel_t_1* p_ = (pixel_t_1 *)where->line[y1] + x1; \
 	while(ptrdiff_t(p_) & (align_ - 1)) { \
 		pixel_t_1* p = p_; \
 		op_1; \
@@ -30,7 +30,7 @@
 	
 #define RECT_X_LOOP_NOALIGN(par_, op_1, op_2) { \
 	int c_ = x2 - x1; \
-	pixel_t_1* p_ = (pixel_t_1 *)where->line[y] + x1; \
+	pixel_t_1* p_ = (pixel_t_1 *)where->line[y1] + x1; \
 	for(; c_ >= par_; c_ -= par_, p_ += par_) { \
 		pixel_t_2* p = (pixel_t_2 *)p_; \
 		op_2; } \
@@ -40,7 +40,7 @@
 		
 #define RECT_X_LOOP(op_1) { \
 	int c_ = x2 - x1; \
-	pixel_t_1* p = (pixel_t_1 *)where->line[y] + x1; \
+	pixel_t_1* p = (pixel_t_1 *)where->line[y1] + x1; \
 	for(; c_ >= 1; --c_, ++p) { \
 		op_1; } }
 		
@@ -62,6 +62,15 @@
 	if(y < where->ct) { y1 += where->ct - y; y = where->ct; } \
 	if(x1 >= x2 || y1 >= y2) return
 
+#define CLIP_HLINE() \
+	if(y < where->ct || y >= where->cb)	return; \
+	if(x < where->cl) { \
+		x1 += where->cl - x; \
+		x = where->cl; } \
+	if(x + (x2 - x1) > where->cr) { \
+		x2 = x1 + where->cr - x; } \
+	if(x1 > x2) return;
+		
 #define SPRITE_Y_LOOP(ops_) \
 	for(; y1 < y2; ++y, ++y1) { \
 		ops_ }
@@ -79,8 +88,6 @@
 	pixel_t_src* src  = (pixel_t_src *)from->line[y1] + x1; \
 	for(; c_ >= 1; --c_, ++dest, ++src) { \
 		op_1; } }
-		
-		
 		
 #define SPRITE_X_LOOP_ALIGN(par_, align_, op_1, op_2) { \
 	int c_ = x2 - x1; \

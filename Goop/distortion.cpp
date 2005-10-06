@@ -4,7 +4,7 @@
 
 #include <allegro.h>
 #include <vector>
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "gfx.h"
 #include "blitters/blitters.h"
 

@@ -3,7 +3,7 @@
 
 #include <zoidcom.h>
 
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "encoding.h"
 #include <utility>
 

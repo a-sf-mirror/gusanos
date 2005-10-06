@@ -115,27 +115,27 @@ bool WeaponType::load(const fs::path &filename)
 					string eventName = *iter;
 					if ( eventName == "primary_shoot" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesWeapon | Event::ProvidesObject);
 						primaryShoot = currEvent;
 					}
 					else if ( eventName == "primary_press" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesWeapon | Event::ProvidesObject);
 						primaryPressed = currEvent;
 					}
 					else if ( eventName == "primary_release" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesWeapon | Event::ProvidesObject);
 						primaryReleased = currEvent;
 					}
 					else if ( eventName == "out_of_ammo" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesWeapon | Event::ProvidesObject);
 						outOfAmmo = currEvent;
 					}
 					else if ( eventName == "reaload_end" )
 					{
-						currEvent = new Event;
+						currEvent = new Event(Event::ProvidesWeapon | Event::ProvidesObject);
 						reloadEnd = currEvent;
 					}
 					else
@@ -150,7 +150,11 @@ bool WeaponType::load(const fs::path &filename)
 				
 				if ( lineID == Parser::ACTION && currEvent != NULL)
 				{
-					currEvent->addAction(*iter, Parser::getActionParams( tokens ));
+					if(!currEvent->addAction(*iter, Parser::getActionParams( tokens )))
+					{
+						//TODO: Add more info here
+						cerr << "Couldn't add action to event" << endl;
+					}
 				}
 				
 			}

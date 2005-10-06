@@ -9,7 +9,7 @@
 #include "script.h"
 #include "game.h"
 #include "glua.h"
-#include "math_func.h" // for rndgen
+#include "omfgutil_math.h" // for rndgen
 
 #include "network.h" //TEMP
 

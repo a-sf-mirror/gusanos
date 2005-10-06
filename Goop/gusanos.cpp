@@ -4,7 +4,6 @@
 #include "resource_list.h"
 #include "sprite.h"
 
-#include "vec.h"
 #include "level.h"
 #include "game.h"
 #include "part_type.h"
@@ -12,6 +11,7 @@
 #include "worm.h"
 #include "player.h"
 #include "omfgutil_macros.h"
+#include "omfgutil_math.h"
 //#include "text.h"
 #ifndef DEDSERV
 #include "viewport.h"
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	;
 	
 	console.registerCommands()
-		(string("QUIT"), Exit)
+		("QUIT", Exit)
 	;
 	
 	console.parseLine("BIND F12 SCREENSHOT");

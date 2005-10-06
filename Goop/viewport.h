@@ -6,7 +6,7 @@
 #endif //DEDSERV
 
 //#include "game.h"
-#include "vec.h"
+#include "omfgutil_math.h"
 #include "lua/types.h"
 //#include <allegro.h>
 

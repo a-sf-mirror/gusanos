@@ -7,7 +7,7 @@
 #include "material.h"
 #include "sprite_set.h"
 #include "sprite.h"
-#include "math_func.h"
+#include "omfgutil_math.h"
 #include "level_effect.h"
 
 

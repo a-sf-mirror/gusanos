@@ -7,9 +7,11 @@
 #include <allegro.h>
 #include "base_worm.h"
 #include "base_player.h"
+#include "player.h"
 #include "glua.h"
 #include "lua/bindings-gfx.h"
-//#include "culling.h"
+#include "blitters/blitters.h"
+#include "culling.h"
 #include <list>
 
 
@@ -33,40 +35,43 @@ Viewport::~Viewport()
 
 struct TestCuller
 {
-	TestCuller(BITMAP* dest_, int scrOffX_, int scrOffY_)
-	: dest(dest_), scrOffX(scrOffX_), scrOffY(scrOffY_)
+	TestCuller(BITMAP* dest_, BITMAP* src_, int scrOffX_, int scrOffY_, int destOffX_, int destOffY_)
+	: dest(dest_), src(src_), scrOffX(scrOffX_), scrOffY(scrOffY_), destOffX(destOffX_), destOffY(destOffY_)
 	{
 		
 	}
 	
 	bool block(int x, int y)
 	{
-		return !game.level.getMaterial(x, y).worm_pass;
-	}
-	
-	int lowerLimitH()
-	{
-		return 0;
-	}
-	
-	int upperLimitH()
-	{
-		return 200;
+		return !game.level.unsafeGetMaterial(x, y).worm_pass;
 	}
 	
 	void line(int y, int x1, int x2)
 	{
-		hline(dest, x1 + scrOffX, y + scrOffY, x2 + scrOffY, 0);
+		//hline_add(dest, x1 + scrOffX, y + scrOffY, x2 + scrOffX + 1, makecol(50, 50, 50), 255);
+		
+	
+		drawSpriteLine_add(
+			dest,
+			src,
+			x1 + scrOffX,
+			y + scrOffY,
+			x1 + destOffX,
+			y + destOffY,
+			x2 + destOffX + 1,
+			255);
 	}
 	
 	BITMAP* dest;
-/*
-	int x;
-	int y;*/
+	BITMAP* src;
+
 	int scrOffX;
 	int scrOffY;
-	//int limitX;
+	int destOffX;
+	int destOffY;
 };
+
+static BITMAP* testLight = 0;
 
 void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height)
 {
@@ -82,6 +87,22 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	m_dest = create_sub_bitmap(where,x,y,width,height);
 	
 	m_listener = sfx.newListener();
+	
+	if(!testLight)
+	{
+		static int s = 200;
+		testLight = create_bitmap(s, s);
+		
+		for(int y = 0; y < s; ++y)
+		for(int x = 0; x < s; ++x)
+		{
+			double v = double(s)/2.0 - (IVec(x, y) - IVec(s/2, s/2)).length();
+			if(v < 0.0)
+				v = 0.0;
+			int iv = int(v);
+			putpixel_solid(testLight, x, y, makecol(iv, iv, iv));
+		}
+	}
 }
 
 void Viewport::render(BasePlayer* player)
@@ -90,33 +111,8 @@ void Viewport::render(BasePlayer* player)
 	int offY = static_cast<int>(m_pos.y);
 	game.level.draw(m_dest, offX, offY);
 	
-/*
-	static bool flag = false;
 	
-	if(!flag)
-	{
-		list<BasePlayer*>::iterator iter = game.players.begin();
-		//++iter; ++iter;
-		BaseWorm* worm = (*iter)->getWorm();
-		int x = (int)worm->getPos().x;
-		int y = (int)worm->getPos().y;
-		Culler<TestCuller, 1> testCuller(TestCuller(m_dest, -(int)m_pos.x, -(int)m_pos.y));
-		//testCuller.cull();
 
-		testCuller.cullRows(
-			0,
-			0,
-			Culler<TestCuller, 1>::fix(0),
-			Culler<TestCuller, 1>::fix(200),
-			0,
-			200,
-			0,
-			x,
-			y
-			);
-		//flag = true;
-	}
-*/
 #ifdef USE_GRID
 	for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
 	{
@@ -132,6 +128,27 @@ void Viewport::render(BasePlayer* player)
 		}
 	}
 #endif
+
+	{
+		BasePlayer* player = game.localPlayers[0];
+	
+		BaseWorm* worm = player->getWorm();
+		if(worm->isActive())
+		{
+			IVec off(m_pos);
+			IVec v(worm->pos);
+			IVec loff(v - IVec(testLight->w/2, testLight->h/2));
+			
+			Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
+
+			//r &= Rect(m_dest) + off;
+			r &= Rect(testLight) + loff;
+			
+			Culler<TestCuller> testCuller(TestCuller(m_dest, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
+	
+			testCuller.cullOmni(v.x, v.y);
+		}
+	}
 
 	EACH_CALLBACK(i, wormRender)
 	{

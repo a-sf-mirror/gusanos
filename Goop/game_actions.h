@@ -2,7 +2,7 @@
 #define GAME_ACTIONS_H
 
 #include "base_action.h"
-#include "angle.h"
+#include "omfgutil_math.h"
 #include "lua/types.h"
 #include <string>
 #include <vector>

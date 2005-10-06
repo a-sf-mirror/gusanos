@@ -1,7 +1,6 @@
 #include "liero.h"
 #include "../gfx.h"
-#include "../vec.h"
-#include "../math_func.h"
+#include "omfgutil_math.h"
 #include <string>
 #include <vector>
 #include <cstring>

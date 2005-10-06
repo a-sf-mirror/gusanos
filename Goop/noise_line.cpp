@@ -1,6 +1,5 @@
 #include "noise_line.h"
-#include "vec.h"
-#include "math_func.h"
+#include "omfgutil_math.h"
 
 #include <allegro.h>
 #include <vector>

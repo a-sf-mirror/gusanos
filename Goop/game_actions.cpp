@@ -10,12 +10,11 @@
 #include "sprite_set.h"
 #endif
 #include "omfgutil_text.h"
+#include "omfgutil_math.h"
 #include "base_object.h"
 #include "weapon.h"
 #include "worm.h"
-#include "angle.h"
 #include "level_effect.h"
-#include "math_func.h"
 
 #include "glua.h"
 #include "script.h"
@@ -58,7 +57,8 @@ BaseAction* shootParticles( const vector< string >& params )
 }
 
 ShootParticles::ShootParticles( const vector< string >& params )
-: distribution(360.0), angleOffset(0.0)
+: BaseAction(BaseAction::RequiresObject)
+, distribution(360.0), angleOffset(0.0)
 {
 	type = NULL;
 	amount = 0;
@@ -160,7 +160,8 @@ BaseAction* uniformShootParticles( const vector< string >& params )
 }
 
 UniformShootParticles::UniformShootParticles( const vector< string >& params )
-: distribution(360.0), angleOffset(0.0)
+: BaseAction(BaseAction::RequiresObject)
+, distribution(360.0), angleOffset(0.0)
 {
 	type = NULL;
 	amount = 0;
@@ -250,6 +251,7 @@ BaseAction* createExplosion( const vector< string >& params )
 }
 
 CreateExplosion::CreateExplosion( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 	type = NULL;
 	if ( params.size() >= 1 )
@@ -284,6 +286,7 @@ BaseAction* push( const vector< string >& params )
 }
 
 Push::Push( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
 {
 	factor = 0;
 
@@ -312,6 +315,7 @@ BaseAction* repel( const vector< string >& params )
 }
 
 Repel::Repel( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
 {
 	maxForce = 0;
 	minForce = 0;
@@ -367,6 +371,7 @@ BaseAction* damp( const vector< string >& params )
 }
 
 Damp::Damp( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject2)
 {
 	factor = 0;
 
@@ -395,6 +400,7 @@ BaseAction* damage( const vector< string >& params )
 }
 
 Damage::Damage( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
 {
 	m_damage = 0;
 	m_damageVariation = 0;
@@ -429,6 +435,7 @@ BaseAction* remove( const vector< string >& params )
 }
 
 Remove::Remove( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 }
 
@@ -451,6 +458,7 @@ BaseAction* playSound( const vector< string >& params )
 }
 
 PlaySound::PlaySound( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 #ifndef DEDSERV
 	sound = NULL;
@@ -501,6 +509,7 @@ BaseAction* playRandomSound( const vector< string >& params )
 }
 
 PlayRandomSound::PlayRandomSound( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 #ifndef DEDSERV
 	loudness = 100;
@@ -559,6 +568,7 @@ BaseAction* playSoundStatic( const vector< string >& params )
 }
 
 PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 #ifndef DEDSERV
 	sound = NULL;
@@ -609,6 +619,7 @@ BaseAction* delayFire( const vector< string >& params )
 }
 
 DelayFire::DelayFire( const vector< string >& params )
+: BaseAction(BaseAction::RequiresWeapon)
 {
 	delayTime = 0;
 	delayTimeVariation = 0;
@@ -644,6 +655,7 @@ BaseAction* showFirecone( const vector< string >& params )
 }
 
 ShowFirecone::ShowFirecone( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 #ifndef DEDSERV
 	sprite = NULL;
@@ -689,6 +701,7 @@ BaseAction* addAngleSpeed( const vector< string >& params )
 }
 
 AddAngleSpeed::AddAngleSpeed( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 	speed = 0;
 	speedVariation = 0;
@@ -724,6 +737,7 @@ BaseAction* setAlphaFade( const vector< string >& params )
 }
 
 SetAlphaFade::SetAlphaFade( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 	frames = 0;
 	dest = 0;
@@ -761,6 +775,7 @@ BaseAction* runCustomEvent( const vector< string >& params )
 }
 
 RunCustomEvent::RunCustomEvent( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject2)
 {
 	index = 0;
 	if ( params.size() > 0 )
@@ -792,7 +807,8 @@ BaseAction* runScript( vector< string > const& params )
 }
 
 RunScript::RunScript( vector< string > const& params )
-: function(0)
+: BaseAction(0)
+, function(0)
 {
 	if ( params.size() > 0 )
 	{
@@ -841,6 +857,7 @@ BaseAction* applyMapEffect( vector< string > const& params )
 }
 
 ApplyMapEffect::ApplyMapEffect( vector< string > const& params )
+: BaseAction(BaseAction::RequiresObject)
 {
 	effect = NULL;
 	if ( params.size() > 0 )

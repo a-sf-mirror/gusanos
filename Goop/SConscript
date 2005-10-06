@@ -2,7 +2,7 @@ Import('env getObjects conf build subfolder getBinName getLibName')
 
 env = env.Copy()
 env.Append(LIBS = Split("""
-	omfggui omfgconsole omfgloaders omfglua omfgblitters glua loadpng""")
+	omfggui omfgconsole omfgloaders omfglua omfgblitters omfgutil glua loadpng""")
 	)
 
 if conf == 'posix':

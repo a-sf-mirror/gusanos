@@ -19,12 +19,20 @@ struct ActionParams
 
 class BaseAction
 {
-	public:
+public:
+	enum Flags
+	{
+		RequiresObject = (1<<0),
+		RequiresObject2 = (1<<1),
+		RequiresWeapon = (1<<2),
+	};
 		
-	BaseAction();
+	BaseAction(int flags_);
 	virtual ~BaseAction(); // <GLIP> Virtual dtor always needed for classes with virtual functions
 
 	virtual void run( ActionParams const& params ) = 0;
+	
+	int flags;
 };
 
 #endif  // _BASE_ACTION_H_

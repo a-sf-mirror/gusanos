@@ -1,6 +1,7 @@
 #include "ninjarope.h"
 
-#include "vec.h"
+#include "omfgutil_math.h"
+#include "omfgutil_macros.h"
 #include "game.h"
 #include "base_object.h"
 #include "part_type.h"
@@ -10,9 +11,7 @@
 #include "base_animator.h"
 #include "animators.h"
 #endif
-#include "vec.h"
 #include "part_type.h"
-#include "math_func.h"
 
 #include <vector>
 
@@ -37,7 +36,8 @@ NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 #endif
 		
 	// Why this?? :OO // Re: Modders may want to make the rope leave trails or sth :o
-	for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
+	//for ( vector< TimerEvent* >::iterator i = m_type->timer.begin(); i != m_type->timer.end(); i++)
+	foreach(i, m_type->timer)
 	{
 		timer.push_back( (*i)->createState() );
 	}
@@ -56,9 +56,10 @@ void NinjaRope::shoot(Vec _pos, Vec _spd)
 	m_angle = spd.getAngle();
 	m_angleSpeed = 0;
 	
-	for ( vector< TimerEvent::State* >::iterator t = timer.begin(); t != timer.end(); t++)
+	//for ( vector< TimerEvent::State >::iterator t = timer.begin(); t != timer.end(); t++)
+	foreach(t, timer)
 	{
-		(*t)->reset();
+		t->reset();
 	}
 }
 

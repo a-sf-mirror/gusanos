@@ -3,7 +3,7 @@
 #include "events.h"
 #include "base_worm.h"
 #include "game.h"
-#include "math_func.h"
+#include "omfgutil_math.h"
 
 #include "network.h"
 
@@ -40,7 +40,7 @@ void Weapon::think( bool isFocused, size_t index )
 	{
 		if ( primaryShooting && ammo > 0)
 		{
-			if (m_type->primaryShoot) m_type->primaryShoot->run((BaseObject*)m_owner, NULL, NULL, this );
+			if (m_type->primaryShoot) m_type->primaryShoot->run(m_owner, NULL, NULL, this );
 			ammo--;
 		}
 	}
@@ -137,7 +137,7 @@ void Weapon::recieveMessage( ZCom_BitStream* data )
 
 void Weapon::outOfAmmo()
 {
-	if (m_type->outOfAmmo) m_type->outOfAmmo->run((BaseObject*)m_owner, NULL, NULL, this );
+	if (m_type->outOfAmmo) m_type->outOfAmmo->run(m_owner, NULL, NULL, this );
 	ammo = 0;
 	reloading = true;
 	reloadTime = m_type->reloadTime;
@@ -145,7 +145,7 @@ void Weapon::outOfAmmo()
 
 void Weapon::reload()
 {
-	if (m_type->reloadEnd) m_type->reloadEnd->run((BaseObject*)m_owner, NULL, NULL, this );
+	if (m_type->reloadEnd) m_type->reloadEnd->run(m_owner, NULL, NULL, this );
 	reloading = false;
 	ammo = m_type->ammo;
 }
@@ -157,7 +157,7 @@ void Weapon::actionStart( Actions action )
 		case PRIMARY_TRIGGER:
 			if ( !inactiveTime && m_type->primaryPressed && ammo > 0 )
 			{
-				m_type->primaryPressed->run( (BaseObject*)m_owner, NULL, NULL, this );
+				m_type->primaryPressed->run( m_owner, NULL, NULL, this );
 				--ammo;
 			}
 			primaryShooting = true;
@@ -176,7 +176,7 @@ void Weapon::actionStop( Actions action )
 		case PRIMARY_TRIGGER:
 			if ( primaryShooting && m_type->primaryReleased )
 			{
-				m_type->primaryReleased->run( (BaseObject*)m_owner, NULL, NULL, this);
+				m_type->primaryReleased->run( m_owner, NULL, NULL, this);
 			}
 			primaryShooting = false;
 		break;

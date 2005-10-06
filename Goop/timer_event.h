@@ -2,14 +2,15 @@
 #define TIMER_EVENT_H
 
 #include "events.h"
-#include "math_func.h"
+#include "omfgutil_math.h"
 
 struct TimerEvent : public Event
 {
 	
 	struct State
 	{
-		State(TimerEvent* event_, int count_) : count(count_), triggerCount(0), event(event_)
+		State(TimerEvent* event_, int count_) 
+		: count(count_), triggerCount(0), event(event_)
 		{}
 		
 		bool tick()
@@ -36,14 +37,15 @@ struct TimerEvent : public Event
 		int triggerCount;
 		TimerEvent* event;
 	};
-	
-	State* createState()
+
+	State createState()
 	{
-		return new State( this, delay + rndInt(delayVariation+1) );
+		return State( this, delay + rndInt(delayVariation+1) );
 	}
 	
-	TimerEvent(int _delay, int _delayVariation, int _triggerTimes) : 
-	delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes)
+	TimerEvent(int _delay, int _delayVariation, int _triggerTimes)
+	: Event(Event::ProvidesObject)
+	, delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes)
 	{}
 	
 	~TimerEvent() {};
