@@ -262,22 +262,14 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 	}
 	else
 	{
-		
+		/*
 		if ( m_angle < Angle(180.0) )
 		{
-			/*
-			if ( !m_type->blender )
-				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y);
-			else*/
 			m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y, blitter);
 		}
-		else
+		else*/
 		{
-			/*
-			if ( !m_type->blender )
-				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, x, y, true);
-			else*/
-			m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, x, y, blitter, true);
+			m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y, blitter);
 		}
 	}
 	if (m_type->distortion)

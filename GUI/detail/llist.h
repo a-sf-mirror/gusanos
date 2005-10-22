@@ -105,12 +105,14 @@ public:
 	struct iterator
 	{
 		iterator()
+		: ptr(0)
 		{
 		}
 		
-		iterator(T* aPtr)
+		iterator(T* ptr_)
+		: ptr(ptr_)
 		{
-			ptr = aPtr;
+
 		}
 		
 		iterator& operator++()

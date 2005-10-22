@@ -7,7 +7,7 @@ def getLibName(lib):
 	
 def getBinName(bin):
 	if conf == 'mingw-cross':
-		bin += '-crap.exe'
+		bin += '.exe'
 	return os.path.join('#bin', conf, bin) # Put executable here so not to confuse
 
 conf = ARGUMENTS.get('conf', 'posix')
@@ -23,7 +23,7 @@ sconscript = ['./GUI/detail/SConscript',
             './lua/SConscript',
             './panzer/SConscript',
             #'./IoVM/SConscript',
-			#'./ParserGen/SConscript',
+			'./parsergen/SConscript',
 			#'./SmallLang/SConscript',
 			]
 			

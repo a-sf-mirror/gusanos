@@ -113,7 +113,7 @@ static int fromHex(char h)
 		return -1;
 }
 
-static bool readColor(RGB& dest, std::string const& str)
+bool Wnd::readColor(RGB& dest, std::string const& str)
 {
 	if(str.size() >= 7 && str[0] == '#')
 	{

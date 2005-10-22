@@ -19,6 +19,7 @@
 #include "proxy_player.h"
 #include "gfx.h"
 #include "sprite_set.h"
+#include "omfgutil_macros.h"
 #ifndef DEDSERV
 #include "sfx.h"
 #include "sound.h"
@@ -162,8 +163,9 @@ string kickCmd(const list<string> &args)
 {
 	if ( !network.isClient() && !args.empty() )
 	{
-		BasePlayer* player2Kick = NULL;
-		for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+		BasePlayer* player2Kick = 0;
+		//for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+		foreach(iter, game.players)
 		{
 			if ( (*iter)->m_name == *args.begin() )
 			{
@@ -173,8 +175,10 @@ string kickCmd(const list<string> &args)
 		}
 		if ( player2Kick )
 		{
-			bool isLocal = false;
-			for ( std::vector<Player*>::iterator iter = game.localPlayers.begin(); iter != game.localPlayers.end(); iter++)
+			//bool isLocal = false;
+			let_(isLocal, false); // l33t macro maybe :o
+			//for ( std::vector<Player*>::iterator iter = game.localPlayers.begin(); iter != game.localPlayers.end(); iter++)
+			foreach(iter, game.localPlayers)
 			{
 				if ( (*iter)->m_name == player2Kick->m_name )
 				{

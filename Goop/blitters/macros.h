@@ -15,7 +15,7 @@
 		ops_ }
 		
 #define RECT_X_LOOP_ALIGN(par_, align_, op_1, op_2) { \
-	int c_ = x2 - x1; \
+	int c_ = x2 - x1 + 1; \
 	pixel_t_1* p_ = (pixel_t_1 *)where->line[y1] + x1; \
 	while(ptrdiff_t(p_) & (align_ - 1)) { \
 		pixel_t_1* p = p_; \
@@ -29,7 +29,7 @@
 		op_1; ++p_; } }
 	
 #define RECT_X_LOOP_NOALIGN(par_, op_1, op_2) { \
-	int c_ = x2 - x1; \
+	int c_ = x2 - x1 + 1; \
 	pixel_t_1* p_ = (pixel_t_1 *)where->line[y1] + x1; \
 	for(; c_ >= par_; c_ -= par_, p_ += par_) { \
 		pixel_t_2* p = (pixel_t_2 *)p_; \
@@ -39,7 +39,7 @@
 		op_1; ++p_; } }
 		
 #define RECT_X_LOOP(op_1) { \
-	int c_ = x2 - x1; \
+	int c_ = x2 - x1 + 1; \
 	pixel_t_1* p = (pixel_t_1 *)where->line[y1] + x1; \
 	for(; c_ >= 1; --c_, ++p) { \
 		op_1; } }

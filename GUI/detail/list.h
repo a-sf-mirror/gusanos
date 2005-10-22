@@ -56,10 +56,16 @@ public:
 			return node_iter_t(node);
 		}
 		
+		void resizeColumns(size_t s);
+		
 		void render(Renderer* renderer, long& y, List& list);
-		//void renderChildren(Renderer* aRenderer, long& y, List& list);
+
 		void renderFrom(Renderer* renderer, long& y, List& list);
-		static node_iter_t findRelative(node_iter_t i, long aIdx);
+		
+		static List::node_iter_t getPrevVisible(node_iter_t i);
+		static List::node_iter_t getNextVisible(node_iter_t i);
+		static int findOffsetTo(node_iter_t i, node_iter_t to);
+		static node_iter_t findRelative(node_iter_t i, int aIdx);
 		
 		void setText(unsigned int column, std::string const& text)
 		{
@@ -73,6 +79,11 @@ public:
 				return columns[column];
 			else
 				return "";
+		}
+		
+		std::vector<std::string> const& getFields()
+		{
+			return columns;
 		}
 		
 		void changeChildrenCount(long change)
@@ -101,7 +112,7 @@ public:
 	List(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes)
 	: Wnd(parent, tagLabel, className, id, attributes, ""), m_RootNode("root")
-	, m_Base(0), m_MainSel(0)
+	, m_Base(0), m_basePos(0), m_MainSel(0)
 	{
 
 	}
@@ -117,6 +128,8 @@ public:
 		
 		if(!m_Base)
 			m_Base = node_iter_t(node);
+		if(!m_MainSel)
+			m_MainSel = node_iter_t(node);
 			
 		//++m_RowCount; // Root node is always visible
 
@@ -185,16 +198,61 @@ public:
 		return false;
 	}
 
+	void setMainSel(node_iter_t iter);
+	
+	bool checkSelection();
+	
+	node_iter_t getMainSel()
+	{
+		return m_MainSel;
+	}
+	
+	void updateBase()
+	{
+		m_Base = Node::findRelative(m_RootNode.children.begin(), m_basePos);
+	}
+	
+	void setBasePos(int pos)
+	{
+		m_basePos = pos;
+		updateBase();
+	}
+	
+	int visibleRows()
+	{
+		return getRect().getHeight() / rowHeight - 1;
+	}
+	
 	virtual bool render(Renderer* renderer);
 	virtual bool mouseDown(ulong newX, ulong newY, Context::MouseKey::type button);
+	
+	virtual bool keyDown(int key);
+	
+	virtual void applyFormatting(Context::GSSpropertyMap const&);
 
 	virtual int classID();
 	
 private:
+	struct ListFormatting
+	{
+		ListFormatting()
+		: headerColor(RGB(170, 170, 255))
+		, selectionColor(RGB(170, 170, 255))
+		{
+			
+		}
+
+		
+		RGB headerColor;
+		RGB selectionColor;
+
+	} m_listFormatting;
+	
 	//list_t           m_Nodes;
 	Node             m_RootNode;
-	list_t::iterator m_Base;
-	list_t::iterator m_MainSel;
+	node_iter_t      m_Base;
+	int              m_basePos;
+	node_iter_t      m_MainSel;
 	std::vector<ColumnHeader> m_columnHeaders;
 };
 

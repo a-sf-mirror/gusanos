@@ -111,7 +111,7 @@ void Console::registerAlias(const std::string &name, const std::string &action)
 		{
 			if(tempItem != items.end())
 				delete tempItem->second;
-			registerItem(name, new Alias(this, name, action));
+			registerItem(name, new Alias(name, action));
 		}
 	}
 }
@@ -127,6 +127,7 @@ struct IsTemporary
 void Console::clearTemporaries()
 {
 	//std::remove_if(items.begin(), items.end(), IsTemporary());
+	/*
 	
 	std::map<std::string, ConsoleItem*, IStrCompare>::iterator i = items.begin(), temp;
 	
@@ -136,7 +137,7 @@ void Console::clearTemporaries()
 		
 		if(temp->second->temp)
 			items.erase(temp);
-	}
+	}*/
 }
 
 struct TestHandler : public ConsoleGrammarBase

@@ -11,7 +11,7 @@
 using namespace std;
 
 Sprite::Sprite( BITMAP* bitmap, int xPivot, int yPivot)
-: m_bitmap(bitmap), m_mirror(0)
+: m_bitmap(bitmap) //, m_mirror(0)
 {
 	if ( xPivot == -1 ) m_xPivot = m_bitmap->w / 2;
 	else m_xPivot = xPivot;
@@ -44,7 +44,7 @@ Sprite::Sprite(Sprite const& b, Sprite const& mask, int color)
 		b.m_bitmap->w,
 		b.m_bitmap->h
 	)
-), m_mirror(0), m_xPivot(b.m_xPivot), m_yPivot(b.m_yPivot)
+)/*, m_mirror(0)*/, m_xPivot(b.m_xPivot), m_yPivot(b.m_yPivot)
 {
 	int colorDepth = bitmap_color_depth(b.m_bitmap);
 	LocalSetColorDepth cd(colorDepth);
@@ -76,7 +76,6 @@ Sprite::Sprite(Sprite const& b, Sprite const& mask, int color)
 		int m = getpixel(maskBitmap, x, y);
 		if(m == wormColor)
 		{
-			int scale;
 			int magn = getr(col);
 			if(magn <= limit)
 				col = scaleColor(color, magn, limit);
@@ -92,10 +91,23 @@ Sprite::Sprite(Sprite const& b, Sprite const& mask, int color)
 }
 #endif
 
+Sprite::Sprite(Sprite const& b, MirrorTag)
+: m_bitmap(
+	create_bitmap_ex(
+		bitmap_color_depth(b.m_bitmap),
+		b.m_bitmap->w,
+		b.m_bitmap->h
+	)
+)/*, m_mirror(0)*/, m_xPivot(b.m_bitmap->w - b.m_xPivot), m_yPivot(b.m_yPivot)
+{
+	clear_to_color(m_bitmap, makecol(255,0,255));
+	draw_sprite_h_flip(m_bitmap, b.m_bitmap, 0, 0);
+}
+
 Sprite::~Sprite()
 {
 	destroy_bitmap( m_bitmap );
-	destroy_bitmap( m_mirror );
+	//destroy_bitmap( m_mirror );
 }
 /*
 void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment )
@@ -138,12 +150,12 @@ void Sprite::drawCut(BITMAP *where, int x, int y, BlitterContext const& blender,
 
 }
 
-void Sprite::draw(BITMAP *where, int x, int y, bool flipped, int alignment)
+void Sprite::draw(BITMAP *where, int x, int y/*, bool flipped*/, int alignment)
 {
-	draw(where, x, y, BlitterContext(), flipped, alignment);
+	draw(where, x, y, BlitterContext()/*, flipped*/, alignment);
 }
 
-void Sprite::draw(BITMAP *where, int x, int y, BlitterContext const& blender, bool flipped, int alignment )
+void Sprite::draw(BITMAP *where, int x, int y, BlitterContext const& blender/*, bool flipped*/, int alignment )
 {
 	int _x,_y;
 	
@@ -155,6 +167,7 @@ void Sprite::draw(BITMAP *where, int x, int y, BlitterContext const& blender, bo
 	else if ( alignment & ALIGN_BOTTOM ) _y = m_bitmap->h;
 	else _y = m_yPivot;
 	
+/*
 	if ( flipped )
 	{
 		if(!m_mirror)
@@ -169,9 +182,10 @@ void Sprite::draw(BITMAP *where, int x, int y, BlitterContext const& blender, bo
 
 		blender.drawSprite(where, m_mirror, x - ( m_bitmap->w - 1 ) + _x, y - _y);
 	}
-	else
+	else*/
 	{
 		blender.drawSprite(where, m_bitmap, x - _x, y - _y);
 	}
 }
 #endif
+

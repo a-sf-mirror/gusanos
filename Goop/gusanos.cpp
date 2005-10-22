@@ -29,6 +29,7 @@
 
 #include "script.h"
 #include "glua.h"
+//#include "http/http.h"
 
 #ifdef WINDOWS
 	#include <winalleg.h>
@@ -64,6 +65,17 @@ void startGame(const std::string&)
 
 int main(int argc, char **argv)
 {
+	/*
+	HTTP::Host host("comser.liero.org.pl");
+	HTTP::Request* r = host.get("gusserv.php?action=list");
+	
+	while(!r->think()) ;
+	
+	delete r;
+	
+	return 0;
+	*/
+	
 	game.init(argc, argv);
 	
 #ifdef POSIX

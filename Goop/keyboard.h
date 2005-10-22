@@ -6,9 +6,10 @@
 #endif //DEDSERV
 
 #include <allegro.h>
-#include <list>
 #include <boost/signal.hpp>
 
+/*
+#include <list>
 #define KEY_EVENT_NONE	0
 #define KEY_EVENT_PRESS	1
 #define KEY_EVENT_RELEASE 2
@@ -18,8 +19,9 @@
 struct KeyEvent
 {
 	int	type;
-	char	key;
+	char key;
 };
+*/
 
 struct StopEarly
 {
@@ -41,7 +43,7 @@ struct StopEarly
 
 class KeyHandler
 {
-	public:
+public:
 	
 	KeyHandler(void);
 	~KeyHandler(void);
@@ -64,7 +66,7 @@ class KeyHandler
 	boost::signal<bool (int), StopEarly> keyUp;
 	boost::signal<bool (char, int), StopEarly> printableChar;
 	
-	private:
+private:
 	
 	static int keyMap[KEY_MAX]; // The keymap
 	static int charMap[KEY_MAX]; // The character map

@@ -92,6 +92,10 @@ public:
 		RGB const& borderRightColor,
 		RGB const& borderBottomColor) = 0;
 		
+	virtual void drawFrame(
+		Rect const& rect,
+		RGB const& color) = 0;
+		
 	virtual void drawBox(
 		Rect const& rect,
 		RGB const& color) = 0;

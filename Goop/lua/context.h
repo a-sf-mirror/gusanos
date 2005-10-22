@@ -93,6 +93,9 @@ public:
 	
 	void push(const char* v);
 	
+	void push(std::string const& v)
+	{ push(v.c_str()); }
+	
 	void push(LuaReference v);
 	
 	void push(bool v);

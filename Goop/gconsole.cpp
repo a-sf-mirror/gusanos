@@ -380,7 +380,8 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 		
 	if ( pos > 0)
 	{
-		if (background) background->getSprite()->draw(where, 0, static_cast<int>(pos), false, ALIGN_LEFT | ALIGN_BOTTOM);
+		if (background)
+			background->getSprite()->draw(where, 0, static_cast<int>(pos), ALIGN_LEFT | ALIGN_BOTTOM);
 
 		int y = static_cast<int>(pos) - 5;
 		

@@ -36,6 +36,7 @@ LuaReference fontMetaTable(0);
 #endif
 LuaReference partTypeMetaTable(0);
 LuaReference weaponTypeMetaTable(0);
+LuaReference mapIterator(0);
 
 enum FontFlags
 {
@@ -242,9 +243,46 @@ METHOD(WeaponType, weapon_name,
 	return 1;
 )
 
+int l_maps(lua_State* L)
+{
+	LuaContext context(L);
+	
+	context.pushReference(mapIterator);
+	
+	typedef ResourceLocator<Level>::NamedResourceMap::const_iterator iter;
+	
+	iter& i = *(iter *)lua_newuserdata (L, sizeof(iter));
+	i = levelLocator.getMap().begin();
+	lua_pushnil(L);
+	
+	return 3;
+}
+
+int l_mapIterator(lua_State* L)
+{
+	LuaContext context(L);
+	
+	typedef ResourceLocator<Level>::NamedResourceMap::const_iterator iter;
+	
+	iter& i = *(iter *)lua_touserdata(L, 1);
+	if(i == levelLocator.getMap().end())
+		lua_pushnil(L);
+	else
+	{
+		//lua.pushReference((*i)->luaReference);
+		context.push(i->first);
+		++i;
+	}
+	
+	return 1;
+}
+
 void initResources()
 {
 	LuaContext& context = lua;
+	
+	lua_pushcfunction(context, l_mapIterator);
+	mapIterator = context.createReference();
 	
 	context.functions()
 		("sprites_load", l_sprites_load)
@@ -255,6 +293,7 @@ void initResources()
 		("font_load", l_font_load)
 #endif
 		("map_is_loaded", l_map_is_loaded)
+		("maps", l_maps)
 	;
 	
 	CLASS(partType,

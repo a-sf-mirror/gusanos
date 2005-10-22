@@ -1,30 +1,44 @@
 #include "list.h"
 #include <cassert>
+#include "omfgutil_macros.h"
 
 namespace OmfgGUI
 {
+
+void List::Node::resizeColumns(size_t s)
+{
+	columns.resize(s);
+	
+	foreach_bool(i, children)
+	{
+		i->resizeColumns(s);
+	}
+}
 
 void List::Node::render(Renderer* renderer, long& y, List& list)
 {
 	long halfRowHeight = rowHeight/2;
 	
-	if(selected)
+	if(selected || list.m_MainSel == node_iter_t(this))
 	{
-		renderer->drawBox(
-			Rect(list.getRect().x1, y, list.getRect().x2, y + rowHeight),
-			RGB(180, 180, 255),
-			list.m_formatting.borders[0].color,
-			list.m_formatting.borders[1].color,
-			list.m_formatting.borders[2].color,
-			list.m_formatting.borders[3].color);
+		Rect r(list.getRect().x1 + 1, y, list.getRect().x2 - 1, y + rowHeight - 1);
+		if(selected)
+		{
+			renderer->drawBox(
+				r,
+				list.m_listFormatting.selectionColor);
+		}
+		
+		if(list.m_MainSel == node_iter_t(this))
+		{
+			renderer->drawFrame(
+				r,
+				RGB(0, 0, 0));
+		}
+		
+		
 	}
 
-/*
-	if(this == list.m_MainSel)
-	{
-		//TODO: aRenderer->drawFrame(Rect(list.m_Rect.x1 + 1, y, list.m_Rect.x2 - 2, y + rowHeight), RGB(0, 0, 0));
-	}*/
-	
 	//renderer->drawText(*list.m_font, text, BaseFont::CenterV, list.m_rect.x1 + 3 + level * 5, y + halfRowHeight, RGB(0, 0, 0));
 	
 	double x = list.getRect().x1 + 3.0 + level * 5.0;
@@ -100,7 +114,69 @@ void List::Node::renderFrom(Renderer* renderer, long& y, List& list)
 	}
 }
 
-List::node_iter_t List::Node::findRelative(node_iter_t i, long aIdx)
+List::node_iter_t List::Node::getPrevVisible(node_iter_t i)
+{
+	node_iter_t parent = i->parent;
+	
+	--i;
+	if(!i)
+	{
+		if(!parent)
+			return node_iter_t();
+		
+		i = parent;
+		parent = i->parent;
+	}
+	else if(i->expanded)
+	{
+		if(i->children.last())
+			i = i->children.last();
+	}
+	
+	return i;
+}
+
+List::node_iter_t List::Node::getNextVisible(node_iter_t i)
+{
+	node_iter_t parent = i->parent;
+	
+	if(i->expanded)
+	{
+		parent = i;
+		i = i->children.begin();
+	}
+	else
+		++i;
+		
+	while(!i)
+	{
+		if(!parent)
+			return node_iter_t();
+			
+		i = parent;
+		parent = i->parent;
+		++i;
+	}
+	
+	return i;
+}
+
+int List::Node::findOffsetTo(node_iter_t i, node_iter_t to)
+{
+	node_iter_t parent = i->parent;
+
+	int offs = 0;
+	
+	for(; i != to; ++offs)
+	{
+		if(!(i = getNextVisible(i)))
+			return -1;
+	}
+
+	return offs;
+}
+
+List::node_iter_t List::Node::findRelative(node_iter_t i, int aIdx)
 {
 	node_iter_t parent = i->parent;
 
@@ -110,22 +186,8 @@ List::node_iter_t List::Node::findRelative(node_iter_t i, long aIdx)
 		{
 			node_iter_t lastValid = i;
 
-			--i;
-			while(!i)
-			{
-				if(!parent)
-					return lastValid;
-					
-				i = parent;
-				parent = i->parent;
-				--i;
-			}
-			
-			if(i->expanded)
-			{
-				parent = i;
-				i = i->children.last();
-			}
+			if(!(i = getPrevVisible(i)))
+				return lastValid;
 		}
 	}
 	else if(aIdx > 0)
@@ -133,23 +195,9 @@ List::node_iter_t List::Node::findRelative(node_iter_t i, long aIdx)
 		while(--aIdx >= 0)
 		{
 			node_iter_t lastValid = i;
-			
-			if(i->expanded)
-			{
-				parent = i;
-				i = i->children.begin();
-			}
-			
-			++i;
-			while(!i)
-			{
-				if(!parent)
-					return lastValid;
-					
-				i = parent;
-				parent = i->parent;
-				++i;
-			}
+
+			if(!(i = getNextVisible(i)))
+				return lastValid;
 		}
 	}
 	
@@ -189,12 +237,8 @@ bool List::render(Renderer* renderer)
 	if(true) //TODO: Check view column headers parameter
 	{
 		renderer->drawBox(
-			Rect(getRect().x1, getRect().y1, getRect().x2, getRect().y1 + rowHeight),
-			RGB(170, 170, 255),
-			m_formatting.borders[0].color,
-			m_formatting.borders[1].color,
-			m_formatting.borders[2].color,
-			m_formatting.borders[3].color);
+			Rect(getRect().x1 + 1, getRect().y1 + 1, getRect().x2 - 1, getRect().y1 + rowHeight - 1),
+			m_listFormatting.headerColor);
 			
 		// Render column headers
 		double x = 3.0 + getRect().x1;
@@ -255,26 +299,108 @@ void List::addColumn(ColumnHeader const& column)
 {
 	m_columnHeaders.push_back(column);
 	
-	node_iter_t i(m_RootNode.children.begin());
-	
-	while(i)
-	{
-		//Do stuff
-		i->columns.resize(m_columnHeaders.size());
+	m_RootNode.resizeColumns(m_columnHeaders.size());
+}
+
+void List::setMainSel(node_iter_t iter)
+{
+	if(!iter)
+		return;
 		
-		if(i->children.begin())
-			i = i->children.begin();
-		else
-		{
-			node_iter_t i2 = i; ++i2;
-			if(!i2)
-				i = i->parent;
-			else
-				i = i2;
-		}
+	m_MainSel = iter;
+	int offs = Node::findOffsetTo(m_RootNode.children.begin(), iter);
+	if(offs < m_basePos)
+		setBasePos(offs);
+	else if(offs >= m_basePos + visibleRows())
+	{
+		setBasePos(offs - visibleRows() + 1);
 	}
 }
 
+bool List::checkSelection()
+{
+	if(!m_MainSel)
+	{
+		if(m_RootNode.children.begin())
+			setMainSel(m_RootNode.children.begin());
+		return false;
+	}
+	
+	return true;
+}
+
+bool List::keyDown(int key)
+{
+	if(m_active)
+	{
+		switch(key)
+		{
+			case KEY_ENTER:
+				doSetActivation(false);
+			break;
+			
+			case KEY_DOWN:
+				if(checkSelection())
+					setMainSel(Node::getNextVisible(node_iter_t(m_MainSel)));
+			break;
+			
+			case KEY_UP:
+				if(checkSelection())
+					setMainSel(Node::getPrevVisible(node_iter_t(m_MainSel)));
+			break;
+			
+			case KEY_PGDN:
+				if(checkSelection())
+					setMainSel(Node::findRelative(node_iter_t(m_MainSel), visibleRows()));
+			break;
+			
+			case KEY_PGUP:
+				if(checkSelection())
+					setMainSel(Node::findRelative(node_iter_t(m_MainSel), -visibleRows()));
+			break;
+			
+			case KEY_SPACE:
+				if(checkSelection())
+					m_MainSel->selected = !m_MainSel->selected;
+			break;
+		}
+		
+		return false;
+	}
+	else
+	{
+		if(key == KEY_ENTER)
+		{
+			doSetActivation(true);
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+void List::applyFormatting(Context::GSSpropertyMap const& f)
+{
+	Wnd::applyFormatting(f);
+
+	const_foreach(i, f)
+	{
+		if(i->first == "header-color")
+		{
+			const_foreach(v, i->second)
+			{
+				readColor(m_listFormatting.headerColor, *v);
+			}
+		}
+		else if(i->first == "selection-color")
+		{
+			const_foreach(v, i->second)
+			{
+				readColor(m_listFormatting.selectionColor, *v);
+			}
+		}
+	}
+}
 int List::classID()
 {
 	return Context::List;

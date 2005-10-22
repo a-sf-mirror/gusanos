@@ -362,6 +362,17 @@ void AllegroRenderer::drawBox(
 	hline(gfx.buffer, rect.x1, rect.y1, rect.x2, allegroColor(borderTopColor));
 }
 
+void AllegroRenderer::drawFrame(
+	Rect const& rect,
+	RGB const& color)
+{
+	int c = allegroColor(color);
+	hline(gfx.buffer, rect.x1, rect.y2, rect.x2, c);
+	vline(gfx.buffer, rect.x2, rect.y1, rect.y2, c);
+	vline(gfx.buffer, rect.x1, rect.y1, rect.y2, c);
+	hline(gfx.buffer, rect.x1, rect.y1, rect.x2, c);
+}
+
 // Draws a box
 void AllegroRenderer::drawBox(
 	Rect const& rect,

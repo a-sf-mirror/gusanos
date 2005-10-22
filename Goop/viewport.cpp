@@ -71,7 +71,7 @@ struct TestCuller
 	int destOffY;
 };
 
-static BITMAP* testLight = 0;
+//static BITMAP* testLight = 0;
 
 void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height)
 {
@@ -88,6 +88,7 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	
 	m_listener = sfx.newListener();
 	
+/*
 	if(!testLight)
 	{
 		static int s = 200;
@@ -102,7 +103,7 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 			int iv = int(v);
 			putpixel_solid(testLight, x, y, makecol(iv, iv, iv));
 		}
-	}
+	}*/
 }
 
 void Viewport::render(BasePlayer* player)
@@ -129,6 +130,7 @@ void Viewport::render(BasePlayer* player)
 	}
 #endif
 
+#if 0
 	{
 		BasePlayer* player = game.localPlayers[0];
 	
@@ -140,8 +142,6 @@ void Viewport::render(BasePlayer* player)
 			IVec loff(v - IVec(testLight->w/2, testLight->h/2));
 			
 			Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
-
-			//r &= Rect(m_dest) + off;
 			r &= Rect(testLight) + loff;
 			
 			Culler<TestCuller> testCuller(TestCuller(m_dest, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
@@ -149,6 +149,7 @@ void Viewport::render(BasePlayer* player)
 			testCuller.cullOmni(v.x, v.y);
 		}
 	}
+#endif
 
 	EACH_CALLBACK(i, wormRender)
 	{

@@ -94,6 +94,8 @@ public:
 	void getCoordX(int& dx, int x);
 	void getCoordY(int& dy, int y);
 	
+	static bool readColor(RGB& dest, std::string const& str);
+	
 	void applyGSSnoState(Context::GSSselectorMap const& style);
 	void applyGSSstate(Context::GSSselectorMap const& style, std::string const& state);
 	virtual void applyGSS(Context::GSSselectorMap const&);

@@ -60,6 +60,10 @@ struct AllegroRenderer : public Renderer
 		RGB const& borderRightColor,
 		RGB const& borderBottomColor);
 		
+	virtual void drawFrame(
+		Rect const& rect,
+		RGB const& color);
+		
 	virtual void drawBox(
 		Rect const& rect,
 		RGB const& color);

@@ -35,6 +35,8 @@ public:
 	Sprite* getColoredSprite( size_t frame, SpriteSet* mask, int color, Angle angle = Angle(0.0) );
 #endif
 
+	void flipSprites();
+
 	size_t getFramesWidth()
 	{
 		return frameCount;
@@ -43,14 +45,28 @@ public:
 private:
 	Sprite* getSprite_(size_t frame, size_t angleFrame)
 	{
-		Sprite* s = m_frame.at(angleFrame*frameCount + frame);
+		Sprite* s = m_frames.at(angleFrame*frameCount + frame);
+		assert(s);
+		return s;
+	}
+	
+	Sprite* getFlippedSprite_(size_t frame, size_t angleFrame)
+	{
+		if(m_flippedFrames.empty())
+		{
+			flipSprites();
+			assert(!m_flippedFrames.empty());
+		}
+			
+		Sprite* s = m_flippedFrames.at(angleFrame*frameCount + frame);
 		assert(s);
 		return s;
 	}
 	
 	typedef std::pair<SpriteSet*, int> ColorKey;
 
-	std::vector< Sprite* > m_frame;
+	std::vector< Sprite* > m_frames;
+	std::vector< Sprite* > m_flippedFrames;
 	size_t frameCount;
 	size_t angleCount;
 	

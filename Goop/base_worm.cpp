@@ -474,9 +474,9 @@ void BaseWorm::think()
 			aimAngle = Angle(0.0);
 			aimSpeed = 0;
 		}
-		if(aimAngle > Angle(180.0))
+		if(aimAngle > Angle::almost(180.0))
 		{
-			aimAngle = Angle(180.0);
+			aimAngle = Angle::almost(180.0);
 			aimSpeed = 0;
 		}
 
@@ -675,7 +675,7 @@ float BaseWorm::getHealth()
 
 Angle BaseWorm::getAngle()
 {
-	return m_dir > 0 ? aimAngle : -aimAngle ;
+	return m_dir > 0 ? aimAngle : Angle(360.0) - aimAngle ;
 }
 
 int BaseWorm::getWeaponIndexOffset( int offset )
@@ -821,8 +821,9 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 	
 	if (m_isActive)
 	{
+		/*
 		bool flipped = false;
-		if ( m_dir < 0 ) flipped = true;
+		if ( m_dir < 0 ) flipped = true;*/
 	
 		{
 			int x = (int)renderPos.x - xOff;
@@ -858,13 +859,13 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			if ( m_weapons[currentWeapon] ) m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
 			
 			int colour = universalToLocalColor(m_owner->colour);
-			skin->getColoredSprite(m_animator->getFrame(), skinMask, colour, aimAngle)->draw(where, renderX, renderY, flipped);
+			skin->getColoredSprite(m_animator->getFrame(), skinMask, colour, getAngle())->draw(where, renderX, renderY);
 			
 			if ( m_currentFirecone )
 			{
 				Vec distance = Vec(aimAngle, (double)m_fireconeDistance);
-				m_currentFirecone->getSprite(m_fireconeAnimator->getFrame(), aimAngle)->
-						draw(where, renderX+static_cast<int>(distance.x)*m_dir, renderY+static_cast<int>(distance.y), flipped);
+				m_currentFirecone->getSprite(m_fireconeAnimator->getFrame(), getAngle())->
+						draw(where, renderX+static_cast<int>(distance.x)*m_dir, renderY+static_cast<int>(distance.y));
 			}
 				
 			if(changing && m_weapons[currentWeapon])

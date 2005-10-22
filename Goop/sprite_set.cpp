@@ -18,6 +18,7 @@ using namespace std;
 ResourceList<SpriteSet> spriteList;
 
 SpriteSet::SpriteSet()
+//: m_flipped(0)
 #ifndef DEDSERV
 : m_coloredCache(ColorSpriteSet(*this))
 #endif
@@ -28,16 +29,16 @@ SpriteSet::SpriteSet()
 #ifndef DEDSERV
 // This does not copy the colored cache naturally
 SpriteSet::SpriteSet(SpriteSet const& b, SpriteSet const& mask, int color)
-: m_frame(b.m_frame), m_angleFactor(b.m_angleFactor)
+: m_frames(b.m_frames), m_angleFactor(b.m_angleFactor)
 , m_halfAngleDivisonSize(b.m_halfAngleDivisonSize)
 , frameCount(b.frameCount)
 , angleCount(b.angleCount)
 , m_coloredCache(ColorSpriteSet(*this))
 {
-	std::vector<Sprite *>::const_iterator srci = b.m_frame.begin();
-	std::vector<Sprite *>::const_iterator maski = mask.m_frame.begin();
-	std::vector<Sprite *>::iterator desti = m_frame.begin();
-	for (; desti != m_frame.end();
+	std::vector<Sprite *>::const_iterator srci = b.m_frames.begin();
+	std::vector<Sprite *>::const_iterator maski = mask.m_frames.begin();
+	std::vector<Sprite *>::iterator desti = m_frames.begin();
+	for (; desti != m_frames.end();
 		++srci, ++maski, ++desti)
 	{
 		if((*srci)->m_bitmap->w != (*maski)->m_bitmap->w
@@ -51,7 +52,9 @@ SpriteSet::SpriteSet(SpriteSet const& b, SpriteSet const& mask, int color)
 
 SpriteSet::~SpriteSet()
 {
-	foreach(frame, m_frame)
+	foreach(frame, m_frames)
+		delete *frame;
+	foreach(frame, m_flippedFrames)
 		delete *frame;
 }
 
@@ -97,8 +100,8 @@ bool SpriteSet::load(fs::path const& filename)
 					{
 						BITMAP* spriteFrame = create_bitmap(x-lastX+1, y-lastY+1);
 						blit(tempBitmap, spriteFrame, lastX, lastY, 0, 0, spriteFrame->w, spriteFrame->h);
-						//m_frame.back().push_back(new Sprite( spriteFrame, pivotX, pivotY ) );
-						m_frame.push_back(new Sprite( spriteFrame, pivotX, pivotY ) );
+						//m_frames.back().push_back(new Sprite( spriteFrame, pivotX, pivotY ) );
+						m_frames.push_back(new Sprite( spriteFrame, pivotX, pivotY ) );
 						++frameCount;
 						
 						pivotX = -1;
@@ -135,11 +138,20 @@ Sprite* SpriteSet::getSprite( size_t frame )
 
 Sprite* SpriteSet::getSprite( size_t frame, Angle angle )
 {
-	angle.clamp();
+	//angle.clamp();
 	if ( frame > frameCount )
 	{
 		frame = 0;
 	}
+	
+	bool flipped = false;
+	if(angle > Angle(180.0))
+	{
+		angle = Angle(360.0) - angle;
+		flipped = true;
+	}
+	
+	angle.clamp();
 
 	size_t angleFrame = ((angle.adjust<16>() + m_halfAngleDivisonSize) * m_angleFactor) >> 16;
 
@@ -147,7 +159,11 @@ Sprite* SpriteSet::getSprite( size_t frame, Angle angle )
 	{
 		angleFrame = angleCount - 1;
 	}
-	return getSprite_(frame, angleFrame);
+	
+	if(flipped)
+		return getFlippedSprite_(frame, angleFrame);
+	else
+		return getSprite_(frame, angleFrame);
 }
 
 void SpriteSet::think()
@@ -182,5 +198,16 @@ Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, A
 	
 	return s->getSprite(frame, angle);
 }
+
+void SpriteSet::flipSprites()
+{
+	assert(m_flippedFrames.empty());
+
+	const_foreach(src, m_frames)
+	{
+		m_flippedFrames.push_back(new Sprite(**src, Sprite::MirrorTag()));
+	}
+}
+
 #endif
 

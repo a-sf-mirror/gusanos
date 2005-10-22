@@ -9,6 +9,7 @@
 #include "omfggui.h"
 #include "omfggui_windows.h"
 #endif
+#include "omfgutil_macros.h"
 
 #include <cmath>
 #include <string>
@@ -274,6 +275,17 @@ int l_gui_list_sort(lua_State* L)
 	return 0;
 }
 
+METHOD(OmfgGUI::List, gui_list_selection,
+	if(!p->getMainSel())
+		return 0;
+		
+	int c = 0;
+	const_foreach(i, p->getMainSel()->getFields())
+	{
+		context.push(*i); ++c;
+	}
+	return c;
+)
 /*! List:add_column(title, width)
 
 	Adds a column to a list with the title //title//.
@@ -307,10 +319,13 @@ void addGUIWndFunctions(LuaContext& context)
 
 void addGUIListFunctions(LuaContext& context)
 {
-	context.tableFunction("insert", l_gui_list_insert);
-	context.tableFunction("clear", l_gui_list_clear);
-	context.tableFunction("add_column", l_gui_list_add_column);
-	context.tableFunction("sort", l_gui_list_sort);
+	context.tableFunctions()
+		("insert", l_gui_list_insert)
+		("clear", l_gui_list_clear)
+		("add_column", l_gui_list_add_column)
+		("sort", l_gui_list_sort)
+		("selection", l_gui_list_selection)
+	;
 }
 #endif
 

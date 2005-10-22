@@ -4,6 +4,8 @@ env = env.Copy()
 env.Append(LIBS = Split("""
 	omfggui omfgconsole omfgloaders omfglua omfgblitters omfgutil glua loadpng""")
 	)
+	
+#omfghttp
 
 if conf == 'posix':
 	env.Append(LIBS = Split("""
@@ -45,7 +47,12 @@ elif conf == 'lucas':
 	        
 # add more platforms here
 
-SConscript(['./loaders/SConscript', './lua/SConscript', './blitters/SConscript'], exports = ['env', 'getObjects', 'getLibName', 'conf', 'build', 'subfolder'])
+SConscript([
+	'./loaders/SConscript',
+	'./lua/SConscript',
+	#'./http/SConscript',
+	'./blitters/SConscript'
+	], exports = ['env', 'getObjects', 'getLibName', 'conf', 'build', 'subfolder'])
 
 exename = 'gusanos'
 if build == 'dedserv' or build == 'dedserv-debug':

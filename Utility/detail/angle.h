@@ -41,6 +41,12 @@ public:
 		
 	}
 	
+	static BasicAngle almost(double degrees)
+	{
+		BasicAngle ang(degrees);
+		return BasicAngle(ang.data - 1);
+	}
+	
 	BasicAngle& operator=(T b)
 	{
 		data = b;
