@@ -551,7 +551,7 @@ string screenShot(const list<string> &args)
 	} while( exists( filename.c_str() ) );
 #endif
 	
-	BITMAP * tmpbitmap = create_bitmap_ex(16,screen->w,screen->h);
+	BITMAP * tmpbitmap = create_bitmap_ex(24,screen->w,screen->h);
 	blit(screen,tmpbitmap,0,0,0,0,screen->w,screen->h);
 	bool success = gfx.saveBitmap( filename.c_str(),tmpbitmap,0);
 	destroy_bitmap(tmpbitmap);

@@ -19,6 +19,8 @@
 #include "omfgutil_macros.h"
 #include "omfgutil_math.h"
 
+#include "culling.h"
+
 #include <vector>
 #include <iostream>
 #define BOOST_NO_MT
@@ -28,7 +30,51 @@ using namespace std;
 
 static boost::pool<> particlePool(sizeof(Particle));
 
-NoiseLine mooo;
+struct PartCuller // TODO: This will be moved to another file so that explosions can use it too.
+{
+	PartCuller(BITMAP* dest_, BITMAP* src_, int alpha_, int destOffX_, int destOffY_, int srcOffX_, int srcOffY_) :
+		dest(dest_),
+		src(src_),
+		alpha(alpha_),
+		destOffX(destOffX_),
+		destOffY(destOffY_),
+		srcOffX(srcOffX_),
+		srcOffY(srcOffY_)
+	{
+		
+	}
+	
+	bool block(int x, int y)
+	{
+		return game.level.unsafeGetMaterial(x, y).blocks_light;
+	}
+	
+	void line(int y, int x1, int x2)
+	{
+		//hline_add(dest, x1 + scrOffX, y + scrOffY, x2 + scrOffX + 1, makecol(50, 50, 50), 255);
+		
+	
+		drawSpriteLine_add(
+			dest,
+			src,
+			x1 + destOffX,
+			y + destOffY,
+			x1 + srcOffX,
+			y + srcOffY,
+			x2 + srcOffX + 1,
+			alpha
+		);
+	}
+	
+	BITMAP* dest;
+	BITMAP* src;
+
+	int alpha;
+	int srcOffX;
+	int srcOffY;
+	int destOffX;
+	int destOffY;
+};
 
 void* Particle::operator new(size_t count)
 {
@@ -98,7 +144,7 @@ void Particle::think()
 		}
 	
 		spd.y += m_type->gravity;
-		
+		// TODO: Remove this TODO
 		if ( m_type->acceleration )
 		{
 			Vec dir(m_angle);
@@ -262,14 +308,23 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 	}
 	else
 	{
-		/*
-		if ( m_angle < Angle(180.0) )
-		{
+		if ( !m_type->culled )
 			m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y, blitter);
-		}
-		else*/
+		else
 		{
-			m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y, blitter);
+			Sprite* renderSprite = m_sprite->getSprite(m_animator->getFrame(), m_angle);
+			BITMAP* renderBitmap = renderSprite->m_bitmap;
+			IVec off(xOff, yOff);
+			IVec cullPos(pos);
+			IVec loff(cullPos - IVec(renderSprite->m_xPivot, renderSprite->m_yPivot));
+		
+			Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
+
+			r &= Rect(renderBitmap) + loff;
+		
+			Culler<PartCuller> partCuller(PartCuller(where, renderBitmap,(int)m_alpha, -off.x, -off.y, -loff.x, -loff.y), r);
+
+			partCuller.cullOmni(cullPos.x, cullPos.y);
 		}
 	}
 	if (m_type->distortion)

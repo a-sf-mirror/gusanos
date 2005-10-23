@@ -73,24 +73,24 @@ void newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(
 #endif
 
 PartType::PartType()
-: newParticle(0), wupixels(1)
+: newParticle(0), wupixels(0)
 , invisible(false)
 {
-	gravity = 0;
-	bounceFactor = 1;
-	groundFriction = 1;
-	colour = -1;
-	repeat = 1;
-	alpha = 255;
+	gravity			= 0;
+	bounceFactor	= 1;
+	groundFriction	= 1;
+	colour			= -1;
+	repeat			= 1;
+	alpha			= 255;
 	angularFriction = 0;
-	animDuration = 100;
-	animType = ANIM_LOOPRIGHT;
-	animOnGround = 1;
-	damping = 1;
-	acceleration = 0;
-	maxSpeed = -1;
-	colLayer = 0;
-	health = 100;
+	animDuration	= 100;
+	animType		= ANIM_LOOPRIGHT;
+	animOnGround	= 1;
+	damping			= 1;
+	acceleration	= 0;
+	maxSpeed		= -1;
+	colLayer		= 0;
+	health			= 100;
 	
 	renderLayer = Grid::WormRenderLayer;
 #ifndef DEDSERV
@@ -102,6 +102,7 @@ PartType::PartType()
 #endif
 	
 	line2Origin = false;
+	culled = false;
 	
 	groundCollision = NULL;
 	creation = NULL;
@@ -241,6 +242,7 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "sprite" ) /* ignore */;
 #endif
 					else if ( var == "invisible" ) invisible = (cast<int>(val) != 0);
+					else if ( var == "occluded" ) culled = (cast<int>(val) != 0);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
 					else if ( var == "anim_on_ground" ) animOnGround = cast<int>(val);
 					else if ( var == "anim_type" )

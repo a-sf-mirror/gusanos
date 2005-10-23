@@ -847,13 +847,13 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			if (m_ninjaRope->active)
 			{
-				//line(where, x, y, static_cast<int>(m_ninjaRope->pos.x) - xOff, static_cast<int>(m_ninjaRope->pos.y) - yOff, m_ninjaRope->getColour());
-				linewu_solid(where
+				line(where, x, y, static_cast<int>(m_ninjaRope->pos.x) - xOff, static_cast<int>(m_ninjaRope->pos.y) - yOff, m_ninjaRope->getColour());
+				/*linewu_solid(where
 					, renderPos.x - xOff
 					, renderPos.y - yOff
 					, m_ninjaRope->pos.x - xOff
 					, m_ninjaRope->pos.y - yOff
-					, m_ninjaRope->getColour());
+				, m_ninjaRope->getColour());*/
 			}
 			
 			if ( m_weapons[currentWeapon] ) m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);

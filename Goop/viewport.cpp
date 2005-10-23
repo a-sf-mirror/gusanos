@@ -93,13 +93,13 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 
 	if(!testLight)
 	{
-		static int s = 200;
+		static int s = 500;
 		testLight = create_bitmap_ex(8, s, s);
 		
 		for(int y = 0; y < s; ++y)
 		for(int x = 0; x < s; ++x)
 		{
-			double v = 2.5*(double(s)/2 - (IVec(x, y) - IVec(s/2, s/2)).length());
+			double v = 0.8*(double(s)/2 - (IVec(x, y) - IVec(s/2, s/2)).length());
 			if(v < 0.0)
 				v = 0.0;
 			int iv = int(v);
@@ -136,7 +136,9 @@ void Viewport::render(BasePlayer* player)
 	}
 #endif
 
-	clear_to_color(testFade, 30);
+	//clear_to_color(testFade, 0);
+	if ( game.level.lightmap )
+		blit( game.level.lightmap, testFade, offX,offY, 0, 0, testFade->w, testFade->h );
 #if 1
 	{
 		BasePlayer* player = game.localPlayers[0];
@@ -153,7 +155,7 @@ void Viewport::render(BasePlayer* player)
 			
 			Culler<TestCuller> testCuller(TestCuller(testFade, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
 	
-			testCuller.cullOmni(v.x, v.y);
+			//testCuller.cullOmni(v.x, v.y);
 		}
 	}
 #endif

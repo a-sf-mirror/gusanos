@@ -27,6 +27,7 @@ Level::Level()
 	image = NULL;
 	background = NULL;	
 	paralax = NULL;
+	lightmap = NULL;
 #endif
 	material = NULL;
 
@@ -34,6 +35,7 @@ Level::Level()
 	m_materialList[0].worm_pass = false;
 	m_materialList[0].particle_pass = false;
 	m_materialList[0].draw_exps = false;
+	m_materialList[0].blocks_light = true;
 	
 	// Background
 	m_materialList[1].worm_pass = true;
@@ -45,6 +47,7 @@ Level::Level()
 	m_materialList[2].particle_pass = false;
 	m_materialList[2].draw_exps = false;
 	m_materialList[2].destroyable = true;
+	m_materialList[2].blocks_light = true;
 	
 	// Special dirt
 	m_materialList[3].worm_pass = true;
@@ -166,10 +169,11 @@ void Level::unload()
 
 #ifndef DEDSERV
 	destroy_bitmap(image); image = NULL;
-	destroy_bitmap(background); material = NULL;
+	destroy_bitmap(background); background = NULL;
 	destroy_bitmap(paralax); paralax = NULL;
-	destroy_bitmap(material); background = NULL;
+	destroy_bitmap(lightmap); lightmap = NULL;
 #endif
+	destroy_bitmap(material); material = NULL;
 
 	vectorEncoding = Encoding::VectorEncoding();
 }
@@ -297,6 +301,20 @@ const string& Level::getName()
 void Level::loaderSucceeded()
 {
 	loaded = true;
+	
+	if ( !lightmap )
+	{
+		LocalSetColorDepth cd(8);
+		lightmap = create_bitmap(material->w, material->h);
+		clear_to_color(lightmap, 50);
+		for ( int x = 0; x < lightmap->w ; ++x )
+		for ( int y = 0; y < lightmap->h ; ++y )
+		{
+			if ( unsafeGetMaterial(x,y).blocks_light )
+				putpixel( lightmap, x, y, 200 );
+		}
+	}
+	
 	// Make the domain one pixel larger than the level so that things like ninjarope hook
 	// can get slightly outside the level and attach.
 	vectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 2048);

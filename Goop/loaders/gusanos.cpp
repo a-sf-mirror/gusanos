@@ -59,9 +59,27 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 			std::string paralaxPath = (path / "paralax").native_file_string();
 			level->paralax = gfx.loadBitmap(paralaxPath.c_str(),0);
 			
+			std::string lightmapPath = (path / "lightmap").native_file_string();
+		
+			BITMAP* tempLightmap = gfx.loadBitmap(lightmapPath.c_str(),0);
+			if ( tempLightmap )
+			{
+				{
+					LocalSetColorDepth cd(8);
+					level->lightmap = create_bitmap(level->material->w, level->material->h);
+				}
+				for ( int x = 0; x < level->lightmap->w ; ++x )
+				for ( int y = 0; y < level->lightmap->h ; ++y )
+				{
+					putpixel( level->lightmap, x, y, getg(getpixel(tempLightmap, x, y)) );
+				}
+				destroy_bitmap( tempLightmap );
+			}
+			
 			level->loaderSucceeded();
 			return true;
 		}
+
 #else
 		level->loaderSucceeded();
 		return true;

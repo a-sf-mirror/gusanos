@@ -84,6 +84,7 @@ class Level
 	BITMAP* image;
 	BITMAP* background;
 	BITMAP* paralax;
+	BITMAP* lightmap; // This has to be 8 bit.
 #endif
 	BITMAP* material;
 	std::string name;
