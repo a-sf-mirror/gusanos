@@ -47,6 +47,17 @@ inline Pixel scaleColor_32(Pixel color, int fact)
 	return temp1 | temp2;
 }
 
+inline Pixel scaleColor_8_4(Pixel color, int fact)
+{
+	Pixel temp1 = (color & 0x00FF00FF);
+	Pixel temp2 = (color & 0xFF00FF00) >> 8;
+	
+	temp1 = ((temp1 * fact) >> 8) & 0x00FF00FF;
+	temp2 = (temp2 * fact) & 0xFF00FF00;
+	
+	return temp1 | temp2;
+}
+
 inline Pixel scaleColor_16(Pixel color, int fact)
 {
 	color = ((color << 16) | color) & 0x7E0F81F;
@@ -92,6 +103,14 @@ inline Pixel32 addColorsCrude_32(Pixel color1, Pixel color2)
 	Pixel32 temp1 = (color1 & 0x01010100) >> 7;
 	color1 |= 0x010101 - temp1;
 	return color1 & 0xFFFFFF;
+}
+
+inline Pixel addColorsCrude_8_4(Pixel color1, Pixel color2)
+{
+	color1 = ((color1 >> 1) & 0x7F7F7F7F) + ((color2 >> 1) & 0x7F7F7F7F);
+	Pixel temp1 = (color1 & 0x80808080) >> 6;
+	color1 |= 0x01010101 - temp1;
+	return color1 << 1;
 }
 
 /* Not recommended to use
@@ -366,6 +385,10 @@ void putpixel_blendHalf_16(BITMAP* where, int x, int y, Pixel color1);
 void putpixel_blend_16(BITMAP* where, int x, int y, Pixel color1, int fact);
 void putpixelwu_blend_16(BITMAP* where, float x, float y, Pixel color1, int fact);
 
+inline void putpixel_solid_8(BITMAP* where, int x, int y, Pixel color1)
+{
+	((Pixel8 *)where->line[y])[x] = color1;
+}
 
 void rectfill_add_16(BITMAP* where, int x1, int y1, int x2, int y2, Pixel colour, int fact);
 void rectfill_blend_16(BITMAP* where, int x1, int y1, int x2, int y2, Pixel colour, int fact);
@@ -387,6 +410,8 @@ void drawSprite_blend_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, in
 void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blendtint_8_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color);
+void drawSprite_multsec_32_with_8(BITMAP* where, BITMAP* from, BITMAP* secondary, int x, int y, int sx, int sy, int cutl, int cutt, int cutr, int cutb);
+void drawSprite_mult_32_with_8(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb);
 
 void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
@@ -398,7 +423,8 @@ void drawSprite_blendtint_8_to_32(BITMAP* where, BITMAP* from, int x, int y, int
 
 void drawSpriteLine_add_32(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
 void drawSpriteLine_add_16(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
-
+void drawSpriteLine_add_8(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
+void drawSpriteLine_add_8_sse(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
 } // namespace Blitters
 
 using Blitters::linewu_blend;
@@ -410,7 +436,22 @@ using Blitters::linewu_add;
 	switch(bitmap_color_depth(where)) { \
 		case 16: Blitters::f_##_16 x_ ; break; \
 		case 32: Blitters::f_##_32 x_ ; break; }
-
+		
+#define SELECT_ALL(f_, x_) \
+	switch(bitmap_color_depth(where)) { \
+		case 16: Blitters::f_##_16 x_ ; break; \
+		case 32: Blitters::f_##_32 x_ ; break; \
+		case 8: Blitters::f_##_8 x_ ; break; }
+		
+#define SELECT_ALL_SSE8(f_, x_) \
+	switch(bitmap_color_depth(where)) { \
+		case 16: Blitters::f_##_16 x_ ; break; \
+		case 32: Blitters::f_##_32 x_ ; break; \
+		case 8: \
+			if(HAS_SSE) Blitters::f_##_8_sse x_ ; \
+			else Blitters::f_##_8 x_ ; \
+		break; }
+		
 #define SELECT_MMX32(f_, x_) \
 	switch(bitmap_color_depth(where)) { \
 		case 16: Blitters::f_##_16 x_ ; break; \
@@ -507,7 +548,7 @@ inline void putpixelwu_blendalpha(BITMAP* where, float x, float y, Pixel color1,
 inline void putpixel_solid(BITMAP* where, int x, int y, Pixel color1)
 {
 	CHECK_RANGE();
-	SELECT(putpixel_solid, (where, x, y, color1));
+	SELECT_ALL(putpixel_solid, (where, x, y, color1));
 }
 
 inline void putpixelwu_solid(BITMAP* where, float x, float y, Pixel color1)
@@ -601,7 +642,7 @@ inline void drawSpriteCut_solid(BITMAP* where, BITMAP* from, int x, int y, int c
 
 inline void drawSpriteLine_add(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact)
 {
-	SELECT(drawSpriteLine_add, (where, from, x, y, x1, y1, x2, fact));
+	SELECT_ALL_SSE8(drawSpriteLine_add, (where, from, x, y, x1, y1, x2, fact));
 }
 
 #undef SELECT

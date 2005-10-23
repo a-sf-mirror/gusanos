@@ -35,6 +35,7 @@ public:
 private:
 
 	BITMAP* m_dest;
+	BITMAP* testFade;
 	Listener* m_listener;
 	Vec m_pos;
 	

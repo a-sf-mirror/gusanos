@@ -31,6 +31,7 @@ Viewport::~Viewport()
 	lua.destroyReference(luaReference);
 	destroy_bitmap(m_dest);
 	sfx.freeListener(m_listener);
+	destroy_bitmap(testFade);
 }
 
 struct TestCuller
@@ -71,7 +72,7 @@ struct TestCuller
 	int destOffY;
 };
 
-//static BITMAP* testLight = 0;
+static BITMAP* testLight = 0;
 
 void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height)
 {
@@ -87,31 +88,36 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	m_dest = create_sub_bitmap(where,x,y,width,height);
 	
 	m_listener = sfx.newListener();
-	
-/*
+
+	testFade = create_bitmap_ex(8, width, height);
+
 	if(!testLight)
 	{
 		static int s = 200;
-		testLight = create_bitmap(s, s);
+		testLight = create_bitmap_ex(8, s, s);
 		
 		for(int y = 0; y < s; ++y)
 		for(int x = 0; x < s; ++x)
 		{
-			double v = double(s)/2.0 - (IVec(x, y) - IVec(s/2, s/2)).length();
+			double v = 2.5*(double(s)/2 - (IVec(x, y) - IVec(s/2, s/2)).length());
 			if(v < 0.0)
 				v = 0.0;
 			int iv = int(v);
-			putpixel_solid(testLight, x, y, makecol(iv, iv, iv));
+			putpixel_solid(testLight, x, y, iv);
 		}
-	}*/
+	}
 }
 
 void Viewport::render(BasePlayer* player)
 {
 	int offX = static_cast<int>(m_pos.x);
 	int offY = static_cast<int>(m_pos.y);
-	game.level.draw(m_dest, offX, offY);
 	
+//#if 0 // TEMP
+	game.level.draw(m_dest, offX, offY);
+//#else
+	//Blitters::drawSprite_multsec_32_with_8(m_dest, game.level.image, testFade, -offX, -offY, -offX, -offY, 0, 0, 0, 0);
+//#endif
 	
 
 #ifdef USE_GRID
@@ -130,7 +136,8 @@ void Viewport::render(BasePlayer* player)
 	}
 #endif
 
-#if 0
+	clear_to_color(testFade, 30);
+#if 1
 	{
 		BasePlayer* player = game.localPlayers[0];
 	
@@ -144,7 +151,7 @@ void Viewport::render(BasePlayer* player)
 			Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
 			r &= Rect(testLight) + loff;
 			
-			Culler<TestCuller> testCuller(TestCuller(m_dest, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
+			Culler<TestCuller> testCuller(TestCuller(testFade, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
 	
 			testCuller.cullOmni(v.x, v.y);
 		}
@@ -165,8 +172,9 @@ void Viewport::render(BasePlayer* player)
 				lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
 			}
 		}
-		
 	}
+	
+	Blitters::drawSprite_mult_32_with_8(m_dest, testFade, 0, 0, 0, 0, 0, 0);
 	
 	if(BaseWorm* worm = player->getWorm())
 	{

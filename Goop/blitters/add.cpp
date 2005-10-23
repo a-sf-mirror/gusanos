@@ -345,6 +345,34 @@ void drawSpriteLine_add_16(BITMAP* where, BITMAP* from, int x, int y, int x1, in
 	}
 }
 
+void drawSpriteLine_add_8(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact)
+{
+	typedef Pixel8 pixel_t_1;
+	typedef Pixel8_4 pixel_t_2;
+
+	if(bitmap_color_depth(from) != 8)
+		return;
+		
+	CLIP_HLINE();
+	
+	if(fact >= 255)
+	{
+		SPRITE_X_LOOP_ALIGN(4, 4,
+			*dest = addColorsCrude_8_4(*dest, *src)
+		,
+			*dest = addColorsCrude_8_4(*dest, *src)
+		)
+	}
+	else if(fact > 0)
+	{
+		SPRITE_X_LOOP_ALIGN(4, 4,
+			*dest = addColorsCrude_8_4(*dest, scaleColor_8_4(*src, fact))
+		,
+			*dest = addColorsCrude_8_4(*dest, scaleColor_8_4(*src, fact))
+		)
+	}
+}
+
 } //namespace Blitters
 
 #endif
