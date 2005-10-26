@@ -27,12 +27,12 @@ using namespace std;
 int main(int argc, char **argv)
 {
 
-	int iters = 20;
+	float fadeDistance= 200;
 
 	for(int i = 0; i < argc; ++i)
 	{
 		const char* arg = argv[i];
-		if(arg[0] == '-')
+		if(arg[0] == '-f')
 		{
 			switch(arg[1])
 			{
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 					if(++i >= argc)
 						break;
 						
-					iters = cast<int>(argv[i]);
+					fadeDistance = cast<float>(argv[i]);
 				break;
 			}
 		}
@@ -71,6 +71,8 @@ int main(int argc, char **argv)
 				lightSources.push_back(IVec(x,y));
 			}
 		}
+		
+		destroy_bitmap(lightsource);
 	
 		Level::ParticleBlockPredicate pred;
 		
@@ -86,33 +88,26 @@ int main(int argc, char **argv)
 			for ( int x = 0; x < lightmap->w; ++x )
 			{
 				int color = 0;
+				float minDistanceSqr = -1;
 				for ( int n = 0; n < lightSources.size() ; ++n )
 				{
-					if ( !level.preciseTrace( lightSources[n].x+0.5f, lightSources[n].x + 0.5f, x, y, pred ) )
+					
+					if ( !level.preciseTrace( lightSources[n].x+0.5f, lightSources[n].y + 0.5f, x, y, pred ) )
 					{
-						float fade = 1;
-						color += 255 * fade;
+						float tmpDist = ( Vec(lightSources[n]) - Vec(x,y) ).lengthSqr();
+						if ( tmpDist < minDistanceSqr || minDistanceSqr < 0 ) minDistanceSqr = tmpDist;
+						color += 255;
 					}
 				}
-				/*for ( int n = 0; n < iters; ++n )
+				if ( color != 0 )
 				{
-					xCoord = 100.f + ( n / 2.f );
-					yCoord = 121.f;
-					float fade;
-				
-					if ( !level.preciseTrace( xCoord, yCoord, x, y, pred ) )
-					{
-						float distance = Vec( x-xCoord, y-yCoord ).length();
-						if ( distance == 0 ) fade = 1;
-						else fade = 1;
-						
-						if ( fade > 1 ) fade = 1;
-						
-						color += 255 * fade;
-					}
-				}*/
-				color /= lightSources.size();
-				if ( color > 255 ) color = 255;
+					float fade = 1 - sqrt(minDistanceSqr)/200;
+					//float fade = sqrt( 1 / (sqrt(minDistanceSqr)*0.1f) );
+					if ( fade < 0 ) fade = 0;
+					color *= fade;
+					color /= lightSources.size();
+					if ( color > 255 ) color = 255;
+				}
 				putpixel( lightmap,x,y,makecol(color,color,color) );
 			}
 			++show_progress;
