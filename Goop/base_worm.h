@@ -14,6 +14,7 @@ class WeaponType;
 #ifndef DEDSERV
 class SpriteSet;
 class BaseAnimator;
+class Viewport;
 #endif
 
 class BaseWorm : public BaseObject
@@ -52,7 +53,8 @@ public:
 	
 	virtual void assignOwner( BasePlayer* owner);
 
-	void draw(BITMAP* where,int xOff, int yOff);
+	//void draw(BITMAP* where,int xOff, int yOff);
+	void draw(Viewport* viewport);
 	
 	void calculateReactionForce(BaseVec<long> origin, Direction dir);
 	void calculateAllReactionForces(BaseVec<float>& nextPos, BaseVec<long>& inextPos);

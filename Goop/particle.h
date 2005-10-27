@@ -11,6 +11,7 @@
 class Sprite;
 class BaseAnimator;
 class BlitterContext;
+class Viewport;
 #endif
 class BasePlayer;
 
@@ -22,7 +23,7 @@ public:
 	~Particle();
 
 #ifndef DEDSERV
-	void draw(BITMAP* where,int xOff, int yOff);
+	void draw(Viewport* viewport);
 #endif
 	void think();
 	Angle getAngle();
@@ -49,7 +50,7 @@ public:
 private:
 
 #ifndef DEDSERV
-	void drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext const& blitter);
+	void drawLine2Origin(Viewport* viewport, BlitterContext const& blitter);
 #endif
 	
 	int m_dir;

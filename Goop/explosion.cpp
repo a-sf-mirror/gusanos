@@ -5,6 +5,7 @@
 #include "base_object.h"
 #include "base_worm.h"
 #include "base_player.h"
+#include "viewport.h"
 #include "exp_type.h"
 #include "events.h"
 #ifndef DEDSERV
@@ -72,7 +73,7 @@ void Explosion::think()
 	if ( m_animator ) m_animator->tick();
 	
 	// Alpha Fade
-	if ( m_type->blender && m_fadeSpeed )
+	if ( ( m_type->blender || m_type->lightHax ) && m_fadeSpeed )
 	{
 		if ( fabs( m_type->destAlpha - m_alpha ) < fabs(m_fadeSpeed) )
 		{
@@ -89,10 +90,15 @@ void Explosion::think()
 	}
 }
 
-void Explosion::draw(BITMAP* where,int xOff, int yOff)
+void Explosion::draw(Viewport* viewport)
 {
-	int x = static_cast<int>(pos.x - xOff);
-	int y = static_cast<int>(pos.y - yOff);
+
+	BITMAP* where = viewport->dest;
+
+	IVec rPos = viewport->convertCoords( IVec( pos ) );
+	Vec rPosPrec = viewport->convertCoordsPrec( pos );
+	int x = rPos.x;
+	int y = rPos.y;
 	
 	BlitterContext blitter(m_type->blender, (int)m_alpha);
 	
@@ -101,7 +107,7 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 		if(!m_type->invisible)
 		{
 			if(m_type->wupixels)
-				blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
+				blitter.putpixelwu(where, rPosPrec.x, rPosPrec.y, m_type->colour);
 			else
 				blitter.putpixel(where, x, y, m_type->colour);
 		}
@@ -118,12 +124,16 @@ void Explosion::draw(BITMAP* where,int xOff, int yOff)
 		}
 		else
 		{
-			game.level.specialDrawSprite( m_sprite->getSprite(m_animator->getFrame(), Angle(0)), where, pos - Vec(xOff, yOff), pos, blitter );
+			game.level.specialDrawSprite( m_sprite->getSprite(m_animator->getFrame(), Angle(0)), where, rPos, IVec(pos), blitter );
 		}
 	}
 	if (m_type->distortion)
 	{
 		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
+	}
+	if ( m_type->lightHax )
+	{
+		game.level.culledDrawLight( m_type->lightHax, viewport, IVec(pos), (int)m_alpha );
 	}
 }
 

@@ -19,6 +19,7 @@ namespace fs = boost::filesystem;
 #ifndef DEDSERV
 class SpriteSet;
 class BaseAnimator;
+class Sprite;
 #endif
 class DetectEvent;
 class BasePlayer;
@@ -62,6 +63,7 @@ class PartType
 	int alpha;
 #ifndef DEDSERV
 	SpriteSet* sprite;
+	Sprite* lightHax;
 #endif
 	int animDuration;
 	int animType;

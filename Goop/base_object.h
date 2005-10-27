@@ -6,6 +6,7 @@
 
 //#include <allegro.h>
 struct BITMAP;
+class Viewport;
 
 class BasePlayer;
 
@@ -18,7 +19,8 @@ public:
 
 #ifndef DEDSERV
 	// Draw the object in the where bitmap with an offset ( used for camera )
-	virtual void draw(BITMAP* where, int xOff, int yOff) {}
+	//virtual void draw(BITMAP* where, int xOff, int yOff) {}
+	virtual void draw(Viewport* viewport) {}
 #endif
 	// All the object logic here
 	virtual void think() {}

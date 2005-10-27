@@ -4,6 +4,7 @@
 #include "base_object.h"
 #include "base_worm.h"
 #include "base_player.h"
+#include "viewport.h"
 #include "part_type.h"
 #ifndef DEDSERV
 #include "gfx.h"
@@ -19,7 +20,7 @@
 #include "omfgutil_macros.h"
 #include "omfgutil_math.h"
 
-#include "culling.h"
+
 
 #include <vector>
 #include <iostream>
@@ -29,52 +30,6 @@
 using namespace std;
 
 static boost::pool<> particlePool(sizeof(Particle));
-
-struct PartCuller // TODO: This will be moved to another file so that explosions can use it too.
-{
-	PartCuller(BITMAP* dest_, BITMAP* src_, int alpha_, int destOffX_, int destOffY_, int srcOffX_, int srcOffY_) :
-		dest(dest_),
-		src(src_),
-		alpha(alpha_),
-		destOffX(destOffX_),
-		destOffY(destOffY_),
-		srcOffX(srcOffX_),
-		srcOffY(srcOffY_)
-	{
-		
-	}
-	
-	bool block(int x, int y)
-	{
-		return game.level.unsafeGetMaterial(x, y).blocks_light;
-	}
-	
-	void line(int y, int x1, int x2)
-	{
-		//hline_add(dest, x1 + scrOffX, y + scrOffY, x2 + scrOffX + 1, makecol(50, 50, 50), 255);
-		
-	
-		drawSpriteLine_add(
-			dest,
-			src,
-			x1 + destOffX,
-			y + destOffY,
-			x1 + srcOffX,
-			y + srcOffY,
-			x2 + srcOffX + 1,
-			alpha
-		);
-	}
-	
-	BITMAP* dest;
-	BITMAP* src;
-
-	int alpha;
-	int srcOffX;
-	int srcOffY;
-	int destOffX;
-	int destOffY;
-};
 
 void* Particle::operator new(size_t count)
 {
@@ -215,7 +170,7 @@ void Particle::think()
 		if ( m_animator ) m_animator->tick();
 		
 		// Alpha Fade
-		if ( m_type->blender && m_fadeSpeed )
+		if ( ( m_type->blender || m_type->lightHax ) && m_fadeSpeed )
 		{
 			if ( fabs(m_alphaDest - m_alpha) < fabs(m_fadeSpeed) )
 			{
@@ -262,23 +217,19 @@ void Particle::damage( float amount, BasePlayer* damager )
 
 #ifndef DEDSERV
 
-void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext const& blitter)
+void Particle::drawLine2Origin( Viewport* viewport, BlitterContext const& blitter)
 {
 	if(m_type->wupixels)
 	{
-		float x = m_origin.x - xOff;
-		float y = m_origin.y - yOff;
-		float x2 = pos.x - xOff;
-		float y2 = pos.y - yOff;
-		blitter.linewu(where, x, y, x2, y2, m_type->colour);
+		Vec rPos = viewport->convertCoordsPrec( pos );
+		Vec rOPos = viewport->convertCoordsPrec( pos );
+		blitter.linewu(viewport->dest, rOPos.x,rOPos.y,rPos.x,rPos.y, m_type->colour);
 	}
 	else
 	{	
-		int x = static_cast<int>(m_origin.x) - xOff;
-		int y = static_cast<int>(m_origin.y) - yOff;
-		int x2 = static_cast<int>(pos.x) - xOff;
-		int y2 = static_cast<int>(pos.y) - yOff;
-		line(where, x,y,x2,y2,m_type->colour); //TODO: Change to use blitter
+		IVec rPos = viewport->convertCoords( IVec(pos) );
+		IVec rOPos = viewport->convertCoords( IVec(m_origin) );
+		line(viewport->dest, rOPos.x,rOPos.y,rPos.x,rPos.y,m_type->colour); //TODO: Change to use blitter
 		//mooo.createPath( 7, 7);
 		//mooo.render(where, x,y,x2,y2, m_type->colour);
 		//mooo.createPath( 5, 10);
@@ -286,10 +237,14 @@ void Particle::drawLine2Origin(BITMAP* where, int xOff, int yOff, BlitterContext
 	}
 }
 
-void Particle::draw(BITMAP* where, int xOff, int yOff)
+void Particle::draw(Viewport* viewport)
 {
-	int x = static_cast<int>(pos.x) - xOff;
-	int y = static_cast<int>(pos.y) - yOff;
+
+	IVec rPos = viewport->convertCoords( IVec(pos) );
+	Vec rPosPrec = viewport->convertCoordsPrec( pos );
+	BITMAP* where = viewport->dest;
+	int x = rPos.x;
+	int y = rPos.y;
 	
 	BlitterContext blitter(m_type->blender, (int)m_alpha);
 	
@@ -298,13 +253,13 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 		if(!m_type->invisible)
 		{
 			if(m_type->wupixels)
-				blitter.putpixelwu(where, pos.x - xOff, pos.y - yOff, m_type->colour);
+				blitter.putpixelwu(where, rPosPrec.x, rPosPrec.y, m_type->colour);
 			else
 				blitter.putpixel(where, x, y, m_type->colour);
 		}
 				
 		if ( m_type->line2Origin )
-			drawLine2Origin( where, xOff, yOff, blitter );
+			drawLine2Origin( viewport, blitter );
 	}
 	else
 	{
@@ -313,23 +268,16 @@ void Particle::draw(BITMAP* where, int xOff, int yOff)
 		else
 		{
 			Sprite* renderSprite = m_sprite->getSprite(m_animator->getFrame(), m_angle);
-			BITMAP* renderBitmap = renderSprite->m_bitmap;
-			IVec off(xOff, yOff);
-			IVec cullPos(pos);
-			IVec loff(cullPos - IVec(renderSprite->m_xPivot, renderSprite->m_yPivot));
-		
-			Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
-
-			r &= Rect(renderBitmap) + loff;
-		
-			Culler<PartCuller> partCuller(PartCuller(where, renderBitmap,(int)m_alpha, -off.x, -off.y, -loff.x, -loff.y), r);
-
-			partCuller.cullOmni(cullPos.x, cullPos.y);
+			game.level.culledDrawSprite(renderSprite, viewport, IVec(pos), (int)m_alpha );
 		}
 	}
 	if (m_type->distortion)
 	{
 		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
+	}
+	if ( m_type->lightHax )
+	{
+		game.level.culledDrawLight( m_type->lightHax, viewport, IVec(pos), (int)m_alpha );
 	}
 }
 #endif

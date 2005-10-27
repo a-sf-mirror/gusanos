@@ -5,6 +5,7 @@
 #include "game.h"
 #ifndef DEDSERV
 #include "sprite_set.h"
+#include "sprite.h"
 #include "gfx.h"
 #include "distortion.h"
 #include "animators.h"
@@ -99,6 +100,8 @@ PartType::PartType()
 	distortMagnitude = 0.8;
 
 	blender = BlitterContext::None;
+	
+	lightHax = NULL;
 #endif
 	
 	line2Origin = false;
@@ -129,6 +132,7 @@ PartType::~PartType()
 	{
 		delete *i;
 	}
+	delete lightHax;
 }
 
 bool PartType::isSimpleParticleType()
@@ -144,6 +148,8 @@ bool PartType::isSimpleParticleType()
 	{
 		return false;
 	}
+	
+	if ( lightHax ) return true;
 			
 	std::vector<BaseAction*>::const_iterator i = groundCollision->actions.begin();
 	for(; i != groundCollision->actions.end(); ++i)
@@ -244,6 +250,7 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "invisible" ) invisible = (cast<int>(val) != 0);
 					else if ( var == "occluded" ) culled = (cast<int>(val) != 0);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
+					else if ( var == "light_radius" ) lightHax = genLight(cast<int>(val));
 					else if ( var == "anim_on_ground" ) animOnGround = cast<int>(val);
 					else if ( var == "anim_type" )
 					{

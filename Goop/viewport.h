@@ -28,14 +28,30 @@ public:
 	void interpolateTo(float x, float y, float factor);
 	void interpolateTo(Vec dest, float factor);
 	
-	BITMAP* getBitmap() { return m_dest; }
+	IVec getPos()
+	{
+		return IVec(m_pos);
+	}
+	
+	IVec convertCoords( IVec const & coord )
+	{
+		return coord - IVec(m_pos);
+	}
+	
+	Vec convertCoordsPrec( Vec const & coord )
+	{
+		return coord - m_pos;
+	}
+	
+	BITMAP* getBitmap() { return dest; }
 	
 	LuaReference luaReference;
 	
+	BITMAP* dest;
+	BITMAP* testFade;
+	
 private:
 
-	BITMAP* m_dest;
-	BITMAP* testFade;
 	Listener* m_listener;
 	Vec m_pos;
 	

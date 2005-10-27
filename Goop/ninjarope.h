@@ -25,7 +25,7 @@ public:
 	void remove();
 
 #ifndef DEDSERV
-	void draw(BITMAP* where, int xOff, int yOff);
+	void draw(Viewport *viewport);
 #endif
 	void think();
 	Angle getAngle();

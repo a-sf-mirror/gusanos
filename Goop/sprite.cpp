@@ -10,6 +10,25 @@
 
 using namespace std;
 
+// LIGHTHAX!!
+#include "omfgutil_math.h"
+Sprite* genLight( int radius )
+{
+	BITMAP* lightHax;
+	{
+		//LocalSetColorDepth cd(8);
+		lightHax = create_bitmap_ex(8, 2*radius, 2*radius );
+	}
+	for ( int x = 0; x < lightHax->w; ++x )
+	for ( int y = 0; y < lightHax->h; ++y )
+	{
+		int color = 255 - ( 255 * Vec( radius-x, radius-y ).length() ) / (float)radius;
+		if ( color < 0 ) color = 0;
+		putpixel(lightHax,x,y,color);
+	}
+	return new Sprite(lightHax, radius, radius);
+}
+
 Sprite::Sprite( BITMAP* bitmap, int xPivot, int yPivot)
 : m_bitmap(bitmap) //, m_mirror(0)
 {
@@ -98,7 +117,7 @@ Sprite::Sprite(Sprite const& b, MirrorTag)
 		b.m_bitmap->w,
 		b.m_bitmap->h
 	)
-)/*, m_mirror(0)*/, m_xPivot(b.m_bitmap->w - b.m_xPivot), m_yPivot(b.m_yPivot)
+)/*, m_mirror(0)*/, m_xPivot( (b.m_bitmap->w -1 ) - b.m_xPivot), m_yPivot(b.m_yPivot)
 {
 	clear_to_color(m_bitmap, makecol(255,0,255));
 	draw_sprite_h_flip(m_bitmap, b.m_bitmap, 0, 0);

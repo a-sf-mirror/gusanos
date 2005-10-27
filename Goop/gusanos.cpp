@@ -150,6 +150,8 @@ int main(int argc, char **argv)
 			{
 #ifdef USE_GRID
 				
+				game.level.think();
+				
 				for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
 				{
 					iter->think();

@@ -17,6 +17,7 @@ class SpriteSet;
 class Distortion;
 class Event;
 class DetectEvent;
+class Sprite;
 
 class ExpType
 {
@@ -35,6 +36,7 @@ class ExpType
 		float distortMagnitude;
 		SpriteSet* sprite;
 		BlitterContext::Type blender;
+		Sprite* lightHax;
 #endif //DEDSERV
 		int renderLayer;
 		int colour;

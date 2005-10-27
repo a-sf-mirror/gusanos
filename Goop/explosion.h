@@ -12,6 +12,7 @@ class Sprite;
 class BaseAnimator;
 #endif
 class BasePlayer;
+class Viewport;
 
 class Explosion : public BaseObject
 {
@@ -20,7 +21,7 @@ public:
 	Explosion(ExpType* type, const Vec& _pos = Vec(0,0), BasePlayer* owner = NULL);
 
 #ifndef DEDSERV
-	void draw(BITMAP* where,int xOff, int yOff);
+	void draw(Viewport* viewport);
 	void think();
 #endif
 	ExpType* getType()

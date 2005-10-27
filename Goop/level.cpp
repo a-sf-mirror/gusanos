@@ -8,7 +8,10 @@
 #include "sprite_set.h"
 #include "sprite.h"
 #include "omfgutil_math.h"
+#include "omfgutil_macros.h"
 #include "level_effect.h"
+#include "viewport.h"
+#include "culling.h"
 
 
 #include <allegro.h>
@@ -18,6 +21,56 @@
 using namespace std;
 
 ResourceLocator<Level> levelLocator;
+
+
+struct AddCuller
+{
+	AddCuller( Level& level, BITMAP* dest, BITMAP* source, int alpha,int dOffx, int dOffy, int sOffx, int sOffy ) :
+		m_level(level),
+		m_dest( dest ),
+		m_source( source),
+		m_alpha(alpha),
+		m_destOffx(dOffx),
+		m_destOffy(dOffy),
+		m_sourceOffx(sOffx),
+		m_sourceOffy(sOffy)
+	{
+	};
+	
+	bool block(int x, int y)
+	{
+		return m_level.unsafeGetMaterial(x,y).blocks_light;
+	}
+		
+	void line(int y, int x1, int x2)
+	{
+		drawSpriteLine_add(
+			m_dest,
+			m_source,
+			x1 - m_destOffx,
+			y - m_destOffy,
+			x1 - m_sourceOffx,
+			y - m_sourceOffy,
+			x2 - m_sourceOffx + 1,
+			m_alpha
+		);
+	}
+
+private:
+	
+	Level const &m_level;
+	
+	BITMAP* m_dest;
+	BITMAP* m_source;
+	
+	int m_destOffx;
+	int m_destOffy;
+	int m_sourceOffx;
+	int m_sourceOffy;
+
+	int m_alpha;
+	
+};
 
 Level::Level()
 {
@@ -30,6 +83,11 @@ Level::Level()
 	lightmap = NULL;
 #endif
 	material = NULL;
+	
+	for ( int i = 0; i < m_materialList.size() ; ++i )
+	{
+		m_materialList[i].index = i;
+	}
 
 	// Rock
 	m_materialList[0].worm_pass = false;
@@ -40,7 +98,7 @@ Level::Level()
 	// Background
 	m_materialList[1].worm_pass = true;
 	m_materialList[1].particle_pass = true;
-	m_materialList[1].draw_exps = true; // I added this coz its cute :P
+	m_materialList[1].draw_exps = true;
 	
 	// Dirt
 	m_materialList[2].worm_pass = false;
@@ -48,6 +106,7 @@ Level::Level()
 	m_materialList[2].draw_exps = false;
 	m_materialList[2].destroyable = true;
 	m_materialList[2].blocks_light = true;
+	m_materialList[2].flows = false;
 	
 	// Special dirt
 	m_materialList[3].worm_pass = true;
@@ -68,100 +127,7 @@ Level::Level()
 Level::~Level()
 {
 }
-/*
-bool Level::load(const string &name)
-{
-	//check if it is liero level
-	if (name.size() > 4)
-		if (name.substr(name.size() - 4, name.size()) == ".lev")
-			if (loadLiero(name))
-				return true;
 
-	//load Gusanos level
-	path = name;
-	int vdepth=get_color_depth();
-	set_color_depth(8);
-	material = gfx.loadBitmap((name + "/material").c_str(),0);
-	set_color_depth(vdepth);
-	if (material)
-	{
-		image = gfx.loadBitmap((name + "/level").c_str(),0);
-		if (image)
-		{
-			background = gfx.loadBitmap((name + "/background").c_str(),0);
-			if(!background)
-			{
-				background = create_bitmap(material->w, material->h);
-				for (int x = 0; x < background->w; x++)
-				for (int y = 0; y < background->h; y++)
-				{
-					putpixel(background, x, y, getpixel(image, x, y));
-				}
-			}
-			loaded = true;
-			return true;
-		}
-	}
-	unload();
-	return false;
-}
-
-bool Level::loadLiero(const std::string &name)
-{
-	path = name;
-
-	Liero::LieroLevel lev;
-	Liero::LieroColor pal[256];
-	if (!Liero::loadPalette(pal, "original.lpl"))
-		return false;
-	if (!Liero::loadLevel(&lev, pal, name))
-		return false;
-
-	material = create_bitmap_ex(8, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
-	image = create_bitmap_ex(16, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
-	background = create_bitmap_ex(16, Liero::MAP_WIDTH, Liero::MAP_HEIGHT);
-
-	for (int y = 0; y < Liero::MAP_HEIGHT; y++)
-	{
-		for (int x = 0; x < Liero::MAP_WIDTH; x++)
-		{
-			int c = lev.level[y][x];
-			int crgb = makecol(pal[c].r, pal[c].g, pal[c].b);
-			int m = 1;
-
-			putpixel(image, x, y, crgb);
-			putpixel(background, x, y, crgb);
-
-			//material
-			//dirt
-			if (c >= 12 && c <= 18 || c == 1 || c == 2)
-				m = 0;
-			else
-			//green dirt
-			if (c >= 94 && c <= 97)
-				m = 0;
-			else
-			//rock
-			if (c >= 98 && c <= 103)
-				m = 0;
-			else
-			//diggable stone
-			if (c >= 176 && c <= 180)
-				m = 0;
-			else
-			//rock
-			if (c >= 19 && c <= 29 || c == 8)
-				m = 0;
-			else
-			//nothing
-				m = 1;
-			putpixel(material, x, y, m);
-		}
-	}
-	loaded = true;
-	return true;
-}
-*/
 void Level::unload()
 {
 	loaded = false;
@@ -181,6 +147,43 @@ void Level::unload()
 bool Level::isLoaded()
 {
 	return loaded;
+}
+
+void Level::think()
+{
+	foreach_delete( wp, m_water )
+	{
+		if ( rnd() > WaterSkipFactor )
+		{
+			if ( getMaterialIndex( wp->x, wp->y ) != wp->mat )
+			{
+				m_water.erase(wp);
+			}else if ( getMaterial( wp->x, wp->y+1 ).particle_pass )
+			{
+				putpixel_solid(image, wp->x, wp->y, getpixel(background, wp->x, wp->y) );
+				putMaterial( 1, wp->x, wp->y );
+				++wp->y;
+				putpixel_solid(image, wp->x, wp->y, makecol(0,0,100) );
+				putMaterial( wp->mat, wp->x, wp->y );
+			}else
+			{
+				char dir;
+				if ( wp->dir ) dir = 1;
+				else dir = -1;
+				
+				if ( getMaterial( wp->x+dir, wp->y ).particle_pass )
+				{
+					putpixel_solid(image, wp->x, wp->y, getpixel(background, wp->x, wp->y) );
+					putMaterial( 1, wp->x, wp->y );
+					wp->x += dir;
+					putpixel_solid(image, wp->x, wp->y, makecol(0,0,100) );
+					putMaterial( wp->mat, wp->x, wp->y );
+				}
+				else
+					wp->dir = !wp->dir;
+			}
+		}
+	}
 }
 
 #ifndef DEDSERV
@@ -203,14 +206,14 @@ void Level::draw(BITMAP* where, int x, int y)
 
 
 // TODO: optimize this
-void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos, BlitterContext const& blitter )
+void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const IVec& pos, const IVec& matPos, BlitterContext const& blitter )
 {
 	int transCol = makecol(255,0,255); // TODO: make a gfx.getTransCol() function
 
-	int xMatStart = (int)matPos.x - sprite->m_xPivot;
-	int yMatStart = (int)matPos.y - sprite->m_yPivot;
-	int xDrawStart = (int)pos.x - sprite->m_xPivot;
-	int yDrawStart = (int)pos.y - sprite->m_yPivot;
+	int xMatStart = matPos.x - sprite->m_xPivot;
+	int yMatStart = matPos.y - sprite->m_yPivot;
+	int xDrawStart = pos.x - sprite->m_xPivot;
+	int yDrawStart = pos.y - sprite->m_yPivot;
 	for ( int x = 0; x < sprite->m_bitmap->w ; ++x )
 	for ( int y = 0; y < sprite->m_bitmap->h ; ++y )
 	{
@@ -222,6 +225,57 @@ void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const Vec& pos, co
 		}
 	}
 }
+
+void Level::culledDrawSprite( Sprite* sprite, Viewport* viewport, const IVec& pos, int alpha )
+{
+	BITMAP* renderBitmap = sprite->m_bitmap;
+	IVec off = viewport->getPos();
+	IVec loff(pos - IVec(sprite->m_xPivot, sprite->m_yPivot));
+	
+	Rect r(0, 0, width() - 1, height() - 1);
+	r &= Rect(renderBitmap) + loff;
+	
+	Culler<AddCuller> addCuller(
+		AddCuller(
+			*this,
+			viewport->dest,
+			renderBitmap,
+			alpha,
+			off.x,
+			off.y,
+			loff.x,
+			loff.y
+			),
+		r );
+
+	addCuller.cullOmni(pos.x, pos.y);
+}
+
+void Level::culledDrawLight( Sprite* sprite, Viewport* viewport, const IVec& pos, int alpha )
+{
+	BITMAP* renderBitmap = sprite->m_bitmap;
+	IVec off = viewport->getPos();
+	IVec loff(pos - IVec(sprite->m_xPivot, sprite->m_yPivot));
+	
+	Rect r(0, 0, width() - 1, height() - 1);
+	r &= Rect(renderBitmap) + loff;
+	
+	Culler<AddCuller> addCuller(
+		AddCuller(
+			*this,
+			viewport->testFade,
+			renderBitmap,
+			alpha,
+			off.x,
+			off.y,
+			loff.x,
+			loff.y
+			),
+		r );
+
+	addCuller.cullOmni(pos.x, pos.y);
+}
+
 #endif
 
 bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
@@ -240,7 +294,7 @@ bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 			if( ( colour == 0 ) && getMaterial( drawX+x, drawY+y ).destroyable )
 			{
 				returnValue = true;
-				material->line[drawY+y][drawX+x] = 1;
+				putMaterial( 1, drawX+y, drawY+x );
 #ifndef DEDSERV
 				putpixel(image, drawX+x, drawY+y, getpixel( background, drawX+x, drawY+y ) );
 #endif
@@ -302,17 +356,26 @@ void Level::loaderSucceeded()
 {
 	loaded = true;
 	
+	for ( int x = 0; x < material->w; ++x )
+	for ( int y = 0; y < material->h; ++y )
+	{
+		if ( unsafeGetMaterial(x,y).flows )
+		{
+			m_water.push_back( WaterParticle( x, y, getMaterialIndex(x,y) ) );
+		}
+	}
+	
 	if ( !lightmap )
 	{
 		LocalSetColorDepth cd(8);
 		lightmap = create_bitmap(material->w, material->h);
-		clear_to_color(lightmap, 50);
-		for ( int x = 0; x < lightmap->w ; ++x )
+		clear_to_color(lightmap, 200);
+		/*for ( int x = 0; x < lightmap->w ; ++x )
 		for ( int y = 0; y < lightmap->h ; ++y )
 		{
 			if ( unsafeGetMaterial(x,y).blocks_light )
 				putpixel( lightmap, x, y, 200 );
-		}
+		}*/
 	}
 	
 	// Make the domain one pixel larger than the level so that things like ninjarope hook

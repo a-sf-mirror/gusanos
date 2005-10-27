@@ -12,6 +12,7 @@
 #include "animators.h"
 #endif
 #include "part_type.h"
+#include "viewport.h"
 
 #include <vector>
 
@@ -215,26 +216,21 @@ Vec& NinjaRope::getPosReference()
 }
 
 #ifndef DEDSERV
-void NinjaRope::draw(BITMAP* where,int xOff, int yOff)
+void NinjaRope::draw(Viewport *viewport)
 {
+	BITMAP* where = viewport->dest;
+	IVec rPos = viewport->convertCoords( IVec(pos) );
 	if (active)
 	{
 		if (!m_sprite)
-			putpixel(where,(int)(pos.x)-xOff,(int)(pos.y)-yOff,m_type->colour);
+			putpixel(where,rPos.x,rPos.y,m_type->colour);
 		else
 		{
-			if ( m_angle < Angle(180.0) )
-			{
-				m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where,static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff));
-			}
-			else
-			{
-				m_sprite->getSprite(m_animator->getFrame(), -m_angle)->draw(where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), true);
-			}
+			m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where,rPos.x,rPos.y);
 		}
 		if (m_type->distortion)
 		{
-			m_type->distortion->apply( where, static_cast<int>(pos.x-xOff), static_cast<int>(pos.y-yOff), m_type->distortMagnitude );
+			m_type->distortion->apply( where, rPos.x,rPos.y, m_type->distortMagnitude );
 		}
 	}
 }

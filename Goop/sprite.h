@@ -15,7 +15,6 @@ enum
 	ALIGN_LEFT = 16
 };
 
-
 class Sprite
 {
 public:
@@ -50,5 +49,7 @@ public:
 	int m_yPivot;
 	
 };
+
+Sprite* genLight( int radius );
 
 #endif // _SPRITE_H_

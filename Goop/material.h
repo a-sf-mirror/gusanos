@@ -16,6 +16,9 @@ struct Material
 	bool destroys_water;
 	bool creates_water;
 	int damage;
+	
+	// Use as read only
+	unsigned char index;
 };
 
 #endif // _MATERIAL_H_

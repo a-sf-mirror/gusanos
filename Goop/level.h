@@ -11,13 +11,33 @@
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <list>
 #include <cmath>
 #include <boost/array.hpp>
 using boost::array;
 
 class Sprite;
 class LevelEffect;
+class Viewport;
 struct BlitterContext;
+
+struct WaterParticle
+{
+	WaterParticle( IVec pos, unsigned char material_ ) : x(pos.x), y(pos.y), mat(material_)
+	{
+		dir = static_cast<bool>( rndInt(2) );
+	}
+	
+	WaterParticle( int x_, int y_, unsigned char material_ ) : x(x_), y(y_), mat(material_)
+	{
+		dir = static_cast<bool>( rndInt(2) );
+	}
+	
+	int x;
+	int y;
+	bool dir; // true is right false is left
+	unsigned char mat;
+};
 
 class Level
 {
@@ -28,6 +48,7 @@ class Level
 	/*
 	bool load(const std::string &name);
 	bool loadLiero(const std::string &name);*/
+	void think();
 	void unload();
 	bool isLoaded();
 #ifndef DEDSERV
@@ -44,7 +65,7 @@ class Level
 	
 	Vec getSpawnLocation();
 	
-	Material const& getMaterial(unsigned int x, unsigned int y)
+	Material const& getMaterial(unsigned int x, unsigned int y) const
 	{
 		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
 			return m_materialList[(unsigned char)material->line[y][x]];
@@ -52,12 +73,32 @@ class Level
 			return m_materialList[0];
 	}
 	
-	Material const& unsafeGetMaterial(unsigned int x, unsigned int y)
+	Material const& unsafeGetMaterial(unsigned int x, unsigned int y) const
 	{
 		return m_materialList[(unsigned char)material->line[y][x]];
 	}
 	
-	bool isInside(unsigned int x, unsigned int y)
+	unsigned char getMaterialIndex(unsigned int x, unsigned int y) const
+	{
+		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
+			return (unsigned char)material->line[y][x];
+		else
+			return 0;
+	}
+	
+	void putMaterial( unsigned char index, unsigned int x, unsigned int y )
+	{
+		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
+			material->line[y][x] = index;
+	}
+	
+	void putMaterial( Material const& mat, unsigned int x, unsigned int y )
+	{
+		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
+			material->line[y][x] = mat.index;
+	}
+	
+	bool isInside(unsigned int x, unsigned int y) const
 	{
 		if(x < static_cast<unsigned int>(material->w) && y < static_cast<unsigned int>(material->h))
 			return true;
@@ -69,16 +110,18 @@ class Level
 	bool trace(long srcx, long srcy, long destx, long desty, PredT predicate);
 	
 #ifndef DEDSERV
-	void specialDrawSprite(Sprite* sprite, BITMAP* where, const Vec& pos, const Vec& matPos, BlitterContext const& blitter );
+	void specialDrawSprite(Sprite* sprite, BITMAP* where, const IVec& pos, const IVec& matPos, BlitterContext const& blitter );
+	
+	void culledDrawSprite(Sprite* sprite, Viewport* viewport, const IVec& pos, int alpha);
+	void culledDrawLight(Sprite* sprite, Viewport* viewport, const IVec& pos, int alpha);
+	
+	//void culledDrawLight(Sprite* sprite, BITMAP* where, const IVec& pos, const IVec& matPos);
 #endif
 	// applies the effect and returns true if it actually changed something on the map
 	bool applyEffect( LevelEffect* effect, int x, int y);
 	
 	void loaderSucceeded();
-	
-	//private:
-		
-	bool loaded;
+
 	
 #ifndef DEDSERV
 	BITMAP* image;
@@ -87,9 +130,6 @@ class Level
 	BITMAP* lightmap; // This has to be 8 bit.
 #endif
 	BITMAP* material;
-	std::string name;
-	std::string path;
-	array<Material, 256> m_materialList;
 	Encoding::VectorEncoding vectorEncoding;
 	Encoding::VectorEncoding intVectorEncoding;
 	Encoding::DiffVectorEncoding diffVectorEncoding;
@@ -101,6 +141,17 @@ class Level
 			return !m.particle_pass;
 		}
 	};
+	
+	std::string name;
+	std::string path;
+	
+	bool loaded;
+	
+	private:
+	
+	array<Material, 256> m_materialList;
+	std::list<WaterParticle> m_water;
+	static const float WaterSkipFactor = 0.05f;
 };
 
 #define SIGN(x_) ((x_) < 0 ? -1 : (x_) > 0 ? 1 : 0)

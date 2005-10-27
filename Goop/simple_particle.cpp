@@ -3,6 +3,7 @@
 #include "omfgutil_math.h"
 #include "game.h"
 #include "base_object.h"
+#include "viewport.h"
 #ifndef DEDSERV
 #include "gfx.h"
 #include "blitters/blitters.h"
@@ -48,42 +49,43 @@ void SimpleParticle::think()
 }
 
 #ifndef DEDSERV
-void SimpleParticle::draw(BITMAP* where, int xOff, int yOff)
+void SimpleParticle::draw(Viewport* viewport)
 {
-	putpixel(where, (int)(pos.x)-xOff, (int)(pos.y)-yOff, colour);
+	IVec rPos = viewport->convertCoords(IVec(pos));
+	putpixel(viewport->dest, rPos.x, rPos.y, colour);
 	//putpixel(where, (posx >> 8)-xOff, (posy >> 8)-yOff, colour);
 }
 
-void SimpleParticle32::draw(BITMAP* where, int xOff, int yOff)
+void SimpleParticle32::draw(Viewport* viewport)
 {
-	int x = (int)(pos.x)-xOff;
-	int y = (int)(pos.y)-yOff;
-	
+	IVec rPos = viewport->convertCoords(IVec(pos));
+	BITMAP* where = viewport->dest;
 
-	if((unsigned int)x < where->w
-	&& (unsigned int)y < where->h)
-		Blitters::putpixel_solid_32(where, x, y, colour);
+	if((unsigned int)rPos.x < where->w
+	&& (unsigned int)rPos.y < where->h )
+		Blitters::putpixel_solid_32(where, rPos.x, rPos.y, colour);
 }
 
-void SimpleParticle16::draw(BITMAP* where, int xOff, int yOff)
+void SimpleParticle16::draw(Viewport* viewport)
 {
-	int x = (int)(pos.x)-xOff;
-	int y = (int)(pos.y)-yOff;
-	
+	IVec rPos = viewport->convertCoords(IVec(pos));
+	BITMAP* where = viewport->dest;
 
-	if((unsigned int)x < where->w
-	&& (unsigned int)y < where->h)
-		Blitters::putpixel_solid_16(where, x, y, colour);
+	if((unsigned int)rPos.x < where->w
+	&& (unsigned int)rPos.y < where->h )
+		Blitters::putpixel_solid_16(where, rPos.x, rPos.y, colour);
 }
 
-void SimpleParticle32wu::draw(BITMAP* where, int xOff, int yOff)
+void SimpleParticle32wu::draw(Viewport* viewport)
 {
-	Blitters::putpixelwu_blend_32(where, pos.x - xOff, pos.y - yOff, colour, 256);
+	Vec rPos = viewport->convertCoordsPrec( pos );
+	Blitters::putpixelwu_blend_32(viewport->dest, rPos.x, rPos.y, colour, 256);
 }
 
-void SimpleParticle16wu::draw(BITMAP* where, int xOff, int yOff)
+void SimpleParticle16wu::draw(Viewport* viewport)
 {
-	Blitters::putpixelwu_blend_16(where, pos.x - xOff, pos.y - yOff, colour, 32);
+	Vec rPos = viewport->convertCoordsPrec( pos );
+	Blitters::putpixelwu_blend_16(viewport->dest, rPos.x, rPos.y, colour, 32);
 }
 
 #endif

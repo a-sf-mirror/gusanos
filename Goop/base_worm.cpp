@@ -14,6 +14,7 @@
 #include "sprite_set.h"
 #include "sprite.h"
 #include "gfx.h"
+#include "viewport.h"
 #include "font.h"
 #include "blitters/blitters.h"
 #endif
@@ -814,7 +815,7 @@ void BaseWorm::removeRefsToPlayer(BasePlayer* player)
 
 #ifndef DEDSERV
 
-void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
+void BaseWorm::draw(Viewport* viewport)
 {
 	if(!m_owner)
 		return;
@@ -824,19 +825,22 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 		/*
 		bool flipped = false;
 		if ( m_dir < 0 ) flipped = true;*/
+		
+		BITMAP* where = viewport->dest;
+		IVec rPos = viewport->convertCoords( IVec(renderPos) );
 	
 		{
-			int x = (int)renderPos.x - xOff;
-			int y = (int)renderPos.y - yOff;
+			int x = rPos.x;
+			int y = rPos.y;
 			
 			int renderX = x;
 			int renderY = y;
 			
 			if ( m_weapons[currentWeapon] && m_weapons[currentWeapon]->reloading )
 			{
-				Vec crosshair = Vec(getAngle(), 25.0) + renderPos - Vec(xOff, yOff);
+				IVec crosshair = IVec(getAngle(), 25.0) + rPos;
 				float radius = m_weapons[currentWeapon]->reloadTime / (float)m_weapons[currentWeapon]->m_type->reloadTime;
-				circle(where, static_cast<int>( crosshair.x ), static_cast<int>(crosshair.y),2,makecol(static_cast<int>(255*radius), static_cast<int>(255*(1-radius)),0));
+				circle(where, crosshair.x,crosshair.y,2,makecol(static_cast<int>(255*radius), static_cast<int>(255*(1-radius)),0));
 			}
 			else for(int i = 0; i < 10; i++)
 			{
@@ -847,7 +851,8 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 			
 			if (m_ninjaRope->active)
 			{
-				line(where, x, y, static_cast<int>(m_ninjaRope->pos.x) - xOff, static_cast<int>(m_ninjaRope->pos.y) - yOff, m_ninjaRope->getColour());
+				IVec nrPos = viewport->convertCoords( IVec(m_ninjaRope->pos) );
+				line(where, x, y, nrPos.x, nrPos.y, m_ninjaRope->getColour());
 				/*linewu_solid(where
 					, renderPos.x - xOff
 					, renderPos.y - yOff
@@ -891,8 +896,8 @@ void BaseWorm::draw(BITMAP* where, int xOff, int yOff)
 		
 #ifdef DEBUG_WORM_REACTS
 		{
-			int x = (int)renderPos.x - xOff;
-			int y = (int)renderPos.y - yOff;
+			int x = rPos.x;
+			int y = rPos.y;
 			game.infoFont->draw(where, lexical_cast<std::string>(reacts[Up]), x, y + 15, 0);
 			game.infoFont->draw(where, lexical_cast<std::string>(reacts[Down]), x, y - 15, 0);
 			game.infoFont->draw(where, lexical_cast<std::string>(reacts[Left]), x + 15, y, 0);

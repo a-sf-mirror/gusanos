@@ -20,7 +20,7 @@
 using namespace std;
 
 Viewport::Viewport()
-: m_dest(0)
+: dest(0)
 {
 	lua.pushFullReference(*this, LuaBindings::viewportMetaTable);
 	luaReference = lua.createReference();
@@ -29,7 +29,7 @@ Viewport::Viewport()
 Viewport::~Viewport()
 {
 	lua.destroyReference(luaReference);
-	destroy_bitmap(m_dest);
+	destroy_bitmap(dest);
 	sfx.freeListener(m_listener);
 	destroy_bitmap(testFade);
 }
@@ -80,12 +80,12 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	|| height > where->h)
 		return;
 	
-	destroy_bitmap(m_dest);
+	destroy_bitmap(dest);
 	if ( x < 0 ) x = 0;
 	if ( y < 0 ) y = 0;
 	if ( x + width > where->w ) x = where->w - width;
 	if ( y + height > where->h ) y = where->h - height;
-	m_dest = create_sub_bitmap(where,x,y,width,height);
+	dest = create_sub_bitmap(where,x,y,width,height);
 	
 	m_listener = sfx.newListener();
 
@@ -99,7 +99,7 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 		for(int y = 0; y < s; ++y)
 		for(int x = 0; x < s; ++x)
 		{
-			double v = 0.8*(double(s)/2 - (IVec(x, y) - IVec(s/2, s/2)).length());
+			double v = 0.2*(double(s)/2 - (IVec(x, y) - IVec(s/2, s/2)).length());
 			if(v < 0.0)
 				v = 0.0;
 			int iv = int(v);
@@ -114,16 +114,21 @@ void Viewport::render(BasePlayer* player)
 	int offY = static_cast<int>(m_pos.y);
 	
 //#if 0 // TEMP
-	game.level.draw(m_dest, offX, offY);
+	game.level.draw(dest, offX, offY);
 //#else
-	//Blitters::drawSprite_multsec_32_with_8(m_dest, game.level.image, testFade, -offX, -offY, -offX, -offY, 0, 0, 0, 0);
+	//Blitters::drawSprite_multsec_32_with_8(dest, game.level.image, testFade, -offX, -offY, -offX, -offY, 0, 0, 0, 0);
 //#endif
+
+	//clear_to_color(testFade, 0);
+	if ( game.level.lightmap )
+		blit( game.level.lightmap, testFade, offX,offY, 0, 0, testFade->w, testFade->h );
 	
 
 #ifdef USE_GRID
 	for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
 	{
-		iter->draw(m_dest, offX, offY);
+		//iter->draw(dest, offX, offY);
+		iter->draw(this);
 	}
 #else
 	for ( int i = 0; i < RENDER_LAYERS_AMMOUNT ; ++i)
@@ -131,14 +136,12 @@ void Viewport::render(BasePlayer* player)
 		ObjectsList::RenderLayerIterator iter;
 		for ( iter = game.objects.renderLayerBegin(i); (bool)iter; ++iter)
 		{
-			(*iter)->draw(m_dest, offX, offY);
+			//(*iter)->draw(dest, offX, offY);
+			(*iter)->draw(this);
 		}
 	}
 #endif
 
-	//clear_to_color(testFade, 0);
-	if ( game.level.lightmap )
-		blit( game.level.lightmap, testFade, offX,offY, 0, 0, testFade->w, testFade->h );
 #if 1
 	{
 		BasePlayer* player = game.localPlayers[0];
@@ -176,7 +179,7 @@ void Viewport::render(BasePlayer* player)
 		}
 	}
 	
-	Blitters::drawSprite_mult_32_with_8(m_dest, testFade, 0, 0, 0, 0, 0, 0);
+	Blitters::drawSprite_mult_32_with_8(dest, testFade, 0, 0, 0, 0, 0, 0);
 	
 	if(BaseWorm* worm = player->getWorm())
 	{
@@ -192,39 +195,39 @@ void Viewport::setPos(float x, float y)
 	m_pos.x=x;
 	m_pos.y=y;
 	
-	if (m_listener) m_listener->pos = m_pos + Vec(m_dest->w/2,m_dest->h/2);
+	if (m_listener) m_listener->pos = m_pos + Vec(dest->w/2,dest->h/2);
 	
-	if ( m_pos.x + m_dest->w > game.level.width() ) m_pos.x = game.level.width() - m_dest->w;
+	if ( m_pos.x + dest->w > game.level.width() ) m_pos.x = game.level.width() - dest->w;
 	else if ( m_pos.x < 0 ) m_pos.x = 0;
-	if ( m_pos.y + m_dest->h > game.level.height() ) m_pos.y = game.level.height() - m_dest->h;
+	if ( m_pos.y + dest->h > game.level.height() ) m_pos.y = game.level.height() - dest->h;
 	else if ( m_pos.y < 0 ) m_pos.y = 0;
 	
 }
 
 void Viewport::interpolateTo(float x, float y, float factor)
 {
-	Vec dest(x-m_dest->w/2,y-m_dest->h/2);
+	Vec destPos(x-dest->w/2,y-dest->h/2);
 
-	m_pos = m_pos + (dest-m_pos)*factor;
+	m_pos = m_pos + (destPos-m_pos)*factor;
 	
 
 	if (m_listener) m_listener->pos = Vec(x,y);
 
-	if ( m_pos.x + m_dest->w > game.level.width() ) m_pos.x = game.level.width() - m_dest->w;
+	if ( m_pos.x + dest->w > game.level.width() ) m_pos.x = game.level.width() - dest->w;
 	else if ( m_pos.x < 0 ) m_pos.x = 0;
-	if ( m_pos.y + m_dest->h > game.level.height() ) m_pos.y = game.level.height() - m_dest->h;
+	if ( m_pos.y + dest->h > game.level.height() ) m_pos.y = game.level.height() - dest->h;
 	else if ( m_pos.y < 0 ) m_pos.y = 0;
 }
 
-void Viewport::interpolateTo(Vec dest, float factor)
+void Viewport::interpolateTo(Vec destPos, float factor)
 {
-	m_pos = m_pos + (dest-Vec(m_dest->w/2,m_dest->h/2)-m_pos)*factor;
+	m_pos = m_pos + (destPos-Vec(dest->w/2,dest->h/2)-m_pos)*factor;
 	
-	if (m_listener) m_listener->pos = dest;
+	if (m_listener) m_listener->pos = destPos;
 	
-	if ( m_pos.x + m_dest->w > game.level.width() ) m_pos.x = game.level.width() - m_dest->w;
+	if ( m_pos.x + dest->w > game.level.width() ) m_pos.x = game.level.width() - dest->w;
 	else if ( m_pos.x < 0 ) m_pos.x = 0;
-	if ( m_pos.y + m_dest->h > game.level.height() ) m_pos.y = game.level.height() - m_dest->h;
+	if ( m_pos.y + dest->h > game.level.height() ) m_pos.y = game.level.height() - dest->h;
 	else if ( m_pos.y < 0 ) m_pos.y = 0;
 }
 
