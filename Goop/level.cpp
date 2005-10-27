@@ -106,7 +106,7 @@ Level::Level()
 	m_materialList[2].draw_exps = false;
 	m_materialList[2].destroyable = true;
 	m_materialList[2].blocks_light = true;
-	m_materialList[2].flows = false;
+	m_materialList[2].flows = true;
 	
 	// Special dirt
 	m_materialList[3].worm_pass = true;
@@ -151,14 +151,18 @@ bool Level::isLoaded()
 
 void Level::think()
 {
+	if ( rnd() > 0.9 )
+	{
 	foreach_delete( wp, m_water )
 	{
+		if ( getMaterialIndex( wp->x, wp->y ) != wp->mat )
+		{
+				putpixel_solid(image, wp->x, wp->y, getpixel(background, wp->x, wp->y) );
+				m_water.erase(wp);
+		}else
 		if ( rnd() > WaterSkipFactor )
 		{
-			if ( getMaterialIndex( wp->x, wp->y ) != wp->mat )
-			{
-				m_water.erase(wp);
-			}else if ( getMaterial( wp->x, wp->y+1 ).particle_pass )
+			if ( getMaterial( wp->x, wp->y+1 ).particle_pass )
 			{
 				putpixel_solid(image, wp->x, wp->y, getpixel(background, wp->x, wp->y) );
 				putMaterial( 1, wp->x, wp->y );
@@ -183,6 +187,7 @@ void Level::think()
 					wp->dir = !wp->dir;
 			}
 		}
+	}
 	}
 }
 
@@ -294,7 +299,7 @@ bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 			if( ( colour == 0 ) && getMaterial( drawX+x, drawY+y ).destroyable )
 			{
 				returnValue = true;
-				putMaterial( 1, drawX+y, drawY+x );
+				putMaterial( 1, drawX+x, drawY+y );
 #ifndef DEDSERV
 				putpixel(image, drawX+x, drawY+y, getpixel( background, drawX+x, drawY+y ) );
 #endif
