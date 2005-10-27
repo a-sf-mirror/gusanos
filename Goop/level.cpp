@@ -106,7 +106,7 @@ Level::Level()
 	m_materialList[2].draw_exps = false;
 	m_materialList[2].destroyable = true;
 	m_materialList[2].blocks_light = true;
-	m_materialList[2].flows = true;
+	m_materialList[2].flows = false;
 	
 	// Special dirt
 	m_materialList[3].worm_pass = true;
@@ -151,8 +151,6 @@ bool Level::isLoaded()
 
 void Level::think()
 {
-	if ( rnd() > 0.9 )
-	{
 	foreach_delete( wp, m_water )
 	{
 		if ( getMaterialIndex( wp->x, wp->y ) != wp->mat )
@@ -187,7 +185,6 @@ void Level::think()
 					wp->dir = !wp->dir;
 			}
 		}
-	}
 	}
 }
 
