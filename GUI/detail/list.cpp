@@ -15,21 +15,21 @@ void List::Node::resizeColumns(size_t s)
 	}
 }
 
-void List::Node::render(Renderer* renderer, long& y, List& list)
+void List::Node::render(Renderer* renderer, long& y)
 {
 	long halfRowHeight = rowHeight/2;
 	
-	if(selected || list.m_MainSel == node_iter_t(this))
+	if(selected || list->m_MainSel == node_iter_t(this))
 	{
-		Rect r(list.getRect().x1 + 1, y, list.getRect().x2 - 1, y + rowHeight - 1);
+		Rect r(list->getRect().x1 + 1, y, list->getRect().x2 - 1, y + rowHeight - 1);
 		if(selected)
 		{
 			renderer->drawBox(
 				r,
-				list.m_listFormatting.selectionColor);
+				list->m_listFormatting.selectionColor);
 		}
 		
-		if(list.m_MainSel == node_iter_t(this))
+		if(list->m_MainSel == node_iter_t(this))
 		{
 			renderer->drawFrame(
 				r,
@@ -41,19 +41,19 @@ void List::Node::render(Renderer* renderer, long& y, List& list)
 
 	//renderer->drawText(*list.m_font, text, BaseFont::CenterV, list.m_rect.x1 + 3 + level * 5, y + halfRowHeight, RGB(0, 0, 0));
 	
-	double x = list.getRect().x1 + 3.0 + level * 5.0;
-	double w = list.getRect().getWidth();
+	double x = list->getRect().x1 + 3.0 + level * 5.0;
+	double w = list->getRect().getWidth();
 	
-	assert(columns.size() == list.m_columnHeaders.size());
+	assert(columns.size() == list->m_columnHeaders.size());
 	
 	std::vector<std::string>::const_iterator i = columns.begin();
-	std::vector<ColumnHeader>::const_iterator h = list.m_columnHeaders.begin();
+	std::vector<ColumnHeader>::const_iterator h = list->m_columnHeaders.begin();
 	
 	for(;
 		i != columns.end();
 		++i, ++h)
 	{
-		renderer->drawText(*list.m_font, *i, BaseFont::CenterV, long(x), y + halfRowHeight, list.m_formatting.fontColor);
+		renderer->drawText(*list->m_font, *i, BaseFont::CenterV, long(x), y + halfRowHeight, list->m_formatting.fontColor);
 		x += h->widthFactor * w;
 	}
 	
@@ -72,7 +72,7 @@ void List::Node::renderChildren(Renderer* aRenderer, long& y, List& list)
 	}
 }*/
 
-void List::Node::renderFrom(Renderer* renderer, long& y, List& list)
+void List::Node::renderFrom(Renderer* renderer, long& y)
 {
 	node_iter_t i(this);
 	//bool        hasParent = i->hasParent;
@@ -82,17 +82,17 @@ void List::Node::renderFrom(Renderer* renderer, long& y, List& list)
 	//Only the root element has parentList == 0, and we can't even obtain an iterator
 	//to the root element, thus it's safe to assume that parentList is a valid pointer.
 	
-	while(i && y < list.getRect().y2)
+	while(i && y < list->getRect().y2)
 	{
-		i->render(renderer, y, list);
+		i->render(renderer, y);
 			
 		y += rowHeight;
 		
 		if(i->expanded)
 		{
-			i->children.getFirst()->renderFrom(renderer, y, list);
+			i->children.getFirst()->renderFrom(renderer, y);
 			
-			if(y >= list.getRect().y2)
+			if(y >= list->getRect().y2)
 				break;
 		}
 		
@@ -163,8 +163,6 @@ List::node_iter_t List::Node::getNextVisible(node_iter_t i)
 
 int List::Node::findOffsetTo(node_iter_t i, node_iter_t to)
 {
-	node_iter_t parent = i->parent;
-
 	int offs = 0;
 	
 	for(; i != to; ++offs)
@@ -257,7 +255,12 @@ bool List::render(Renderer* renderer)
 	
 	if(m_Base)
 	{
-		m_Base->renderFrom(renderer, y, *this);
+		//m_Base->renderFrom(renderer, y, *this);
+		for(node_iter_t i = m_Base; i && y < getRect().y2; i = Node::getNextVisible(i))
+		{
+			i->render(renderer, y);
+			y += rowHeight;
+		}
 	}
 	
 	/*
@@ -306,9 +309,10 @@ void List::setMainSel(node_iter_t iter)
 {
 	if(!iter)
 		return;
-		
 	m_MainSel = iter;
+	
 	int offs = Node::findOffsetTo(m_RootNode.children.begin(), iter);
+
 	if(offs < m_basePos)
 		setBasePos(offs);
 	else if(offs >= m_basePos + visibleRows())
@@ -329,6 +333,28 @@ bool List::checkSelection()
 	return true;
 }
 
+bool List::verify_(node_iter_t i, node_iter_t n)
+{
+	if(i == n)
+		return true;
+	
+	foreach(c, n->children)
+	{
+		if(verify_(i, c))
+			return true;
+	}
+	
+	return false;
+}
+
+List::node_iter_t List::verify(node_iter_t i)
+{
+	if(verify_(i, node_iter_t(&m_RootNode)))
+		return i;
+	else
+		return node_iter_t();
+}
+
 bool List::keyDown(int key)
 {
 	if(m_active)
@@ -341,22 +367,27 @@ bool List::keyDown(int key)
 			
 			case KEY_DOWN:
 				if(checkSelection())
-					setMainSel(Node::getNextVisible(node_iter_t(m_MainSel)));
+					setMainSel(Node::getNextVisible(m_MainSel));
 			break;
 			
 			case KEY_UP:
 				if(checkSelection())
-					setMainSel(Node::getPrevVisible(node_iter_t(m_MainSel)));
+					setMainSel(Node::getPrevVisible(m_MainSel));
 			break;
 			
 			case KEY_PGDN:
 				if(checkSelection())
-					setMainSel(Node::findRelative(node_iter_t(m_MainSel), visibleRows()));
+					setMainSel(Node::findRelative(m_MainSel, visibleRows()));
 			break;
 			
 			case KEY_PGUP:
 				if(checkSelection())
-					setMainSel(Node::findRelative(node_iter_t(m_MainSel), -visibleRows()));
+					setMainSel(Node::findRelative(m_MainSel, -visibleRows()));
+			break;
+			
+			case KEY_RIGHT:
+				if(checkSelection());
+					expand(m_MainSel);
 			break;
 			
 			case KEY_SPACE:

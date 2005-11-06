@@ -41,6 +41,7 @@ public:
 		Node(std::string const& text)
 		: selected(false), expanded(true)
 		, parent(0), totalChildrenCount(0), level(0)
+		, list(0)
 		{
 			columns.push_back(text);
 		}
@@ -58,9 +59,9 @@ public:
 		
 		void resizeColumns(size_t s);
 		
-		void render(Renderer* renderer, long& y, List& list);
+		void render(Renderer* renderer, long& y);
 
-		void renderFrom(Renderer* renderer, long& y, List& list);
+		void renderFrom(Renderer* renderer, long& y);
 		
 		static List::node_iter_t getPrevVisible(node_iter_t i);
 		static List::node_iter_t getNextVisible(node_iter_t i);
@@ -88,8 +89,13 @@ public:
 		
 		void changeChildrenCount(long change)
 		{
-			if(expanded && parent)
-				parent->changeChildrenCount(change);
+			if(expanded)
+			{
+				if(parent)
+					parent->changeChildrenCount(change);
+				else
+					list->m_RootNode.totalChildrenCount += change;
+			}
 			totalChildrenCount += change;
 		}
 		
@@ -97,13 +103,10 @@ public:
 		std::vector<std::string> columns;
 		bool        selected;
 		bool        expanded;
-		//list_t*     parentList;
 		Node*       parent;
 		long        totalChildrenCount;
-		//bool        hasParent;
 		long        level;
-		//TODO: columns
-
+		List*       list;
 		list_t      children;
 	};
 	
@@ -114,25 +117,47 @@ public:
 	: Wnd(parent, tagLabel, className, id, attributes, ""), m_RootNode("root")
 	, m_Base(0), m_basePos(0), m_MainSel(0)
 	{
-
+		assert(!m_RootNode.parent);
+		m_RootNode.list = this;
+		m_RootNode.setNext(0);
+		m_RootNode.setPrev(0);
 	}
 	
 	void addColumn(ColumnHeader const& column);
 	
+	node_iter_t verify(node_iter_t i);
+	
 	node_iter_t push_back(Node* node)
 	{
+		/*
 		node->columns.resize(m_columnHeaders.size());
 		node_iter_t i = m_RootNode.children.insert(node);
 		node->parent = 0; // Just to be sure
 		node->level = m_RootNode.level + 1;
+		*/
+		//node_iter_t i = push_back(node, &m_RootNode);
+		node->list = this;
+		node->columns.resize(m_columnHeaders.size());
+		m_RootNode.children.insert(node);
+		++m_RootNode.totalChildrenCount;
+		node_iter_t i(node);
+		i->parent = 0;
 		
 		if(!m_Base)
-			m_Base = node_iter_t(node);
+			m_Base = i;
 		if(!m_MainSel)
-			m_MainSel = node_iter_t(node);
+			m_MainSel = i;
 			
-		//++m_RowCount; // Root node is always visible
-
+		return i;
+	}
+	
+	node_iter_t push_back(Node* node, Node* parent)
+	{
+		node->list = this;
+		node->level = parent->level + 1;
+		node->columns.resize(m_columnHeaders.size());
+		node_iter_t i = parent->push_back(node);
+		
 		return i;
 	}
 	
@@ -143,12 +168,17 @@ public:
 			i->expanded = false;
 			if(i->parent)
 				i->parent->changeChildrenCount(-i->totalChildrenCount);
+			int offs = Node::findOffsetTo(m_RootNode.children.begin(), m_Base);
+			setBasePos(offs);
 		}
 		else
 		{
 			i->expanded = true;
 			if(i->parent)
 				i->parent->changeChildrenCount(i->totalChildrenCount);
+			
+			int offs = Node::findOffsetTo(m_RootNode.children.begin(), i);
+			setBasePos(offs);
 		}
 	}
 	
@@ -214,6 +244,10 @@ public:
 	
 	void setBasePos(int pos)
 	{
+		if(pos >= m_RootNode.totalChildrenCount - visibleRows())
+			pos = m_RootNode.totalChildrenCount - visibleRows() - 1;
+		if(pos < 0)
+			pos = 0;
 		m_basePos = pos;
 		updateBase();
 	}
@@ -233,6 +267,8 @@ public:
 	virtual int classID();
 	
 private:
+	bool verify_(node_iter_t i, node_iter_t n);
+	
 	struct ListFormatting
 	{
 		ListFormatting()

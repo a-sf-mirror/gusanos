@@ -1,0 +1,11 @@
+
+Import('env getObjects getBinName conf build subfolder')
+
+env = env.Copy()
+env.Append(LIBS = Split("""
+		omfgutil""")
+	)
+
+parserGen = env.Program(getBinName('parsergen'), getObjects(env))
+
+Return('parserGen')

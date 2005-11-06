@@ -437,6 +437,9 @@ void outputC(ostream& out, istream& in)
 	}
 }
 
+int baz() { struct foo { static int bar() { return 6; } }; printf("%i\n", foo::bar()); }
+
+
 int main()
 {
 	fs::ifstream f("/home/glip/liero/liero.exe", ios::binary);
@@ -447,10 +450,5 @@ int main()
 	for(int i = 0; i < 40; ++i)
 		tc.w[i].writeWeapon();
 
-/*
-	ifstream in("sndhead.bin", ios::binary);
-	ofstream out("sndhead.c");
-	outputC(out, in);
-*/
 	return 0;
 }

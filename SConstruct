@@ -9,26 +9,28 @@ def getBinName(bin):
 	if conf == 'mingw-cross':
 		bin += '.exe'
 	return os.path.join('#bin', conf, bin) # Put executable here so not to confuse
-
+	
 conf = ARGUMENTS.get('conf', 'posix')
 build = ARGUMENTS.get('build', 'release')
 subfolder = os.path.join(conf, build)
 
+exp = ['env', 'getObjects', 'getLibName', 'getBinName', 'conf', 'subfolder', 'build']
 sconscript = ['./GUI/detail/SConscript',
 			'./Utility/detail/SConscript',
             './Console/SConscript',
             './loadpng/SConscript',
             './Goop/SConscript',
             './liero2gus/SConscript',
-            './lua/SConscript',
-            './panzer/SConscript',
+            #'./lua/SConscript',
+			'./lua51/SConscript',
+            #'./panzer/SConscript',
+            './lighter/SConscript',
             #'./IoVM/SConscript',
-			'./parsergen/SConscript',
 			#'./SmallLang/SConscript',
 			]
-			
+					
 env = Environment(
-		CPPPATH = ['.', '#loadpng', '#lua', '#Console', '#GUI', '#Utility'],
+		CPPPATH = ['.', '#loadpng', '#lua51', '#Console', '#GUI', '#Utility'],
 		LIBPATH = [os.path.join('#lib/', subfolder)],
 	)
 	
@@ -145,8 +147,26 @@ def getObjects(env):
 			
 	return objects
 
+# Build parser generator
+parserGen = SConscript('./parsergen/SConscript', exports = exp)
 
-SConscript(sconscript, exports=['env', 'getObjects', 'getLibName', 'getBinName', 'conf', 'subfolder', 'build'])
+def parserGenEmitter(target, source, env):
+	env.Depends(target, parserGen)
+	return (target, source)
+	
+def parserBuilderFunc(target, source, env):
+	os.system('%s %s %s' % (parserGen[0].abspath, str(source[0]), str(target[0]) + '.re'))
+	os.system('re2c %s > %s' % (str(target[0]) + '.re', str(target[0])))
+	return None
+	
+parserBuilder = Builder(action = parserBuilderFunc,
+	emitter = parserGenEmitter,
+	suffix = '.h', src_suffix = '.pg')
+	
+env['BUILDERS']['Parser'] = parserBuilder
+
+# Build the rest
+SConscript(sconscript, exports = exp)
             
 if conf == 'mingw-cross':
 	env.Append(BUILDERS = {'Strip' : Builder(action = os.path.join(mingwPath, 'bin', 'strip') + ' $SOURCE')})
