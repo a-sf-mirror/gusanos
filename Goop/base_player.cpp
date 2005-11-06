@@ -27,8 +27,7 @@ LuaReference BasePlayer::metaTable()
 }
 
 BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options)
-: m_options(options), deaths(0)
-, kills(0), deleteMe(false)
+: m_options(options), stats(new Stats), deleteMe(false)
 , m_worm(0), m_id(0) // TODO: make a invalid_connection_id define thingy
 , m_wormID(INVALID_NODE_ID)
 , m_node(0), m_interceptor(0)
@@ -129,10 +128,11 @@ void BasePlayer::think()
 						break;
 						case SYNC:
 						{
-							kills = data->getInt(32);
-							deaths = data->getInt(32);
+							stats->kills = data->getInt(32);
+							stats->deaths = data->getInt(32);
 							m_name = data->getStringStatic();
 							colour = data->getInt(24);
+							m_options->uniqueID = static_cast<unsigned int>(data->getInt(32));
 						}
 						break;
 						
@@ -141,7 +141,7 @@ void BasePlayer::think()
 							changeName_( data->getStringStatic() );
 						}
 						break;
-											
+
 						case COLOR_CHANGE:
 						{
 							changeColor_(data->getInt(24));
@@ -441,10 +441,11 @@ void BasePlayer::sendSyncMessage( ZCom_ConnID id )
 {
 	ZCom_BitStream *data = new ZCom_BitStream;
 	addEvent(data, SYNC);
-	data->addInt(kills, 32);
-	data->addInt(deaths, 32);
+	data->addInt(stats->kills, 32);
+	data->addInt(stats->deaths, 32);
 	data->addString( m_name.c_str() );
 	data->addInt(colour, 24);
+	data->addInt(static_cast<int>(m_options->uniqueID), 32);
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 
@@ -499,6 +500,8 @@ bool BasePlayerInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from
 #endif
 			return true;
 		} break;
+		
+		case BasePlayer::Other: break; // Do nothing?
 	}
 	return false;
 }
@@ -701,6 +704,8 @@ void BasePlayer::baseActionStop ( BaseActions action )
 				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH, data);
 			}
 		}
+		
+		case DIG: break; // Digging doesn't stop
 		
 		case ACTION_COUNT: break; // Do nothing
 	}

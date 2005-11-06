@@ -233,20 +233,40 @@ int l_gui_wnd_activate(lua_State* L)
 
 	Inserts an item into the list with the column values passed.
 */
-int l_gui_list_insert(lua_State* L)
-{
-	OmfgGUI::List* p = *static_cast<OmfgGUI::List **>(lua_touserdata (L, 1));
-	
-	int c = lua_gettop(L);
+METHOD(OmfgGUI::List, gui_list_insert,
+
+	int c = lua_gettop(context);
 	OmfgGUI::List::Node* n = new OmfgGUI::List::Node("");
 	p->push_back(n);
 	for(int i = 2; i <= c; ++i)
-		n->setText(i - 2, lua_tostring(L, i));
+		n->setText(i - 2, lua_tostring(context, i));
 	
-	//TODO: Push reference to element
+	lua_pushlightuserdata(context, &*n);
 	
-	return 0;
-}
+	return 1;
+)
+
+/*! List:subinsert(node, columns...)
+
+	Inserts an item into the list, under another node, with the column values passed.
+*/
+METHOD(OmfgGUI::List, gui_list_subinsert,
+
+	OmfgGUI::List::Node* parent = (OmfgGUI::List::Node *)lua_touserdata(context, 2);
+	
+	if(!p->verify(parent))
+		return 0;
+			
+	int c = lua_gettop(context);
+	OmfgGUI::List::Node* n = new OmfgGUI::List::Node("");
+	p->push_back(n, parent);
+	for(int i = 3; i <= c; ++i)
+		n->setText(i - 3, lua_tostring(context, i));
+	
+	lua_pushlightuserdata(context, &*n);
+	
+	return 1;
+)
 
 /*! List:clear()
 
@@ -268,7 +288,7 @@ int l_gui_list_clear(lua_State* L)
 int l_gui_list_sort(lua_State* L)
 {
 	OmfgGUI::List* p = *static_cast<OmfgGUI::List **>(lua_touserdata (L, 1));
-	unsigned int column = static_cast<unsigned int>(lua_tonumber(L, 2));
+	unsigned int column = static_cast<unsigned int>(lua_tointeger(L, 2));
 	
 	p->sortNumerically(column);
 
@@ -321,6 +341,7 @@ void addGUIListFunctions(LuaContext& context)
 {
 	context.tableFunctions()
 		("insert", l_gui_list_insert)
+		("subinsert", l_gui_list_subinsert)
 		("clear", l_gui_list_clear)
 		("add_column", l_gui_list_add_column)
 		("sort", l_gui_list_sort)

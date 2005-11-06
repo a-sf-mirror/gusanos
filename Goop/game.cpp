@@ -267,12 +267,12 @@ void Options::registerInConsole()
 	splitScreen = false;
 	
 	console.registerCommands()
-		(string("MAP"), mapCmd, mapCompleter)
-		(string("GAME"), gameCmd)
-		(string("ADDBOT"), addbotCmd)
-		(string("CONNECT"),connectCmd)
-		(string("RCON"), rConCmd, rConCompleter)
-		(string("KICK"), kickCmd, kickCompleter)
+		("MAP", mapCmd, mapCompleter)
+		("GAME", gameCmd)
+		("ADDBOT", addbotCmd)
+		("CONNECT",connectCmd)
+		("RCON", rConCmd, rConCompleter)
+		("KICK", kickCmd, kickCompleter)
 	;
 }
 
@@ -493,7 +493,7 @@ void Game::loadWeapons()
 		WeaponOrder comp;
 		std::sort(weaponList.begin(), weaponList.end(), comp); 
 		
-		for ( int i = 0; i < weaponList.size(); ++i )
+		for ( size_t i = 0; i < weaponList.size(); ++i )
 		{
 			weaponList[i]->setIndex(i);
 		}
@@ -882,7 +882,8 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 			localPlayers.push_back( player );
 			EACH_CALLBACK(i, localplayerInit)
 			{
-				lua.callReference(0, *i, player->luaReference);
+				//lua.callReference(0, *i, player->luaReference);
+				(lua.call(*i), player->luaReference)();
 			}
 			return player;
 		}

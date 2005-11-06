@@ -69,6 +69,17 @@ public:
 		Other
 	};
 	
+	struct Stats
+	{
+		Stats()
+		: deaths(0), kills(0)
+		{
+		}
+		
+		int deaths;
+		int kills;
+	};
+	
 	static LuaReference metaTable();
 
 	// ClassID is Used by zoidcom to identify the class over the network,
@@ -124,14 +135,13 @@ public:
 		return space;
 	}
 	
-	int deaths;
-	int kills;
+	shared_ptr<Stats> stats;
 	
 	bool deleteMe;
 	
 	std::string m_name;
 	int colour;
-	
+
 	LuaReference luaReference;
 	LuaReference luaData;
 	

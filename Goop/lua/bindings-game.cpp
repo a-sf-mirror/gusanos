@@ -56,7 +56,7 @@ int l_game_players(lua_State* L)
 */
 int l_game_localPlayer(lua_State* L)
 {
-	int i = (int)lua_tonumber(L, 1);
+	int i = (int)lua_tointeger(L, 1);
 	if(i >= 0 && i < game.localPlayers.size())
 	{
 		lua.pushReference(game.localPlayers[i]->luaReference);
@@ -72,7 +72,7 @@ int l_game_localPlayer(lua_State* L)
 	Returns the number of kills a player has made.
 */
 LMETHOD(BasePlayer, player_kills,
-	lua_pushnumber(context, p->kills);
+	context.push(p->stats->kills);
 	return 1;
 )
 
@@ -82,7 +82,7 @@ LMETHOD(BasePlayer, player_kills,
 	Returns the number of deaths a player has suffered.
 */
 LMETHOD(BasePlayer, player_deaths,
-	lua_pushnumber(context, p->deaths);
+	context.push(p->stats->deaths);
 	return 1;
 )
 
@@ -91,7 +91,7 @@ LMETHOD(BasePlayer, player_deaths,
 	Returns the name of the player.
 */
 LMETHOD(BasePlayer, player_name,
-	lua_pushstring(context, p->m_name.c_str());
+	context.push(p->m_name.c_str());
 	return 1;
 )
 
@@ -104,8 +104,9 @@ LMETHOD(BasePlayer, player_data,
 		context.pushReference(p->luaData);
 	else
 	{
-		lua_newtable(context);
-		lua_pushvalue(context, -1);
+		context
+			.newtable()
+			.pushvalue(-1);
 		p->luaData = context.createReference();
 	}
 	
@@ -117,7 +118,7 @@ LMETHOD(BasePlayer, player_data,
 	Makes the player send 'text' as a chat message.
 */
 LMETHOD(BasePlayer, player_say,
-	char const* s = lua_tostring(context, 2);
+	char const* s = context.tostring(2);
 	if(s)
 		p->sendChatMsg(s);
 	return 0;
@@ -133,7 +134,7 @@ LMETHOD(BasePlayer, player_selectWeapons,
 	std::vector<WeaponType *> weapons;
 	for(size_t i = 1;; ++i)
 	{
-		lua_rawgeti(context, 2, i);
+		context.rawgeti(2, i);
 		if(lua_isnil(context, -1))
 		{
 			break;
@@ -143,7 +144,7 @@ LMETHOD(BasePlayer, player_selectWeapons,
 			//TODO: Check if this is really a weapon type!
 			WeaponType* weapon = *static_cast<WeaponType **>(lua_touserdata(context, -1));
 			weapons.push_back(weapon);
-			lua_settop(context, -2); // Pop value
+			context.pop(); // Pop value
 		}
 	}
 	
@@ -205,10 +206,10 @@ int l_game_playerIterator(lua_State* L)
 */
 int l_map_isBlocked(lua_State* L)
 {
-	int x1 = (int)lua_tonumber(L, 1);
-	int y1 = (int)lua_tonumber(L, 2);
-	int x2 = (int)lua_tonumber(L, 3);
-	int y2 = (int)lua_tonumber(L, 4);
+	int x1 = lua_tointeger(L, 1);
+	int y1 = lua_tointeger(L, 2);
+	int x2 = lua_tointeger(L, 3);
+	int y2 = lua_tointeger(L, 4);
 	lua_pushboolean(L, game.level.trace(x1, y1, x2, y2, Level::ParticleBlockPredicate()));
 	return 1;
 }
@@ -220,8 +221,8 @@ int l_map_isBlocked(lua_State* L)
 
 int l_map_isParticlePass(lua_State* L)
 {
-	int x = (int)lua_tonumber(L, 1);
-	int y = (int)lua_tonumber(L, 2);
+	int x = lua_tointeger(L, 1);
+	int y = lua_tointeger(L, 2);
 
 	lua_pushboolean(L, game.level.getMaterial(x, y).particle_pass);
 	return 1;

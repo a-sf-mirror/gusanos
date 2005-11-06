@@ -10,6 +10,7 @@ using namespace std;
 
 PlayerOptions::PlayerOptions(std::string const& name_)
 : name(name_), m_nameChanged(false), m_colorChanged(false)
+, uniqueID(0)
 {
 	aimAcceleration = AngleDiff(0.1);
 	//aimFriction = 0.05;

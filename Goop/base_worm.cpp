@@ -953,10 +953,10 @@ void BaseWorm::die()
 	m_isActive = false;
 	if (m_owner)
 	{
-		m_owner->deaths++;
+		m_owner->stats->deaths++;
 		game.displayKillMsg(m_owner, m_lastHurt); //TODO: Record what weapon it was?
 	}
-	if (m_lastHurt && m_lastHurt != m_owner) m_lastHurt->kills++;
+	if (m_lastHurt && m_lastHurt != m_owner) m_lastHurt->stats->kills++;
 	
 	m_ninjaRope->remove();
 	m_timeSinceDeath = 0;

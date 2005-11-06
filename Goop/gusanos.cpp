@@ -63,19 +63,40 @@ void startGame(const std::string&)
     //menu = false;
 }
 
+// Parser test
+
+/*
+#include "test.h"
+
+struct TestParser
+{
+	TestParser(std::istream& str_)
+	: str(str_)
+	{
+	}
+	
+	size_t read(char* p, size_t s)
+	{
+		str.read(p, s);
+		return str.gcount();
+	}
+	
+	std::istream& str;
+};*/
+
 int main(int argc, char **argv)
 {
-	/*
-	HTTP::Host host("comser.liero.org.pl");
-	HTTP::Request* r = host.get("gusserv.php?action=list");
-	
-	while(!r->think()) ;
-	
-	delete r;
+/*
+	std::stringstream ss("a = 1\n on foo()\nbar(1, n = 10)\n");
+	TGrammar<TestParser> parser((TestParser(ss)));
+	parser.rule_lines();
+	if(parser.full())
+	{
+		cout << "Success" << endl;
+	}
 	
 	return 0;
-	*/
-	
+*/
 	game.init(argc, argv);
 	
 #ifdef POSIX
@@ -340,7 +361,8 @@ int main(int argc, char **argv)
 
 		EACH_CALLBACK(i, afterRender)
 		{
-			lua.callReference(*i);
+			//lua.callReference(*i);
+			(lua.call(*i))();
 		}
 		
 		gfx.updateScreen();

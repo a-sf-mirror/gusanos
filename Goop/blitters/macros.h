@@ -131,6 +131,7 @@
 		pixel_t_1* src = src_; \
 		op_1; ++dest_; ++src_; } }
 		
+
 #define SPRITE_X_LOOP_NOALIGN(par_, op_1, op_2) { \
 	int c_ = x2 - x1; \
 	pixel_t_1* dest_ = (pixel_t_1 *)where->line[y] + x; \
@@ -142,6 +143,20 @@
 	while(c_-- >= 1) { \
 		pixel_t_1* dest = dest_; \
 		pixel_t_1* src = src_; \
+		op_1; ++dest_; ++src_; } }
+		
+
+#define SPRITE_X_LOOP_NOALIGN_T(par_, op_1, op_2) { \
+	int c_ = x2 - x1; \
+	pixel_t_dest_1* dest_ = ((pixel_t_dest_1 *)where->line[y]) + x; \
+	pixel_t_src_1* src_  = ((pixel_t_src_1 *)from->line[y1]) + x1; \
+	for(; c_ >= par_; (c_ -= par_), (dest_ += par_), (src_ += par_)) { \
+		pixel_t_dest_2* dest = (pixel_t_dest_2 *)dest_; \
+		pixel_t_src_2* src = (pixel_t_src_2 *)src_; \
+		op_2; } \
+	while(c_-- >= 1) { \
+		pixel_t_dest_1* dest = dest_; \
+		pixel_t_src_1* src = src_; \
 		op_1; ++dest_; ++src_; } }
 
 #define WULINE(a, b, OFFA, OFFB, DEPTH, SHIFT, MAX, BLEND) { \
@@ -171,6 +186,10 @@
 				} \
 				b##f += grad; \
 		} } }
+		
+/* These are unused atm
+
+*/
 		
 #define SIGN(x_) ((x_) < 0 ? -1 : (x_) > 0 ? 1 : 0)
 

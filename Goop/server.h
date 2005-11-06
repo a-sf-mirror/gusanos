@@ -3,22 +3,27 @@
 
 #ifndef DISABLE_ZOIDCOM
 
+#include "base_player.h"
+
 #include <zoidcom.h>
+#include <map>
+#include <boost/shared_ptr.hpp>
 
 class Server : public ZCom_Control
 {
-	private:
+private:
 	// Flag to refuse connection while waiting for all players to aknowledge disconnection
 	bool m_preShutdown;
+	std::map<unsigned int, boost::shared_ptr<BasePlayer::Stats> > savedScores;
 	
-	public:
+public:
 	
 	Server( int _udpport );
 	~Server();
 	
 	void preShutdown() { m_preShutdown = true; }
 	
-	protected:
+protected:
 		
 	// called on incoming connections
 	bool ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply );

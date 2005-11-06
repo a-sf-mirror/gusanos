@@ -1,6 +1,7 @@
 #ifndef DEDSERV
 
 #include "blitters.h"
+#include "colors.h"
 #include "macros.h"
 
 #include <algorithm>

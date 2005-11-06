@@ -545,8 +545,8 @@ void PlayRandomSound::run( ActionParams const& params )
 #ifndef DEDSERV
 	if ( !sounds.empty() )
 	{
-		int sound = rnd() * sounds.size(); // TODO: Make an integer version of rnd()
-		if ( sounds[sound] != NULL )
+		int sound = rndInt(sounds.size()); // TODO: Make an integer version of rnd()
+		if ( sounds[sound] )
 		{
 			sounds[sound]->play2D(params.object,loudness,pitch,pitchVariation);
 		}

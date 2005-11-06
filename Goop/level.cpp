@@ -371,13 +371,13 @@ void Level::loaderSucceeded()
 	{
 		LocalSetColorDepth cd(8);
 		lightmap = create_bitmap(material->w, material->h);
-		clear_to_color(lightmap, 200);
-		/*for ( int x = 0; x < lightmap->w ; ++x )
+		clear_to_color(lightmap, 50);
+		for ( int x = 0; x < lightmap->w ; ++x )
 		for ( int y = 0; y < lightmap->h ; ++y )
 		{
 			if ( unsafeGetMaterial(x,y).blocks_light )
 				putpixel( lightmap, x, y, 200 );
-		}*/
+		}
 	}
 	
 	// Make the domain one pixel larger than the level so that things like ninjarope hook

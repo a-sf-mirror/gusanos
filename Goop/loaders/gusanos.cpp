@@ -261,7 +261,7 @@ bool LuaLoader::load(Script* script, fs::path const& path)
 	}
 	lua_settop(lua, -2); // Pop table or nil
 	
-	lua.load(f);
+	lua.load(name, f);
 	
 	script->lua = &lua;
 	script->table = name;

@@ -27,6 +27,14 @@ public:
 	void setPos(float x, float y);
 	void interpolateTo(float x, float y, float factor);
 	void interpolateTo(Vec dest, float factor);
+/*
+<<<<<<< viewport.h
+	
+	
+	BITMAP* getBitmap() { return m_dest; }
+=======
+*/
+	void drawLight(IVec const& v); // TEMP
 	
 	IVec getPos()
 	{
@@ -44,7 +52,9 @@ public:
 	}
 	
 	BITMAP* getBitmap() { return dest; }
-	
+/*
+>>>>>>> 1.9
+	*/
 	LuaReference luaReference;
 	
 	BITMAP* dest;

@@ -71,10 +71,52 @@ public:
 		LuaContext& m_context;
 	};
 	
+	struct CallProxy
+	{
+		CallProxy(LuaContext& context, LuaReference ref, int returns)
+		: m_context(context), m_ref(ref), m_params(0), m_returns(returns)
+		{
+			m_context.push(errorReport);
+			m_context.push(ref);
+		}
+		
+		template<class T>
+		CallProxy const& operator,(T const& p) const
+		{
+			++m_params;
+			m_context.push(p);
+			return *this;
+		}
+		
+		int operator()() const
+		{
+			if(lua_isnil(m_context, -m_params-1))
+				return 0;
+			
+			int r = m_context.call(m_params, m_returns, -m_params-2);
+			
+			if(r < 0)
+			{
+				m_context.pop(1);
+				m_context.destroyReference(m_ref);
+				return 0;
+			}
+			lua_remove(m_context, -r-1);
+			return r;
+		}
+
+		LuaContext& m_context;
+		LuaReference m_ref;
+		mutable int m_params;
+		int m_returns;
+	};
+	
+	static int errorReport(lua_State* L);
+	
 	LuaContext();
-	
+	/*
 	LuaContext(istream& stream);
-	
+	*/
 	LuaContext(lua_State* state_);
 	
 	void init();
@@ -83,33 +125,63 @@ public:
 	
 	static const char * istreamChunkReader(lua_State *L, void *data, size_t *size);
 
-	void load(istream& stream);
+	void load(std::string const& chunk, istream& stream);
+	/*
+	void load(std::string const& chunk, istream& stream, string const& table);
+	*/
+	int call(int params = 0, int returns = 0, int errfunc = 0);
 	
-	void load(istream& stream, string const& table);
+	LuaContext& push(lua_CFunction v)
+	{
+		lua_pushcfunction(m_State, v);
+		return *this;
+	}
 	
-	int call(int params = 0, int returns = 0);
+	LuaContext& push(lua_Number v)
+	{
+		lua_pushnumber(m_State, v);
+		return *this;
+	}
 	
-	void push(lua_Number v);
+	LuaContext& push(char const* v)
+	{
+		lua_pushstring(m_State, v);
+		return *this;
+	}
 	
-	void push(const char* v);
+	LuaContext& push(std::string const& v)
+	{
+		push(v.c_str());
+		return *this;
+	}
 	
-	void push(std::string const& v)
-	{ push(v.c_str()); }
+	LuaContext& push(LuaReference v)
+	{
+		pushReference(v);
+		return *this;
+	}
 	
-	void push(LuaReference v);
+	LuaContext& push(bool v)
+	{
+		lua_pushboolean(m_State, v);
+		return *this;
+	}
 	
-	void push(bool v);
-	
-	void push(int v);
+	LuaContext& push(int v)
+	{
+		lua_pushinteger(m_State, static_cast<lua_Integer>(v));
+		return *this;
+	}
 			
 	template<class T>
-	void push(T* v)
+	LuaContext& push(T* v)
 	{
 		v->pushLuaReference();
+		return *this;
 	}
 	
 	template<class T>
-	void push(std::vector<T> const& v)
+	LuaContext& push(std::vector<T> const& v)
 	{
 		lua_newtable(m_State);
 		for(size_t n = 0; n < v.size(); ++n)
@@ -117,6 +189,7 @@ public:
 			push(v[n]);
 			lua_rawseti(m_State, -2, n + 1);
 		}
+		return *this;
 	}
 	
 	template<class T>
@@ -153,6 +226,47 @@ public:
 		return p;
 	}
 	
+	LuaContext& pushvalue(int i)
+	{
+		lua_pushvalue(m_State, i);
+		return *this;
+	}
+	
+	LuaContext& rawgeti(int table, int key)
+	{
+		lua_rawgeti(m_State, table, key);
+		return *this;
+	}
+	
+	LuaContext& rawseti(int table, int key)
+	{
+		lua_rawseti(m_State, table, key);
+		return *this;
+	}
+	
+	char const* tostring(int i)
+	{
+		return lua_tostring(m_State, i);
+	}
+	
+	LuaContext& newtable()
+	{
+		lua_newtable(m_State);
+		return *this;
+	}
+	
+	LuaContext& pop(int c = 1)
+	{
+		lua_settop(m_State, (-1)-c);
+		return *this;
+	}
+	
+	CallProxy call(LuaReference ref, int returns = 0)
+	{
+		return CallProxy(*this, ref, returns);
+	}
+	
+/*
 	int callReference(LuaReference ref);
 	
 	template<class T1>
@@ -216,16 +330,11 @@ public:
 	}
 	
 	// Add more when needed...
-	
+*/
 	template<class T>
 	inline T get(int idx)
 	{
 		return T();
-	}
-		
-	void pop(int num)
-	{
-		lua_settop(m_State, -1-num);
 	}
 	
 	template<class T>

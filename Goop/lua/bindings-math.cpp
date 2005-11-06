@@ -61,10 +61,11 @@ int l_floor(lua_State* L)
 */
 int l_randomint(lua_State* L)
 {
-	int l = (int)luaL_checknumber(L, 1);
-	int u = (int)luaL_checknumber(L, 2);
+	int l = lua_tointeger(L, 1);
+	int u = lua_tointeger(L, 2);
 	
-	lua_pushnumber(L, l + (unsigned int)(rndgen()) % (u - l + 1));
+	//lua_pushnumber(L, l + (unsigned int)(rndgen()) % (u - l + 1));
+	lua_pushinteger(L, l + rndInt(u - l + 1));
 	
 	return 1;
 }

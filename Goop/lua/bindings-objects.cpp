@@ -49,17 +49,17 @@ int shootFromObject(lua_State* L, BaseObject* object)
 		case 10: distanceOffset = lua_tonumber(L, 10);
 		case 9:  angleOffset = AngleDiff(lua_tonumber(L, 9));
 		case 8:  distribution = AngleDiff(lua_tonumber(L, 8));
-		case 7:  amountVariation = (int)lua_tonumber(L, 7);
+		case 7:  amountVariation = lua_tointeger(L, 7);
 		case 6:  motionInheritance = lua_tonumber(L, 6);
 		case 5:  speedVariation = lua_tonumber(L, 5);
 		case 4:  speed = lua_tonumber(L, 4);
-		case 3:  amount = (int)lua_tonumber(L, 3);
+		case 3:  amount = lua_tointeger(L, 3);
 	}
 
 	char dir = object->getDir();
 	Angle baseAngle(object->getAngle() + angleOffset * dir);
 	
-	int realAmount = amount + int(rnd()*amountVariation);
+	int realAmount = amount + rndInt(amountVariation); // int(rnd()*amountVariation);
 	for(int i = 0; i < realAmount; ++i)
 	{
 		Angle angle = baseAngle + distribution * midrnd();

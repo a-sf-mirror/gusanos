@@ -47,6 +47,7 @@ void KeyHandler::init()
 {
 	install_keyboard();
 	
+/*
 	// Map as identity by default
 	for(int i = 0; i < KEY_MAX; ++i)
 	{
@@ -55,7 +56,8 @@ void KeyHandler::init()
 		capsCharMap[i] = shiftCharMap[i] = toupper(charMap[i]);
 	}
 	
-	//keyboard_ucallback = keyMapCallback; // Install key mapping callback
+	keyboard_ucallback = keyMapCallback; // Install key mapping callback
+*/
 }
 
 void KeyHandler::shutDown()

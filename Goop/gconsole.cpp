@@ -309,7 +309,7 @@ void GConsole::varCbFont( std::string oldValue )
 #endif
 void GConsole::init()
 {
-	//keyHandler.init();
+	keyHandler.init();
 	
 	//Connect the handlers as group 0 so they are called first
 #ifndef DEDSERV

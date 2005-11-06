@@ -6,6 +6,7 @@
 #include "gconsole.h"
 #include "glua.h"
 #include "omfgutil_text.h"
+#include "util/stringbuild.h"
 #include <boost/bind.hpp>
 
 #include <string>
@@ -24,7 +25,8 @@ string eventStart(size_t index, Player::Actions action, list<string> const& args
 		
 		EACH_CALLBACK(i, localplayerEvent[action])
 		{
-			int n = lua.callReference(1, *i, player.luaReference, true);
+			//int n = lua.callReference(1, *i, player.luaReference, true);
+			int n = (lua.call(*i, 1), player.luaReference, true)();
 			if(n > 0 && lua.get<bool>(-1))
 				ignore = true;
 			lua.pop(n);
@@ -46,7 +48,8 @@ string eventStop(size_t index, Player::Actions action, list<string> const& args)
 		
 		EACH_CALLBACK(i, localplayerEvent[action])
 		{
-			int n = lua.callReference(1, *i, player.luaReference, false);
+			//int n = lua.callReference(1, *i, player.luaReference, false);
+			int n = (lua.call(*i, 1), player.luaReference, false)();
 			if(n > 0 && lua.get<bool>(-1))
 				ignore = true;
 			lua.pop(n);
@@ -70,8 +73,8 @@ void registerPlayerInput()
 		for(int action = Player::LEFT; action < Player::ACTION_COUNT; ++action)
 		{
 			console.registerCommands()
-				("+P" + cast<string>(i) + actionNames[action], boost::bind(eventStart, i, (Player::Actions)action, _1))
-				("-P" + cast<string>(i) + actionNames[action], boost::bind(eventStop, i, (Player::Actions)action, _1))
+				((S_("+P") << i << actionNames[action]), boost::bind(eventStart, i, (Player::Actions)action, _1))
+				((S_("-P") << i << actionNames[action]), boost::bind(eventStop, i, (Player::Actions)action, _1))
 			;
 		}
 	}

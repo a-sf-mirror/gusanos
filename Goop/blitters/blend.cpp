@@ -1,6 +1,7 @@
 #ifndef DEDSERV
 
 #include "blitters.h"
+#include "colors.h"
 #include "macros.h"
 
 #include <algorithm>
@@ -67,7 +68,8 @@ void putpixelwu_blend_16(BITMAP* where, float x, float y, Pixel color1, int fact
 	int xi = xf >> 5;
 	int yi = yf >> 5;
 	
-	if((unsigned int)xi < where->w - 1 && (unsigned int)yi < where->h - 1)
+	if((unsigned int)xi < (unsigned int)(where->w - 1)
+	&& (unsigned int)yi < (unsigned int)(where->h - 1))
 	{
 		int fx = xf & 31;
 		int fy = yf & 31;

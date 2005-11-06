@@ -14,9 +14,6 @@ if conf == 'posix':
 	        zoidcom boost_filesystem-gcc boost_signals-gcc"""),
 			LINKFLAGS = '-Wl,--export-dynamic'
 		)
-		
-		#Xpm Xext X11
-		
 elif conf == 'mingw-cross':
 	env.Append(LIBS = Split("""
 	        png13 z fmod
@@ -58,3 +55,4 @@ exename = 'gusanos'
 if build == 'dedserv' or build == 'dedserv-debug':
 	exename += '-ded'
 env.Program(getBinName(exename), getObjects(env))
+#env.Parser('test.h', 'test.pg')

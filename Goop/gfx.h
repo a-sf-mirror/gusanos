@@ -56,6 +56,8 @@ public:
 	BITMAP* buffer;
 
 	int m_distortionAA;
+	
+	int m_haxWormLight; //TEMP HAX
 #endif
 	
 	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL, bool keepAlpha = false);

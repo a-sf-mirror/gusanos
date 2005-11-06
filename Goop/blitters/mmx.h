@@ -78,12 +78,11 @@ union mmx_reg
 #define pcmpeqw_rr(A, B) mmx_rr(pcmpeqw, A, B)
 #define pcmpeqd_rm(A, B) mmx_rm(pcmpeqd, A, B)
 
-
 #define pmullw_rr(A, B) mmx_rr(pmullw, A, B)
 #define pmulhw_rr(A, B) mmx_rr(pmulhw, A, B)
 #define pmulhw_rm(A, B) mmx_rm(pmulhw, A, B)
 #define pmullw_rm(A, B) mmx_rm(pmullw, A, B)
-
+#define pmulhuw_rr(A, B) mmx_rr(pmulhuw, A, B)
 
 
 #define mmx_rri(op, regd, regs, imm) \

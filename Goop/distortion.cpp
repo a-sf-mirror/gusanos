@@ -6,7 +6,8 @@
 #include <vector>
 #include "omfgutil_math.h"
 #include "gfx.h"
-#include "blitters/blitters.h"
+//#include "blitters/blitters.h"
+#include "blitters/colors.h"
 
 #include <string>
 

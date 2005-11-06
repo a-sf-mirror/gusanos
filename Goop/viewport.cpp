@@ -4,6 +4,7 @@
 
 #include "game.h"
 #include "sfx.h"
+#include "gfx.h"
 #include <allegro.h>
 #include "base_worm.h"
 #include "base_player.h"
@@ -99,7 +100,7 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 		for(int y = 0; y < s; ++y)
 		for(int x = 0; x < s; ++x)
 		{
-			double v = 0.2*(double(s)/2 - (IVec(x, y) - IVec(s/2, s/2)).length());
+			double v = 1.0*(double(s)/2 - (IVec(x, y) - IVec(s/2, s/2)).length());
 			if(v < 0.0)
 				v = 0.0;
 			int iv = int(v);
@@ -108,21 +109,31 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	}
 }
 
+void Viewport::drawLight(IVec const& v)
+{
+	IVec off(m_pos);
+	IVec loff(v - IVec(testLight->w/2, testLight->h/2));
+	
+	Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
+	r &= Rect(testLight) + loff;
+	
+	Culler<TestCuller> testCuller(TestCuller(testFade, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
+
+	testCuller.cullOmni(v.x, v.y);
+}
+
+
 void Viewport::render(BasePlayer* player)
 {
 	int offX = static_cast<int>(m_pos.x);
 	int offY = static_cast<int>(m_pos.y);
 	
-//#if 0 // TEMP
 	game.level.draw(dest, offX, offY);
-//#else
-	//Blitters::drawSprite_multsec_32_with_8(dest, game.level.image, testFade, -offX, -offY, -offX, -offY, 0, 0, 0, 0);
-//#endif
 
-	//clear_to_color(testFade, 0);
+#if 0
 	if ( game.level.lightmap )
 		blit( game.level.lightmap, testFade, offX,offY, 0, 0, testFade->w, testFade->h );
-	
+#endif
 
 #ifdef USE_GRID
 	for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
@@ -142,23 +153,16 @@ void Viewport::render(BasePlayer* player)
 	}
 #endif
 
-#if 1
+#if 0
+	if(gfx.m_haxWormLight)
 	{
 		BasePlayer* player = game.localPlayers[0];
 	
 		BaseWorm* worm = player->getWorm();
 		if(worm->isActive())
 		{
-			IVec off(m_pos);
 			IVec v(worm->pos);
-			IVec loff(v - IVec(testLight->w/2, testLight->h/2));
-			
-			Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
-			r &= Rect(testLight) + loff;
-			
-			Culler<TestCuller> testCuller(TestCuller(testFade, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
-	
-			//testCuller.cullOmni(v.x, v.y);
+			drawLight(v);
 		}
 	}
 #endif
@@ -174,18 +178,22 @@ void Viewport::render(BasePlayer* player)
 				int x = (int)renderPos.x - offX;
 				int y = (int)renderPos.y - offY;
 				bool ownViewport = (*playerIter == player);
-				lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
+				//lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
+				(lua.call(*i), (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport)();
 			}
 		}
 	}
-	
+
+#if 0
 	Blitters::drawSprite_mult_32_with_8(dest, testFade, 0, 0, 0, 0, 0, 0);
+#endif
 	
 	if(BaseWorm* worm = player->getWorm())
 	{
 		EACH_CALLBACK(i, viewportRender)
 		{
-			lua.callReference(0, *i, luaReference, worm->luaReference);
+			//lua.callReference(0, *i, luaReference, worm->luaReference);
+			(lua.call(*i), luaReference, worm->luaReference)();
 		}
 	}
 }

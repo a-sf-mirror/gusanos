@@ -35,8 +35,30 @@ struct LuaReference
 		if(!p) return 0; \
 		body_ }
 		
+#define BINOP(type_, name_, body_) \
+	int l_##name_(lua_State* L_) { \
+		LuaContext context(L_); \
+		void* a_ = lua_touserdata (context, 1); \
+		if(!a_) return 0; \
+		void* b_ = lua_touserdata (context, 2); \
+		if(!b_) return 0; \
+		type_* a = *static_cast<type_ **>(a_); \
+		type_* b = *static_cast<type_ **>(b_); \
+		body_ }
+		
 #define CLASS(name_, body_) { \
 	lua_newtable(context); \
+	lua_pushstring(context, "__index"); \
+	lua_newtable(context); \
+	context.tableFunctions() \
+		body_ ; \
+	lua_rawset(context, -3); \
+	name_##MetaTable = context.createReference(); }
+	
+#define CLASSM(name_, meta_, body_) { \
+	lua_newtable(context); \
+	context.tableFunctions() \
+		meta_ ; \
 	lua_pushstring(context, "__index"); \
 	lua_newtable(context); \
 	context.tableFunctions() \

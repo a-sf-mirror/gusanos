@@ -32,6 +32,7 @@ struct PlayerOptions
 	float ropeAdjustSpeed;
 	int colour;
 	std::string name;
+	unsigned int uniqueID;
 	
 	std::string setColour(std::list<std::string> const& args);
 	

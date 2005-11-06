@@ -66,9 +66,9 @@ int l_sprites_render(lua_State* L)
 		
 	BITMAP* b = (BITMAP *)lua_touserdata(L, 2);
 		
-	int frame = (int)lua_tonumber(L, 3);
-	int x = (int)lua_tonumber(L, 4);
-	int y = (int)lua_tonumber(L, 5);
+	int frame = lua_tointeger(L, 3);
+	int x = lua_tointeger(L, 4);
+	int y = lua_tointeger(L, 5);
 	s->getSprite(frame)->draw(b, x, y);
 #endif
 	return 0;
@@ -118,21 +118,21 @@ int l_font_render(lua_State* L)
 		
 	std::string s(sc);
 		
-	int x = static_cast<int>(lua_tonumber(L, 4));
-	int y = static_cast<int>(lua_tonumber(L, 5));
+	int x = lua_tointeger(L, 4);
+	int y = lua_tointeger(L, 5);
 	
 	int cr = 255, cg = 255, cb = 255;
 	int flags = 0;
 	
 	if(lua_gettop(L) >= 8)
 	{
-		cr = static_cast<int>(lua_tonumber(L, 6));
-		cg = static_cast<int>(lua_tonumber(L, 7));
-		cb = static_cast<int>(lua_tonumber(L, 8));
+		cr = lua_tointeger(L, 6);
+		cg = lua_tointeger(L, 7);
+		cb = lua_tointeger(L, 8);
 		
 		if(lua_gettop(L) >= 9)
 		{
-			flags = static_cast<int>(lua_tonumber(L, 9));
+			flags = lua_tointeger(L, 9);
 		}
 	}
 	
@@ -243,6 +243,11 @@ METHOD(WeaponType, weapon_name,
 	return 1;
 )
 
+BINOP(WeaponType, weapon_eq,
+	context.push(a == b);
+	return 1;
+)
+
 int l_maps(lua_State* L)
 {
 	LuaContext context(L);
@@ -300,7 +305,9 @@ void initResources()
 		/* Insert stuff here */
 	)
 	
-	CLASS(weaponType,
+	CLASSM(weaponType,
+		("__eq", l_weapon_eq)
+	,
 		("next", l_weapon_next)
 		("prev", l_weapon_prev)
 		("name", l_weapon_name)

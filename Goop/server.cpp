@@ -6,6 +6,8 @@
 #include "base_player.h"
 #include "player_options.h"
 #include "network.h"
+#include "omfgutil_math.h"
+#include "omfgutil_macros.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -42,6 +44,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 		{
 			std::string name = _data.getStringStatic();
 			int colour = _data.getInt(24);
+			unsigned int uniqueID = static_cast<unsigned int>(_data.getInt(32));
 
 			BaseWorm* worm = game.addWorm(true);
 			if ( NetWorm* netWorm = dynamic_cast<NetWorm*>(worm) )
@@ -49,6 +52,24 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 				netWorm->setOwnerId(_id);
 			}
 			BasePlayer* player = game.addPlayer ( Game::PROXY );
+			
+			let_(i, savedScores.find(uniqueID));
+			if(i != savedScores.end())
+			{
+				player->stats = i->second;
+				player->getOptions()->uniqueID = uniqueID;
+			}
+			else
+			{
+				do
+				{
+					uniqueID = rndgen();
+				} while(uniqueID);
+				
+				player->getOptions()->uniqueID = uniqueID;
+				savedScores[uniqueID] = player->stats;
+			}
+			
 			player->colour = colour;
 			player->localChangeName( name );
 			console.addLogMsg( "* " + player->m_name + " HAS JOINED THE GAME");

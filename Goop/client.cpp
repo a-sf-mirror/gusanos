@@ -30,6 +30,8 @@ void Client::requestPlayer(PlayerOptions const& playerOptions)
 	req->addInt(Network::PLAYER_REQUEST,8);
 	req->addString( playerOptions.name.c_str() );
 	req->addInt(playerOptions.colour, 24);
+	req->addInt(playerOptions.uniqueID, 32);
+	std::cerr << "Sent ID: " << playerOptions.uniqueID << std::endl;
 	ZCom_sendData( network.getServerID(), req, eZCom_ReliableOrdered );
 }
 
