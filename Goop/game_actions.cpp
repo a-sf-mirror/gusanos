@@ -7,6 +7,7 @@
 #include "exp_type.h"
 #ifndef DEDSERV
 #include "sound.h"
+#include "sound1d.h"
 #include "sprite_set.h"
 #endif
 #include "omfgutil_text.h"
@@ -34,6 +35,7 @@ void registerGameActions()
 	game.actionList["play_sound"] = playSound;
 	game.actionList["play_random_sound"] = playRandomSound;
 	game.actionList["play_sound_static"] = playSoundStatic;
+	game.actionList["play_global_sound"] = playGlobalSound;
 	game.actionList["delay_fire"] = delayFire;
 	game.actionList["add_angle_speed"] = addAngleSpeed;
 	game.actionList["push"] = push;
@@ -45,6 +47,7 @@ void registerGameActions()
 	game.actionList["repel"] = repel;
 	game.actionList["damp"] = damp;
 	game.actionList["apply_map_effect"] = applyMapEffect;
+	game.actionList["put_particle"] = putParticle;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -238,6 +241,61 @@ void UniformShootParticles::run( ActionParams const& params )
 }
 
 UniformShootParticles::~UniformShootParticles()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* putParticle( const vector< string >& params )
+{
+	return new PutParticle(params);
+}
+
+PutParticle::PutParticle( const vector< string >& params )
+: BaseAction(0)
+{
+	type = NULL;
+	x = 0;
+	y = 0;
+	xspd = 0;
+	yspd = 0;
+	if ( params.size() >= 1 )
+	{
+		type = partTypeList.load(params[0]);
+	}
+	if( params.size() >= 2 )
+	{
+		x = cast<float>(params[1]);
+	}
+	if( params.size() >= 3 )
+	{
+		y = cast<float>(params[2]);
+	}
+	if( params.size() >= 4 )
+	{
+		xspd = cast<float>(params[3]);
+	}
+	if( params.size() >= 5 )
+	{
+		yspd = cast<float>(params[4]);
+	}
+	if( params.size() >= 6 )
+	{
+		angle = Angle( cast<float>(params[5]) );
+	}
+}
+
+void PutParticle::run( ActionParams const& params )
+{
+	if (type)
+	{
+		type->newParticle(type, Vec(x,y), Vec(xspd,yspd), 1, 0, angle);
+	}
+}
+
+PutParticle::~PutParticle()
 {
 }
 
@@ -606,6 +664,63 @@ void PlaySoundStatic::run( ActionParams const& params )
 }
 
 PlaySoundStatic::~PlaySoundStatic()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+BaseAction* playGlobalSound( const vector< string >& params )
+{
+	return new PlayGlobalSound(params);
+}
+
+PlayGlobalSound::PlayGlobalSound( const vector< string >& params )
+: BaseAction(0)
+{
+#ifndef DEDSERV
+	sound = NULL;
+	volume = 1;
+	volumeVariation = 0;
+	pitch = 1;
+	pitchVariation = 0;
+
+	if ( params.size() > 0 )
+	{
+		sound = sound1DList.load(params[0]);
+	}
+	if( params.size() > 1 )
+	{
+		volume = cast<float>(params[1]);
+	}
+	if( params.size() > 2 )
+	{
+		volumeVariation = cast<float>(params[2]);
+	}
+	if( params.size() > 3 )
+	{
+		pitch = cast<float>(params[3]);
+	}
+	if( params.size() > 4 )
+	{
+		pitchVariation = cast<float>(params[4]);
+	}
+#endif
+}
+
+void PlayGlobalSound::run( ActionParams const& params )
+{
+#ifndef DEDSERV
+	if (sound != NULL)
+	{
+		//allegro_message("moo");
+		sound->play( volume, pitch, volumeVariation, pitchVariation );
+	}
+#endif
+}
+
+PlayGlobalSound::~PlayGlobalSound()
 {
 }
 

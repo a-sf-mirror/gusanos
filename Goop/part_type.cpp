@@ -92,6 +92,7 @@ PartType::PartType()
 	maxSpeed		= -1;
 	colLayer		= 0;
 	health			= 100;
+	radius			= 0;
 	
 	renderLayer = Grid::WormRenderLayer;
 #ifndef DEDSERV
@@ -238,6 +239,7 @@ bool PartType::load(fs::path const& filename)
 
 					else if ( var == "angular_friction" ) angularFriction = cast<Angle>(val);
 					else if ( var == "health" ) health = cast<float>(val);
+					else if ( var == "radius" ) radius = cast<float>(val);
 
 					else if ( var == "line_to_origin" ) 
 						line2Origin = ( cast<int>(val) == 1 );
@@ -293,7 +295,7 @@ bool PartType::load(fs::path const& filename)
 						else if ( val == "bitmap" && tokens.size() >= 4)
 							distortion = new Distortion( bitmapMap( tokens[3] ) );
 					}
-					else if ( var == "distort_magnitude" ) distortMagnitude = cast<float>(val); //<GLIP> Fixed a spelling error, magnitud -> magnitude
+					else if ( var == "distort_magnitude" ) distortMagnitude = cast<float>(val);
 #else
 					else if ( var == "distortion" ) /* ignore */;
 					else if ( var == "distort_magnitude" ) /* ignore */;

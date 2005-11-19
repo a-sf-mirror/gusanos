@@ -49,6 +49,7 @@ class PartType
 	float damping;
 	float acceleration;
 	float maxSpeed;
+	float radius; //Hax!
 	int repeat;
 	AngleDiff angularFriction;
 	int colLayer;

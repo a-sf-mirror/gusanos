@@ -169,9 +169,8 @@ int main(int argc, char **argv)
 			
 			if ( game.isLoaded() && game.level.isLoaded() )
 			{
-#ifdef USE_GRID
 				
-				game.level.think();
+#ifdef USE_GRID
 				
 				for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
 				{
@@ -215,6 +214,18 @@ int main(int argc, char **argv)
 						(*objIter)->removeRefsToPlayer(*iter);
 					}
 #endif
+
+					if ( Player* player = dynamic_cast<Player*>(*iter) )
+					{
+						foreach ( p, game.localPlayers )
+						{
+							if ( player == *p )
+							{
+								game.localPlayers.erase(p);
+								break;
+							}
+						}
+					}
 					(*iter)->removeWorm();
 					delete *iter;
 					game.players.erase(iter);

@@ -15,6 +15,7 @@ struct Material
 	bool blocks_light;
 	bool destroys_water;
 	bool creates_water;
+	bool is_stagnated_water;
 	int damage;
 	
 	// Use as read only

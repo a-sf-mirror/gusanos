@@ -12,6 +12,7 @@
 #include "level_effect.h"
 #include "viewport.h"
 #include "culling.h"
+#include "events.h"
 
 
 #include <allegro.h>
@@ -75,6 +76,8 @@ private:
 Level::Level()
 {
 	loaded = false;
+	m_firstFrame = true;
+	m_events = 0;
 	
 #ifndef DEDSERV
 	image = NULL;
@@ -83,11 +86,6 @@ Level::Level()
 	lightmap = NULL;
 #endif
 	material = NULL;
-	
-	for ( int i = 0; i < m_materialList.size() ; ++i )
-	{
-		m_materialList[i].index = i;
-	}
 
 	// Rock
 	m_materialList[0].worm_pass = false;
@@ -122,6 +120,16 @@ Level::Level()
 	m_materialList[7].worm_pass = false;
 	m_materialList[7].particle_pass = false;
 	m_materialList[7].draw_exps = false;
+	
+	for ( int i = 0; i < m_materialList.size() ; ++i )
+	{
+		m_materialList[i].index = i;
+		if ( m_materialList[i].flows && !m_materialList[i].is_stagnated_water && i < m_materialList.size()-1 )
+		{
+			m_materialList[i+1] = m_materialList[i];
+			m_materialList[i+1].is_stagnated_water = true;
+		}
+	}
 }
 
 Level::~Level()
@@ -132,12 +140,17 @@ void Level::unload()
 {
 	loaded = false;
 	path = "";
+	m_firstFrame = true;
+	
+	delete m_events;
+	m_events = 0;
 
 #ifndef DEDSERV
 	destroy_bitmap(image); image = NULL;
 	destroy_bitmap(background); background = NULL;
 	destroy_bitmap(paralax); paralax = NULL;
 	destroy_bitmap(lightmap); lightmap = NULL;
+	destroy_bitmap(watermap); watermap = NULL;
 #endif
 	destroy_bitmap(material); material = NULL;
 
@@ -149,8 +162,41 @@ bool Level::isLoaded()
 	return loaded;
 }
 
+
+
+void Level::checkWBorders( int x, int y )
+{
+	if ( getMaterial( x, y-1 ).is_stagnated_water )
+	{
+		unsigned char mat = getMaterialIndex(x, y-1) - 1;
+		m_water.push_back( WaterParticle( x, y-1, mat ) );
+		putMaterial( mat, x, y-1 );
+	}
+	if ( getMaterial( x+1, y ).is_stagnated_water )
+	{
+		unsigned char mat = getMaterialIndex(x+1, y) - 1;
+		m_water.push_back( WaterParticle( x+1, y, mat ) );
+		putMaterial( mat, x+1, y );
+	}
+	if ( getMaterial( x-1, y ).is_stagnated_water )
+	{
+		unsigned char mat = getMaterialIndex(x-1, y) - 1;
+		m_water.push_back( WaterParticle( x-1, y, mat ) );
+		putMaterial( mat, x-1, y );
+	}
+	
+}
+
+
 void Level::think()
 {
+
+	if( m_firstFrame )
+	{
+		m_firstFrame = false;
+		if ( m_events && m_events->gameStart )
+			m_events->gameStart->run(0,0,0,0);
+	}
 	foreach_delete( wp, m_water )
 	{
 		if ( getMaterialIndex( wp->x, wp->y ) != wp->mat )
@@ -160,29 +206,49 @@ void Level::think()
 		}else
 		if ( rnd() > WaterSkipFactor )
 		{
-			if ( getMaterial( wp->x, wp->y+1 ).particle_pass )
+			unsigned char mat = getMaterialIndex( wp->x, wp->y+1 );
+			if ( m_materialList[mat].particle_pass && !m_materialList[mat].flows)
 			{
+				checkWBorders( wp->x, wp->y  );
 				putpixel_solid(image, wp->x, wp->y, getpixel(background, wp->x, wp->y) );
 				putMaterial( 1, wp->x, wp->y );
 				++wp->y;
-				putpixel_solid(image, wp->x, wp->y, makecol(0,0,100) );
+				putpixel_solid(image, wp->x, wp->y, getpixel(watermap, wp->x, wp->y) );
 				putMaterial( wp->mat, wp->x, wp->y );
+				wp->count = 0; // Reset stagnation counter because it moved
 			}else
 			{
 				char dir;
 				if ( wp->dir ) dir = 1;
 				else dir = -1;
 				
-				if ( getMaterial( wp->x+dir, wp->y ).particle_pass )
+				mat = getMaterialIndex( wp->x+dir, wp->y );
+				if ( m_materialList[mat].particle_pass && !m_materialList[mat].flows )
 				{
+					checkWBorders( wp->x, wp->y );
 					putpixel_solid(image, wp->x, wp->y, getpixel(background, wp->x, wp->y) );
 					putMaterial( 1, wp->x, wp->y );
 					wp->x += dir;
-					putpixel_solid(image, wp->x, wp->y, makecol(0,0,100) );
+					putpixel_solid(image, wp->x, wp->y, getpixel(watermap, wp->x, wp->y) );
 					putMaterial( wp->mat, wp->x, wp->y );
+					wp->count = 0;
+					// Reset stagnation counter because it moved
 				}
 				else
+				{
 					wp->dir = !wp->dir;
+					++wp->count; // It didnt move so the stagnation counter gets incremented.
+					if ( wp->count > 1 )
+					{
+						mat = getMaterialIndex( wp->x-dir, wp->y );
+						if ( !m_materialList[mat].particle_pass || m_materialList[mat].flows )
+						{
+							putMaterial( wp->mat+1, wp->x, wp->y );
+							putpixel_solid(image, wp->x, wp->y, getpixel(watermap, wp->x, wp->y) );
+							m_water.erase(wp);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -289,14 +355,15 @@ bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 		drawX -= tmpMask->m_xPivot;
 		drawY -= tmpMask->m_yPivot;
 		unsigned int colour = 0;
-		for( int x = 0; x < tmpMask->m_bitmap->w; ++x )
 		for( int y = 0; y < tmpMask->m_bitmap->h; ++y )
+		for( int x = 0; x < tmpMask->m_bitmap->w; ++x )
 		{
 			colour = getpixel( tmpMask->m_bitmap, x, y);
 			if( ( colour == 0 ) && getMaterial( drawX+x, drawY+y ).destroyable )
 			{
 				returnValue = true;
 				putMaterial( 1, drawX+x, drawY+y );
+				checkWBorders( drawX+x, drawY+y );
 #ifndef DEDSERV
 				putpixel(image, drawX+x, drawY+y, getpixel( background, drawX+x, drawY+y ) );
 #endif
@@ -357,13 +424,19 @@ const string& Level::getName()
 void Level::loaderSucceeded()
 {
 	loaded = true;
-	
-	for ( int x = 0; x < material->w; ++x )
+	m_water.clear();
 	for ( int y = 0; y < material->h; ++y )
+	for ( int x = 0; x < material->w; ++x )
 	{
-		if ( unsafeGetMaterial(x,y).flows )
+		if ( unsafeGetMaterial(x,y).flows && !unsafeGetMaterial(x,y).is_stagnated_water )
 		{
 			m_water.push_back( WaterParticle( x, y, getMaterialIndex(x,y) ) );
+		}
+		
+		if ( unsafeGetMaterial(x,y).is_stagnated_water )
+		{
+			allegro_message( "Map is using a material that is reserved for internal use on water" );
+			break;
 		}
 	}
 	
@@ -378,6 +451,24 @@ void Level::loaderSucceeded()
 			if ( unsafeGetMaterial(x,y).blocks_light )
 				putpixel( lightmap, x, y, 200 );
 		}
+	}
+	
+	if(!background)
+	{
+		background = create_bitmap(material->w, material->h);
+		blit(image, background, 0,0,0,0,material->w, material->h);
+		gfx.setBlender(ALPHA,120);
+		rectfill( background, 0,0,background->w,background->h,0);
+		solid_mode();
+	}
+	
+	if ( !watermap )
+	{
+		watermap = create_bitmap( image->w, image->h );
+		blit( background, watermap, 0,0,0,0,image->w, image->h );
+		gfx.setBlender(ALPHA, 150);
+		rectfill( watermap, 0,0,watermap->w, watermap->h, makecol( 0, 0, 200 ) );
+		solid_mode();
 	}
 	
 	// Make the domain one pixel larger than the level so that things like ninjarope hook

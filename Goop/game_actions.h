@@ -10,6 +10,7 @@
 class PartType;
 class ExpType;
 class Sound;
+class Sound1D;
 class SpriteSet;
 class BaseObject;
 class LevelEffect;
@@ -66,6 +67,28 @@ class UniformShootParticles : public BaseAction
 		Angle distribution;
 		AngleDiff angleOffset;
 		float distanceOffset;
+};
+
+BaseAction* putParticle( const std::vector< std::string >& params );
+
+class PutParticle : public BaseAction
+{
+	public:
+
+		PutParticle( const std::vector< std::string >& params );
+		~PutParticle();
+
+		void run( ActionParams const& params );
+
+	private:
+
+		PartType *type;
+	
+		float x;
+		float y;
+		float xspd;
+		float yspd;
+		Angle angle;
 };
 
 BaseAction* createExplosion( const std::vector< std::string >& params );
@@ -224,6 +247,26 @@ class PlaySoundStatic : public BaseAction
 	float pitchVariation;
 	float loudness;
 	
+};
+
+BaseAction* playGlobalSound( const std::vector< std::string >& params );
+
+class PlayGlobalSound : public BaseAction
+{
+	public:
+
+	PlayGlobalSound( const std::vector< std::string >& params );
+	~PlayGlobalSound();
+
+	void run( ActionParams const& params );
+
+	private:
+		
+	Sound1D *sound;
+	float volume;
+	float volumeVariation;
+	float pitch;
+	float pitchVariation;
 };
 
 BaseAction* delayFire( const std::vector< std::string >& params );

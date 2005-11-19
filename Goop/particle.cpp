@@ -87,6 +87,61 @@ Particle::~Particle()
 #endif
 }
 
+inline Vec getCorrection( const Vec& objPos, const Vec& pointPos, float radius )
+{
+	Vec diff = pointPos - objPos;
+	if ( diff.lengthSqr() < radius*radius )
+	{
+		float lengthDiff = diff.length() - radius;
+		return diff.normal() * lengthDiff;
+	}else
+	{
+		return Vec();
+	}
+}
+
+Vec getCorrectionBox( const Vec& objPos, const IVec& boxPos, float radius )
+{
+	IVec iObjPos = IVec( objPos );
+	if ( iObjPos.x == boxPos.x )
+	{
+		if ( objPos.y < boxPos.y )
+		{
+			return getCorrection( objPos, Vec ( objPos.x, boxPos.y), radius );
+		}else
+		{
+			return getCorrection( objPos, Vec ( objPos.x, boxPos.y+1), radius );
+		}
+	}else if ( iObjPos.y == boxPos.y )
+	{
+		if ( objPos.x < boxPos.x )
+		{
+			return getCorrection( objPos, Vec( boxPos.x, objPos.y), radius );
+		}else
+		{
+			return getCorrection( objPos, Vec( boxPos.x+1, objPos.y), radius );
+		}
+	}else if ( objPos.y < boxPos.y )
+	{
+		if ( objPos.x < boxPos.x )
+		{
+			return getCorrection( objPos, Vec( boxPos.x, boxPos.y), radius );
+		}else
+		{
+			return getCorrection( objPos, Vec( boxPos.x+1, boxPos.y), radius );
+		}
+	}else
+	{
+		if ( objPos.x < boxPos.x )
+		{
+			return getCorrection( objPos, Vec( boxPos.x, boxPos.y + 1 ), radius );
+		}else
+		{
+			return getCorrection( objPos, Vec( boxPos.x+1, boxPos.y + 1), radius );
+		}
+	}
+}
+
 void Particle::think()
 {
 	for ( int i = 0; i < m_type->repeat; ++i)
@@ -109,6 +164,23 @@ void Particle::think()
 				
 		spd *= m_type->damping;
 		
+		if ( m_type->radius > 0 ) // HAX
+		{
+			float radius = m_type->radius;
+			float speedCorrection = m_type->bounceFactor;
+			IVec iPos = IVec( pos );
+			for ( int y = -radius; y <= radius; ++y )
+			for ( int x = -radius; x <= radius; ++x )
+			{
+				if ( !game.level.getMaterial( iPos.x + x, iPos.y + y ).particle_pass )
+				{
+					Vec correction = getCorrectionBox( pos , iPos + IVec( x, y ), radius );
+					pos += correction;
+					spd += correction* speedCorrection * 2;
+				}
+			}
+		}
+
 		bool collision = false;
 		if ( !game.level.getMaterial( (int)(pos.x + spd.x), (int)pos.y ).particle_pass)
 		{

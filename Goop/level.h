@@ -13,6 +13,7 @@
 #include <vector>
 #include <list>
 #include <cmath>
+#include "events.h"
 #include <boost/array.hpp>
 using boost::array;
 
@@ -23,12 +24,12 @@ struct BlitterContext;
 
 struct WaterParticle
 {
-	WaterParticle( IVec pos, unsigned char material_ ) : x(pos.x), y(pos.y), mat(material_)
+	WaterParticle( IVec pos, unsigned char material_ ) : x(pos.x), y(pos.y), mat(material_), count(0)
 	{
 		dir = static_cast<bool>( rndInt(2) );
 	}
 	
-	WaterParticle( int x_, int y_, unsigned char material_ ) : x(x_), y(y_), mat(material_)
+	WaterParticle( int x_, int y_, unsigned char material_ ) : x(x_), y(y_), mat(material_), count(0)
 	{
 		dir = static_cast<bool>( rndInt(2) );
 	}
@@ -37,6 +38,23 @@ struct WaterParticle
 	int y;
 	bool dir; // true is right false is left
 	unsigned char mat;
+	int count;
+};
+
+struct LevelEvents
+{
+	LevelEvents() : gameStart(0), gameEnd(0)
+	{
+	}
+	
+	~LevelEvents()
+	{
+		delete gameStart;
+		delete gameEnd;
+	}
+	
+	Event* gameStart;
+	Event* gameEnd;
 };
 
 class Level
@@ -128,6 +146,7 @@ class Level
 	BITMAP* background;
 	BITMAP* paralax;
 	BITMAP* lightmap; // This has to be 8 bit.
+	BITMAP* watermap; // How water looks in each pixel of the map
 #endif
 	BITMAP* material;
 	Encoding::VectorEncoding vectorEncoding;
@@ -147,9 +166,22 @@ class Level
 	
 	bool loaded;
 	
+	void setEvents( LevelEvents* events )
+	{
+		delete m_events;
+		m_events = events;
+	}
+	
 	private:
 	
+	
+	void checkWBorders( int x, int y );
+	
 	array<Material, 256> m_materialList;
+	
+	LevelEvents *m_events;
+	bool m_firstFrame;
+	
 	std::list<WaterParticle> m_water;
 	static const float WaterSkipFactor = 0.05f;
 };

@@ -23,6 +23,7 @@
 #ifndef DEDSERV
 #include "sfx.h"
 #include "sound.h"
+#include "sound1d.h"
 #include "font.h"
 #include "menu.h"
 #include "keyboard.h"
@@ -397,6 +398,8 @@ void Game::think()
 	}
 #endif
 
+	level.think();
+
 	if ( !m_node )
 		return;
 	
@@ -510,6 +513,7 @@ void Game::loadMod()
 	deathObject = partTypeList.load("death.obj");
 	digObject = partTypeList.load("wormdig.obj");
 #ifndef DEDSERV
+	chatSound = sound1DList.load("chat.wav");
 	infoFont = fontLocator.load("minifont");
 #endif
 	levelEffectList.indexate();
@@ -568,6 +572,7 @@ void Game::unload()
 	expTypeList.clear();
 #ifndef DEDSERV
 	soundList.clear();
+	sound1DList.clear();
 #endif
 	spriteList.clear();
 	levelEffectList.clear();
@@ -622,6 +627,10 @@ void Game::refreshResources()
 	soundList.addPath(fs::path(level.getPath()) / "sounds");
 	soundList.addPath(fs::path(nextMod) / "sounds");
 	soundList.addPath(fs::path("default/sounds"));
+	
+	sound1DList.addPath(fs::path(level.getPath()) / "sounds");
+	sound1DList.addPath(fs::path(nextMod) / "sounds");
+	sound1DList.addPath(fs::path("default/sounds"));
 #endif
 	
 	spriteList.addPath(fs::path(level.getPath()) / "sprites");
@@ -794,6 +803,8 @@ void Game::displayChatMsg( std::string const& owner, std::string const& message)
 {
 	console.addLogMsg('<' + owner + "> " + message);
 	displayMessage(ScreenMessage(ScreenMessage::Chat, '{' + owner + "}: " + message, 800));
+	
+	if ( chatSound ) chatSound->play();
 }
 
 void Game::displayKillMsg( BasePlayer* killed, BasePlayer* killer )

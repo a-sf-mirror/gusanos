@@ -14,6 +14,9 @@ Material::Material()
 	destroys_water = false;
 	creates_water = false;
 	damage = 0;
+	is_stagnated_water = false;
+	
+	index = 0; // Should I not initialize this?
 }
 
 Material::~Material()

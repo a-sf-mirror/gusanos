@@ -28,6 +28,7 @@ class Particle;
 class PartType;
 class Explosion;
 #ifndef DEDSERV
+class Sound1D;
 class Font;
 #endif
 
@@ -184,6 +185,8 @@ public:
 	PartType* NRPartType;
 	PartType* deathObject;
 	PartType* digObject;
+	
+	Sound1D* chatSound;
 	
 	const std::string& getMod();
 	const std::string& getModPath();

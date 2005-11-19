@@ -2,6 +2,9 @@
 #include "../gfx.h"
 #include "../blitters/types.h"
 #include "../glua.h"
+#include "../events.h"
+#include "../game_actions.h"
+#include "../parser.h"
 #include <string>
 
 #include <boost/filesystem/path.hpp>
@@ -24,6 +27,87 @@ bool GusanosLevelLoader::canLoad(fs::path const& path, std::string& name)
 	}
 	return false;
 }
+
+namespace{
+
+	LevelEvents* loadConfig( fs::path const& filename )
+	{
+		
+		fs::ifstream fileStream(filename);
+		
+		LevelEvents* returnConf = new LevelEvents;
+		
+		if ( fileStream )
+		{	
+			string parseLine;
+			Event *currEvent = NULL;
+			while ( portable_getline( fileStream, parseLine ) )
+			{
+				{
+					string var;
+					string val;
+	
+					vector<string> tokens;
+					tokens = Parser::tokenize ( parseLine );
+					int lineID = Parser::identifyLine( tokens );
+					
+					vector<string>::iterator iter = tokens.begin();
+					
+					if ( lineID == Parser::PROP_ASSIGMENT )
+					{
+						var = *iter;
+						iter++;
+						if ( iter != tokens.end() && *iter == "=")
+						{
+							iter++;
+							if ( iter != tokens.end() )
+								val = *iter;
+						}
+						
+						if ( var == "poop" );
+						else
+						{
+							std::cout << "Unknown variable on following line:" << std::endl;
+							std::cout << "\t" << parseLine << std::endl;
+						}
+					}
+					
+					if ( lineID == Parser::EVENT_START )
+					{
+						iter++;
+						string eventName = *iter;
+						if ( eventName == "game_start" )
+						{
+							currEvent = new Event(0);
+							returnConf->gameStart = currEvent;
+						}
+						else
+						{
+							std::cout << "Unknown event on following line:" << std::endl;
+							std::cout << "\t" << parseLine << std::endl;
+							std::cout << "Event name given: \"" << eventName << "\"" << std::endl;
+							std::cout << "----------------" << std::endl;
+							currEvent = 0;
+						}
+	
+					}
+					
+					if ( lineID == Parser::ACTION && currEvent )
+					{
+						if(!currEvent->addAction(*iter, Parser::getActionParams( tokens )))
+						{
+							//TODO: Add more info here
+							cerr << "Couldn't add action to event" << endl;
+						}
+					}
+					
+				}
+			}
+	
+		}
+		return returnConf;
+	}
+}
 	
 bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 {
@@ -38,6 +122,7 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 	
 	if (level->material)
 	{
+		level->setEvents( loadConfig( path / "config.cfg" ) );
 #ifndef DEDSERV
 		std::string imagePath = (path / "level").native_file_string();
 		
@@ -47,14 +132,6 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 			std::string backgroundPath = (path / "background").native_file_string();
 			
 			level->background = gfx.loadBitmap(backgroundPath.c_str(),0);
-			if(!level->background)
-			{
-				level->background = create_bitmap(level->material->w, level->material->h);
-				blit(level->image, level->background, 0,0,0,0,level->material->w, level->material->h);
-				gfx.setBlender(ALPHA,120);
-				rectfill( level->background, 0,0,level->background->w,level->background->h,0);
-				solid_mode();
-			}
 			
 			std::string paralaxPath = (path / "paralax").native_file_string();
 			level->paralax = gfx.loadBitmap(paralaxPath.c_str(),0);
@@ -79,6 +156,7 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 			level->loaderSucceeded();
 			return true;
 		}
+		
 
 #else
 		level->loaderSucceeded();

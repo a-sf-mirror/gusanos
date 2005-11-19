@@ -64,7 +64,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 				do
 				{
 					uniqueID = rndgen();
-				} while(uniqueID);
+				} while(!uniqueID);
 				
 				player->getOptions()->uniqueID = uniqueID;
 				savedScores[uniqueID] = player->stats;
