@@ -1,58 +1,33 @@
-Import('env getObjects conf build subfolder getBinName getLibName')
+Import('env')
 
 env = env.Copy()
 env.Append(LIBS = Split("""
-	omfggui omfgconsole omfgloaders omfglua omfgblitters omfgutil glua loadpng""")
+	omfggui omfghttp omfgconsole omfgutil glua loadpng""") #omfgloaders omfglua omfgblitters
 	)
-	
-#omfghttp
 
-if conf == 'posix':
-	env.Append(LIBS = Split("""
-	        png12 z fmod
-	        alleg-4.2.0 alleg_unsharable
-	        zoidcom boost_filesystem-gcc boost_signals-gcc"""),
-			LINKFLAGS = '-Wl,--export-dynamic'
-		)
-elif conf == 'mingw-cross':
-	env.Append(LIBS = Split("""
-	        png13 z fmod
-	        alleg zoidcom_mw boost_filesystem-mgw boost_signals-mgw""")
-		)
-elif conf == 'basara':
-	env.Append(LIBS = Split("""
-	        png12 z fmod
-	        alleg-4.2.0 alleg_unsharable
-	        zoidcom boost_filesystem-gcc boost_signals-gcc"""),
-	        LINKFLAGS = '-Wl,--export-dynamic'
-		)
-elif conf == 'darka':
-	env.Append(LIBS = Split("""
-	        png12 z fmod
-	        alleg-4.2.0 alleg_unsharable
-	        zoidcom boost_filesystem-gcc-mt boost_signals-gcc-mt"""),
-	        LINKFLAGS = '-Wl,--export-dynamic'
-		)
-elif conf == 'lucas':
-	env.Append(LIBS = Split("""
-	        png12 z fmod-3.74.1
-	        alleg-4.2.0 alleg_unsharable
-	        zoidcom boost_filesystem-gcc boost_signals-gcc"""),
-			LINKFLAGS = '-Wl,--export-dynamic'
-		)
-		
+if env.conf != 'mingw-cross':
+	env.ParseConfig('allegro-config --libs --cppflags')
+	
+env.Append(LIBS = env.confLibs('boost_filesystem boost_signals fmod png zoidcom z'))
+
+if env.conf == 'mingw-cross':
+	env.Append(LIBS = Split("alleg ws2_32"))
 	        
 # add more platforms here
 
-SConscript([
-	'./loaders/SConscript',
-	'./lua/SConscript',
-	#'./http/SConscript',
-	'./blitters/SConscript'
-	], exports = ['env', 'getObjects', 'getLibName', 'conf', 'build', 'subfolder'])
+#SConscript([
+#	'./loaders/SConscript',
+#	'./lua/SConscript',
+#	'./http/SConscript',
+#	'./blitters/SConscript'
+#	], exports = ['env'])
 
 exename = 'gusanos'
-if build == 'dedserv' or build == 'dedserv-debug':
+if env.build == 'dedserv' or env.build == 'dedserv-debug':
 	exename += '-ded'
-env.Program(getBinName(exename), getObjects(env))
-#env.Parser('test.h', 'test.pg')
+env.Program(env.getBinName(exename),
+	env.getObjects() +
+	env.getObjects('lua') +
+	env.getObjects('blitters') +
+	env.getObjects('loaders'))
+#env.Parser('omfg_script_parser.h', 'omfg_script_parser.pg')

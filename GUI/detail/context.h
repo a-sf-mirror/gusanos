@@ -1,15 +1,18 @@
 #ifndef OMFG_GUI_CONTEXT_H
 #define OMFG_GUI_CONTEXT_H
 
-#include "omfgutil_math.h"
-#include "omfgutil_common.h"
+#include "util/rect.h"
+#include "util/common.h"
 #include "renderer.h"
 //#include "formatting.h"
 #include <iostream>
 #include <map>
+#include <list>
 #include <string>
 #include <vector>
 #include <stack>
+
+class LuaContext;
 
 namespace OmfgGUI
 {
@@ -53,7 +56,8 @@ public:
 		std::map<std::string, PropertyMap> states;
 	};*/
 
-	typedef std::map<std::string, std::vector<std::string> > GSSpropertyMap;
+	//typedef std::map<std::string, std::vector<std::string> > GSSpropertyMap;
+	typedef std::list<std::pair<std::string, std::vector<std::string> > > GSSpropertyMap;
 	static GSSpropertyMap GSSpropertyMapStandard;
 
 	struct GSSstate
@@ -240,13 +244,16 @@ public:
 	
 	//typedef std::map<std::string, GSSpropertyMap> GSSselectorMap;
 	
-	Context()
+	Context(Renderer* renderer)
 	: m_mouseCaptureWnd(0), m_rootWnd(0), m_keyboardFocusWnd(0)
+	, m_mouseFocusWnd(0), m_renderer(renderer)
 	{
 
 	}
 	
-	virtual ~Context();
+	virtual ~Context()
+	{
+	}
 	
 	void updateGSS();
 	
@@ -288,20 +295,34 @@ public:
 	// is turned visible again.
 	virtual void shownFocus() {}
 	
+	virtual LuaContext& luaContext() = 0;
+	
+	virtual bool keyState(int key) = 0;
+	
 	Wnd* getFocus()
 	{
 		return m_keyboardFocusWnd;
 	}
 	
+	void setActive(Wnd* wnd);
+	
 	void process();
 	
-	void render(Renderer* renderer);
+	void render();
+	
+	void mouseDown(int x, int y, MouseKey::type button);
+	void mouseUp(int x, int y, MouseKey::type button);
+	void mouseMove(int x, int y);
+	void mouseScroll(int x, int y, int offs);
+	
+	virtual void loadGSSFile(std::string const&, bool passive) = 0;
+	virtual Wnd* loadXMLFile(std::string const&, Wnd* loadTo) = 0;
 	
 	// This is defined in xml.cpp
 	void loadGSS(std::istream& s);
 	
 	// This is defined in xml.cpp
-	void buildFromXML(std::istream& s, Wnd* dest);
+	Wnd* buildFromXML(std::istream& s, Wnd* dest);
 	
 	void testParseXML();
 	
@@ -317,20 +338,21 @@ public:
 	{
 		return m_rootWnd;
 	}
-	
+
 	void registerNamedWindow(std::string const& id, Wnd* wnd);
 	
+	/*
 	void deregisterNamedWindow(std::string const& id)
 	{
 		if(id.size() == 0)
 			return;
 		m_namedWindows.erase(id);
-	}
-	
+	}*/
+
 	void registerWindow(Wnd* wnd);
 	
 	void deregisterWindow(Wnd* wnd);
-	
+
 	Wnd* findNamedWindow(std::string const& id)
 	{
 		std::map<std::string, Wnd*>::iterator i = m_namedWindows.find(id);
@@ -338,9 +360,16 @@ public:
 			return 0;
 		return i->second;
 	}
+
+	void destroy();
+	
+	Renderer* renderer()
+	{ return m_renderer; }
 	
 	virtual BaseFont* loadFont(std::string const& name) = 0;
 	virtual BaseSpriteSet* loadSpriteSet(std::string const& name) = 0;
+	
+	
 //	BaseFont const& m_defaultFont; //TEMP
 	
 protected:
@@ -349,6 +378,9 @@ protected:
 	Wnd* m_mouseCaptureWnd;
 	Wnd* m_rootWnd;
 	Wnd* m_keyboardFocusWnd;
+	Wnd* m_activeWnd;
+	Wnd* m_mouseFocusWnd;
+	Renderer* m_renderer;
 
 	GSSselectorMap m_gss;
 	std::map<std::string, Wnd*> m_namedWindows;
@@ -358,5 +390,6 @@ protected:
 };
 
 } //namespace OmfgGUI
+
 
 #endif //OMFG_GUI_CONTEXT_H

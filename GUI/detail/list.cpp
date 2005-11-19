@@ -1,9 +1,13 @@
 #include "list.h"
 #include <cassert>
-#include "omfgutil_macros.h"
+#include "util/macros.h"
 
 namespace OmfgGUI
 {
+
+char const List::metaTable[] = "gui_list";
+
+char const List::Node::metaTable[] = "gui_list_node";
 
 void List::Node::resizeColumns(size_t s)
 {
@@ -33,7 +37,7 @@ void List::Node::render(Renderer* renderer, long& y)
 		{
 			renderer->drawFrame(
 				r,
-				RGB(0, 0, 0));
+				list->m_listFormatting.selectionFrameColor);
 		}
 		
 		
@@ -202,17 +206,18 @@ List::node_iter_t List::Node::findRelative(node_iter_t i, int aIdx)
 	return i;
 }
 
-bool List::render(Renderer* renderer)
+void List::Node::clearSelections()
 {
-	/*
-	renderer->drawBox(
-		getRect(),
-		m_formatting.background.color,
-		m_formatting.borders[0].color,
-		m_formatting.borders[1].color,
-		m_formatting.borders[2].color,
-		m_formatting.borders[3].color);
-	*/
+	selected = false;
+	for(node_iter_t i = children.begin(); i; ++i)
+	{
+		i->clearSelections();
+	}
+}
+
+bool List::render()
+{
+	Renderer* renderer = context()->renderer();
 	
 	if(m_formatting.background.skin)
 	{
@@ -276,28 +281,6 @@ bool List::render(Renderer* renderer)
 	return true;
 }
 
-bool List::mouseDown(ulong newX, ulong newY, Context::MouseKey::type mutton)
-{
-	//TODO
-	/*long offset = static_cast<long>((newY - getRect().y1) / rowHeight);
-	
-	node_iter_t cur = m_Base;
-	
-	
-	
-	for(node_iter_t cur = m_Base; isValid(cur); ++cur)
-	{
-		if(--offset < 0)
-		{
-			cur->selected = !cur->selected;
-			m_MainSel = cur;
-			return true;
-		}
-		
-	}*/
-	return false;
-}
-
 void List::addColumn(ColumnHeader const& column)
 {
 	m_columnHeaders.push_back(column);
@@ -319,6 +302,11 @@ void List::setMainSel(node_iter_t iter)
 	{
 		setBasePos(offs - visibleRows() + 1);
 	}
+}
+
+void List::scrollBottom()
+{
+	setBasePos(m_visibleChildren - visibleRows() + 1);
 }
 
 bool List::checkSelection()
@@ -355,14 +343,22 @@ List::node_iter_t List::verify(node_iter_t i)
 		return node_iter_t();
 }
 
+
 bool List::keyDown(int key)
 {
 	if(m_active)
 	{
 		switch(key)
 		{
+/*
+			case KEY_LCONTROL: case KEY_RCONTROL:
+				m_multiSelect = true;
+			break;
+*/
+			
 			case KEY_ENTER:
-				doSetActivation(false);
+				if(!doAction())
+					doSetActivation(false);
 			break;
 			
 			case KEY_DOWN:
@@ -410,6 +406,91 @@ bool List::keyDown(int key)
 	return true;
 }
 
+bool List::mouseDown(ulong x, ulong y, Context::MouseKey::type button)
+{
+	if(button == Context::MouseKey::Left)
+	{
+		bool select = context()->keyState(KEY_LCONTROL) || context()->keyState(KEY_RCONTROL);
+		bool range = context()->keyState(KEY_LSHIFT) || context()->keyState(KEY_RSHIFT);
+		
+		focus();
+		
+		if(!m_active)
+			doSetActivation(true);
+		
+		int y2 = y - getRect().y1 - rowHeight;
+		
+		if(m_Base)
+		{
+			node_iter_t newSel = Node::findRelative(m_Base, y2 / rowHeight);
+			
+			if(!select)
+			{
+				m_RootNode.clearSelections();
+			}
+			
+			if(range && m_MainSel && m_MainSel != newSel
+			&& m_MainSel->parent == newSel->parent)
+			{
+				bool toggle = false;
+				Node* parent = m_MainSel->parent;
+				if(!parent)
+					parent = &m_RootNode;
+				for(node_iter_t i = parent->children.begin(); i; ++i)
+				{
+					if(i == m_MainSel || i == newSel)
+					{
+						if(!toggle)
+							toggle = true;
+						else
+						{
+							i->selected = true;
+							break;
+						}
+					}
+					
+					if(toggle)
+						i->selected = true;
+				}
+			}
+			else
+			{
+				newSel->selected = !newSel->selected;
+				setMainSel(newSel);
+			}
+		}
+			
+		return false;
+	}
+	return true;
+}
+
+bool List::mouseScroll(ulong newX, ulong newY, int offs)
+{
+	setBasePos(m_basePos + offs*2);
+	return false;
+}
+
+
+/*
+bool Edit::mouseMove(ulong x, ulong y)
+{
+	if(m_drag)
+	{
+		focus();
+		
+		if(!m_active)
+			doSetActivation(true);
+		
+		int xoff = m_hscroll - 5 - m_rect.x1;
+		Renderer* renderer = context()->renderer();
+		m_selTo = renderer->getTextCoordToIndex(*m_font, m_text.begin(), m_text.end(), x + xoff);
+		
+		return false;
+	}
+	return true;
+}*/
+
 void List::applyFormatting(Context::GSSpropertyMap const& f)
 {
 	Wnd::applyFormatting(f);
@@ -428,6 +509,13 @@ void List::applyFormatting(Context::GSSpropertyMap const& f)
 			const_foreach(v, i->second)
 			{
 				readColor(m_listFormatting.selectionColor, *v);
+			}
+		}
+		else if(i->first == "selection-frame-color")
+		{
+			const_foreach(v, i->second)
+			{
+				readColor(m_listFormatting.selectionFrameColor, *v);
 			}
 		}
 	}

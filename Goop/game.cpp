@@ -19,7 +19,7 @@
 #include "proxy_player.h"
 #include "gfx.h"
 #include "sprite_set.h"
-#include "omfgutil_macros.h"
+#include "util/macros.h"
 #ifndef DEDSERV
 #include "sfx.h"
 #include "sound.h"
@@ -27,6 +27,7 @@
 #include "font.h"
 #include "menu.h"
 #include "keyboard.h"
+#include "mouse.h"
 #include "player_input.h"
 #include "viewport.h"
 #endif //DEDSERV
@@ -35,6 +36,7 @@
 #include "network.h"
 #include "script.h"
 #include "ninjarope.h"
+#include "hash_table.h"
 
 #include "loaders/gusanos.h"
 #include "loaders/lierox.h"
@@ -63,6 +65,33 @@ using std::vector;
 using std::cerr;
 using std::cout;
 using std::endl;
+
+namespace
+{
+	enum NetEvents
+	{
+		eHole = 0,
+		// Add here
+		NetEventsCount,
+	};
+	
+	void addEvent(ZCom_BitStream* data, NetEvents event)
+	{
+		Encoding::encode( *data, static_cast<int>(event), NetEventsCount );
+	}
+	
+	std::list<LevelEffectEvent> appliedLevelEffects;
+
+	std::string nextMod;
+	std::string m_modPath;
+	std::string m_modName;
+	std::string m_defaultPath;
+	bool loaded;
+	ZCom_Node *m_node;
+	bool m_isAuthority;
+	HashTable<std::string, unsigned long> stringToIndexMap;
+	std::vector<std::string> indexToStringMap;
+}
 
 ZCom_ClassID Game::classID = ZCom_Invalid_ID;
 
@@ -313,6 +342,7 @@ void Game::parseCommandLine(int argc, char** argv)
 void Game::init(int argc, char** argv)
 {
 	allegro_init();
+	install_timer();
 
 	levelLocator.registerLoader(&GusanosLevelLoader::instance);
 	levelLocator.registerLoader(&LieroXLevelLoader::instance);
@@ -339,6 +369,7 @@ void Game::init(int argc, char** argv)
 
 #ifndef DEDSERV
 	keyHandler.init();
+	mouseHandler.init();
 #endif
 	console.init();
 #ifndef DEDSERV
@@ -381,10 +412,7 @@ void Game::init(int argc, char** argv)
 #endif
 }
 
-void Game::addEvent(ZCom_BitStream* data, Game::NetEvents event)
-{
-	Encoding::encode( *data, static_cast<int>(event), NetEventsCount );
-}
+
 
 void Game::think()
 {
@@ -534,7 +562,7 @@ void Game::unload()
 	//cerr << "Unloading..." << endl;
 	loaded = false;
 #ifndef DEDSERV
-	OmfgGUI::menu.clear();
+	OmfgGUI::menu.destroy();
 	sfx.clear();
 #endif
 	
@@ -577,15 +605,18 @@ void Game::unload()
 	spriteList.clear();
 	levelEffectList.clear();
 
-#ifndef DEDSERV	
+#ifndef DEDSERV
 	fontLocator.clear();
 	xmlLocator.clear();
 	gssLocator.clear();
 #endif
 	scriptLocator.clear();
-	
+
 	lua.reset();
 	luaCallbacks = LuaCallbacks(); // Reset callbacks
+#ifndef DEDSERV
+	OmfgGUI::menu.clear();
+#endif
 }
 
 bool Game::isLoaded()
@@ -784,7 +815,8 @@ void Game::removeNode()
 
 bool Game::setMod( const string& modname )
 {
-	if ( file_exists( modname.c_str(), FA_DIREC, NULL) ) //TODO: Change to Boost.Filesystem
+	//if ( file_exists( modname.c_str(), FA_DIREC, NULL) ) //TODO: Change to Boost.Filesystem
+	if( fs::exists(modname) )
 	{
 		nextMod = modname;
 	}
@@ -968,4 +1000,9 @@ unsigned long Game::stringToIndex(std::string const& str)
 std::string const& Game::indexToString(unsigned long idx)
 {
 	return indexToStringMap.at(idx);
+}
+
+std::string const& Game::getModName()
+{
+	return m_modName;
 }

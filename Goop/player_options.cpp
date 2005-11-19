@@ -1,7 +1,7 @@
 #include "player_options.h"
 #include "gconsole.h"
 #include <boost/bind.hpp>
-#include "omfgutil_text.h"
+#include "util/text.h"
 #include <cmath>
 #include <list>
 #include <allegro.h>

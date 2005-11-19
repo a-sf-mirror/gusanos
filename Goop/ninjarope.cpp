@@ -1,7 +1,7 @@
 #include "ninjarope.h"
 
-#include "omfgutil_math.h"
-#include "omfgutil_macros.h"
+#include "util/vec.h"
+#include "util/macros.h"
 #include "game.h"
 #include "base_object.h"
 #include "part_type.h"
@@ -10,9 +10,9 @@
 #include "sprite.h"
 #include "base_animator.h"
 #include "animators.h"
+#include "viewport.h"
 #endif
 #include "part_type.h"
-#include "viewport.h"
 
 #include <vector>
 

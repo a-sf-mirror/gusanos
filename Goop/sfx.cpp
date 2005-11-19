@@ -3,12 +3,12 @@
 #include "sfx.h"
 #include "gconsole.h"
 #include "base_object.h"
-//#include "text.h" //For cast<>
-#include "omfgutil_macros.h"
+#include "util/macros.h"
 #include <boost/assign/list_inserter.hpp>
 using namespace boost::assign;
 
 #include <vector>
+#include <list>
 #include <fmod.h>
 #include <boost/utility.hpp>
 
@@ -16,13 +16,24 @@ using namespace std;
 
 Sfx sfx;
 
+namespace
+{
+	bool m_initialized = false;
+	
+	std::list< std::pair< int, BaseObject* > > chanObject;
+	std::vector<Listener*> listeners;
+	
+	int m_volume;
+	int m_listenerDistance;
+	int m_outputMode = -1;
+}
+
 void volume( int oldValue )
 {
 	if (sfx) sfx.volumeChange();
 }
 
 Sfx::Sfx()
-: m_initialized(false), m_outputMode(-1)
 {
 }
 
@@ -191,5 +202,10 @@ void Sfx::volumeChange()
 {
 	FSOUND_SetSFXMasterVolume(m_volume);
 }
+
+Sfx::operator bool()
+{
+	return m_initialized;
+} 
 
 #endif

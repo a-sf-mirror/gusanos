@@ -10,8 +10,9 @@
 #include "distortion.h"
 #include "animators.h"
 #endif
-#include "omfgutil_text.h"
-#include "omfgutil_math.h"
+#include "util/text.h"
+#include "util/vec.h"
+#include "util/angle.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "timer_event.h"
@@ -124,6 +125,7 @@ PartType::~PartType()
 	delete creation;
 #ifndef DEDSERV
 	delete distortion;
+	delete lightHax;
 #endif
 	for ( vector<TimerEvent*>::iterator i = timer.begin(); i != timer.end(); i++)
 	{
@@ -133,14 +135,13 @@ PartType::~PartType()
 	{
 		delete *i;
 	}
-	delete lightHax;
 }
 
 bool PartType::isSimpleParticleType()
 {
 	if(repeat != 1 || alpha != 255
 #ifndef DEDSERV
-	|| sprite || distortion || blender
+	|| sprite || distortion || blender || lightHax
 #endif
 	|| damping != 1.f
 	|| acceleration != 0.f || !groundCollision
@@ -149,9 +150,7 @@ bool PartType::isSimpleParticleType()
 	{
 		return false;
 	}
-	
-	if ( lightHax ) return true;
-			
+		
 	std::vector<BaseAction*>::const_iterator i = groundCollision->actions.begin();
 	for(; i != groundCollision->actions.end(); ++i)
 	{
@@ -252,7 +251,11 @@ bool PartType::load(fs::path const& filename)
 					else if ( var == "invisible" ) invisible = (cast<int>(val) != 0);
 					else if ( var == "occluded" ) culled = (cast<int>(val) != 0);
 					else if ( var == "anim_duration" ) animDuration = cast<int>(val);
+#ifndef DEDSERV
 					else if ( var == "light_radius" ) lightHax = genLight(cast<int>(val));
+#else
+					else if ( var == "light_radius" ) /* ignore */;
+#endif
 					else if ( var == "anim_on_ground" ) animOnGround = cast<int>(val);
 					else if ( var == "anim_type" )
 					{
@@ -394,7 +397,8 @@ bool PartType::load(fs::path const& filename)
 						std::cout << "Unknown event on following line:" << std::endl;
 						std::cout << "\t" << parseLine << std::endl;
 						std::cout << "Event name given: \"" << eventName << "\"" << std::endl;
-						std::cout << "----------------" << std::endl;
+						//std::cout << "----------------" << std::endl;
+						std::cout << filename.native_file_string() << std::endl;
 						currEvent = 0;
 					}
 

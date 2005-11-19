@@ -125,9 +125,10 @@ void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, 
 				//prefetchnta 32(%esi);
 				//prefetcht0  %es:32(%edi);
 				
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 				prefetchnta(src[8]);
 				prefetcht0(dest[8]);
-				
+#endif
 				movq_rm(mm4, src[0]);    // mm0 = src1 | src2
 				movq_rm(mm5, src[2]);    // mm4 = src3 | src4
 				movq_rm(mm6, src[4]);    // mm4 = src3 | src4
@@ -186,8 +187,10 @@ void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, 
 				movq_rm(mm0, src[0]);    // mm0 = src1 | src2
 				movq_rm(mm4, src[2]);    // mm4 = src3 | src4
 				
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 				prefetchnta(src[8]);
 				prefetcht0(dest[8]);
+#endif
 				
 				movq_rr(mm1, mm0);
 				movq_rr(mm5, mm4);
@@ -262,9 +265,11 @@ void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, 
 				*dest = addColors_16_2(*dest, scaleColor_16(s, scaledFact))
 		,
 			//TODO: Rearrange
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 			prefetchnta(src[8]);
 			prefetcht0(dest[8]);
-			
+#endif
+
 			movq_rm(mm0, dest[0]);    // mm1 = dest1 | dest2 | dest3 | dest4
 			movq_rm(mm3, src[0]);     // mm0 = src1 | src2 | src3 | src4
 			

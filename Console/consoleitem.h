@@ -4,6 +4,8 @@
 #include <string>
 #include <list>
 
+class Console;
+
 class ConsoleItem
 {
 public:
@@ -21,6 +23,9 @@ public:
 	bool isLocked();
 	
 	bool temp;
+	
+	virtual ~ConsoleItem()
+	{}
 	
 protected:
 	Console* m_owner;

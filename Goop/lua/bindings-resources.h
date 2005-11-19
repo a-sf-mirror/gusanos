@@ -1,7 +1,7 @@
 #ifndef LUA_BINDINGS_RESOURCES_H
 #define LUA_BINDINGS_RESOURCES_H
 
-#include "types.h"
+#include "luaapi/types.h"
 
 namespace LuaBindings
 {
@@ -9,6 +9,7 @@ namespace LuaBindings
 	
 	extern LuaReference fontMetaTable;
 	extern LuaReference partTypeMetaTable;
+	extern LuaReference spritesMetaTable;
 }
 
 #endif //LUA_BINDINGS_RESOURCES_H

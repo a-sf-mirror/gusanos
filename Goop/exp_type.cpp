@@ -9,7 +9,7 @@
 #include "gfx.h"
 #include "sprite.h"
 #endif //DEDSERV
-#include "omfgutil_text.h"
+#include "util/text.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "object_grid.h"
@@ -115,7 +115,11 @@ bool ExpType::load(fs::path const& filename)
 					else if ( var == "timeout" ) timeout = cast<int>(val);
 					else if ( var == "timeout_variation" ) timeoutVariation = cast<int>(val);
 					else if ( var == "render_layer" ) renderLayer = cast<int>(val);
+#ifndef DEDSERV
 					else if ( var == "light_radius" ) lightHax = genLight( cast<int>(val) );
+#else
+					else if ( var == "light_radius" ) /* ignore */;
+#endif
 					else if ( var == "alpha" ) alpha = cast<int>(val);
 					else if ( var == "dest_alpha" ) destAlpha = cast<int>(val);
 #ifndef DEDSERV

@@ -19,8 +19,6 @@
 */
 
 
-
-
 /*
 @@ LUA_ANSI controls the use of non-ansi features.
 ** CHANGE it (define it) if you want Lua to avoid the use of any
@@ -29,6 +27,33 @@
 #if defined(__STRICT_ANSI__)
 #define LUA_ANSI
 #endif
+
+
+#if !defined(LUA_ANSI)
+
+#if defined(__linux__)
+#define LUA_USE_MKSTEMP
+#define LUA_USE_ISATTY
+#define LUA_USE_ULONGJMP
+#define LUA_USE_POPEN
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+#define LUA_USE_MKSTEMP
+#define LUA_USE_ISATTY
+#define LUA_USE_ULONGJMP
+#define LUA_USE_POPEN
+#define LUA_DL_DYLD
+#endif
+
+#if defined(_WIN32)
+#define LUA_DL_DLL
+#endif
+
+#endif
+
+
+
 
 
 /*
@@ -92,7 +117,7 @@
 #define LUA_PATHSEP	";"
 #define LUA_PATH_MARK	"?"
 #define LUA_EXECDIR	"!"
-#define LUA_IGMARK	":"
+#define LUA_IGMARK	"-"
 
 
 /*
@@ -141,10 +166,12 @@
 #if defined(luaall_c)
 #define LUAI_FUNC	static
 #define LUAI_DATA	/* empty */
+
 #elif defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
       defined(__ELF__)
 #define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
 #define LUAI_DATA	LUAI_FUNC
+
 #else
 #define LUAI_FUNC	extern
 #define LUAI_DATA	extern
@@ -189,7 +216,7 @@
 ** CHANGE it if you have a better definition for non-POSIX/non-Windows
 ** systems.
 */
-#if !defined(LUA_ANSI) && defined(_POSIX_C_SOURCE)
+#if defined(LUA_USE_ISATTY)
 #include <unistd.h>
 #define lua_stdin_is_tty()	isatty(0)
 #elif !defined(LUA_ANSI) && defined(_WIN32)
@@ -239,17 +266,17 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#define lua_readline(L,b,p)	(((b)=readline(p)) != NULL)
+#define lua_readline(L,b,p)	((void)L, ((b)=readline(p)) != NULL)
 #define lua_saveline(L,idx) \
 	if (lua_strlen(L,idx) > 0)  /* non-empty line? */ \
 	  add_history(lua_tostring(L, idx));  /* add it to history */
-#define lua_freeline(L,b)	free(b)
+#define lua_freeline(L,b)	((void)L, free(b))
 #else
 #define lua_readline(L,b,p)	\
-	(fputs(p, stdout), fflush(stdout),  /* show prompt */ \
+	((void)L, fputs(p, stdout), fflush(stdout),  /* show prompt */ \
 	fgets(b, LUA_MAXINPUT, stdin) != NULL)  /* get line */
-#define lua_saveline(L,idx)	((void)0)
-#define lua_freeline(L,b)	((void)0)
+#define lua_saveline(L,idx)	{ (void)L; (void)idx; }
+#define lua_freeline(L,b)	{ (void)L; (void)b; }
 #endif
 
 #endif
@@ -316,19 +343,11 @@
 #define LUA_COMPAT_LSTR		1
 
 /*
-@@ LUA_COMPAT_FIND controls compatibility with old 'string.find' behavior.
-** CHANGE it to undefined as soon as your programs use 'string.find' only
-** to find patterns.
-*/
-#define LUA_COMPAT_FIND
-
-/*
 @@ LUA_COMPAT_GFIND controls compatibility with old 'string.gfind' name.
 ** CHANGE it to undefined as soon as you rename 'string.gfind' to
 ** 'string.gmatch'.
 */
 #define LUA_COMPAT_GFIND
-
 
 /*
 @@ LUA_COMPAT_OPENLIB controls compatibility with old 'luaL_openlib'
@@ -349,10 +368,10 @@
 */
 #if defined(LUA_USE_APICHECK)
 #include <assert.h>
-#define luai_apicheck(L,o) assert(o)
+#define luai_apicheck(L,o)	{ (void)L; assert(o); }
 #else
 /* (By default lua_assert is empty, so luai_apicheck is also empty.) */
-#define luai_apicheck(L,o)		lua_assert(o)
+#define luai_apicheck(L,o)	{ (void)L; lua_assert(o); }
 #endif
 
 
@@ -525,16 +544,19 @@ union luai_Cast { double l_d; long l_l; };
 /*
 @@ The luai_num* macros define the primitive operations over numbers.
 */
-#define luai_numadd(L,a,b)	((a)+(b))
-#define luai_numsub(L,a,b)	((a)-(b))
-#define luai_nummul(L,a,b)	((a)*(b))
-#define luai_numdiv(L,a,b)	((a)/(b))
-#define luai_nummod(L,a,b)	((a) - floor((a)/(b))*(b))
-#define luai_numpow(L,a,b)	pow(a,b)
-#define luai_numunm(L,a)	(-(a))
-#define luai_numeq(L,a,b)	((a)==(b))
-#define luai_numlt(L,a,b)	((a)<(b))
-#define luai_numle(L,a,b)	((a)<=(b))
+#if defined(LUA_CORE)
+#include <math.h>
+#define luai_numadd(a,b)	((a)+(b))
+#define luai_numsub(a,b)	((a)-(b))
+#define luai_nummul(a,b)	((a)*(b))
+#define luai_numdiv(a,b)	((a)/(b))
+#define luai_nummod(a,b)	((a) - floor((a)/(b))*(b))
+#define luai_numpow(a,b)	(pow(a,b))
+#define luai_numunm(a)		(-(a))
+#define luai_numeq(a,b)		((a)==(b))
+#define luai_numlt(a,b)		((a)<(b))
+#define luai_numle(a,b)		((a)<=(b))
+#endif
 
 /* }================================================================== */
 
@@ -597,7 +619,7 @@ union luai_Cast { double l_d; long l_l; };
 */
 #if defined(loslib_c) || defined(luaall_c)
 
-#if !defined(LUA_ANSI) && defined(_POSIX_C_SOURCE)
+#if defined(LUA_USE_MKSTEMP)
 #include <unistd.h>
 #define LUA_TMPNAMBUFSIZE	32
 #define lua_tmpnam(b,e)	{ \
@@ -605,6 +627,7 @@ union luai_Cast { double l_d; long l_l; };
 	e = mkstemp(b); \
 	if (e != -1) close(e); \
 	e = (e == -1); }
+
 #else
 #define LUA_TMPNAMBUFSIZE	L_tmpnam
 #define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
@@ -618,21 +641,21 @@ union luai_Cast { double l_d; long l_l; };
 @* the file streams.
 ** CHANGE it if you have a way to implement it in your system.
 */
-#if !defined(LUA_ANSI) && defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 2
+#if defined(LUA_USE_POPEN)
 
-#define lua_popen(L,c,m)	popen(c,m)
-#define lua_pclose(L,file)	(pclose(file) != -1)
+#define lua_popen(L,c,m)	((void)L, popen(c,m))
+#define lua_pclose(L,file)	((void)L, (pclose(file) != -1))
 
 #elif !defined(LUA_ANSI) && defined(_WIN32)
 
-#define lua_popen(L,c,m)	_popen(c,m)
-#define lua_pclose(L,file)	(_pclose(file) != -1)
+#define lua_popen(L,c,m)	((void)L, _popen(c,m))
+#define lua_pclose(L,file)	((void)L, (_pclose(file) != -1))
 
 #else
 
 #define lua_popen(L,c,m)  \
   ((void)c, (void)m, luaL_error(L, LUA_QL("popen") " not supported"), (FILE*)0)
-#define lua_pclose(L,file)		((void)file, 0)
+#define lua_pclose(L,file)		((void)L, (void)file, 0)
 
 #endif
 
@@ -647,16 +670,11 @@ union luai_Cast { double l_d; long l_l; };
 ** automatically.  (When you change the makefile to add -ldl, you must
 ** also add -DLUA_USE_DLOPEN.)
 ** If you do not want any kind of dynamic library, undefine all these
-** options (or just remove these definitions).
+** options.
+** By default, _WIN32 gets LUA_DL_DLL and MAC OS X gets LUA_DL_DYLD.
 */
-#if !defined(LUA_ANSI) 
-#if defined(_WIN32)
-#define LUA_DL_DLL
-#elif defined(__APPLE__) && defined(__MACH__)
-#define LUA_DL_DYLD
-#elif defined(LUA_USE_DLOPEN)
+#if defined(LUA_USE_DLOPEN)
 #define LUA_DL_DLOPEN
-#endif
 #endif
 
 
@@ -674,10 +692,12 @@ union luai_Cast { double l_d; long l_l; };
 ** CHANGE them if you defined LUAI_EXTRASPACE and need to do something
 ** extra when a thread is created/deleted/resumed/yielded.
 */
-#define luai_userstateopen(L)		((void)0)
-#define luai_userstatefree(L)		((void)0)
-#define luai_userstateresume(L,n)	((void)0)
-#define luai_userstateyield(L,n)	((void)0)
+#define luai_userstateopen(L)		((void)L)
+#define luai_userstateclose(L)		((void)L)
+#define luai_userstatethread(L,L1)	((void)L)
+#define luai_userstatefree(L)		((void)L)
+#define luai_userstateresume(L,n)	((void)L)
+#define luai_userstateyield(L,n)	((void)L)
 
 
 

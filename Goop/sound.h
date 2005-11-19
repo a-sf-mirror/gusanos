@@ -6,7 +6,7 @@
 #endif //DEDSERV
 
 #include "resource_list.h"
-#include "omfgutil_math.h"
+#include "util/vec.h"
 #include <string>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;

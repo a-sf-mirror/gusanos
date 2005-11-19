@@ -74,6 +74,7 @@ struct AllegroRenderer : public Renderer
 	virtual void drawText(BaseFont const& font, std::string const& str, ulong flags, ulong x, ulong y, RGB const& aColor);
 	
 	virtual std::pair<int, int> getTextDimensions(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e);
+	virtual int getTextCoordToIndex(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e, int x);
 	
 	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y);
 	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y, ulong left, ulong top, ulong bottom, ulong right);
@@ -100,7 +101,7 @@ private:
 class GContext : public Context
 {
 public:
-	GContext();
+	GContext(Renderer* renderer);
 	
 	void init();
 	
@@ -108,14 +109,25 @@ public:
 	bool eventKeyUp(int k);
 	bool eventPrintableChar(char c, int k);
 	
+	bool eventMouseDown(int b);
+	bool eventMouseUp(int b);
+	bool eventMouseMove(int x, int y);
+	bool eventMouseScroll(int offs);
+	
 	void clear();
 	
 	virtual void setFocus(Wnd* wnd);
 	virtual void hiddenFocus();
 	virtual void shownFocus();
+	virtual LuaContext& luaContext();
 	
 	virtual BaseFont* loadFont(std::string const& name);
 	virtual BaseSpriteSet* loadSpriteSet(std::string const& name);
+	
+	virtual void loadGSSFile(std::string const& name, bool passive);
+	virtual Wnd* loadXMLFile(std::string const& name, Wnd* loadTo);
+	
+	virtual bool keyState(int key);
 	
 private:
 	GConsole::BindingLock bindingLock;

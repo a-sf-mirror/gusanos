@@ -4,7 +4,7 @@
 #include "base_object.h"
 #include "base_action.h"
 //#include "game_actions.h"
-#include "omfgutil_macros.h"
+#include "util/macros.h"
 #include "game.h"
 
 #include <vector>

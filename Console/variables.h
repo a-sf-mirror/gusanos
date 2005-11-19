@@ -2,7 +2,7 @@
 #define VARIABLES_H
 
 #include "consoleitem.h"
-#include "omfgutil_text.h"
+#include "util/text.h"
 #include <boost/function.hpp>
 //#include <boost/lexical_cast.hpp>
 //using boost::lexical_cast;
@@ -65,14 +65,14 @@ class TVariable : public Variable
 		if (!args.empty())
 		{
 			T oldValue = *m_src;
-			*m_src = cast<T>(*args.begin());
+			*m_src = convert<T>::value(*args.begin());
 			if ( m_callback ) m_callback(oldValue);
 	
 			return std::string();
 		}else
 		{
 			//return m_name + " IS \"" + cast<std::string>(*m_src) + '"';
-			return cast<std::string>(*m_src);
+			return convert<std::string>::value(*m_src);
 		}
 	}
 	

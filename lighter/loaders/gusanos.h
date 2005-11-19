@@ -18,6 +18,10 @@ struct GusanosLevelLoader
 	virtual const char* getName();
 	
 	static GusanosLevelLoader instance;
+	
+	virtual ~GusanosLevelLoader()
+	{
+	}
 };
 
 

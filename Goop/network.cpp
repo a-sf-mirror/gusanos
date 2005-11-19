@@ -7,19 +7,114 @@
 //#include "text.h"
 #include "net_worm.h"
 #include "base_player.h"
+#include "http.h"
+#include "util/macros.h"
 
 #ifndef DISABLE_ZOIDCOM
 
 #include <string>
 #include <iostream>
+#include <list>
+#include <utility>
 #include <zoidcom.h>
 
 using namespace std;
+
+namespace
+{
+	struct HttpRequest
+	{
+		HttpRequest(HTTP::Request* req_, HttpRequestCallback handler_)
+		: req(req_), handler(handler_)
+		{
+		}
+		
+		HTTP::Request* req;
+		HttpRequestCallback handler;
+	};
+
+	std::list<HttpRequest> requests;
+	std::string serverName;
+	std::string serverDesc;
+	HTTP::Host masterServer("comser.liero.org.pl");
+	int updateTimer = 0;
+	bool serverAdded = false;
+	
+	void processHttpRequests()
+	{
+		foreach_delete(i, requests)
+		{
+			if(i->req->think())
+			{
+				if(i->handler)
+					i->handler(i->req);
+				else
+					delete i->req;
+				requests.erase(i);
+			}
+		}
+	}
+	
+	void onServerRemoved(HTTP::Request* req)
+	{
+		if(req->success)
+		{
+			cout << "Unregistered from master server" << endl;
+		}
+		else
+		{
+			cerr << "Failed to unregister from master server" << endl;
+		}
+		serverAdded = false;
+		delete req;
+	}
+	
+	void onServerAdded(HTTP::Request* req)
+	{
+		if(req->success)
+		{
+			serverAdded = true;
+			cout << "Registered to master server" << endl;
+		}
+		else
+		{
+			serverAdded = false;
+			cerr << "Failed to register to master server" << endl;
+		}
+		delete req;
+	}
+	
+	void onServerUpdate(HTTP::Request* req)
+	{
+		if(req->success)
+		{
+			cout << "Sent update to master server" << endl;
+		}
+		else
+		{
+			cerr << "Failed to send update to master server" << endl;
+			serverAdded = false; // Maybe the server was droped, try to reregister it
+		}
+		delete req;
+	}
+	
+	void registerToMasterServer()
+	{
+		std::list<std::pair<std::string, std::string> > data;
+		data.push_back(std::make_pair("action", "add"));
+		data.push_back(std::make_pair("title", serverName));
+		data.push_back(std::make_pair("desc", serverDesc));
+		data.push_back(std::make_pair("mod", game.getModName()));
+		data.push_back(std::make_pair("map", game.level.getName()));
+		network.addHttpRequest(masterServer.post("gusserv.php", data), onServerAdded);
+	}
+}
 
 Network network;
 
 Network::Network()
 {
+	m_host = false;
 	m_zcom = NULL;
 	m_control = NULL;
 	connCount = 0;
@@ -61,8 +156,12 @@ void Network::registerInConsole()
 {
 	console.registerVariables()
 		("NET_SERVER_PORT", &m_serverPort, 9898)
+		("NET_SERVER_NAME", &serverName, "Unnamed server")
+		("NET_SERVER_DESC", &serverDesc, "")
 	;
 }
+
+
 
 void Network::update()
 {
@@ -77,6 +176,25 @@ void Network::update()
 		connect( m_lastServerAddr );
 		m_reconnect = false;
 	}
+	if(m_host)
+	{
+		if(++updateTimer > 6000*3)
+		{
+			updateTimer = 0;
+			if(!serverAdded)
+			{
+				registerToMasterServer();
+			}
+			else
+			{
+				std::list<std::pair<std::string, std::string> > data;
+				data.push_back(std::make_pair("action", "update"));
+				network.addHttpRequest(masterServer.post("gusserv.php", data), onServerUpdate);
+			}
+		}
+	}
+	
+	processHttpRequests();
 }
 
 void Network::registerClasses() // Factorization of class registering in client and server
@@ -86,6 +204,15 @@ void Network::registerClasses() // Factorization of class registering in client 
 	Game::classID = m_control->ZCom_registerClass("game");
 }
 
+HTTP::Request* Network::fetchServerList()
+{
+	std::list<std::pair<std::string, std::string> > data;
+	data.push_back(std::make_pair("action", "list"));
+	return masterServer.post("gusserv.php", data);
+}
+
+
+
 void Network::host()
 {
 	disconnect();
@@ -93,6 +220,8 @@ void Network::host()
 	registerClasses();
 	m_host = true;
 	game.assignNetworkRole( true ); // Gives the game class node authority role
+	
+	registerToMasterServer();
 }
 
 void Network::connect( const std::string &_address )
@@ -110,6 +239,25 @@ void Network::connect( const std::string &_address )
 
 void Network::disconnect( DConnEvents event )
 {
+	if(serverAdded)
+	{
+		std::list<std::pair<std::string, std::string> > data;
+		data.push_back(std::make_pair("action", "remove"));
+		network.addHttpRequest(masterServer.post("gusserv.php", data), onServerRemoved);
+	}
+	
+	if(requests.size())
+	{
+		cout << "Waiting for HTTP requests to finish... " << std::flush;
+		do
+		{
+			processHttpRequests();
+			rest(2);
+		}
+		while(requests.size() > 0);
+		cout << "done." << endl;
+	}
+	
 	if ( m_control )
 	{
 		ZCom_BitStream *eventData = new ZCom_BitStream;
@@ -180,6 +328,11 @@ int Network::getServerPing()
 			return m_control->ZCom_getConnectionStats(m_serverID).avg_ping;
 	}
 	return -1;
+}
+
+void Network::addHttpRequest(HTTP::Request* req, HttpRequestCallback handler)
+{
+	requests.push_back(HttpRequest(req, handler));
 }
 
 #endif

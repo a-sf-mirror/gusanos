@@ -1,14 +1,14 @@
 #include "explosion.h"
 
-#include "omfgutil_math.h"
+#include "util/vec.h"
 #include "game.h"
 #include "base_object.h"
 #include "base_worm.h"
 #include "base_player.h"
-#include "viewport.h"
 #include "exp_type.h"
 #include "events.h"
 #ifndef DEDSERV
+#include "viewport.h"
 #include "distortion.h"
 #include "gfx.h"
 #include "base_animator.h"

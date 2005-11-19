@@ -1,12 +1,12 @@
 #include "simple_particle.h"
 
-#include "omfgutil_math.h"
+#include "util/vec.h"
 #include "game.h"
 #include "base_object.h"
-#include "viewport.h"
 #ifndef DEDSERV
 #include "gfx.h"
 #include "blitters/blitters.h"
+#include "viewport.h"
 #endif
 
 #define BOOST_NO_MT

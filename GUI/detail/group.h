@@ -9,6 +9,8 @@ namespace OmfgGUI
 class Group : public Wnd
 {
 public:
+	static char const metaTable[];
+	
 	Group(Wnd* parent_, std::string const& tagLabel, std::string const& className, 
 	  std::string const& id, std::map<std::string, std::string> const& properties,
 	  std::string const& text_ = std::string(""))
@@ -17,7 +19,7 @@ public:
 
 	}
 	
-	virtual bool render(Renderer* renderer);
+	virtual bool render();
 	
 	virtual void process();
 

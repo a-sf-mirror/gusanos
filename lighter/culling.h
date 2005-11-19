@@ -3,7 +3,8 @@
 
 #include <stack>
 #include <algorithm>
-#include <omfgutil_common.h>
+#include "util/common.h"
+#include "util/rect.h"
 
 //#define DEBUG_CULLER
 

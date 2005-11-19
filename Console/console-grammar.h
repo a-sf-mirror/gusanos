@@ -17,6 +17,10 @@
 #include <string>
 #include <exception>
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 struct SyntaxError : public std::exception
 {
 	SyntaxError(char const* desc_)

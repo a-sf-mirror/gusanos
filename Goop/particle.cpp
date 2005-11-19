@@ -4,7 +4,6 @@
 #include "base_object.h"
 #include "base_worm.h"
 #include "base_player.h"
-#include "viewport.h"
 #include "part_type.h"
 #ifndef DEDSERV
 #include "gfx.h"
@@ -12,13 +11,15 @@
 #include "sprite_set.h"
 #include "base_animator.h"
 #include "blitters/blitters.h"
+#include "viewport.h"
 #endif
 #include "glua.h"
 #include "lua/bindings-objects.h"
 #include "detect_event.h"
 #include "noise_line.h"
-#include "omfgutil_macros.h"
-#include "omfgutil_math.h"
+#include "util/macros.h"
+#include "util/vec.h"
+#include "util/angle.h"
 
 
 
@@ -294,8 +295,8 @@ void Particle::drawLine2Origin( Viewport* viewport, BlitterContext const& blitte
 	if(m_type->wupixels)
 	{
 		Vec rPos = viewport->convertCoordsPrec( pos );
-		Vec rOPos = viewport->convertCoordsPrec( pos );
-		blitter.linewu(viewport->dest, rOPos.x,rOPos.y,rPos.x,rPos.y, m_type->colour);
+		Vec rOPos = viewport->convertCoordsPrec( m_origin );
+		blitter.linewu(viewport->dest, rOPos.x, rOPos.y, rPos.x, rPos.y, m_type->colour);
 	}
 	else
 	{	

@@ -3,18 +3,18 @@
 
 #include <algorithm>
 
+#include <iostream>
+using std::cerr;
+using std::endl;
+
 namespace OmfgGUI
 {
 
-bool Edit::render(Renderer* renderer)
+char const Edit::metaTable[] = "gui_edit";
+
+bool Edit::render()
 {
-	/*
-	renderer->drawBox(
-		getRect(), m_formatting.background.color,
-		m_formatting.borders[0].color,
-		m_formatting.borders[1].color,
-		m_formatting.borders[2].color,
-		m_formatting.borders[3].color);*/
+	Renderer* renderer = context()->renderer();
 	
 	if(m_formatting.background.skin)
 	{
@@ -87,12 +87,15 @@ bool Edit::keyDown(int key)
 		switch(key)
 		{
 			case KEY_ENTER:
-				doSetActivation(false);
+				if(!doAction())
+					doSetActivation(false);
 			break;
 			
+/*
 			case KEY_LSHIFT: case KEY_RSHIFT:
 				m_select = true;
 			break;
+*/
 		}
 		
 		return false;
@@ -109,6 +112,7 @@ bool Edit::keyDown(int key)
 	return true;
 }
 
+/*
 bool Edit::keyUp(int key)
 {
 	if(m_active)
@@ -125,25 +129,24 @@ bool Edit::keyUp(int key)
 	
 	return true;
 }
+*/
 
 bool Edit::charPressed(char c, int key)
 {
 	if(m_active)
 	{
+		bool select = context()->keyState(KEY_LSHIFT) || context()->keyState(KEY_RSHIFT);
+		
 		switch(key)
 		{
 			case KEY_RIGHT:
 				if(m_caretPos < m_text.size())
 					++m_caretPos;
-				if(!m_select)
-					m_selTo = m_caretPos;
 			break;
 			
 			case KEY_LEFT:
 				if(m_caretPos > 0)
 					--m_caretPos;
-				if(!m_select)
-					m_selTo = m_caretPos;
 			break;
 			
 			case KEY_BACKSPACE:
@@ -184,14 +187,10 @@ bool Edit::charPressed(char c, int key)
 			
 			case KEY_HOME:
 				m_caretPos = 0;
-				if(!m_select)
-					m_selTo = m_caretPos;
 			break;
 			
 			case KEY_END:
 				m_caretPos = m_text.size();
-				if(!m_select)
-					m_selTo = m_caretPos;
 			break;
 			
 			case KEY_ENTER:
@@ -222,9 +221,62 @@ bool Edit::charPressed(char c, int key)
 			break;
 		}
 		
+		if(!select)
+			m_selTo = m_caretPos;
+		
 		return false;
 	}
 	
+	return true;
+}
+
+bool Edit::mouseDown(ulong x, ulong y, Context::MouseKey::type button)
+{
+	if(button == Context::MouseKey::Left)
+	{
+		bool select = context()->keyState(KEY_LSHIFT) || context()->keyState(KEY_RSHIFT);
+		
+		focus();
+		
+		if(!m_active)
+			doSetActivation(true);
+		int xoff = m_hscroll - 5 - m_rect.x1;
+		Renderer* renderer = context()->renderer();
+		m_caretPos = renderer->getTextCoordToIndex(*m_font, m_text.begin(), m_text.end(), x + xoff);
+		
+		if(!select)
+			m_selTo = m_caretPos;
+		
+		m_drag = true; 
+		return false;
+	}
+	return true;
+}
+
+bool Edit::mouseUp(ulong x, ulong y, Context::MouseKey::type button)
+{
+	if(button == Context::MouseKey::Left)
+	{
+		m_drag = false;
+	}
+	return true;
+}
+
+bool Edit::mouseMove(ulong x, ulong y)
+{
+	if(m_drag)
+	{
+		focus();
+		
+		if(!m_active)
+			doSetActivation(true);
+		
+		int xoff = m_hscroll - 5 - m_rect.x1;
+		Renderer* renderer = context()->renderer();
+		m_selTo = renderer->getTextCoordToIndex(*m_font, m_text.begin(), m_text.end(), x + xoff);
+		
+		return false;
+	}
 	return true;
 }
 

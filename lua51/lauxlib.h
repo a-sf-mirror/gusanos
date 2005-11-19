@@ -114,6 +114,7 @@ LUALIB_API const char *(luaL_findtable) (lua_State *L, int idx,
 
 #define luaL_getmetatable(L,n)	(lua_getfield(L, LUA_REGISTRYINDEX, (n)))
 
+#define luaL_opt(L,f,n,d)	(lua_isnoneornil(L,(n)) ? (d) : f(L,(n)))
 
 /*
 ** {======================================================

@@ -1,8 +1,8 @@
 #ifndef OMFG_GUI_RENDERER_H
 #define OMFG_GUI_RENDERER_H
 
-#include "omfgutil_math.h"
-#include "omfgutil_common.h"
+#include "util/rect.h"
+#include "util/common.h"
 #include <string>
 #include <algorithm>
 #include <utility>
@@ -65,7 +65,8 @@ struct BaseSpriteSet
 	virtual ulong getFrameWidth(int frame, int angle = 0) const = 0;
 	virtual ulong getFrameHeight(int frame, int angle = 0) const = 0;
 	
-	virtual ~BaseSpriteSet() {}
+	virtual ~BaseSpriteSet()
+	{}
 };
 
 struct BaseFont
@@ -76,7 +77,8 @@ struct BaseFont
 		CenterV = 1 << 1
 	};
 	
-	virtual ~BaseFont() {}
+	virtual ~BaseFont()
+	{}
 };
 
 //Renderer interface
@@ -106,6 +108,7 @@ public:
 	virtual void drawText(BaseFont const& font, std::string const& str, ulong flags, ulong x, ulong y, RGB const& aColor) = 0;
 	
 	virtual std::pair<int, int> getTextDimensions(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e) = 0;
+	virtual int getTextCoordToIndex(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e, int x) = 0;
 	
 	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y) = 0;
 	virtual void drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y, ulong left, ulong top, ulong bottom, ulong right) = 0;
@@ -118,6 +121,9 @@ public:
 	virtual void resetBlending() = 0;
 	
 	void drawSkinnedBox(BaseSpriteSet const& skin, Rect const& rect, RGB const& backgroundColor);
+	
+	virtual ~Renderer()
+	{}
 };
 
 }

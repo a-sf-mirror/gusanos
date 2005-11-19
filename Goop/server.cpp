@@ -6,14 +6,15 @@
 #include "base_player.h"
 #include "player_options.h"
 #include "network.h"
-#include "omfgutil_math.h"
-#include "omfgutil_macros.h"
+#include "util/math_func.h"
+#include "util/macros.h"
 
 #ifndef DISABLE_ZOIDCOM
 
 #include <zoidcom.h>
 #include <allegro.h>
 #include <list>
+
 
 Server::Server( int _udpport ) : m_preShutdown(false)
 {

@@ -3,14 +3,14 @@
 #ifndef DEDSERV
 #include "gfx.h"
 #include "blitters/context.h"
+#include "viewport.h"
 #endif
 #include "material.h"
 #include "sprite_set.h"
 #include "sprite.h"
-#include "omfgutil_math.h"
-#include "omfgutil_macros.h"
+#include "util/vec.h"
+#include "util/macros.h"
 #include "level_effect.h"
-#include "viewport.h"
 #include "culling.h"
 #include "events.h"
 
@@ -23,7 +23,7 @@ using namespace std;
 
 ResourceLocator<Level> levelLocator;
 
-
+#ifndef DEDSERV
 struct AddCuller
 {
 	AddCuller( Level& level, BITMAP* dest, BITMAP* source, int alpha,int dOffx, int dOffy, int sOffx, int sOffy ) :
@@ -72,6 +72,7 @@ private:
 	int m_alpha;
 	
 };
+#endif
 
 Level::Level()
 {
@@ -190,13 +191,13 @@ void Level::checkWBorders( int x, int y )
 
 void Level::think()
 {
-
 	if( m_firstFrame )
 	{
 		m_firstFrame = false;
 		if ( m_events && m_events->gameStart )
 			m_events->gameStart->run(0,0,0,0);
 	}
+#ifndef DEDSERV
 	foreach_delete( wp, m_water )
 	{
 		if ( getMaterialIndex( wp->x, wp->y ) != wp->mat )
@@ -252,6 +253,7 @@ void Level::think()
 			}
 		}
 	}
+#endif
 }
 
 #ifndef DEDSERV
@@ -440,6 +442,7 @@ void Level::loaderSucceeded()
 		}
 	}
 	
+#ifndef DEDSERV
 	if ( !lightmap )
 	{
 		LocalSetColorDepth cd(8);
@@ -452,6 +455,7 @@ void Level::loaderSucceeded()
 				putpixel( lightmap, x, y, 200 );
 		}
 	}
+#endif
 	
 	if(!background)
 	{
@@ -476,5 +480,5 @@ void Level::loaderSucceeded()
 	vectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 2048);
 	intVectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 1);
 	diffVectorEncoding = Encoding::DiffVectorEncoding(1024);
-	cerr << "vectorEncoding: " << vectorEncoding.totalBits() << endl;
+	//cerr << "vectorEncoding: " << vectorEncoding.totalBits() << endl;
 }

@@ -1,8 +1,8 @@
 #ifndef OMFG_GUI_EDIT
 #define OMFG_GUI_EDIT
 
-#include "omfgutil_math.h"
-#include "omfgutil_common.h"
+#include "util/rect.h"
+#include "util/common.h"
 #include <string>
 #include "wnd.h"
 
@@ -12,17 +12,19 @@ namespace OmfgGUI
 class Edit : public Wnd
 {
 public:
+	static char const metaTable[];
+	
 	Edit(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes,
 	  std::string const& text = std::string(""))
 	: Wnd(parent, tagLabel, className, id, attributes, text)
-	, m_select(false), m_caretPos(0), m_selTo(0)
+	, m_drag(false), m_caretPos(0), m_selTo(0)
 	, m_hscroll(0)
 	{
 
 	}
 	
-	virtual bool render(Renderer* renderer);
+	virtual bool render();
 	
 	virtual void process();
 
@@ -47,9 +49,15 @@ public:
 	virtual void setText(std::string const& aStr);
 	
 	virtual bool keyDown(int key);
-	virtual bool keyUp(int key);
+	//virtual bool keyUp(int key);
 	
 	virtual bool charPressed(char c, int key);
+	
+	virtual bool mouseDown(ulong x, ulong y, Context::MouseKey::type button);
+	
+	virtual bool mouseUp(ulong x, ulong y, Context::MouseKey::type button);
+	
+	virtual bool mouseMove(ulong x, ulong y);
 	
 	void assertCaretVisibility(Renderer* renderer);
 	
@@ -60,7 +68,8 @@ public:
 	
 protected:
 
-	bool        m_select;
+	//bool        m_select;
+	bool        m_drag;
 	ulong		m_caretPos;
 	ulong		m_selTo;
 	long        m_hscroll;

@@ -3,7 +3,7 @@
 
 #include <string>
 #include <list>
-#include "omfgutil_math.h"
+#include "util/angle.h"
 #include <allegro.h>
 
 // TODO: Move these to blitters/<somewhere>

@@ -29,8 +29,10 @@ void drawSprite_mult_32_with_8_sse(BITMAP* where, BITMAP* from, int x, int y, in
 		SPRITE_X_LOOP_NOALIGN_T(4,
 			*dest = scaleColor_32(*dest, *src)
 		,
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 			prefetchnta(src[8]);
 			prefetcht0(dest[8]);
+#endif
 			
 			pxor_rr(mm0, mm0);
 			

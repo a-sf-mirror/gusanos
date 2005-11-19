@@ -4,7 +4,7 @@
 
 #include "sfx.h"
 #include "resource_list.h"
-#include "omfgutil_math.h"
+#include "util/math_func.h"
 #include "base_object.h"
 
 #include <string>

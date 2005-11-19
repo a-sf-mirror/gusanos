@@ -3,7 +3,7 @@
 
 #include "material.h"
 #include "resource_locator.h"
-#include "omfgutil_math.h"
+#include "util/math_func.h"
 //#include "sprite.h"
 
 #include "encoding.h"

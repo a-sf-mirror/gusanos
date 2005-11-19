@@ -2,6 +2,7 @@
 
 #include "renderer.h"
 #include "wnd.h"
+#include "util/macros.h"
 #include <iostream>
 using std::cerr;
 using std::endl;
@@ -13,10 +14,10 @@ Context::GSSpropertyMap Context::GSSpropertyMapStandard;
 Context::GSSstate Context::GSSstate::standard;
 Context::GSSid Context::GSSid::standard;
 Context::GSSclass Context::GSSclass::standard;
-	
-Context::~Context()
+
+void Context::destroy()
 {
-	delete m_rootWnd;
+	delete m_rootWnd; m_rootWnd = 0;
 }
 
 void Context::setRoot_(Wnd* wnd)
@@ -77,14 +78,14 @@ void Context::keyUp(KeyType k, bool shift, bool alt, bool ctrl)
 {
 }
 
-void Context::render(Renderer* renderer)
+void Context::render()
 {
 	if(m_rootWnd)
 	{
-		Rect oldClip(renderer->getClip());
-		m_rootWnd->doRender(renderer, renderer->getViewportRect());
-		renderer->setClip(oldClip);
-		renderer->resetBlending();
+		Rect oldClip(renderer()->getClip());
+		m_rootWnd->doRender(renderer()->getViewportRect());
+		renderer()->setClip(oldClip);
+		renderer()->resetBlending();
 	}	
 }
 
@@ -94,8 +95,38 @@ void Context::process()
 		m_rootWnd->doProcess();
 }
 
+void Context::mouseDown(int x, int y, MouseKey::type button)
+{
+	m_rootWnd->doMouseDown(x, y, button);
+}
+
+void Context::mouseUp(int x, int y, MouseKey::type button)
+{
+	if(m_mouseFocusWnd)
+	{
+		m_mouseFocusWnd->mouseUp(x, y, button);
+		m_mouseFocusWnd = 0;
+	}
+}
+
+void Context::mouseMove(int x, int y)
+{
+	if(m_mouseFocusWnd)
+		m_mouseFocusWnd->mouseMove(x, y);
+	else
+		m_rootWnd->doMouseMove(x, y);
+}
+
+void Context::mouseScroll(int x, int y, int offs)
+{
+	m_rootWnd->doMouseScroll(x, y, offs);
+}
+
 void Context::setFocus(Wnd* aWnd)
 {
+	if(aWnd == m_keyboardFocusWnd)
+		return;
+	
 	if(aWnd)
 	{
 		while(aWnd->m_lastChildFocus)
@@ -123,6 +154,13 @@ void Context::setFocus(Wnd* aWnd)
 	}
 }
 
+void Context::setActive(Wnd* wnd)
+{
+	if(m_activeWnd)
+		m_activeWnd->doSetActivation(false);
+	m_activeWnd = wnd;
+}
+
 void Context::registerWindow(Wnd* wnd)
 {
 	registerNamedWindow(wnd->m_id, wnd);
@@ -130,16 +168,20 @@ void Context::registerWindow(Wnd* wnd)
 
 void Context::registerNamedWindow(std::string const& id, Wnd* wnd)
 {
-	if(id.size() == 0)
+	if(id.empty())
 		return;
 
+	m_namedWindows.insert(std::make_pair(id, wnd));
+	
+	/*
 	std::map<std::string, Wnd*>::iterator i = m_namedWindows.find(id);
 	if(i != m_namedWindows.end())
 	{
-		cerr << "Deleting conflicting window (named '" << id << "'): " << i->second << endl;
-		delete i->second; //Delete conflicting window
+		//cerr << "Deleting conflicting window (named '" << id << "'): " << i->second << endl;
+		//delete i->second; //Delete conflicting window
 	}
 	m_namedWindows[id] = wnd;
+	*/
 }
 
 void Context::deregisterWindow(Wnd* wnd)
@@ -150,7 +192,16 @@ void Context::deregisterWindow(Wnd* wnd)
 		captureMouse(0);
 	if(getRoot() == wnd)
 		setRoot((Wnd *)0);
-	deregisterNamedWindow(wnd->m_id);
+	if(m_activeWnd == wnd)
+		m_activeWnd = 0;
+	if(m_mouseFocusWnd == wnd)
+		m_mouseFocusWnd = 0;
+	//deregisterNamedWindow(wnd->m_id);
+	foreach_delete(i, m_namedWindows)
+	{
+		if(i->second == wnd)
+			m_namedWindows.erase(i);
+	}
 }
 
 

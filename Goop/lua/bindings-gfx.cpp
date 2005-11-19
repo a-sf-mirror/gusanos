@@ -1,6 +1,6 @@
 #include "bindings-gfx.h"
 
-#include "types.h"
+#include "luaapi/types.h"
 
 #include "../glua.h"
 
@@ -36,7 +36,7 @@ BlitterContext blitter;
 int l_gfx_draw_box(lua_State* L)
 {
 #ifndef DEDSERV
-	BITMAP* b = *(BITMAP **)lua_touserdata(L, 1);
+	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(L, 1));
 	
 	int x1 = lua_tointeger(L, 2);
 	int y1 = lua_tointeger(L, 3);
@@ -85,16 +85,10 @@ int l_gfx_reset_blending(lua_State* L)
 
 	Returns the HUD bitmap of this viewport.
 */
-int l_viewport_getBitmap(lua_State* L)
-{
-	LuaContext context(L);
-	
-	Viewport* p = *static_cast<Viewport **>(lua_touserdata (L, 1));
-
+METHOD(Viewport, viewport_getBitmap,
 	context.pushFullReference(*p->getBitmap(), bitmapMetaTable);
-	
 	return 1;
-}
+)
 
 METHOD(BITMAP, bitmap_w,
 	lua_pushinteger(context, p->w);

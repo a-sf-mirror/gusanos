@@ -2,10 +2,11 @@
 #define OMFG_GUI_WND_H
 
 #include <string>
-#include "omfgutil_math.h"
-#include "omfgutil_common.h"
+#include "util/rect.h"
+#include "util/common.h"
 #include "renderer.h"
 #include "context.h"
+#include "luaapi/types.h"
 
 #include <iostream>
 #include <list>
@@ -21,12 +22,20 @@ class Wnd
 public:
 	friend class Context;
 	
+	static char const metaTable[];
+	
 	enum Dir
 	{
 		Up = 0,
 		Right,
 		Down,
 		Left
+	};
+	
+	enum LuaCallbacks
+	{
+		OnAction = 0,
+		LuaCallbacksMax,
 	};
 	
 	Wnd(Wnd* parent, std::string const& tagLabel, std::string const& className,
@@ -39,7 +48,8 @@ public:
 		if(m_parent)
 		{
 			setContext_(m_parent->m_context);
-			m_parent->m_children.push_back(this);
+			//m_parent->m_children.push_back(this);
+			m_parent->addChild(this);
 		}
 		else
 			m_context = 0;
@@ -47,19 +57,31 @@ public:
 	}
 	
 	virtual ~Wnd();
+	
+	void* operator new(size_t count);
+	
+	void operator delete(void* block)
+	{
+		// Lua frees the memory
+	}
+	
+	void* operator new(size_t count, void* space)
+	{
+		return space;
+	}
 
 /*
 	signal<void (Wnd&, std::string const&,
 		std::string const&)> sigTextChange;*/
 		
-	bool doRender(Renderer* renderer, Rect const& clip);
+	bool doRender(Rect const& clip);
 	
 	void doProcess();
 	
 	/*
 		returns: True if anything was rendered, False otherwise
 	*/
-	virtual bool render(Renderer* renderer);
+	virtual bool render();
 	
 	virtual void process();
 	
@@ -71,6 +93,8 @@ public:
 	{
 		doSetActivation(!m_active);
 	}
+	
+	bool doAction();
 	
 	virtual void setText(std::string const& aStr);
 
@@ -117,6 +141,8 @@ public:
 	//Sends a mouse button up event
 	bool doMouseUp(ulong aNewX, ulong aNewY, Context::MouseKey::type aButton);
 	
+	bool doMouseScroll(ulong newX, ulong newY, int offs);
+
 	//Sends a cursor relocation event
 	virtual bool mouseMove(ulong aNewX, ulong aNewY);
 	
@@ -126,6 +152,8 @@ public:
 	//Sends a mouse button up event
 	virtual bool mouseUp(ulong aNewX, ulong aNewY, Context::MouseKey::type aButton);
 	
+	virtual bool mouseScroll(ulong newX, ulong newY, int offs);
+	
 	virtual bool keyDown(int key);
 	
 	virtual bool keyUp(int key);
@@ -133,6 +161,35 @@ public:
 	virtual bool charPressed(char c, int key);
 	
 	virtual int classID();
+		
+	void pushReference();
+	
+	virtual bool registerCallback(std::string const& name, LuaReference callb);
+	
+	void addChild(Wnd* ch)
+	{
+		m_children.push_back(ch);
+		m_namedChildren[ch->m_id] = ch; 
+	}
+	
+	void removeChild(Wnd* ch)
+	{
+		for(Wnd* p = this; p && p->m_lastChildFocus == ch; p = p->m_parent)
+		{
+			p->m_lastChildFocus = 0;
+		}
+		
+		m_children.remove(ch);
+		m_namedChildren.erase(ch->m_id);
+	}
+	
+	Wnd* getChildByName(std::string const& name)
+	{
+		std::map<std::string, Wnd*>::const_iterator i = m_namedChildren.find(name);
+		if(i != m_namedChildren.end())
+			return i->second;
+		return 0;
+	}
 	
 	void setVisibility(bool v)
 	{
@@ -149,9 +206,22 @@ public:
 	
 	bool isVisibile();
 	
+	bool switchTo();
+	
+	void focus()
+	{
+		m_context->setFocus(this);
+	}
+	
+	Context* context()
+	{
+		return m_context;
+	}
+	
 	//std::string const& getText() const;
 	
-	bool                 m_focusable;
+	bool m_focusable;
+	LuaReference luaReference;
 	
 protected:
 
@@ -160,6 +230,8 @@ protected:
 	bool readSpriteSet(BaseSpriteSet*& dest, std::string const& str);
 	
 	bool readSkin(BaseSpriteSet*& dest, std::string const& str);
+	
+	LuaReference m_callbacks[LuaCallbacksMax];
 
 /*
 	//Transfers ownership
@@ -188,13 +260,15 @@ protected:
 	
 	std::map<std::string, std::string> m_attributes;
 	
+	std::map<std::string, Wnd*> m_namedChildren;
+	
 	bool                 m_visible;
 	bool                 m_active;
 	
 	Rect                 m_freeRect;
 	int                  m_freeNextX;
 	int                  m_freeNextY;
-	
+
 	// Formatting
 	struct Formatting
 	{

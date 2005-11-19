@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "lua/context.h"
-#include "lua/types.h"
+#include "luaapi/context.h"
+#include "luaapi/types.h"
 
 #define EACH_CALLBACK(i_, type_) for(std::vector<LuaReference>::iterator i_ = luaCallbacks.type_.begin(); \
 			i_ != luaCallbacks.type_.end(); ++i_)

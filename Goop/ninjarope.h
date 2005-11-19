@@ -3,7 +3,8 @@
 
 #include "base_object.h"
 #include "events.h"
-#include "omfgutil_math.h"
+#include "util/vec.h"
+#include "util/angle.h"
 #include "timer_event.h"
 #include <vector>
 //#include <boost/variant.hpp>

@@ -1,3 +1,0 @@
-Import('env getObjects getLibName')
-
-env.StaticLibrary(getLibName('omfgutil'), getObjects(env))

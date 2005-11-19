@@ -2,7 +2,7 @@
 #define LEVEL_H
 
 #include "material.h"
-#include "omfgutil_math.h"
+#include "util/vec.h"
 
 #include <allegro.h>
 #include <string>

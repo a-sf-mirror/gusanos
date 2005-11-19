@@ -1,6 +1,6 @@
 #include "bindings-game.h"
 
-#include "types.h"
+#include "luaapi/types.h"
 
 #include "../glua.h"
 #include "../game.h"

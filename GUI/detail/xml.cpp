@@ -7,6 +7,9 @@
 #include "group.h"
 #include <sstream>
 #include <iostream>
+#include <utility>
+#include "luaapi/types.h"
+#include "luaapi/context.h"
 
 using namespace std;
 
@@ -33,7 +36,7 @@ struct GSSHandler
 		//cerr << "GSS " << tagLabel << "." << className << "#" << id << ":" << state << "  " << property << endl;
 		Context::GSSpropertyMap& dest = style.insert(tagLabel).insert(className).insert(id).insert(state);
 
-		dest[property] = value;
+		dest.push_back(std::make_pair(property, value));
 	}
 	
 	Context::GSSselectorMap& style;
@@ -63,20 +66,14 @@ struct XMLHandler
 		WndInfo(Wnd* wnd_)
 		: wnd(wnd_)
 		{
-			/* TODO
-			curX = wnd->getFormatting().spacing;
-			curY = wnd->getFormatting().spacing;*/
-			nextY = curY;
+
 		}
 		
 		Wnd* wnd;
-
-		int  curX, curY;
-		int  nextY;
 	};
 	
 	XMLHandler(Context& context_, Wnd* dest_, Context::GSSselectorMap& style_)
-	: tag(""), context(context_), style(style_)
+	: tag(""), context(context_), style(style_), firstWindow(0)
 	{
 		windows.push(WndInfo(dest_));
 	}
@@ -119,33 +116,23 @@ struct XMLHandler
 					
 		if(tag.label == "window")
 		{
-			newWindow = new Wnd(windows.top().wnd, tag.label, className, id, tag.attributes, label);
+			newWindow = LUA_NEW_(Wnd, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
 		}
 		else if(tag.label == "list")
 		{
-			List* l = new List(windows.top().wnd, tag.label, className, id, tag.attributes);
-			newWindow = l;
-			/*
-			l->addColumn(List::ColumnHeader("Foo", 0.5));
-			List::Node* n = new List::Node(":o");
-			l->push_back(n);
-			n->setText(1, ":O");
-			n = new List::Node(">:O");
-			n->selected = true;
-			l->push_back(n);
-			n->setText(1, "<:o");*/
+			newWindow = LUA_NEW_(List, (windows.top().wnd, tag.label, className, id, tag.attributes), context.luaContext());
 		}
 		else if(tag.label == "button")
 		{
-			newWindow = new Button(windows.top().wnd, tag.label, className, id, tag.attributes, label);
+			newWindow = LUA_NEW_(Button, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
 		}
 		else if(tag.label == "group")
 		{
-			newWindow = new Group(windows.top().wnd, tag.label, className, id, tag.attributes, label);
+			newWindow = LUA_NEW_(Group, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
 		}
 		else if(tag.label == "edit")
 		{
-			newWindow = new Edit(windows.top().wnd, tag.label, className, id, tag.attributes, label);
+			newWindow = LUA_NEW_(Edit, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
 		}
 		newWindow->m_focusable = focusable;
 		
@@ -157,6 +144,8 @@ struct XMLHandler
 		
 		if(newWindow)
 		{
+			if(!firstWindow)
+				firstWindow = newWindow;
 			newWindow->applyGSS(style);
 			newWindow->updatePlacement();
 
@@ -174,17 +163,19 @@ struct XMLHandler
 	std::stack<WndInfo> windows;
 	Context& context;
 	Context::GSSselectorMap& style;
+	Wnd* firstWindow;
 };
 
-void Context::buildFromXML(std::istream& s, Wnd* dest)
+Wnd* Context::buildFromXML(std::istream& s, Wnd* dest)
 {
 	if(dest && dest->m_context != this)
 	{
-		return; // The destination window belongs to a different context
+		return 0; // The destination window belongs to a different context
 	}
 
 	XMLHandler handler(*this, dest, m_gss);
 	xmlDocument(s, handler);
+	return handler.firstWindow;
 }
 	
 void Context::testParseXML()

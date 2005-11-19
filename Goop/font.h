@@ -235,6 +235,7 @@ public:
 	
 	std::pair<int, int> getDimensions(std::string::const_iterator b, std::string::const_iterator e, int spacing = 0, int flags = 0);
 	
+	int getTextCoordToIndex(std::string::const_iterator b, std::string::const_iterator e, int x, int spacing = 0, int flags = 0);
 /*
 	std::pair<int, int> getFormattedDimensions(std::string const& text, int spacing = 0);
 	

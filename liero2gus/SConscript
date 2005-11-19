@@ -1,16 +1,8 @@
 
-Import('env getObjects getBinName conf build subfolder')
+Import('env')
 
 env = env.Copy()
-if conf == 'posix':
-	env.Append(LIBS = 'boost_filesystem-gcc')
-elif conf == 'mingw-cross':
-	env.Append(LIBS = 'boost_filesystem-mgw')
-elif conf == 'basara':
-	env.Append(LIBS = 'boost_filesystem-gcc')
-elif conf == 'darka':
-	env.Append(LIBS = 'boost_filesystem-gcc-mt')
-elif conf == 'lucas':
-	env.Append(LIBS = 'boost_filesystem-gcc')
+
+env.Append(LIBS = env.confLibs('boost_filesystem'))
 	
-env.Program(getBinName('liero2gus'), getObjects(env))
+env.Program(env.getBinName('liero2gus'), env.getObjects())

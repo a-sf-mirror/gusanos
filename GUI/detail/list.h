@@ -15,6 +15,8 @@ namespace OmfgGUI
 class List : public Wnd
 {
 public:
+	static char const metaTable[];
+	
 	struct Node;
 	
 	// typedef std::list<Node> list_t;
@@ -36,6 +38,8 @@ public:
 	
 	struct Node : public LNodeImp<Node>
 	{
+		static char const metaTable[];
+		
 		friend class List;
 		
 		Node(std::string const& text)
@@ -45,6 +49,8 @@ public:
 		{
 			columns.push_back(text);
 		}
+		
+		virtual ~Node() {}
 		
 		node_iter_t push_back(Node* node)
 		{
@@ -67,6 +73,18 @@ public:
 		static List::node_iter_t getNextVisible(node_iter_t i);
 		static int findOffsetTo(node_iter_t i, node_iter_t to);
 		static node_iter_t findRelative(node_iter_t i, int aIdx);
+		
+		void* operator new(size_t count);
+		
+		void operator delete(void* block)
+		{
+			// Lua frees the memory
+		}
+		
+		void* operator new(size_t count, void* space)
+		{
+			return space;
+		}
 		
 		void setText(unsigned int column, std::string const& text)
 		{
@@ -94,10 +112,12 @@ public:
 				if(parent)
 					parent->changeChildrenCount(change);
 				else
-					list->m_RootNode.totalChildrenCount += change;
+					list->m_visibleChildren += change;
 			}
 			totalChildrenCount += change;
 		}
+		
+		void clearSelections();
 		
 		//std::string text;
 		std::vector<std::string> columns;
@@ -108,6 +128,7 @@ public:
 		long        level;
 		List*       list;
 		list_t      children;
+		LuaReference luaReference;
 	};
 	
 	friend struct Node;
@@ -115,7 +136,7 @@ public:
 	List(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes)
 	: Wnd(parent, tagLabel, className, id, attributes, ""), m_RootNode("root")
-	, m_Base(0), m_basePos(0), m_MainSel(0)
+	, m_Base(0), m_basePos(0), m_MainSel(0), m_visibleChildren(0)
 	{
 		assert(!m_RootNode.parent);
 		m_RootNode.list = this;
@@ -139,7 +160,7 @@ public:
 		node->list = this;
 		node->columns.resize(m_columnHeaders.size());
 		m_RootNode.children.insert(node);
-		++m_RootNode.totalChildrenCount;
+		++m_visibleChildren;
 		node_iter_t i(node);
 		i->parent = 0;
 		
@@ -154,7 +175,6 @@ public:
 	node_iter_t push_back(Node* node, Node* parent)
 	{
 		node->list = this;
-		node->level = parent->level + 1;
 		node->columns.resize(m_columnHeaders.size());
 		node_iter_t i = parent->push_back(node);
 		
@@ -168,6 +188,8 @@ public:
 			i->expanded = false;
 			if(i->parent)
 				i->parent->changeChildrenCount(-i->totalChildrenCount);
+			else
+				m_visibleChildren -= i->totalChildrenCount;
 			int offs = Node::findOffsetTo(m_RootNode.children.begin(), m_Base);
 			setBasePos(offs);
 		}
@@ -176,6 +198,8 @@ public:
 			i->expanded = true;
 			if(i->parent)
 				i->parent->changeChildrenCount(i->totalChildrenCount);
+			else
+				m_visibleChildren += i->totalChildrenCount;
 			
 			int offs = Node::findOffsetTo(m_RootNode.children.begin(), i);
 			setBasePos(offs);
@@ -194,7 +218,7 @@ public:
 	void clear()
 	{
 		m_MainSel = m_Base = node_iter_t(0);
-		m_RootNode.totalChildrenCount = 0;
+		m_visibleChildren = 0;
 		m_RootNode.children.clear();
 	}
 	
@@ -242,10 +266,12 @@ public:
 		m_Base = Node::findRelative(m_RootNode.children.begin(), m_basePos);
 	}
 	
+	void scrollBottom();
+	
 	void setBasePos(int pos)
 	{
-		if(pos >= m_RootNode.totalChildrenCount - visibleRows())
-			pos = m_RootNode.totalChildrenCount - visibleRows() - 1;
+		if(pos > m_visibleChildren - visibleRows())
+			pos = m_visibleChildren - visibleRows();
 		if(pos < 0)
 			pos = 0;
 		m_basePos = pos;
@@ -257,8 +283,15 @@ public:
 		return getRect().getHeight() / rowHeight - 1;
 	}
 	
-	virtual bool render(Renderer* renderer);
+	node_iter_t getFirstNode()
+	{
+		return m_RootNode.children.begin();
+	}
+	
+	virtual bool render();
 	virtual bool mouseDown(ulong newX, ulong newY, Context::MouseKey::type button);
+	
+	virtual bool mouseScroll(ulong newX, ulong newY, int offs);
 	
 	virtual bool keyDown(int key);
 	
@@ -274,6 +307,7 @@ private:
 		ListFormatting()
 		: headerColor(RGB(170, 170, 255))
 		, selectionColor(RGB(170, 170, 255))
+		, selectionFrameColor(RGB(0, 0, 0))
 		{
 			
 		}
@@ -281,6 +315,7 @@ private:
 		
 		RGB headerColor;
 		RGB selectionColor;
+		RGB selectionFrameColor;
 
 	} m_listFormatting;
 	
@@ -290,6 +325,7 @@ private:
 	int              m_basePos;
 	node_iter_t      m_MainSel;
 	std::vector<ColumnHeader> m_columnHeaders;
+	int m_visibleChildren;
 };
 
 }

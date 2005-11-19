@@ -4,7 +4,8 @@
 #include "base_player.h"
 #include "worm.h"
 #include "base_object.h"
-#include "omfgutil_math.h"
+#include "util/angle.h"
+#include "util/vec.h"
 
 //AI Worm Player
 class PlayerAI : public BasePlayer

@@ -3,7 +3,6 @@
 
 #include "detail/context.h"
 #include "detail/renderer.h"
-#include "detail/common.h"
 
 namespace OmfgGUI
 {

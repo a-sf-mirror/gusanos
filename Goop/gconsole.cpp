@@ -9,7 +9,7 @@
 #include "script.h"
 #include "game.h"
 #include "glua.h"
-#include "omfgutil_math.h" // for rndgen
+#include "util/math_func.h"
 
 #include "network.h" //TEMP
 
@@ -90,6 +90,7 @@ string echoCmd(list<string> const& args)
 }
 
 #ifndef DEDSERV
+/*
 // Key map swapping command
 string swapKeysCmd(const list<string> &args)
 {
@@ -109,6 +110,7 @@ string swapKeysCmd(const list<string> &args)
 	}
 	return "SWAPKEYS <KEY A> <KEY B> : SWAPS KEY A AND KEY B WITH EACHOTHER";
 }
+
 
 string setShiftChar(const list<string> &args)
 {
@@ -163,7 +165,7 @@ string setAltGrChar(const list<string> &args)
 	}
 	return "SETALTGRCHAR <KEY> <CHARACTER> : SETS THE CHARACTER TO BE USED WITH ALTGR+KEY";
 }
-
+*/
 string GConsole::setConsoleKey(list<string> const& args)
 {
 	if (args.size() >= 1)
@@ -309,10 +311,11 @@ void GConsole::varCbFont( std::string oldValue )
 #endif
 void GConsole::init()
 {
+#ifndef DEDSERV
 	keyHandler.init();
 	
 	//Connect the handlers as group 0 so they are called first
-#ifndef DEDSERV
+
 	keyHandler.printableChar.connect(0, boost::bind(&GConsole::eventPrintableChar, this, _1, _2));
 	keyHandler.keyDown.connect(0, boost::bind(&GConsole::eventKeyDown, this, _1));
 	keyHandler.keyUp.connect(0, boost::bind(&GConsole::eventKeyUp, this, _1));
@@ -332,10 +335,12 @@ void GConsole::init()
 	console.registerCommands()
 #ifndef DEDSERV
 		(string("BIND"), bindCmd, bindCompleter)
+/*
 		(string("SWAPKEYS"), swapKeysCmd)
 		(string("SETSHIFTCHAR"), setShiftChar)
 		(string("SETALTGRCHAR"), setAltGrChar)
 		(string("SETCHAR"), setChar)
+*/
 		(string("SETCONSOLEKEY"), boost::bind(&GConsole::setConsoleKey, this, _1))
 #endif
 		(string("EXEC"), execCmd)

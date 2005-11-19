@@ -284,7 +284,6 @@ void Player::actionStop ( Actions action )
 			}
 		}
 		break;
-
 	}
 }
 

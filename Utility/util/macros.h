@@ -8,7 +8,7 @@
 
 #define foreach( i, c )\
   typedef __typeof__( c ) BOOST_PP_CAT(T_, __LINE__); BOOST_PP_CAT(T_, __LINE__)& BOOST_PP_CAT(C_, __LINE__) = (c); for( BOOST_PP_CAT(T_, __LINE__)::iterator i = BOOST_PP_CAT(C_, __LINE__).begin(); i != BOOST_PP_CAT(C_, __LINE__).end(); ++i )
-  
+
 #define foreach_bool( i, c )\
   typedef __typeof__( c ) BOOST_PP_CAT(T_, __LINE__); BOOST_PP_CAT(T_, __LINE__)& BOOST_PP_CAT(C_, __LINE__) = (c); for( BOOST_PP_CAT(T_, __LINE__)::iterator i = BOOST_PP_CAT(C_, __LINE__).begin(); i; ++i )
   

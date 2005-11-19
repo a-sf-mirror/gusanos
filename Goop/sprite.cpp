@@ -5,13 +5,14 @@
 #include "blitters/context.h"
 #endif
 
+
 #include <allegro.h>
 #include <iostream>
 
 using namespace std;
 
 // LIGHTHAX!!
-#include "omfgutil_math.h"
+#include "util/vec.h"
 Sprite* genLight( int radius )
 {
 	BITMAP* lightHax;

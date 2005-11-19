@@ -9,7 +9,7 @@
 #include <set>
 #include <boost/lexical_cast.hpp>
 #include <boost/array.hpp>
-#include "omfgutil_macros.h"
+#include "util/macros.h"
 
 using std::cout;
 using std::endl;
@@ -82,6 +82,7 @@ struct Handler
 		}
 		else
 			return false;
+		return true;
 	}
 	
 	void firstSet(Option& self, std::set<int>& s)
@@ -139,7 +140,7 @@ struct Handler
 				return s;
 		}
 		
-		return "";
+		return "true";
 	}
 	
 	std::string firstSetTest(Def& self)
@@ -196,7 +197,7 @@ struct Handler
 					{
 						if(!token.code.empty())
 							//s << self.code << ".reset(static_cast<" << token.name << " *>(curData.release());\n";
-							s << "auto_ptr<" << token.name << "> " << self.code << "(static_cast<" << token.name << " *>(curData.release()));\n";
+							s << "auto_ptr<" << token.name << "> " << self.code << "(curData);\n";
 						else
 							throw SyntaxError("Token does not return any data");
 					}
@@ -418,26 +419,6 @@ struct Handler
 };
 
 //#define PARSER
-
-#ifdef PARSER
-#include "out2.h"
-
-struct TestParser
-{
-	TestParser(std::istream& str_)
-	: str(str_)
-	{
-	}
-	
-	size_t read(char* p, size_t s)
-	{
-		str.read(p, s);
-		return str.gcount();
-	}
-	
-	std::istream& str;
-};
-#endif
 
 int main(int argc, char const* argv[])
 {

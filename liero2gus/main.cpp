@@ -439,7 +439,6 @@ void outputC(ostream& out, istream& in)
 
 int baz() { struct foo { static int bar() { return 6; } }; printf("%i\n", foo::bar()); }
 
-
 int main()
 {
 	fs::ifstream f("/home/glip/liero/liero.exe", ios::binary);

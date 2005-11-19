@@ -2,10 +2,11 @@
 #define BASE_WORM_H
 
 #include "zoidcom.h"
-#include "omfgutil_math.h"
+#include "util/vec.h"
+#include "util/angle.h"
 #include "base_object.h"
 #include <vector>
-#include "lua/types.h"
+#include "luaapi/types.h"
 
 class BasePlayer;
 class NinjaRope;

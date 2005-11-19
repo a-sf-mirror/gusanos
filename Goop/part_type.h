@@ -9,7 +9,7 @@
 #include <allegro.h>
 #endif
 #include "events.h"
-#include "omfgutil_math.h"
+#include "util/angle.h"
 
 #include <string>
 #include <vector>

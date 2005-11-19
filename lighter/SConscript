@@ -1,4 +1,4 @@
-Import('env getObjects conf build subfolder getBinName getLibName')
+Import('env')
 
 env = env.Copy()
 env.Append(LIBS = Split("""
@@ -7,48 +7,20 @@ env.Append(LIBS = Split("""
 	
 #omfghttp
 
-if conf == 'posix':
-	env.Append(LIBS = Split("""
-	        png12 z
-	        alleg-4.2.0 alleg_unsharable
-	        boost_filesystem-gcc boost_signals-gcc"""),
-			LINKFLAGS = '-Wl,--export-dynamic'
-		)
-		
-		#Xpm Xext X11
-		
-elif conf == 'mingw-cross':
-	env.Append(LIBS = Split("""
-	        png13 z
-	        alleg boost_filesystem-mgw boost_signals-mgw""")
-		)
-elif conf == 'basara':
-	env.Append(LIBS = Split("""
-	        png12 z
-	        alleg-4.2.0 alleg_unsharable
-	        boost_filesystem-gcc boost_signals-gcc"""),
-	        LINKFLAGS = '-Wl,--export-dynamic'
-		)
-elif conf == 'darka':
-	env.Append(LIBS = Split("""
-	        png12 z
-	        alleg-4.2.0 alleg_unsharable
-	        boost_filesystem-gcc-mt boost_signals-gcc-mt"""),
-	        LINKFLAGS = '-Wl,--export-dynamic'
-		)
-elif conf == 'lucas':
-	env.Append(LIBS = Split("""
-	        png12 z
-	        alleg-4.2.0 alleg_unsharable
-	        boost_filesystem-gcc boost_signals-gcc"""),
-			LINKFLAGS = '-Wl,--export-dynamic'
-		)
-		
+if env.conf == 'mingw-cross':
+	env.Append(LIBS = Split("alleg"))
+else:
+	env.ParseConfig('allegro-config --libs --cppflags')
+	
+env.Append(
+	LIBS = env.confLibs('boost_filesystem boost_signals png') + ['z']
+	)
+
 	        
 # add more platforms here
 
 SConscript([
 	'./loaders/SConscript'
-	], exports = ['env', 'getObjects', 'getLibName', 'conf', 'build', 'subfolder'])
+	], exports = ['env'])
 
-env.Program(getBinName('lighter'), getObjects(env))
+env.Program(env.getBinName('lighter'), env.getObjects())

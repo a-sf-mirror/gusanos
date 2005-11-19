@@ -10,8 +10,8 @@
 #include "particle.h"
 #include "worm.h"
 #include "player.h"
-#include "omfgutil_macros.h"
-#include "omfgutil_math.h"
+#include "mouse.h"
+#include "util/macros.h"
 //#include "text.h"
 #ifndef DEDSERV
 #include "viewport.h"
@@ -29,7 +29,8 @@
 
 #include "script.h"
 #include "glua.h"
-//#include "http/http.h"
+#include "http.h"
+#include <memory>
 
 #ifdef WINDOWS
 	#include <winalleg.h>
@@ -49,8 +50,8 @@ int showFps;
 int showDebug;
 
 //millisecond timer
-volatile unsigned int _timer = 0;
-void _timerUpdate(void) { _timer++; } END_OF_FUNCTION(_timerUpdate);
+volatile unsigned int timer = 0;
+void timerUpdate(void) { timer++; } END_OF_FUNCTION(timerUpdate);
 
 string Exit(const list<string> &args)
 {
@@ -103,8 +104,6 @@ int main(int argc, char **argv)
 	
 #endif
 
-	//OmfgGUI::menu.testParseXML();
-
 	console.registerVariables()
 		("CL_SHOWFPS", &showFps, 1)
 		("CL_SHOWDEBUG", &showDebug, 0)
@@ -118,19 +117,17 @@ int main(int argc, char **argv)
 
 #ifndef DEDSERV
 	OmfgGUI::menu.clear();
-	OmfgGUI::AllegroRenderer renderer;
 #endif
 	game.loadMod();
 	
 	//install millisecond timer
-	install_timer();
-	LOCK_VARIABLE(_timer);
-	LOCK_FUNCTION(_timerUpdate);
-	install_int_ex(_timerUpdate, BPS_TO_TIMER(100));
+	LOCK_VARIABLE(timer);
+	LOCK_FUNCTION(timerUpdate);
+	install_int_ex(timerUpdate, BPS_TO_TIMER(100));
 
-	unsigned int _fpsLast = 0;
-	int _fpsCount = 0;
-	int _fps = 0;
+	unsigned int fpsLast = 0;
+	int fpsCount = 0;
+	int fps = 0;
 	unsigned int logicLast = 0;
 	
 #ifndef DEDSERV
@@ -143,7 +140,7 @@ int main(int argc, char **argv)
 	while (!quit)
 	{
 
-		while ( logicLast + 1 <= _timer )
+		while ( logicLast + 1 <= timer )
 		{
 			
 #ifdef USE_GRID
@@ -243,8 +240,14 @@ int main(int argc, char **argv)
 			console.checkInput();
 #endif
 			console.think();
+			mouseHandler.poll();
 			
 			spriteList.think();
+			
+			EACH_CALLBACK(i, afterUpdate)
+			{
+				(lua.call(*i))();
+			}
 			
 			++logicLast;
 		}
@@ -261,13 +264,13 @@ int main(int argc, char **argv)
 
 #ifndef DEDSERV
 		//Update FPS
-		if (_fpsLast + 100 <= _timer)
+		if (fpsLast + 100 <= timer)
 		{
-			_fps = _fpsCount;
-			_fpsCount = 0;
-			_fpsLast = _timer;
+			fps = fpsCount;
+			fpsCount = 0;
+			fpsLast = timer;
 			
-			//console.addLogMsg(cast<string>(_fps));
+			//console.addLogMsg(cast<string>(fps));
 		}
 
 
@@ -285,6 +288,7 @@ int main(int argc, char **argv)
 				game.infoFont->draw(gfx.buffer, "OBJECTS: \01303" + cast<string>(game.objects.size()), 5, 10, 0, 255, 255, 255, 255, Font::Formatting);
 				game.infoFont->draw(gfx.buffer, "PLAYERS: \01303" + cast<string>(game.players.size()), 5, 15, 0, 255, 255, 255, 255, Font::Formatting);
 				game.infoFont->draw(gfx.buffer, "PING:    \01303" + cast<string>(network.getServerPing()), 5, 20, 0, 255, 255, 255, 255, Font::Formatting);
+				game.infoFont->draw(gfx.buffer, "LUA MEM: \01303" + cast<string>(lua_gc(lua, LUA_GCCOUNT, 0)), 5, 25, 0, 255, 255, 255, 255, Font::Formatting);
 			}
 						
 			int miny = 150;
@@ -357,17 +361,21 @@ int main(int argc, char **argv)
 				while(b != e);
 			}
 		}
+		else
+		{
+			clear_bitmap(gfx.buffer);
+		}
 
 		
 		//show fps
 		if (showFps)
 		{
-			game.infoFont->draw(gfx.buffer, "FPS: \01303" + cast<string>(_fps), 5, 5, 0, 255, 255, 255, 255, Font::Formatting);
+			game.infoFont->draw(gfx.buffer, "FPS: \01303" + cast<string>(fps), 5, 5, 0, 255, 255, 255, 255, Font::Formatting);
 		}
-		_fpsCount++;
+		fpsCount++;
 
 
-		OmfgGUI::menu.render(&renderer);
+		OmfgGUI::menu.render();
 		console.render(gfx.buffer);
 
 		EACH_CALLBACK(i, afterRender)
@@ -380,11 +388,10 @@ int main(int argc, char **argv)
 #endif
 	}
 	
-	cerr << Encoding::eliasCodedBits << " bits for " << Encoding::eliasInvokations << " invokations." << endl;
-	
 	network.disconnect();
 	network.shutDown();
 	game.unload();
+	OmfgGUI::menu.destroy();
 	console.shutDown();
 #ifndef DEDSERV
 	sfx.shutDown();

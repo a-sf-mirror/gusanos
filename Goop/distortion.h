@@ -5,7 +5,7 @@
 #error "Can't use this in dedicated server"
 #endif //DEDSERV
 
-#include "omfgutil_math.h"
+#include "util/vec.h"
 #include <string>
 #include <utility>
 #include <map>

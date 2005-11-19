@@ -1,6 +1,7 @@
 #include "base_worm.h"
 
-#include "omfgutil_math.h"
+#include "util/vec.h"
+#include "util/angle.h"
 #include "game.h"
 #include "base_object.h"
 #include "base_player.h"
@@ -852,13 +853,13 @@ void BaseWorm::draw(Viewport* viewport)
 			if (m_ninjaRope->active)
 			{
 				IVec nrPos = viewport->convertCoords( IVec(m_ninjaRope->pos) );
-				line(where, x, y, nrPos.x, nrPos.y, m_ninjaRope->getColour());
-				/*linewu_solid(where
-					, renderPos.x - xOff
-					, renderPos.y - yOff
-					, m_ninjaRope->pos.x - xOff
-					, m_ninjaRope->pos.y - yOff
-				, m_ninjaRope->getColour());*/
+				//line(where, x, y, nrPos.x, nrPos.y, m_ninjaRope->getColour());
+				linewu_solid(where
+					, x
+					, y
+					, nrPos.x
+					, nrPos.y
+				, m_ninjaRope->getColour());
 			}
 			
 			if ( m_weapons[currentWeapon] ) m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
@@ -990,8 +991,7 @@ void BaseWorm::damage( float amount, BasePlayer* damager )
 void BaseWorm::addAimSpeed( AngleDiff speed )
 {
 	if ( m_owner )
-	if ( fabs( aimSpeed ) < m_owner->getOptions()->aimMaxSpeed )
-	aimSpeed += speed;
+		aimSpeed += speed;
 }
 
 void BaseWorm::addRopeLength( float distance )

@@ -5,7 +5,7 @@
 #include "player.h"
 #include "gconsole.h"
 #include "glua.h"
-#include "omfgutil_text.h"
+#include "util/text.h"
 #include "util/stringbuild.h"
 #include <boost/bind.hpp>
 

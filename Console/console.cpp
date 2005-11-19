@@ -3,7 +3,8 @@
 #include "command.h"
 #include "special_command.h"
 #include "alias.h"
-#include "omfgutil_text.h"
+#include "util/text.h"
+#include "util/macros.h"
 #include "consoleitem.h"
 
 #include "console-grammar.h"
@@ -115,7 +116,7 @@ void Console::registerAlias(const std::string &name, const std::string &action)
 		}
 	}
 }
-
+/*
 struct IsTemporary
 {
 	bool operator()(std::pair<std::string, ConsoleItem*> const& x) const
@@ -123,21 +124,16 @@ struct IsTemporary
 		return x.second->temp;
 	}
 };
-
+*/
 void Console::clearTemporaries()
 {
 	//std::remove_if(items.begin(), items.end(), IsTemporary());
-	/*
-	
-	std::map<std::string, ConsoleItem*, IStrCompare>::iterator i = items.begin(), temp;
-	
-	for(; i != items.end();)
-	{
-		temp = i; ++i;
-		
-		if(temp->second->temp)
-			items.erase(temp);
-	}*/
+
+	foreach_delete(i, items)
+	{	
+		if(i->second->temp)
+			items.erase(i);
+	}
 }
 
 struct TestHandler : public ConsoleGrammarBase

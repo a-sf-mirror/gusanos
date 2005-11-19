@@ -3,6 +3,8 @@
 
 #include "detail/wnd.h"
 #include "detail/button.h"
+#include "detail/edit.h"
+#include "detail/group.h"
 #include "detail/list.h"
 
 #endif //OMFGGUI_WINDOWS_H

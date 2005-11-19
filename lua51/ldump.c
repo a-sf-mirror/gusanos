@@ -26,7 +26,6 @@ typedef struct {
 
 #define DumpCode(f,D)	 DumpVector(f->code,f->sizecode,sizeof(Instruction),D)
 #define DumpLines(f,D)	 DumpVector(f->lineinfo,f->sizelineinfo,sizeof(int),D)
-#define DumpLiteral(s,D) DumpBlock("" s,(sizeof(s))-1,D)
 #define DumpVar(x,D)	 DumpMem(&x,1,sizeof(x),D)
 #define DumpMem(b,n,size,D)	DumpBlock(b,(n)*(size),D)
 

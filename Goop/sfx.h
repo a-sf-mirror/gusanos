@@ -5,9 +5,8 @@
 #error "Can't use this in dedicated server"
 #endif //DEDSERV
 
-#include "omfgutil_math.h"
-#include <list>
-#include <vector>
+#include "util/vec.h"
+
 
 class BaseObject;
 
@@ -19,7 +18,7 @@ struct Listener
 
 class Sfx
 {
-	public:
+public:
 		
 	Sfx();
 	~Sfx();
@@ -34,20 +33,7 @@ class Sfx
 	void freeListener(Listener* listener);
 	void volumeChange();
 	
-	operator bool()
-	{ return m_initialized; } // Returns true if it's safe to use this object
-	
-	private:
-	
-	bool m_initialized;
-	
-	std::list< std::pair< int, BaseObject* > > chanObject;
-	std::vector<Listener*> listeners;
-	
-	int m_volume;
-	int m_listenerDistance;
-	int m_outputMode;
-
+	operator bool(); // Returns true if it's safe to use this object
 };
 
 extern Sfx sfx;

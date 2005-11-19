@@ -175,6 +175,36 @@ pair<int, int> Font::getDimensions(std::string::const_iterator b, std::string::c
 	return make_pair(w, h);
 }
 
+int Font::getTextCoordToIndex(std::string::const_iterator b, std::string::const_iterator e, int x, int spacing, int flags)
+{
+	int i = 0;
+	
+	for(; b != e; ++b)
+	{
+		if(flags & Formatting)
+		{
+			while(skipFormatting(b, e))
+			{
+				if(b == e)
+					return i;
+			}
+		}
+		
+		CharInfo *c = lookupChar(*b);
+		
+		int w = c->width + c->spacing + spacing;
+		if(x < w / 2)
+			return i;
+		else if(x < w)
+			return i + 1;
+		
+		x -= w;
+		++i;
+	}
+	
+	return i;
+}
+
 /*
 pair<int, int> Font::getFormattedDimensions(std::string const& text, int spacing)
 {

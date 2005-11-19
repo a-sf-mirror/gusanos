@@ -6,9 +6,13 @@
 
 #include <zoidcom.h>
 #include <string>
+#include <boost/function.hpp>
 
-//static unsigned int INVALID_NODE_ID = 0; // You can't have statics in headers outside classes >:o
-#define INVALID_NODE_ID 0
+const unsigned int INVALID_NODE_ID = 0;
+
+namespace HTTP { struct Request; }
+
+typedef boost::function<void (HTTP::Request*)> HttpRequestCallback;
 
 class Network
 {
@@ -52,6 +56,9 @@ public:
 	
 	bool isHost();
 	bool isClient();
+	
+	static HTTP::Request* fetchServerList();
+	static void addHttpRequest(HTTP::Request*, HttpRequestCallback);
 	
 	ZCom_Control* getZControl();
 	int getServerPing();

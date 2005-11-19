@@ -4,8 +4,7 @@
 #include <allegro.h>
 
 #include <string>
-#include <list>
-//#include "blitters/vtables.h"
+//#include <list>
 
 enum Blenders
 {
@@ -63,40 +62,12 @@ public:
 	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL, bool keepAlpha = false);
 	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);
 	
-	operator bool()
-	{ return m_initialized; } // Returns true if it's safe to use this object
-
-	
-private:
-	
-	bool m_initialized;
-	
-#ifndef DEDSERV
-	int m_fullscreen;
-	int m_doubleRes;
-	int m_vwidth;
-	int m_vheight;
-	int m_vsync;
-	int m_clearBuffer;
-	int m_filter;
-	int m_driver;
-	int m_bitdepth;
-
-	BITMAP* m_doubleResBuffer;
-	
-	enum Filters
-	{
-		NO_FILTER,
-		SCANLINES,
-		SCANLINES2,
-		BILINEAR
-	};
-#endif
+	operator bool(); // Returns true if it's safe to use this object
 
 };
 
 #ifndef DEDSERV
-std::string screenShot(const std::list<std::string> &args);
+//std::string screenShot(const std::list<std::string> &args);
 #endif
 
 extern Gfx gfx;

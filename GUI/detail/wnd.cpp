@@ -1,4 +1,8 @@
 #include "wnd.h"
+
+#include "luaapi/types.h"
+#include "luaapi/context.h"
+
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -9,6 +13,8 @@ using std::endl;
 
 namespace OmfgGUI
 {
+	
+char const Wnd::metaTable[] = "gui_wnd";
 
 Wnd::~Wnd()
 {
@@ -16,17 +22,18 @@ Wnd::~Wnd()
 	{
 		//Remove references in context
 		
+		m_context->luaContext().destroyReference(luaReference);
 		m_context->deregisterWindow(this);
+	}
+	else
+	{
+		cerr << "WARNING: Wnd destructed without context" << endl;
 	}
 	
 	if(m_parent)
 	{
-		for(Wnd* p = m_parent; m_parent && m_parent->m_lastChildFocus == this; p = p->m_parent)
-		{
-			p->m_lastChildFocus = 0;
-		}
 		
-		m_parent->m_children.remove(this);
+		m_parent->removeChild(this);
 	}
 
 	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
@@ -526,11 +533,13 @@ Wnd* Wnd::findClosestChild(Wnd* org, Dir direction)
 	return minWnd;
 }
 
-bool Wnd::doRender(Renderer* renderer, Rect const& clip)
+bool Wnd::doRender(Rect const& clip)
 {
 	//Render parent first
 	if(!m_visible)
 		return false;
+	
+	Renderer* renderer = context()->renderer();
 		
 	Rect rect(clip);
 	rect.intersect(m_rect);
@@ -543,14 +552,14 @@ bool Wnd::doRender(Renderer* renderer, Rect const& clip)
 	else
 		renderer->resetBlending();
 	
-	if(!render(renderer))
+	if(!render())
 		return false;
 
 	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
 	
 	for(; i != e; ++i)
 	{
-		(*i)->doRender(renderer, rect);
+		(*i)->doRender(rect);
 	}
 	
 	return true;
@@ -569,7 +578,7 @@ void Wnd::doProcess()
 	process();
 }
 
-bool Wnd::render(Renderer* renderer)
+bool Wnd::render()
 {
 	return true;
 }
@@ -587,15 +596,41 @@ void Wnd::doSetActivation(bool active)
 {
 	if(active != m_active)
 	{
+		if(active)
+		{
+			m_context->setActive(this);
+			focus();
+		}
 		setActivation(active);
 		m_active = active;
 		applyGSS(m_context->m_gss);
 	}
 }
 
+bool Wnd::doAction()
+{
+	if(m_callbacks[OnAction])
+	{
+		LuaContext& lua = m_context->luaContext();
+		int r = (lua.call(m_callbacks[OnAction], 1), luaReference)();
+		if(r == 1)
+		{
+			bool v = lua_toboolean(lua, -1);
+			lua.pop(1);
+			return v;
+		}
+	}
+	return false;
+}
+
 void Wnd::setText(std::string const& aStr)
 {
 	m_text = aStr;
+}
+
+void Wnd::pushReference()
+{
+	m_context->luaContext().push(luaReference);
 }
 
 void Wnd::notifyHide()
@@ -656,14 +691,14 @@ void Wnd::doUpdateGSS()
 //Sends a cursor relocation event
 bool Wnd::doMouseMove(ulong newX, ulong newY)
 {
-	if(!m_rect.isInside(newX, newY))
-		return false;
+	if(!m_visible || !m_rect.isInside(newX, newY))
+		return true;
 		
 	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
 	
 	for(; i != e; ++i)
-		if((*i)->doMouseMove(newX, newY))
-			return true;
+		if(!(*i)->doMouseMove(newX, newY))
+			return false;
 
 	return mouseMove(newX, newY);
 }
@@ -671,49 +706,74 @@ bool Wnd::doMouseMove(ulong newX, ulong newY)
 //Sends a mouse button down event
 bool Wnd::doMouseDown(ulong newX, ulong newY, Context::MouseKey::type button)
 {
-	if(!m_rect.isInside(newX, newY))
-		return false;
+	if(!m_visible || !m_rect.isInside(newX, newY))
+		return true;
 		
 	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
 	
 	for(; i != e; ++i)
-		if((*i)->doMouseDown(newX, newY, button))
-			return true;
-		
-	return mouseDown(newX, newY, button);
+	{
+		if(!(*i)->doMouseDown(newX, newY, button))
+			return false;
+	}
+	
+	bool res = mouseDown(newX, newY, button);
+	if(!res)
+		m_context->m_mouseFocusWnd = this;
+
+	return res;
 }
 
 //Sends a mouse button up event
 bool Wnd::doMouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
 {
-	if(!m_rect.isInside(newX, newY))
-		return false;
+	if(!m_visible || !m_rect.isInside(newX, newY))
+		return true;
 		
 	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
 	
 	for(; i != e; ++i)
-		if((*i)->doMouseUp(newX, newY, button))
-			return true;
+		if(!(*i)->doMouseUp(newX, newY, button))
+			return false;
 		
 	return mouseUp(newX, newY, button);
+}
+
+bool Wnd::doMouseScroll(ulong newX, ulong newY, int offs)
+{
+	if(!m_visible || !m_rect.isInside(newX, newY))
+		return true;
+		
+	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
+	
+	for(; i != e; ++i)
+		if(!(*i)->doMouseScroll(newX, newY, offs))
+			return false;
+		
+	return mouseScroll(newX, newY, offs);
 }
 
 //Sends a cursor relocation event
 bool Wnd::mouseMove(ulong newX, ulong newY)
 {
-	return false;
+	return true;
 }
 
 //Sends a mouse button down event
 bool Wnd::mouseDown(ulong newX, ulong newY, Context::MouseKey::type button)
 {
-	return false;
+	return true;
 }
 
 //Sends a mouse button up event
 bool Wnd::mouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
 {
-	return false;
+	return true;
+}
+
+bool Wnd::mouseScroll(ulong newX, ulong newY, int offs)
+{
+	return true;
 }
 
 bool Wnd::keyDown(int key)
@@ -747,16 +807,43 @@ int Wnd::classID()
 	return Context::Unknown;
 }
 
+bool Wnd::registerCallback(std::string const& name, LuaReference callb)
+{
+	LuaCallbacks i = LuaCallbacksMax;
+	if(name == "onAction")
+		i = OnAction;
+	if(i != LuaCallbacksMax && !m_callbacks[i])
+	{
+		m_callbacks[i] = callb;
+		return true;
+	}
+	return false;
+}
+
 bool Wnd::isVisibile()
 {
 	Wnd* p = this;
 	while(p)
 	{
-		
 		if(!p->m_visible)
 			return false;
 
 		p = p->getParent();
+	}
+	
+	return true;
+}
+
+bool Wnd::switchTo()
+{
+	if(!m_parent)
+		return false;
+	
+	std::list<Wnd *>::iterator i = m_parent->m_children.begin(), e = m_parent->m_children.end();
+	
+	for(; i != e; ++i)
+	{
+		(*i)->setVisibility(*i == this);
 	}
 	
 	return true;

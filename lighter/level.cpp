@@ -4,7 +4,8 @@
 
 #include "material.h"
 
-#include "omfgutil_math.h"
+#include "util/vec.h"
+#include "util/math_func.h"
 
 
 #include <allegro.h>

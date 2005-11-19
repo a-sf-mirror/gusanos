@@ -2,15 +2,17 @@
 
 #include "menu.h"
 #include "keyboard.h"
+#include "mouse.h"
 #include "gfx.h"
 #include "blitters/blitters.h"
 #include "font.h"
 #include "sprite_set.h"
 #include "sprite.h"
 #include "script.h"
-#include "lua/context.h"
+#include "luaapi/context.h"
 #include "omfggui_windows.h"
 #include "gconsole.h"
+#include "glua.h"
 #include <boost/bind.hpp>
 #include <iostream>
 #include <list>
@@ -26,7 +28,8 @@ ResourceLocator<GSSFile, false, false> gssLocator;
 namespace OmfgGUI
 {
 
-GContext menu;
+AllegroRenderer renderer;
+GContext menu(&renderer);
 
 std::string cmdLoadXML(std::list<std::string> const& args)
 {
@@ -155,7 +158,8 @@ ulong GusanosSpriteSet::getFrameHeight(int frame, int angle) const
 	return spriteSet->getSprite(frame)->getHeight();
 }
 
-GContext::GContext()
+GContext::GContext(Renderer* renderer)
+: Context(renderer)
 {
 	array<bool, 256>::iterator b = bindingLock.enable.begin();
 	std::fill(b + KEY_F1, b + KEY_ESC + 1, false);
@@ -167,12 +171,44 @@ void GContext::init()
 	keyHandler.keyUp.connect(boost::bind(&GContext::eventKeyUp, this, _1));
 	keyHandler.printableChar.connect(boost::bind(&GContext::eventPrintableChar, this, _1, _2));
 	
+	mouseHandler.buttonDown.connect(boost::bind(&GContext::eventMouseDown, this, _1));
+	mouseHandler.buttonUp.connect(boost::bind(&GContext::eventMouseUp, this, _1));
+	mouseHandler.move.connect(boost::bind(&GContext::eventMouseMove, this, _1, _2));
+	mouseHandler.scroll.connect(boost::bind(&GContext::eventMouseScroll, this, _1));
+	
 	console.registerCommands()
 		("GUI_LOADXML", cmdLoadXML)
 		("GUI_LOADGSS", cmdLoadGSS)
 		("GUI_GSS", cmdGSS)
 		("GUI_FOCUS", cmdFocus)
 	;
+}
+
+bool GContext::eventMouseDown(int b)
+{
+	Context::mouseDown(mouseHandler.getX(), mouseHandler.getY(), MouseKey::type(b));
+	return true;
+}
+
+bool GContext::eventMouseUp(int b)
+{
+	//m_rootWnd->doMouseUp(mouseHandler.getX(), mouseHandler.getY(), MouseKey::type(b));
+	Context::mouseUp(mouseHandler.getX(), mouseHandler.getY(), MouseKey::type(b));
+	return true;
+}
+
+bool GContext::eventMouseMove(int x, int y)
+{
+	//m_rootWnd->doMouseMove(x, y);
+	Context::mouseMove(x, y);
+	return true;
+}
+
+bool GContext::eventMouseScroll(int offs)
+{
+	//m_rootWnd->doMouseScroll(mouseHandler.getX(), mouseHandler.getY(), offs);
+	Context::mouseScroll(mouseHandler.getX(), mouseHandler.getY(), offs);
+	return true;
 }
 
 bool GContext::eventKeyDown(int k)
@@ -248,8 +284,9 @@ bool GContext::eventKeyUp(int k)
 	Wnd* focus = getFocus();
 	if(focus && focus->isVisibile())
 	{
-		bool ok = focus->keyUp(k);
+		focus->keyUp(k);
 		
+		/*
 		// Do sth?
 		switch(k)
 		{
@@ -271,7 +308,7 @@ bool GContext::eventKeyUp(int k)
 				}
 			}
 			break;
-		}
+		}*/
 	}
 	
 	return true;
@@ -308,13 +345,18 @@ void GContext::shownFocus()
 	console.lockBindings(bindingLock);
 }
 
+LuaContext& GContext::luaContext()
+{
+	return lua;
+}
+
 void GContext::clear()
 {
 	delete m_rootWnd;
 	m_rootWnd = 0;
 	
 	std::istringstream rootGSS(
-		"#root { background: #000080 ; left: 0 ; top: 0 ; bottom : -1 ; right: -1; padding: 29; spacing: 20 }"
+		"window { left: 0 ; top: 0 ; bottom : -1 ; right: -1; }"
 		"edit { background: #FFFFFF ; border: #666666; border-bottom: #A0A0A0 ; border-right: #A0A0A0 ;"
 		" width: 100 ; height: 15 ; font-family: big }");
 		
@@ -338,6 +380,33 @@ BaseSpriteSet* GContext::loadSpriteSet(std::string const& name)
 	if(!s)
 		return 0;
 	return new GusanosSpriteSet(s);
+}
+
+void GContext::loadGSSFile(std::string const& name, bool passive)
+{
+	GSSFile f;
+	if(gssLocator.load(&f, name))
+	{
+		loadGSS(f.f);
+		if(!passive)
+			updateGSS();
+	}
+}
+
+Wnd* GContext::loadXMLFile(std::string const& name, Wnd* loadTo)
+{
+	XMLFile f;
+	if(xmlLocator.load(&f, name))
+	{
+		return buildFromXML(f.f, loadTo);
+	}
+	
+	return 0;
+}
+
+bool GContext::keyState(int key)
+{
+	return keyHandler.getKey(key);
 }
 
 int allegroColor(RGB const& rgb)
@@ -416,6 +485,15 @@ std::pair<int, int> AllegroRenderer::getTextDimensions(BaseFont const& font, std
 		return f->font->getDimensions(b, e);
 	}
 	return std::make_pair(0, 0);
+}
+
+int AllegroRenderer::getTextCoordToIndex(BaseFont const& font, std::string::const_iterator b, std::string::const_iterator e, int x)
+{
+	if(GusanosFont const* f = dynamic_cast<GusanosFont const*>(&font))
+	{
+		return f->font->getTextCoordToIndex(b, e, x);
+	}
+	return 0;
 }
 
 void AllegroRenderer::drawSprite(BaseSpriteSet const& spriteSet, int frame, ulong x, ulong y)

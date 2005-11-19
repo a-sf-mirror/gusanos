@@ -10,8 +10,9 @@
 #include "sound1d.h"
 #include "sprite_set.h"
 #endif
-#include "omfgutil_text.h"
-#include "omfgutil_math.h"
+#include "util/text.h"
+#include "util/angle.h"
+#include "util/vec.h"
 #include "base_object.h"
 #include "weapon.h"
 #include "worm.h"

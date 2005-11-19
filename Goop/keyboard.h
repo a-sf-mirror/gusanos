@@ -53,14 +53,14 @@ public:
 	void pollKeyboard(); //Isn't "poll" a better name?
 	//KeyEvent getEvent();
 
-	static int keyMapCallback(int key, int *scancode);
+	//static int keyMapCallback(int key, int *scancode);
 	static int mapKey(int k);
 	static bool getKey(int k);
-	static int reverseMapKey(int k);
-	static void swapKeyMapping(int keyA, int keyB);
-	static void setShiftCharacter(int key, int character);
-	static void setAltGrCharacter(int key, int character);
-	static void setCharacter(int key, int character);
+	//static int reverseMapKey(int k);
+	//static void swapKeyMapping(int keyA, int keyB);
+	//static void setShiftCharacter(int key, int character);
+	//static void setAltGrCharacter(int key, int character);
+	//static void setCharacter(int key, int character);
 	
 	boost::signal<bool (int), StopEarly> keyDown;
 	boost::signal<bool (int), StopEarly> keyUp;
@@ -68,11 +68,11 @@ public:
 	
 private:
 	
-	static int keyMap[KEY_MAX]; // The keymap
-	static int charMap[KEY_MAX]; // The character map
-	static int shiftCharMap[KEY_MAX]; // The shift map
-	static int capsCharMap[KEY_MAX]; // The caps lock map
-	static int altgrCharMap[KEY_MAX]; // The altgr lock map
+	//static int keyMap[KEY_MAX]; // The keymap
+	//static int charMap[KEY_MAX]; // The character map
+	//static int shiftCharMap[KEY_MAX]; // The shift map
+	//static int capsCharMap[KEY_MAX]; // The caps lock map
+	//static int altgrCharMap[KEY_MAX]; // The altgr lock map
 	
 	//std::list<KeyEvent> events;
 	

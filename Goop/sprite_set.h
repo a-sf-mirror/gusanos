@@ -2,8 +2,8 @@
 #define SPRITE_SET_H
 
 #include "resource_list.h"
-#include "omfgutil_math.h"
-#include "omfgutil_common.h"
+#include "util/angle.h"
+#include "util/cache.h"
 #include <allegro.h>
 #include <string>
 #include <vector>

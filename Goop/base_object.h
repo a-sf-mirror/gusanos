@@ -1,8 +1,9 @@
 #ifndef base_object_h
 #define base_object_h
 
-#include "omfgutil_math.h"
-#include "lua/types.h"
+#include "util/angle.h"
+#include "util/vec.h"
+#include "luaapi/types.h"
 
 //#include <allegro.h>
 struct BITMAP;
@@ -14,7 +15,7 @@ class BaseObject
 {
 public:
 		
-	BaseObject( BasePlayer* owner = NULL, Vec pos_ = Vec(), Vec spd_ = Vec() );
+	BaseObject( BasePlayer* owner = 0, Vec pos_ = Vec(), Vec spd_ = Vec() );
 	virtual ~BaseObject();
 
 #ifndef DEDSERV

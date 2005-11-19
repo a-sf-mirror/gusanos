@@ -4,7 +4,8 @@
 #include "worm.h"
 #include "game.h"
 #include "weapon.h"
-#include "omfgutil_math.h"
+#include "util/angle.h"
+#include "util/vec.h"
 #include <vector>
 #include <list>
 #include <cmath>

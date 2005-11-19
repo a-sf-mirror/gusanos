@@ -3,7 +3,7 @@
 
 #include "base_object.h"
 #include "exp_type.h"
-#include "omfgutil_math.h"
+#include "util/vec.h"
 //#include "animators.h"
 #include <vector>
 

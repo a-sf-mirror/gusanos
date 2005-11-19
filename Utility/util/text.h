@@ -21,6 +21,37 @@ T1 cast(const T2 &t2)
 	return t1;
 }
 
+template<class To>
+struct convert
+{
+	template<class From>
+	static To value(From const& v)
+	{
+		std::stringstream strStream;
+		strStream << v;
+		To v2;
+		strStream >> v2;
+		return v2;
+	}
+};
+
+template<>
+struct convert<std::string>
+{
+	template<class From>
+	static std::string value(From const& v)
+	{
+		std::stringstream strStream;
+		strStream << v;
+		return strStream.str();
+	}
+	
+	static std::string value(std::string const& v)
+	{
+		return v;
+	}
+};
+
 void separate_str_by(char ch, const std::string &src, std::string &left, std::string &right);
 
 std::list< std::list<std::string> > text2Tree(const std::string &text);
@@ -58,6 +89,43 @@ inline bool iisPrefixOfOther(
 			return false;
 	}
 	return true;
+}
+
+template<class IterA, class IterB>
+inline bool istrCmp(
+	IterA a,
+	IterA ae,
+	IterB b,
+	IterB be
+)
+{
+	for (; a != ae && b != be;
+		    ++a, ++b)
+	{
+		char ca = std::toupper(*a);
+		char cb = std::toupper(*b);
+		if(ca != cb)
+			return false;
+	}
+	return (a == ae && b == be);
+}
+
+template<class IterB>
+inline bool istrCmp(
+	char const* a,
+	IterB b,
+	IterB be
+)
+{
+	for (; *a && b != be;
+		    ++a, ++b)
+	{
+		char ca = std::toupper(*a);
+		char cb = std::toupper(*b);
+		if(ca != cb)
+			return false;
+	}
+	return (!*a && b == be);
 }
 
 struct IStrCompare

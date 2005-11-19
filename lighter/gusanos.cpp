@@ -3,9 +3,10 @@
 #include "level.h"
 #include "culling.h"
 #include "loaders/gusanos.h"
-#include "omfgutil_macros.h"
-#include "omfgutil_math.h"
-#include "omfgutil_text.h"
+#include "util/macros.h"
+#include "util/vec.h"
+#include "util/rect.h"
+#include "util/text.h"
 #include "gfx.h"
 
 #ifdef WINDOWS
@@ -106,6 +107,7 @@ int main(int argc, char **argv)
 
 	float fadeDistance= 200;
 
+	/* Broken
 	for(int i = 0; i < argc; ++i)
 	{
 		const char* arg = argv[i];
@@ -121,7 +123,7 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
-	}
+	}*/
 	allegro_init();
 	install_keyboard();
 	

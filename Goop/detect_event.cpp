@@ -3,7 +3,7 @@
 #include "events.h"
 #include "base_object.h"
 #include "game.h"
-#include "omfgutil_macros.h"
+#include "util/macros.h"
 
 DetectEvent::DetectEvent( float range, bool detectOwner, int detectFilter)
 : Event(Event::ProvidesObject | Event::ProvidesObject2)

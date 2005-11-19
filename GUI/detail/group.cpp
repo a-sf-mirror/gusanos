@@ -7,8 +7,12 @@ using std::endl;
 namespace OmfgGUI
 {
 
-bool Group::render(Renderer* renderer)
+char const Group::metaTable[] = "gui_group";
+
+bool Group::render()
 {
+	Renderer* renderer = context()->renderer();
+	
 	if(m_formatting.background.skin)
 	{
 		renderer->drawSkinnedBox(*m_formatting.background.skin, getRect(), m_formatting.background.color);

@@ -1,11 +1,13 @@
 #include "gfx.h"
-//#include "text.h"
 #include "gconsole.h"
 
 #ifndef DEDSERV
 #include "blitters/blitters.h"
 #include "blitters/colors.h"
 #include "blitters/macros.h"
+#include "mouse.h"
+#include "sprite_set.h"
+#include "sprite.h"
 #endif
 #include <boost/bind.hpp>
 #include <boost/assign/list_inserter.hpp>
@@ -24,6 +26,73 @@ using namespace boost::assign;
 using namespace std;
 
 Gfx gfx;
+
+namespace
+{
+	bool m_initialized = false;
+
+#ifndef DEDSERV
+	enum Filters
+	{
+		NO_FILTER,
+		SCANLINES,
+		SCANLINES2,
+		BILINEAR
+	};
+	
+	int m_fullscreen = 1;
+	int m_doubleRes = 1;
+	int m_vwidth = 320;
+	int m_vheight = 240;
+	int m_vsync = 0;
+	int m_clearBuffer = 0;
+	int m_filter = NO_FILTER;
+	int m_driver = 0;
+	int m_bitdepth = 32;
+
+	BITMAP* m_doubleResBuffer = 0;
+#endif
+
+#ifndef DEDSERV
+	
+	string screenShot(const list<string> &args)
+	{
+		int nameIndex = 0;
+		
+	#ifdef GLIPTIC_SCREENSHOT_HAX
+		string filename;
+		do
+		{
+			filename = "/usr/local/htdocs/stuff/gusanos-screens/ss" + cast<string>(nameIndex) + ".png";
+			++nameIndex;
+		} while( exists( filename.c_str() ) );
+	#else
+		string filename;
+		do
+		{
+			string ssIndex = cast<string>(nameIndex);
+			while ( ssIndex.size() < 3 )
+			{
+				ssIndex = "0" + ssIndex;
+			}
+			filename = "screenshots/ss" + ssIndex + ".png";
+			++nameIndex;
+		} while( exists( filename.c_str() ) );
+	#endif
+		
+		BITMAP * tmpbitmap = create_bitmap_ex(24,screen->w,screen->h);
+		blit(screen,tmpbitmap,0,0,0,0,screen->w,screen->h);
+		bool success = gfx.saveBitmap( filename.c_str(),tmpbitmap,0);
+		destroy_bitmap(tmpbitmap);
+		
+		if ( success )
+			return "SCREENSHOT SAVED AS: " + filename;
+		else 
+			return "UNABLE TO SAVE SCREENSHOT";
+	}
+	
+#endif
+}
 
 #ifndef DEDSERV
 
@@ -53,11 +122,8 @@ void Gfx::doubleRes( int oldValue )
 
 #endif
 Gfx::Gfx()
-: m_initialized(false)
 #ifndef DEDSERV
-, buffer(NULL)
-, m_fullscreen(true), m_doubleRes(false)
-, m_vwidth(320), m_vheight(240), m_bitdepth(32), m_doubleResBuffer(0)
+: buffer(NULL)
 #endif
 {
 }
@@ -150,6 +216,18 @@ void Gfx::registerInConsole()
 
 void Gfx::updateScreen()
 {
+	{
+		//rectfill(buffer, x-2, y-2, x+2, y+2, makecol(255, 128, 0));
+		SpriteSet* sp = spriteList.load("cursor");
+		if(sp)
+		{
+			int x = mouseHandler.getX();
+			int y = mouseHandler.getY();
+			sp->getSprite()->draw(buffer, x, y);
+		}
+	}
+	//show_mouse(0);
+	
 	if ( m_vsync ) vsync();
 	if ( !m_doubleRes )
 	{
@@ -367,6 +445,7 @@ void Gfx::updateScreen()
 			blit(m_doubleResBuffer, screen, 0, 0, 0, 0, m_vwidth, m_vheight);
 	}
 	if ( m_clearBuffer ) clear_bitmap(buffer);
+	//show_mouse(screen);
 }
 
 int Gfx::getGraphicsDriver()
@@ -526,41 +605,9 @@ bool Gfx::saveBitmap( const string &filename,BITMAP* image, RGB* palette )
 	return returnValue;
 }
 
-#ifndef DEDSERV
-
-string screenShot(const list<string> &args)
+Gfx::operator bool()
 {
-	int nameIndex = 0;
-	
-#ifdef GLIPTIC_SCREENSHOT_HAX
-	string filename;
-	do
-	{
-		filename = "/usr/local/htdocs/stuff/gusanos-screens/ss" + cast<string>(nameIndex) + ".png";
-		++nameIndex;
-	} while( exists( filename.c_str() ) );
-#else
-	string filename;
-	do
-	{
-		string ssIndex = cast<string>(nameIndex);
-		while ( ssIndex.size() < 3 )
-		{
-			ssIndex = "0" + ssIndex;
-		}
-		filename = "screenshots/ss" + ssIndex + ".png";
-		++nameIndex;
-	} while( exists( filename.c_str() ) );
-#endif
-	
-	BITMAP * tmpbitmap = create_bitmap_ex(24,screen->w,screen->h);
-	blit(screen,tmpbitmap,0,0,0,0,screen->w,screen->h);
-	bool success = gfx.saveBitmap( filename.c_str(),tmpbitmap,0);
-	destroy_bitmap(tmpbitmap);
-	
-	if ( success )
-		return "SCREENSHOT SAVED AS: " + filename;
-	else 
-		return "UNABLE TO SAVE SCREENSHOT";
+	return m_initialized;
 }
-#endif
+
+

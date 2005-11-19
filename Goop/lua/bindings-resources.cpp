@@ -1,7 +1,8 @@
 #include "bindings-resources.h"
+#include "bindings-gfx.h"
 #include "bindings.h"
 
-#include "types.h"
+#include "luaapi/types.h"
 
 #include "../game.h"
 #include "../gfx.h"
@@ -33,6 +34,7 @@ namespace LuaBindings
 
 #ifndef DEDSERV
 LuaReference fontMetaTable(0);
+LuaReference spritesMetaTable(0);
 #endif
 LuaReference partTypeMetaTable(0);
 LuaReference weaponTypeMetaTable(0);
@@ -47,34 +49,34 @@ enum FontFlags
 	Formatting  = (1<<3),
 };
 
+#ifndef DEDSERV
+
 int l_sprites_load(lua_State* L)
 {
-	const char* n = lua_tostring(L, 1);
+	LuaContext context(L);
+	
+	const char* n = lua_tostring(context, 1);
+	if(!n) return 0;
 
 	SpriteSet *s = spriteList.load(n);
-	lua_pushlightuserdata(L, s);
+	if(!s) return 0;
+	
+	context.pushFullReference(*s, LuaBindings::spritesMetaTable);
 
 	return 1;
 }
 
-int l_sprites_render(lua_State* L)
-{
-#ifndef DEDSERV
-	SpriteSet* s = (SpriteSet *)lua_touserdata(L, 1);
-	if(!s)
-		return 0;
+LMETHOD(SpriteSet, sprites_render,
+	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(context, 2));
 		
-	BITMAP* b = (BITMAP *)lua_touserdata(L, 2);
-		
-	int frame = lua_tointeger(L, 3);
-	int x = lua_tointeger(L, 4);
-	int y = lua_tointeger(L, 5);
-	s->getSprite(frame)->draw(b, x, y);
-#endif
+	int frame = lua_tointeger(context, 3);
+	int x = lua_tointeger(context, 4);
+	int y = lua_tointeger(context, 5);
+	p->getSprite(frame)->draw(b, x, y);
+	
 	return 0;
-}
+)
 
-#ifndef DEDSERV
 /*! font_load(name)
 
 	Loads and returns a Font object of the font with the passed name.
@@ -86,13 +88,11 @@ int l_font_load(lua_State* L)
 	LuaContext context(L);
 	
 	char const* n = lua_tostring(L, 1);
+	if(!n) return 0;
 
 	Font *f = fontLocator.load(n);
-	if(!f)
-	{
-		lua_pushnil(L);
-		return 1;
-	}
+	if(!f) return 0;
+	
 	context.pushFullReference(*f, LuaBindings::fontMetaTable);
 
 	return 1;
@@ -106,11 +106,11 @@ int l_font_load(lua_State* L)
 */
 int l_font_render(lua_State* L)
 {
-	Font *f = *(Font **)lua_touserdata(L, 1);
+	Font *f = *static_cast<Font **>(lua_touserdata(L, 1));
 	if(!f || lua_gettop(L) < 5)
 		return 0;
 		
-	BITMAP* b = *(BITMAP **)lua_touserdata(L, 2);
+	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(L, 2));
 	
 	char const* sc = lua_tostring(L, 3);
 	if(!sc)
@@ -220,6 +220,12 @@ int l_weapon_random(lua_State* L)
 	return 1;
 }
 
+int l_weapon_count(lua_State* L)
+{
+	lua_pushinteger(L, game.weaponList.size());
+	return 1;
+}
+
 METHOD(WeaponType, weapon_next,
 	size_t n = p->getIndex() + 1;
 	if(n >= game.weaponList.size())
@@ -290,15 +296,16 @@ void initResources()
 	mapIterator = context.createReference();
 	
 	context.functions()
-		("sprites_load", l_sprites_load)
-		("sprites_render", l_sprites_render)
 		("load_particle", l_load_particle)
 		("weapon_random", l_weapon_random)
+		("weapon_count", l_weapon_count)
 #ifndef DEDSERV
+		("sprites_load", l_sprites_load)
 		("font_load", l_font_load)
 #endif
 		("map_is_loaded", l_map_is_loaded)
 		("maps", l_maps)
+		
 	;
 	
 	CLASS(partType,
@@ -326,6 +333,10 @@ void initResources()
 		("CenterH", CenterH)
 		("Shadow", Shadow)
 		("Formatting", Formatting)
+	)
+	
+	CLASS(sprites,
+		("render", l_sprites_render)
 	)
 
 #endif

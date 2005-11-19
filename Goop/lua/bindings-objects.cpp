@@ -1,6 +1,6 @@
 #include "bindings-objects.h"
 
-#include "types.h"
+#include "luaapi/types.h"
 
 #include "../base_player.h"
 #include "../player.h"
@@ -8,7 +8,6 @@
 #include "../particle.h"
 #include "../game.h" //Do we need this?
 #include "../glua.h"
-#include "omfgutil_math.h"
 
 #include <cmath>
 #include <iostream>

@@ -1,7 +1,7 @@
 #ifndef LUA_BINDINGS_OBJECTS_H
 #define LUA_BINDINGS_OBJECTS_H
 
-#include "types.h"
+#include "luaapi/types.h"
 
 namespace LuaBindings
 {

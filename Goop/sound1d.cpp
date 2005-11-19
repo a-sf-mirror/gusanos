@@ -4,6 +4,7 @@
 
 #include "sfx.h"
 #include "resource_list.h"
+#include "util/math_func.h"
 
 #include <string>
 #include <iostream>

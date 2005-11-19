@@ -6,10 +6,13 @@ using std::endl;
 
 namespace OmfgGUI
 {
+	
+char const Button::metaTable[] = "gui_button";
 
-bool Button::render(Renderer* renderer)
+bool Button::render()
 {
 	//Draw a flat, grey box with the text by default
+	Renderer* renderer = context()->renderer();
 	
 	if(m_formatting.background.skin)
 	{
@@ -48,13 +51,43 @@ void Button::process()
 //Sends a mouse button down event
 bool Button::mouseDown(ulong newX, ulong newY, Context::MouseKey::type button)
 {
-	return false;
+	if(button == Context::MouseKey::Left)
+	{
+		doSetActivation(true);
+		return false;
+	}
+	return true;
 }
 
 //Sends a mouse button up event
 bool Button::mouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
 {
-	return false;
+	if(button == Context::MouseKey::Left)
+	{
+		if(m_rect.isInside(newX, newY))
+		{
+			if(!doAction())
+				doSetActivation(false);
+		}
+		else
+			doSetActivation(false);
+		
+		return false;
+	}
+	return true;
+}
+
+bool Button::keyDown(int key)
+{
+	switch(key)
+	{
+		case KEY_ENTER:
+			doAction();
+			return false;
+		break;
+	}
+	
+	return true;
 }
 
 int Button::classID()

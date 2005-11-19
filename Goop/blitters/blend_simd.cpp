@@ -32,8 +32,10 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 			Pixel s = *src;
 			*dest = blendColorsFact_32(*dest, s, (((s >> 24) * fact) >> 8))
 		,
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 			prefetchnta(src[8]);
 			prefetcht0(dest[8]);
+#endif
 			
 			movq_rm(mm0, src[0]);    // mm0 = src1 | src2
 			movq_rm(mm1, dest[0]);   // mm1 = dest1 | dest2
@@ -139,8 +141,10 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 				if(s != maskcolor_32)
 					*dest = blendColorsHalfCrude_32(*dest, s)
 			,
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 				prefetchnta(src[8]);
 				prefetcht0(dest[8]);
+#endif
 				
 				movq_rm(mm0, src[0]);    // mm0 = src1 | src2
 				movq_rm(mm1, src[2]);    // mm1 = src3 | src4
@@ -187,8 +191,10 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 				if(s != maskcolor_32)
 					*dest = blendColorsFact_32(*dest, s, fact)
 			,
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 				prefetchnta(src[8]);
 				prefetcht0(dest[8]);
+#endif
 				
 				movq_rm(mm0, src[0]);    // mm0 = src1 | src2
 				movq_rm(mm1, src[2]);    // mm1 = src3 | src4
@@ -542,8 +548,10 @@ void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 			if(s != maskcolor_16)
 				*dest = blendColorsFact_16_2(*dest, s, fact)
 		,
+#ifdef NDEBUG // GCC 4 has problems with these instructions with -O0 somewhy
 			prefetchnta(src[8]);
 			prefetcht0(dest[8]);
+#endif
 			
 			movq_rm(mm0, dest[0]);    // mm1 = dest1 | dest2 | dest3 | dest4
 			movq_rm(mm3, src[0]);     // mm0 = src1 | src2 | src3 | src4

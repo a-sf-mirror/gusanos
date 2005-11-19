@@ -14,11 +14,11 @@ using namespace std;
 
 ////////////////////////////PUBLIC//////////////////////////////
 
-int KeyHandler::keyMap[KEY_MAX];
-int KeyHandler::shiftCharMap[KEY_MAX]; // The shift map
-int KeyHandler::capsCharMap[KEY_MAX]; // The caps lock map
-int KeyHandler::altgrCharMap[KEY_MAX]; // The alt gr map
-int KeyHandler::charMap[KEY_MAX]; // The character map
+//int KeyHandler::keyMap[KEY_MAX];
+//int KeyHandler::shiftCharMap[KEY_MAX]; // The shift map
+//int KeyHandler::capsCharMap[KEY_MAX]; // The caps lock map
+//int KeyHandler::altgrCharMap[KEY_MAX]; // The alt gr map
+//int KeyHandler::charMap[KEY_MAX]; // The character map
 
 KeyHandler keyHandler;
 
@@ -110,7 +110,9 @@ KeyEvent KeyHandler::getEvent()
 	return event;
 }
 */
-/*static*/ int KeyHandler::keyMapCallback(int, int *scancode)
+
+/*
+int KeyHandler::keyMapCallback(int, int *scancode)
 {
 	// Translate scancode
 	int newScancode = mapKey(*scancode);
@@ -126,28 +128,24 @@ KeyEvent KeyHandler::getEvent()
 		return charMap[newScancode]; // Use regular map
 		
 	//TODO: Add caps-lock and ctrl tables
-}
+}*/
 
-/*static*/ bool KeyHandler::getKey(int k)
+bool KeyHandler::getKey(int k)
 {
 	return key[mapKey(k)] != 0;
 }
 
-/*static*/ int KeyHandler::mapKey(int k)
+int KeyHandler::mapKey(int k)
 {
 	return k; //keyMap[k];
 }
-
-/*static*/ int KeyHandler::reverseMapKey(int k)
-{
 /*
-	int *kp = std::find(&keyMap[0], &keyMap[KEY_MAX], k);
-	return static_cast<int>(kp - keyMap);*/
-	
+int KeyHandler::reverseMapKey(int k)
+{	
 	return k;
 }
 
-/*static*/ void KeyHandler::swapKeyMapping(int keyA, int keyB)
+void KeyHandler::swapKeyMapping(int keyA, int keyB)
 {
 	// Find what hardware key maps to the software keys to swap
 	int keyAmap = reverseMapKey(keyA);
@@ -158,20 +156,21 @@ KeyEvent KeyHandler::getEvent()
 	keyMap[keyBmap] = keyA;
 }
 
-/*static*/ void KeyHandler::setShiftCharacter(int key, int character)
+void KeyHandler::setShiftCharacter(int key, int character)
 {
 	shiftCharMap[key] = character;
 }
 
-/*static*/ void KeyHandler::setAltGrCharacter(int key, int character)
+void KeyHandler::setAltGrCharacter(int key, int character)
 {
 	altgrCharMap[key] = character;
 }
 
-/*static*/ void KeyHandler::setCharacter(int key, int character)
+void KeyHandler::setCharacter(int key, int character)
 {
 	charMap[key] = character;
 }
+*/
 
 ////////////////////////////PRIVATE//////////////////////////////
 

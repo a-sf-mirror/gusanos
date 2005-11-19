@@ -4,8 +4,7 @@
 #include "level.h"
 //#include "base_object.h"
 //#include "base_action.h"
-#include "objects_list.h"
-#include "hash_table.h"
+//#include "objects_list.h"
 #include "object_grid.h"
 
 #ifndef DEDSERV
@@ -191,51 +190,17 @@ public:
 	const std::string& getMod();
 	const std::string& getModPath();
 	const std::string& getDefaultPath();
-	
-/*	//Not used anymore
-	template <typename T1>
-	bool specialLoad(const std::string& name, T1 &resource)
-	{
-		if ( resource.load(level.getPath() + name) ) return true;
-		if ( resource.load(m_modPath + name) ) return true;
-		if ( resource.load(m_defaultPath + name) ) return true;
-		
-		return false;
-	}*/
 
 #ifndef DEDSERV
 	Font *infoFont;
 #endif
 	std::list<ScreenMessage> messages;
-	
-
-	HashTable<std::string, unsigned long> stringToIndexMap;
-	std::vector<std::string> indexToStringMap;
 
 	unsigned long stringToIndex(std::string const& str);
 	
 	std::string const& indexToString(unsigned long idx);
 	
-private:
-	
-	enum NetEvents
-	{
-		eHole = 0,
-		// Add here
-		NetEventsCount,
-	};
-	
-	void addEvent(ZCom_BitStream* data, NetEvents event);
-	
-	std::list<LevelEffectEvent> appliedLevelEffects;
-
-	std::string nextMod;
-	std::string m_modPath;
-	std::string m_modName;
-	std::string m_defaultPath;
-	bool loaded;
-	ZCom_Node *m_node;
-	bool m_isAuthority;
+	std::string const& getModName();
 };
 
 extern Game game;

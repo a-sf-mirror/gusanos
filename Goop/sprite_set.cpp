@@ -3,7 +3,7 @@
 #include "resource_list.h"
 #include "gfx.h"
 #include "sprite.h"
-#include "omfgutil_macros.h"
+#include "util/macros.h"
 
 #include <allegro.h>
 #include <string>
@@ -199,6 +199,8 @@ Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, A
 	return s->getSprite(frame, angle);
 }
 
+#endif
+
 void SpriteSet::flipSprites()
 {
 	assert(m_flippedFrames.empty());
@@ -208,6 +210,3 @@ void SpriteSet::flipSprites()
 		m_flippedFrames.push_back(new Sprite(**src, Sprite::MirrorTag()));
 	}
 }
-
-#endif
-

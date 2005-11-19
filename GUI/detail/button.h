@@ -9,6 +9,8 @@ namespace OmfgGUI
 class Button : public Wnd
 {
 public:
+	static char const metaTable[];
+	
 	Button(Wnd* parent_, std::string const& tagLabel, std::string const& className, 
 	  std::string const& id, std::map<std::string, std::string> const& properties,
 	  std::string const& text_ = std::string(""))
@@ -17,13 +19,15 @@ public:
 
 	}
 	
-	virtual bool render(Renderer* renderer);
+	virtual bool render();
 	
 	virtual void process();
 
 	virtual bool mouseDown(ulong newX, ulong newY, Context::MouseKey::type button);
 
 	virtual bool mouseUp(ulong newX, ulong newY, Context::MouseKey::type button);
+	
+	virtual bool keyDown(int key);
 	
 	virtual int classID();
 	

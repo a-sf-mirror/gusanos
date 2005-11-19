@@ -2,7 +2,7 @@
 #define GUSANOS_BLOOD_H
 
 #include "base_object.h"
-#include "omfgutil_math.h"
+#include "util/vec.h"
 
 class SimpleParticle : public BaseObject
 {
