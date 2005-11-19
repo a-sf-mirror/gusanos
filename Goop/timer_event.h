@@ -2,7 +2,7 @@
 #define TIMER_EVENT_H
 
 #include "events.h"
-#include "omfgutil_math.h"
+#include "util/math_func.h"
 
 struct TimerEvent : public Event
 {
