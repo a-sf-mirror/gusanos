@@ -3,7 +3,8 @@
 #include "events.h"
 #include "base_worm.h"
 #include "game.h"
-#include "omfgutil_math.h"
+#include "util/vec.h"
+#include "util/angle.h"
 
 #include "network.h"
 

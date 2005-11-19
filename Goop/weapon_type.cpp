@@ -2,7 +2,7 @@
 
 #include "events.h"
 #include "sprite_set.h"
-#include "omfgutil_text.h"
+#include "util/text.h"
 #include "parser.h"
 #include "resource_base.h"
 
@@ -167,5 +167,4 @@ bool WeaponType::load(const fs::path &filename)
 		return false;
 	}
 }
-
 

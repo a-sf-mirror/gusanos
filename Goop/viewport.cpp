@@ -24,6 +24,7 @@ Viewport::Viewport()
 : dest(0)
 {
 	lua.pushFullReference(*this, LuaBindings::viewportMetaTable);
+	//lua.pushLightReference(this, LuaBindings::viewportMetaTable);
 	luaReference = lua.createReference();
 }
 
@@ -178,6 +179,7 @@ void Viewport::render(BasePlayer* player)
 				int x = (int)renderPos.x - offX;
 				int y = (int)renderPos.y - offY;
 				bool ownViewport = (*playerIter == player);
+				
 				//lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
 				(lua.call(*i), (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport)();
 			}
@@ -193,6 +195,14 @@ void Viewport::render(BasePlayer* player)
 		EACH_CALLBACK(i, viewportRender)
 		{
 			//lua.callReference(0, *i, luaReference, worm->luaReference);
+			lua.push(luaReference);
+			if(!lua_getmetatable(lua, -1))
+			{
+				throw ":O";
+			}
+			else
+				lua.pop(1);
+			lua.pop(1);
 			(lua.call(*i), luaReference, worm->luaReference)();
 		}
 	}

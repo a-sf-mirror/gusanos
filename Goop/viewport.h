@@ -6,8 +6,8 @@
 #endif //DEDSERV
 
 //#include "game.h"
-#include "omfgutil_math.h"
-#include "lua/types.h"
+#include "util/vec.h"
+#include "luaapi/types.h"
 //#include <allegro.h>
 
 struct Listener;

@@ -15,4 +15,3 @@ void Worm::think()
 	renderPos = pos;
 #endif
 }
-
