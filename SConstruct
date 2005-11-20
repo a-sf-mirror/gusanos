@@ -124,10 +124,12 @@ class MyConf(Configure):
 			return
 		for prefix in ['/usr/include', '/usr/local/include']:
 			for suffix in [''] + altsuffix:
-				if self.CheckCXXHeader(os.path.join(prefix, suffix, header)):
+				#if self.CheckCXXHeader(os.path.join(prefix, suffix, header)):
+				if os.path.exists(os.path.join(prefix, suffix, header)):
 					path = os.path.join(prefix, suffix)
 					env.Append(CPPPATH = path)
 					self.addCPPPath(path)
+					print "Found", header, "in", path
 					return
 					
 		print "Could not locate header", header
@@ -195,7 +197,7 @@ if not os.path.exists(configName):
 	config.checkHeader('fmod.h', ['fmod'])
 	config.checkHeader('png.h', ['png'])
 	config.checkHeader('zlib.h', ['zlib'])
-	config.checkHeader('boost/utility.hpp', ['boost-1_33', 'boost-1_32'])
+	config.checkHeader('boost/utility.hpp', ['boost-1_33_1', 'boost-1_33', 'boost-1_32'])
 	
 	env = config.write(configName)
 else:
