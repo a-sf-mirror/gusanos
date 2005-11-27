@@ -37,6 +37,7 @@ class PartType
 	
 	bool isSimpleParticleType();
 	bool load(fs::path const& filename);
+	bool load2(fs::path const& filename);
 	
 #ifndef DEDSERV
 	BaseAnimator* allocateAnimator();

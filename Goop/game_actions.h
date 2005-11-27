@@ -15,21 +15,27 @@ class SpriteSet;
 class BaseObject;
 class LevelEffect;
 
+namespace OmfgScript
+{
+struct TokenBase;
+struct ActionFactory;
+}
+
+extern OmfgScript::ActionFactory gameActions;
+
+#define GAME_ACTION(name_, body_) \
+class name_ : public BaseAction { \
+public: \
+	name_( const std::vector< std::string >& params ); \
+	name_( std::vector<OmfgScript::TokenBase*> const& params ); \
+	~name_(); \
+	virtual void run( ActionParams const& params ); \
+private: \
+	body_ };
+
 void registerGameActions();
 
-BaseAction* shootParticles( const std::vector< std::string >& params );
-
-class ShootParticles : public BaseAction
-{
-	public:
-
-	ShootParticles( const std::vector< std::string >& params );
-	~ShootParticles();
-
-	void run( ActionParams const& params );
-
-	private:
-
+GAME_ACTION(ShootParticles,
 	PartType *type;
 	
 	int amount;
@@ -41,350 +47,123 @@ class ShootParticles : public BaseAction
 	Angle distribution;
 	AngleDiff angleOffset;
 	float distanceOffset;
-};
+)
 
-BaseAction* uniformShootParticles( const std::vector< std::string >& params );
+GAME_ACTION(UniformShootParticles,
+	PartType *type;
 
-class UniformShootParticles : public BaseAction
-{
-	public:
+	int amount;
+	int amountVariation;
 
-		UniformShootParticles( const std::vector< std::string >& params );
-		~UniformShootParticles();
+	float motionInheritance;
+	float speed;
+	float speedVariation;
+	Angle distribution;
+	AngleDiff angleOffset;
+	float distanceOffset;
+)
 
-		void run( ActionParams const& params );
+GAME_ACTION(PutParticle,
+	PartType *type;
 
-	private:
+	float x;
+	float y;
+	float xspd;
+	float yspd;
+	Angle angle;
+)
 
-		PartType *type;
+GAME_ACTION(CreateExplosion,
+	ExpType *type;
+)
+
+GAME_ACTION(Push,
+	float factor;
+)
+
+GAME_ACTION(Repel,
+	float maxForce;
+	float minForce;
+	float maxDistance;
 	
-		int amount;
-		int amountVariation;
-	
-		float motionInheritance;
-		float speed;
-		float speedVariation;
-		Angle distribution;
-		AngleDiff angleOffset;
-		float distanceOffset;
-};
+	// Precomputed constants
+	float maxDistanceSqr;
+	float forceDiffScaled;
+)
 
-BaseAction* putParticle( const std::vector< std::string >& params );
+GAME_ACTION(Damp,
+	float factor;
+)
 
-class PutParticle : public BaseAction
-{
-	public:
+GAME_ACTION(Damage,
+	float m_damage;
+	float m_damageVariation;
+)
 
-		PutParticle( const std::vector< std::string >& params );
-		~PutParticle();
+GAME_ACTION(Remove,
+)
 
-		void run( ActionParams const& params );
-
-	private:
-
-		PartType *type;
-	
-		float x;
-		float y;
-		float xspd;
-		float yspd;
-		Angle angle;
-};
-
-BaseAction* createExplosion( const std::vector< std::string >& params );
-
-class CreateExplosion : public BaseAction
-{
-	public:
-
-		CreateExplosion( const std::vector< std::string >& params );
-		~CreateExplosion();
-
-		void run( ActionParams const& params );
-
-	private:
-
-		ExpType *type;
-};
-
-BaseAction* push( const std::vector< std::string >& params );
-
-class Push : public BaseAction
-{
-	public:
-
-		Push( const std::vector< std::string >& params );
-		~Push();
-
-		void run( ActionParams const& params );
-
-	private:
-		float factor;
-};
-
-BaseAction* repel( const std::vector< std::string >& params );
-
-class Repel : public BaseAction
-{
-	public:
-
-		Repel( const std::vector< std::string >& params );
-		~Repel();
-
-		void run( ActionParams const& params );
-
-	private:
-		float maxForce;
-		float minForce;
-		float maxDistance;
-		
-		// Precomputed constants
-		float maxDistanceSqr;
-		float forceDiffScaled;
-};
-
-BaseAction* damp( const std::vector< std::string >& params );
-
-class Damp : public BaseAction
-{
-	public:
-
-		Damp( const std::vector< std::string >& params );
-		~Damp();
-
-		void run( ActionParams const& params );
-
-	private:
-		float factor;
-};
-
-BaseAction* damage( const std::vector< std::string >& params );
-
-class Damage : public BaseAction
-{
-	public:
-
-		Damage( const std::vector< std::string >& params );
-		~Damage();
-
-		void run( ActionParams const& params );
-
-	private:
-		float m_damage;
-		float m_damageVariation;
-};
-
-BaseAction* remove( const std::vector< std::string >& params );
-
-class Remove : public BaseAction
-{
-	public:
-
-	Remove( const std::vector< std::string >& params );
-	~Remove();
-
-	void run( ActionParams const& params );
-
-	private:
-	
-};
-
-BaseAction* playSound( const std::vector< std::string >& params );
-
-class PlaySound : public BaseAction
-{
-	public:
-
-	PlaySound( const std::vector< std::string >& params );
-	~PlaySound();
-
-	void run( ActionParams const& params );
-
-	private:
-		
+GAME_ACTION(PlaySound,
 	Sound *sound;
 	float pitch;
 	float pitchVariation;
 	float loudness;
-	
-};
+)
 
-BaseAction* playRandomSound( const std::vector< std::string >& params );
+GAME_ACTION(PlayRandomSound,
+	std::vector<Sound*> sounds;
+	float pitch;
+	float pitchVariation;
+	float loudness;
+)
 
-class PlayRandomSound : public BaseAction
-{
-	public:
-
-		PlayRandomSound( const std::vector< std::string >& params );
-		~PlayRandomSound();
-
-		void run( ActionParams const& params );
-
-	private:
-		
-		std::vector<Sound*> sounds;
-		float pitch;
-		float pitchVariation;
-		float loudness;
-	
-};
-
-BaseAction* playSoundStatic( const std::vector< std::string >& params );
-
-class PlaySoundStatic : public BaseAction
-{
-	public:
-
-	PlaySoundStatic( const std::vector< std::string >& params );
-	~PlaySoundStatic();
-
-	void run( ActionParams const& params );
-
-	private:
-		
+GAME_ACTION(PlaySoundStatic,
 	Sound *sound;
 	float pitch;
 	float pitchVariation;
 	float loudness;
-	
-};
+)
 
-BaseAction* playGlobalSound( const std::vector< std::string >& params );
-
-class PlayGlobalSound : public BaseAction
-{
-	public:
-
-	PlayGlobalSound( const std::vector< std::string >& params );
-	~PlayGlobalSound();
-
-	void run( ActionParams const& params );
-
-	private:
-		
+GAME_ACTION(PlayGlobalSound,
 	Sound1D *sound;
 	float volume;
 	float volumeVariation;
 	float pitch;
 	float pitchVariation;
-};
+)
 
-BaseAction* delayFire( const std::vector< std::string >& params );
-
-class DelayFire : public BaseAction
-{
-	public:
-
-	DelayFire( const std::vector< std::string >& params );
-	~DelayFire();
-
-	void run( ActionParams const& params );
-
-	private:
-	
+GAME_ACTION(DelayFire,
 	int delayTime;
 	int delayTimeVariation;
-};
+)
 
-BaseAction* showFirecone( const std::vector< std::string >& params );
+GAME_ACTION(ShowFirecone,
+	int frames;
+	float drawDistance;
+	SpriteSet* sprite;
+)
 
-class ShowFirecone : public BaseAction
-{
-	public:
-
-		ShowFirecone( const std::vector< std::string >& params );
-		~ShowFirecone();
-
-		void run( ActionParams const& params );
-
-	private:
-	
-		int frames;
-		float drawDistance;
-		SpriteSet* sprite;
-};
-
-BaseAction* addAngleSpeed( const std::vector< std::string >& params );
-
-class AddAngleSpeed : public BaseAction
-{
-	public:
-
-	AddAngleSpeed( const std::vector< std::string >& params );
-	~AddAngleSpeed();
-
-	void run( ActionParams const& params );
-
-	private:
-	
+GAME_ACTION(AddAngleSpeed,
 	AngleDiff speed;
 	AngleDiff speedVariation;
-};
+)
 
-BaseAction* setAlphaFade( const std::vector< std::string >& params );
+GAME_ACTION(SetAlphaFade,
+	int frames;
+	int dest;
+)
 
-class SetAlphaFade : public BaseAction
-{
-	public:
+GAME_ACTION(RunCustomEvent,
+	size_t index;
+)
 
-		SetAlphaFade( const std::vector< std::string >& params );
-		~SetAlphaFade();
-
-		void run( ActionParams const& params );
-
-	private:
-	
-		int frames;
-		int dest;
-};
-
-BaseAction* runCustomEvent( const std::vector< std::string >& params );
-
-class RunCustomEvent : public BaseAction
-{
-	public:
-
-		RunCustomEvent( const std::vector< std::string >& params );
-		~RunCustomEvent();
-
-		void run( ActionParams const& params );
-
-	private:
-	
-		size_t index;
-};
-
-BaseAction* runScript( std::vector< std::string > const& params );
-
-class RunScript : public BaseAction
-{
-public:
-
-	RunScript( std::vector< std::string > const& params );
-	~RunScript();
-
-	void run( ActionParams const& params );
-
-private:
-
+GAME_ACTION(RunScript,
 	LuaReference function;
-};
+)
 
-BaseAction* applyMapEffect( const std::vector< std::string >& params );
-
-class ApplyMapEffect : public BaseAction
-{
-	public:
-
-		ApplyMapEffect( const std::vector< std::string >& params );
-		~ApplyMapEffect();
-
-		void run( ActionParams const& params );
-
-	private:
-	
+GAME_ACTION(ApplyMapEffect,
 		LevelEffect* effect;
-};
+)
 
 
 #endif  // _GAME_ACTIONS_H_

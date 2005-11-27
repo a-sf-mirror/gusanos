@@ -367,10 +367,6 @@ void Game::init(int argc, char** argv)
 	setMod("default");
 	refreshResources();
 
-#ifndef DEDSERV
-	keyHandler.init();
-	mouseHandler.init();
-#endif
 	console.init();
 #ifndef DEDSERV
 	OmfgGUI::menu.init();
@@ -401,6 +397,9 @@ void Game::init(int argc, char** argv)
 	gfx.init();
 #ifndef DEDSERV
 	sfx.init();
+
+	keyHandler.init();
+	mouseHandler.init();
 #endif
 
 #ifndef DISABLE_ZOIDCOM
@@ -536,6 +535,7 @@ void Game::loadMod()
 	options.maxWeapons = options.maxWeaponsVar;
 	options.splitScreen = ( options.splitScreenVar != 0 );
 	console.loadResources();
+	gfx.loadResources();
 	loadWeapons();
 	NRPartType = partTypeList.load("ninjarope.obj");
 	deathObject = partTypeList.load("death.obj");

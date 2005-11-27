@@ -66,38 +66,62 @@ void startGame(const std::string&)
 
 // Parser test
 
-/*
-#include "test.h"
+//#define TEST
+#ifdef TEST
+#include "omfg_script.h"
 
-struct TestParser
+BaseAction* dummyActionCreator( std::vector<OmfgScript::TokenBase* > const & )
 {
-	TestParser(std::istream& str_)
-	: str(str_)
-	{
-	}
-	
-	size_t read(char* p, size_t s)
-	{
-		str.read(p, s);
-		return str.gcount();
-	}
-	
-	std::istream& str;
-};*/
+	return 0;
+}
+#endif
 
 int main(int argc, char **argv)
 {
-/*
-	std::stringstream ss("a = 1\n on foo()\nbar(1, n = 10)\n");
-	TGrammar<TestParser> parser((TestParser(ss)));
-	parser.rule_lines();
-	if(parser.full())
+#ifdef TEST
+	try
 	{
-		cout << "Success" << endl;
+		std::ifstream ss("test.obj");
+		OmfgScript::ActionFactory af;
+		
+		af.add("basara", dummyActionCreator)
+			("sprite") ("x") ("y") ("xspd") ("yspd")
+		;
+		
+		af.add("Gliptic", dummyActionCreator)
+		;
+		
+		OmfgScript::Parser parser(ss, af, "test.obj");
+		
+		parser.addEvent("baz", 0)
+			("test")
+			("moo")
+		;
+		
+		if(parser.run())
+		{
+			cout << "Success. Foo = " << parser.getBool("x") << endl;
+			
+			OmfgScript::Parser::EventIter i(parser);
+			for(; i; ++i)
+			{
+				const_foreach(j, i.params())
+				{
+					if(*j)
+						(*j)->output(cout);
+					cout << endl;
+				}
+			}
+		}
+	}
+	
+	catch(std::exception& e)
+	{
+		cout << "Parsing aborted. " << e.what() << endl;
 	}
 	
 	return 0;
-*/
+#endif
 	game.init(argc, argv);
 	
 #ifdef POSIX
@@ -105,7 +129,7 @@ int main(int argc, char **argv)
 #endif
 
 	console.registerVariables()
-		("CL_SHOWFPS", &showFps, 1)
+		("CL_SHOWFPS", &showFps, 1) 
 		("CL_SHOWDEBUG", &showDebug, 0)
 	;
 	

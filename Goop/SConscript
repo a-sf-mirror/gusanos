@@ -2,7 +2,8 @@ Import('env')
 
 env = env.Copy()
 env.Append(LIBS = Split("""
-	omfggui omfghttp omfgconsole omfgutil glua loadpng""") #omfgloaders omfglua omfgblitters
+	omfggui omfghttp omfgconsole 
+	omfgscript glua loadpng omfgutil""")
 	)
 
 if env.conf != 'mingw-cross':
@@ -15,13 +16,6 @@ if env.conf == 'mingw-cross':
 	        
 # add more platforms here
 
-#SConscript([
-#	'./loaders/SConscript',
-#	'./lua/SConscript',
-#	'./http/SConscript',
-#	'./blitters/SConscript'
-#	], exports = ['env'])
-
 exename = 'gusanos'
 if env.build == 'dedserv' or env.build == 'dedserv-debug':
 	exename += '-ded'
@@ -30,4 +24,3 @@ env.Program(env.getBinName(exename),
 	env.getObjects('lua') +
 	env.getObjects('blitters') +
 	env.getObjects('loaders'))
-#env.Parser('omfg_script_parser.h', 'omfg_script_parser.pg')

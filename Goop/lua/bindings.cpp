@@ -16,6 +16,7 @@
 //#include "../gfx.h"
 #include "../network.h"
 #include "../glua.h"
+#include "../keys.h"
 #include "../menu.h"
 #include "http.h"
 
@@ -80,6 +81,13 @@ int l_clear_keybuf(lua_State* L)
 {
 	clear_keybuf();
 	return 0;
+}
+
+int l_key_name(lua_State* L)
+{
+	int k = lua_tointeger(L, 1);
+	lua_pushstring(L, keyNames[k].c_str());
+	return 1;
 }
 #endif
 
@@ -319,6 +327,7 @@ void init()
 		("fetch_server_list", l_fetch_server_list)
 #ifndef DEDSERV
 		("clear_keybuf", l_clear_keybuf)
+		("key_name", l_key_name)
 #endif
 
 		("quit", l_quit)

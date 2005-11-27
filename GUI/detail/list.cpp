@@ -455,8 +455,15 @@ bool List::mouseDown(ulong x, ulong y, Context::MouseKey::type button)
 			}
 			else
 			{
-				newSel->selected = !newSel->selected;
 				setMainSel(newSel);
+				
+				if(select)
+					newSel->selected = !newSel->selected;
+				else
+				{
+					newSel->selected = true;
+					expand(newSel);
+				}
 			}
 		}
 			

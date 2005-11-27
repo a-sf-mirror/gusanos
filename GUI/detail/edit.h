@@ -19,7 +19,7 @@ public:
 	  std::string const& text = std::string(""))
 	: Wnd(parent, tagLabel, className, id, attributes, text)
 	, m_drag(false), m_caretPos(0), m_selTo(0)
-	, m_hscroll(0)
+	, m_hscroll(0), m_lock(false)
 	{
 
 	}
@@ -44,6 +44,11 @@ public:
 			m_selTo = selTo;
 			//InvalidateWhole();
 		}
+	}
+	
+	void setLock(bool lock)
+	{
+		m_lock = lock;
 	}
 	
 	virtual void setText(std::string const& aStr);
@@ -73,6 +78,7 @@ protected:
 	ulong		m_caretPos;
 	ulong		m_selTo;
 	long        m_hscroll;
+	bool        m_lock;
 	
 /*
 	bool		m_OnlyNumbers;

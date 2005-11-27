@@ -111,7 +111,7 @@ void LuaContext::load(std::string const& chunk, istream& stream)
 	
 	if(result)
 	{
-		cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
+		//cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
 		pop(1);
 		return;
 	}
@@ -180,14 +180,14 @@ int LuaContext::call(int params, int returns, int errfunc)
 		case LUA_ERRMEM:
 		case LUA_ERRERR:
 		{
-			cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
+			//cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
 			pop(1);
 			return -1;
 		}
 		break;
 	}
 	
-	return returns;
+	return result;
 }
 
 /*

@@ -23,6 +23,7 @@ public:
 	void init();
 	void shutDown();
 	void registerInConsole();
+	void loadResources();
 #ifndef DEDSERV
 	void fullscreenChange();
 	void doubleResChange();
@@ -32,6 +33,7 @@ public:
 	void doubleRes( int oldValue );
 	
 	void updateScreen();
+
 	
 	inline void setBlender( Blenders blender, int alpha )
 	{

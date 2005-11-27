@@ -82,6 +82,7 @@ void Edit::setText(std::string const& aStr)
 
 bool Edit::keyDown(int key)
 {
+	
 	if(m_active)
 	{
 		switch(key)
@@ -150,6 +151,9 @@ bool Edit::charPressed(char c, int key)
 			break;
 			
 			case KEY_BACKSPACE:
+				if(m_lock)
+					break;
+					
 				if(m_selTo < m_caretPos)
 				{
 					m_text.erase(m_text.begin() + m_selTo, m_text.begin() + m_caretPos);
@@ -169,6 +173,9 @@ bool Edit::charPressed(char c, int key)
 			break;
 			
 			case KEY_DEL:
+				if(m_lock)
+					break;
+				
 				if(m_selTo < m_caretPos)
 				{
 					m_text.erase(m_text.begin() + m_selTo, m_text.begin() + m_caretPos);
@@ -198,6 +205,9 @@ bool Edit::charPressed(char c, int key)
 			break;
 			
 			default:
+				if(m_lock)
+					break;
+				
 				switch(c)
 				{
 					default:

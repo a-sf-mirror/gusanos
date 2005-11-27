@@ -35,6 +35,7 @@ namespace
 	enum Filters
 	{
 		NO_FILTER,
+		NO_FILTER2,
 		SCANLINES,
 		SCANLINES2,
 		BILINEAR
@@ -51,9 +52,7 @@ namespace
 	int m_bitdepth = 32;
 
 	BITMAP* m_doubleResBuffer = 0;
-#endif
-
-#ifndef DEDSERV
+	SpriteSet* mouseCursor = 0;
 	
 	string screenShot(const list<string> &args)
 	{
@@ -184,6 +183,7 @@ void Gfx::registerInConsole()
 
 		insert(videoFilters) // These neat boost::assign functions actually make it smaller than!
 			("NOFILTER", NO_FILTER)
+			("NOFILTER2", NO_FILTER2)
 			("SCANLINES", SCANLINES)
 			("SCANLINES2", SCANLINES2)
 			("BILINEAR", BILINEAR)
@@ -212,19 +212,21 @@ void Gfx::registerInConsole()
 #endif
 }
 
+void Gfx::loadResources()
+{
+#ifndef DEDSERV
+	mouseCursor = spriteList.load("cursor");
+#endif
+}
 #ifndef DEDSERV
 
 void Gfx::updateScreen()
 {
+	if(mouseCursor)
 	{
-		//rectfill(buffer, x-2, y-2, x+2, y+2, makecol(255, 128, 0));
-		SpriteSet* sp = spriteList.load("cursor");
-		if(sp)
-		{
-			int x = mouseHandler.getX();
-			int y = mouseHandler.getY();
-			sp->getSprite()->draw(buffer, x, y);
-		}
+		int x = mouseHandler.getX();
+		int y = mouseHandler.getY();
+		mouseCursor->getSprite()->draw(buffer, x, y);
 	}
 	//show_mouse(0);
 	
@@ -250,14 +252,108 @@ void Gfx::updateScreen()
 
 						bmp_select(screen);
 						
-						for(int y = 0; y < 239; ++y)
+						for(int y = 0; y < 240; ++y)
+						{
+							Pixel32* src = (Pixel32 *)buffer->line[y];
+
+							unsigned long dest1 = bmp_write_line(screen, y*2);
+							
+										
+							for(int x = 0; x < 320; ++x)
+							{
+								Pixel p = *src++;
+								
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+								
+							}
+							
+							dest1 = bmp_write_line(screen, y*2 + 1);
+							
+							for(int x = 0; x < 320; ++x)
+							{
+								Pixel p = *src++;
+								
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+							}
+							
+							
+						}
+						
+						bmp_unwrite_line(screen);
+						
+						release_screen();
+					}
+					break;
+					
+					case 16:
+						acquire_screen();
+
+						bmp_select(screen);
+
+						for(int y = 0; y < 240; ++y)
+						{
+							// This is done in two loops to avoid shearing
+							Pixel16* src = (Pixel16 *)buffer->line[y];
+							
+							unsigned long dest1 = bmp_write_line(screen, y*2);
+														
+							for(int x = 0; x < 320; ++x)
+							{
+								Pixel32 p = (Pixel32)*src++;
+								
+								p = p | (p << 16);
+
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+							}
+							
+							src = (Pixel16 *)buffer->line[y];
+							
+							dest1 = bmp_write_line(screen, y*2 + 1);
+							
+							for(int x = 0; x < 320; ++x)
+							{
+								Pixel32 p = (Pixel32)*src++;
+								
+								p = p | (p << 16);
+
+								bmp_write32(dest1, p); dest1 += sizeof(Pixel32);
+							}
+						}
+						
+						bmp_unwrite_line(screen);
+						
+						release_screen();
+					break;
+					
+					default:
+						stretch_blit(buffer, screen, 0, 0, buffer->w, buffer->h, 0, 0, screen->w, screen->h);
+					break;
+				}
+
+				blitFromBuffer = false;
+			break;
+			
+			case NO_FILTER2:
+				
+				switch(bitmap_color_depth(screen))
+				{
+					case 32:
+					{
+						acquire_screen();
+
+						bmp_select(screen);
+						
+						for(int y = 0; y < 240; ++y)
 						{
 							Pixel32* src = (Pixel32 *)buffer->line[y];
 
 							unsigned long dest1 = bmp_write_line(screen, y*2);
 							unsigned long dest2 = bmp_write_line(screen, y*2 + 1);
+							
 										
-							for(int x = 0; x < 319; ++x)
+							for(int x = 0; x < 320; ++x)
 							{
 								Pixel p = *src++;
 								

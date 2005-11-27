@@ -106,8 +106,8 @@ public:
 				m_context.destroyReference(m_ref);
 				return 0;
 			}
-			lua_remove(m_context, -r-1);
-			return r;
+			lua_remove(m_context, -m_returns-1);
+			return m_returns;
 		}
 
 		LuaContext& m_context;

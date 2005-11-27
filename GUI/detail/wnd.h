@@ -35,6 +35,8 @@ public:
 	enum LuaCallbacks
 	{
 		OnAction = 0,
+		OnKeyDown,
+		OnActivate,
 		LuaCallbacksMax,
 	};
 	
@@ -154,6 +156,10 @@ public:
 	
 	virtual bool mouseScroll(ulong newX, ulong newY, int offs);
 	
+	bool doKeyDown(int key);
+		
+	bool doKeyUp(int key);
+	
 	virtual bool keyDown(int key);
 	
 	virtual bool keyUp(int key);
@@ -205,6 +211,9 @@ public:
 	void notifyShow();
 	
 	bool isVisibile();
+	
+	bool isActive()
+	{ return m_active; }
 	
 	bool switchTo();
 	

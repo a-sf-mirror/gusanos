@@ -1,5 +1,6 @@
 #include "text.h"
 #include <list>
+#include <cctype>
 
 
 using namespace std;
@@ -110,5 +111,54 @@ list< list<string> > text2Tree(const string &text)
 	return argTree;
 }
 
+namespace
+{
+	int minimum(int a, int b, int c)
+	{
+		int min = a;
+		if(b < min)
+			min = b;
+		if(c < min)
+			min = c;
+		return min;
+	}
+}
 
+int levenshteinDistance(std::string const& a, std::string const& b)
+{
+	if(a == b)
+		return 0;
+	
+	// n = alen, m = blen
+	std::string::size_type alen = a.size();
+	std::string::size_type blen = b.size();
+	
+	if(alen && blen)
+	{
+		++alen; ++blen;
+		int* d = new int[alen * blen];
+		
+		for(int k = 0; k < alen; ++k)
+			d[k] = k;
+		
+		for(int k = 0; k < blen; ++k)
+			d[k * alen] = k;
+			
+		for(int i = 1; i < alen; ++i)
+		for(int j = 1; j < blen; ++j)
+		{
+			int cost = (tolower(a[i - 1]) == tolower(b[j - 1])) ? 0 : 1;
 
+        	d[j*alen + i] = minimum(
+				d[(j - 1)*alen + i] + 1,
+				d[j*alen + i - 1] + 1,
+				d[(j - 1)*alen + i - 1] + cost
+			);
+		}
+		int distance = d[alen*blen - 1];
+		delete[] d;
+		return distance;
+	}
+	else
+		return std::max(alen, blen);
+}

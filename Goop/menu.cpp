@@ -214,7 +214,7 @@ bool GContext::eventMouseScroll(int offs)
 bool GContext::eventKeyDown(int k)
 {
 	Wnd* focus = getFocus();
-	if(focus && focus->isVisibile() && focus->keyDown(k))
+	if(focus && focus->isVisibile() && focus->doKeyDown(k))
 	{
 		Wnd* parent = focus->getParent();
 		if(parent && parent->isVisibile())
@@ -284,7 +284,7 @@ bool GContext::eventKeyUp(int k)
 	Wnd* focus = getFocus();
 	if(focus && focus->isVisibile())
 	{
-		focus->keyUp(k);
+		focus->doKeyUp(k);
 		
 		/*
 		// Do sth?

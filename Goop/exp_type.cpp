@@ -10,10 +10,13 @@
 #include "sprite.h"
 #endif //DEDSERV
 #include "util/text.h"
+#include "util/macros.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "object_grid.h"
 
+#include "omfg_script.h"
+#include "game_actions.h"
 
 
 #include <allegro.h>
@@ -64,7 +67,7 @@ ExpType::~ExpType()
 	}
 }
 
-bool ExpType::load(fs::path const& filename)
+bool ExpType::load2(fs::path const& filename)
 {
 	//cerr << "Loading explosion: " << filename.native_file_string() << endl;
 	fs::ifstream fileStream(filename);
@@ -235,4 +238,121 @@ bool ExpType::load(fs::path const& filename)
 	}
 }
 
+namespace EventID
+{
+enum type
+{
+	Creation,
+	DetectRange,
+};
+}
+
+bool ExpType::load(fs::path const& filename)
+{
+	fs::ifstream fileStream(filename);
+
+	if (!fileStream )
+		return false;
+	
+	OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
+		
+	parser.addEvent("creation", EventID::Creation);
+	
+	parser.addEvent("detect_range", EventID::DetectRange)
+		("range")
+		("detect_owner")
+		("layers")
+	;
+		
+	if(!parser.run())
+	{
+		parser.error("Trailing garbage");
+		return false;
+	}
+
+#ifndef DEDSERV
+	{
+		OmfgScript::TokenBase* v = parser.getProperty("sprite");
+		if(!v->isDefault())
+			sprite = spriteList.load(v->toString());
+	}
+#endif
+	invisible = parser.getBool("invisible", false);
+	timeout = parser.getInt("timeout", 0);
+	timeoutVariation = parser.getInt("timeout_variation", 0);
+	renderLayer = parser.getInt("render_layer", Grid::WormRenderLayer);
+
+	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
+	{
+		if ( f->name == "lens" )
+			distortion = new Distortion( lensMap( (*f)[0]->toInt() ));
+		else if ( f->name == "swirl" )
+			distortion = new Distortion( swirlMap( (*f)[0]->toInt() ));
+		else if ( f->name == "ripple" )
+			distortion = new Distortion( rippleMap( (*f)[0]->toInt() ));
+		else if ( f->name == "random" )
+			distortion = new Distortion( randomMap( (*f)[0]->toInt() ) );
+		else if ( f->name == "spin" )
+			distortion = new Distortion( spinMap( (*f)[0]->toInt() ) );
+		else if ( f->name == "bitmap" )
+			distortion = new Distortion( bitmapMap( (*f)[0]->toString() ) );
+	}
+		
+	alpha = parser.getInt("alpha", 255);
+	destAlpha = parser.getInt("dest_alpha", -1);
+	wupixels = parser.getBool("wu_pixels", false);
+	distortMagnitude = parser.getDouble("distort_magnitude", 0.8);
+	
+	std::string const& blenderstr = parser.getString("blender", "none");
+	if(blenderstr == "add") blender = BlitterContext::Add;
+	else if(blenderstr == "alpha") blender = BlitterContext::Alpha;
+	else if(blenderstr == "alphach") blender = BlitterContext::AlphaChannel;
+	else blender = BlitterContext::None;
+	
+	colour = parser.getProperty("color", "colour")->toColor(255, 255, 255);
+	
+	OmfgScript::Parser::EventIter i(parser);
+	for(; i; ++i)
+	{
+		std::vector<OmfgScript::TokenBase*> const& p = i.params();
+		switch(i.type())
+		{
+			case EventID::Creation:
+				creation = new Event(i.actions());
+			break;
+			
+			case EventID::DetectRange:
+				
+				int detectFilter = 0;
+				if(p[2]->isList())
+				{
+					const_foreach(i, p[2]->toList())
+					{
+						OmfgScript::TokenBase& v = **i;
+						if ( v.isString() )
+						{
+							if( v.toString() == "worms" ) detectFilter |= 1;
+						}
+						else if ( v.isInt() )
+							detectFilter |= 1 << (v.toInt() + 1);
+					}
+				}
+				else
+				{
+					detectFilter = 1;
+				}
+				detectRanges.push_back( new DetectEvent(i.actions(), p[0]->toDouble(0.0), p[1]->toBool(true), detectFilter));
+			break;
+		}
+	}
+			
+/*
+#ifndef DEDSERV
+					else if ( var == "light_radius" ) lightHax = genLight( cast<int>(val) );
+#else
+					else if ( var == "light_radius" ) ;
+#endif
+*/
+	return true;
+}
 

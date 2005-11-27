@@ -9,6 +9,7 @@ class BaseObject;
 struct DetectEvent : public Event
 {
 	DetectEvent( float range, bool detectOwner, int detectFilter );
+	DetectEvent(std::vector<BaseAction*>&, float range, bool detectOwner, int detectFilter);
 	~DetectEvent();
 	
 	void check( BaseObject* ownerObject );

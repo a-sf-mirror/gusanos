@@ -19,6 +19,12 @@ Event::Event(int flags_)
 {
 }
 
+Event::Event(std::vector<BaseAction*>& actions_)
+: flags(0)
+{
+	actions.swap(actions_);
+}
+
 Event::~Event()
 {
 	/*vector<BaseAction*>::iterator i;

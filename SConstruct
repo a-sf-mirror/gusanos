@@ -10,6 +10,7 @@ sconscript = ['GUI',
             'Console',
             'loadpng',
             'Goop',
+            'OmfgScript',
             'liero2gus',
             #'lua',
 			'lua51',
@@ -32,6 +33,7 @@ class MyEnv(Environment):
 		self.conf = ARGUMENTS.get('conf', 'posix')
 		self.build = ARGUMENTS.get('build', 'release')
 		self.subfolder = os.path.join(self.conf, self.build)
+		self.noParsers = ARGUMENTS.get('no-parsers', False)
 		
 	def confLibs(self, l):
 		return [self['LIB__' + lib] for lib in Split(l)]
@@ -151,7 +153,7 @@ class MyConf(Configure):
 env = MyEnv()
 
 env.Append(
-	CPPPATH = ['.', '#http', '#loadpng', '#lua51', '#Console', '#GUI', '#Utility'],
+	CPPPATH = Split('. #http #loadpng #lua51 #Console #GUI #Utility #OmfgScript'),
 	LIBPATH = [os.path.join('#lib', env.subfolder), os.path.join('#lib', env.conf)],
 	CPPFLAGS = Split('-pipe -Wall -Wno-reorder')
 )
@@ -212,7 +214,7 @@ def parserGenEmitter(target, source, env):
 	
 def parserBuilderFunc(target, source, env):
 	os.system('%s %s %s' % (parserGen[0].abspath, str(source[0]), str(target[0]) + '.re'))
-	os.system('re2c %s > %s' % (str(target[0]) + '.re', str(target[0])))
+	os.system('re2c -bi %s > %s' % (str(target[0]) + '.re', str(target[0])))
 	return None
 	
 parserBuilder = Builder(action = parserBuilderFunc,

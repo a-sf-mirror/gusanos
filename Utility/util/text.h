@@ -260,4 +260,6 @@ std::string shellComplete(
 	return s;
 }
 
+int levenshteinDistance(std::string const& a, std::string const& b);
+
 #endif  // OMFGUTIL_TEXT_COMMON_H

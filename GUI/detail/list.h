@@ -44,7 +44,7 @@ public:
 		
 		Node(std::string const& text)
 		: selected(false), expanded(true)
-		, parent(0), totalChildrenCount(0), level(0)
+		, parent(0), visibleChildren(0), level(0)
 		, list(0)
 		{
 			columns.push_back(text);
@@ -114,7 +114,7 @@ public:
 				else
 					list->m_visibleChildren += change;
 			}
-			totalChildrenCount += change;
+			visibleChildren += change;
 		}
 		
 		void clearSelections();
@@ -124,7 +124,7 @@ public:
 		bool        selected;
 		bool        expanded;
 		Node*       parent;
-		long        totalChildrenCount;
+		long        visibleChildren;
 		long        level;
 		List*       list;
 		list_t      children;
@@ -183,26 +183,35 @@ public:
 	
 	void expand(node_iter_t i)
 	{
-		if(i->expanded)
+		if(i->children.begin())
 		{
-			i->expanded = false;
-			if(i->parent)
-				i->parent->changeChildrenCount(-i->totalChildrenCount);
+			if(i->expanded)
+			{
+				i->expanded = false;
+				if(i->parent)
+					i->parent->changeChildrenCount(-i->visibleChildren);
+				else
+					m_visibleChildren -= i->visibleChildren;
+				
+				setBase(m_Base);
+			}
 			else
-				m_visibleChildren -= i->totalChildrenCount;
-			int offs = Node::findOffsetTo(m_RootNode.children.begin(), m_Base);
-			setBasePos(offs);
-		}
-		else
-		{
-			i->expanded = true;
-			if(i->parent)
-				i->parent->changeChildrenCount(i->totalChildrenCount);
-			else
-				m_visibleChildren += i->totalChildrenCount;
-			
-			int offs = Node::findOffsetTo(m_RootNode.children.begin(), i);
-			setBasePos(offs);
+			{
+				i->expanded = true;
+				if(i->parent)
+					i->parent->changeChildrenCount(i->visibleChildren);
+				else
+					m_visibleChildren += i->visibleChildren;
+				
+				setBase(m_Base);
+				
+				int offs = Node::findOffsetTo(m_RootNode.children.begin(), i);
+				
+				if(offs < m_basePos)
+					setBase(i, offs);
+				else if(offs + i->visibleChildren >= m_basePos + visibleRows())
+					setBasePos(offs + i->visibleChildren - visibleRows() + 1);
+			}
 		}
 	}
 	
@@ -276,6 +285,31 @@ public:
 			pos = 0;
 		m_basePos = pos;
 		updateBase();
+	}
+	
+	void setBase(node_iter_t i)
+	{
+		int pos = Node::findOffsetTo(m_RootNode.children.begin(), i);
+		setBase(i, pos);
+	}
+	
+	// This assumes that pos is the position of i !
+	// Don't use it unless you know this is the case.
+	void setBase(node_iter_t i, int pos)
+	{
+		m_basePos = pos;
+		if(pos > m_visibleChildren - visibleRows())
+			pos = m_visibleChildren - visibleRows();
+		if(pos < 0)
+			pos = 0;
+			
+		if(pos != m_basePos)
+		{
+			m_basePos = pos;
+			updateBase();
+		}
+		else
+			m_Base = i;
 	}
 	
 	int visibleRows()

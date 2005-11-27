@@ -117,6 +117,9 @@ int l_tcp_connect(lua_State* L)
 	
 	std::auto_ptr<TCP::Hostent> hp(TCP::resolveHost( addr ));
 	
+	if(!hp.get())
+		return 0;
+	
     TCP::createAddr(server, hp.get(), port);
     
     int s;

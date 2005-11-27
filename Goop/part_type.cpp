@@ -13,6 +13,7 @@
 #include "util/text.h"
 #include "util/vec.h"
 #include "util/angle.h"
+#include "util/macros.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "timer_event.h"
@@ -20,6 +21,7 @@
 #include "particle.h"
 #include "simple_particle.h"
 #include "game_actions.h"
+#include "omfg_script.h"
 
 
 #include <allegro.h>
@@ -185,7 +187,7 @@ bool PartType::isSimpleParticleType()
 	return true;
 }
 
-bool PartType::load(fs::path const& filename)
+bool PartType::load2(fs::path const& filename)
 {
 	//cerr << "Loading particle: " << filename.native_file_string() << endl;
 	
@@ -201,15 +203,6 @@ bool PartType::load(fs::path const& filename)
 			{
 				string var;
 				string val;
-
-/* //Unnecessary
-#ifndef WINDOWS
-				//Check for windows formatting on files
-				if (parseLine[parseLine.length()-1] == '\r')
-				{
-					parseLine.erase(parseLine.length()-1);
-				}
-#endif*/
 
 				vector<string> tokens;
 				tokens = Parser::tokenize ( parseLine );
@@ -351,7 +344,6 @@ bool PartType::load(fs::path const& filename)
 						}
 						timer.push_back(new TimerEvent(delay, delayVariation, triggerTimes));
 						currEvent = timer.back();
-						
 					}
 					else if ( eventName == "detect_range" )
 					{
@@ -459,6 +451,226 @@ bool PartType::load(fs::path const& filename)
 	{
 		return false;
 	}
+}
+
+namespace EventID
+{
+enum type
+{
+	Creation,
+	DetectRange,
+	GroundCollision,
+	Death,
+	Timer,
+	CustomEvent,
+};
+}
+
+bool PartType::load(fs::path const& filename)
+{
+	fs::ifstream fileStream(filename);
+
+	if (!fileStream )
+		return false;
+	
+	OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
+		
+	parser.addEvent("creation", EventID::Creation);
+	
+	parser.addEvent("death", EventID::Death);
+	
+	parser.addEvent("ground_collision", EventID::GroundCollision);
+	
+	parser.addEvent("timer", EventID::Timer)
+		("delay")
+		("delay_var")
+		("max_trigger")
+	;
+	
+	parser.addEvent("custom_event", EventID::CustomEvent)
+		("index", false)
+	;
+	
+	parser.addEvent("detect_range", EventID::DetectRange)
+		("range")
+		("detect_owner")
+		("layers")
+	;
+		
+	if(!parser.run())
+	{
+		parser.error("Trailing garbage");
+		return false;
+	}
+
+#ifndef DEDSERV
+	{
+		OmfgScript::TokenBase* v = parser.getProperty("sprite");
+		if(!v->isDefault())
+			sprite = spriteList.load(v->toString());
+	}
+#endif
+	invisible = parser.getBool("invisible", false);
+	culled = parser.getBool("occluded", false);
+	animOnGround = parser.getBool("anim_on_ground");
+	renderLayer = parser.getInt("render_layer", Grid::WormRenderLayer);
+	colLayer = parser.getInt("col_layer", 0);
+	
+	animDuration = parser.getInt("anim_duration", 100);
+	gravity = parser.getDouble("gravity", 0.0);
+	repeat = parser.getInt("repeat", 1);
+	bounceFactor = parser.getDouble("bounce_factor", 1.0);
+	groundFriction = parser.getDouble("ground_friction", 1.0);
+	damping = parser.getDouble("damping", 1.0);
+	acceleration = parser.getDouble("acceleration", 0.0);
+	maxSpeed = parser.getDouble("max_speed", -1.0);
+	angularFriction = Angle(parser.getDouble("angular_friction", 0.0));
+	health = parser.getDouble("health", 100.0);
+	radius = parser.getDouble("radius", 0.0);
+	line2Origin = parser.getBool("line_to_origin", false);
+	
+	std::string const& animtypestr = parser.getString("anim_type", "loop_right");
+	if(animtypestr == "ping_pong") animType = ANIM_PINGPONG;
+	else if(animtypestr == "loop_right") animType = ANIM_LOOPRIGHT;
+	else if(animtypestr == "right_once") animType = ANIM_RIGHTONCE;
+	
+	
+/*
+#ifndef DEDSERV
+	else if ( var == "light_radius" ) lightHax = genLight(cast<int>(val));
+#else
+	else if ( var == "light_radius" ) ;
+#endif
+*/
+
+	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
+	{
+		if ( f->name == "lens" )
+			distortion = new Distortion( lensMap( (*f)[0]->toInt() ));
+		else if ( f->name == "swirl" )
+			distortion = new Distortion( swirlMap( (*f)[0]->toInt() ));
+		else if ( f->name == "ripple" )
+			distortion = new Distortion( rippleMap( (*f)[0]->toInt() ));
+		else if ( f->name == "random" )
+			distortion = new Distortion( randomMap( (*f)[0]->toInt() ) );
+		else if ( f->name == "spin" )
+			distortion = new Distortion( spinMap( (*f)[0]->toInt() ) );
+		else if ( f->name == "bitmap" )
+			distortion = new Distortion( bitmapMap( (*f)[0]->toString() ) );
+	}
+		
+	alpha = parser.getInt("alpha", 255);
+	wupixels = parser.getBool("wu_pixels", false);
+	distortMagnitude = parser.getDouble("distort_magnitude", 0.8);
+	
+	std::string const& blenderstr = parser.getString("blender", "none");
+	if(blenderstr == "add") blender = BlitterContext::Add;
+	else if(blenderstr == "alpha") blender = BlitterContext::Alpha;
+	else if(blenderstr == "alphach") blender = BlitterContext::AlphaChannel;
+	else blender = BlitterContext::None;
+	
+	colour = parser.getProperty("color", "colour")->toColor(255, 255, 255);
+		
+	OmfgScript::Parser::EventIter i(parser);
+	for(; i; ++i)
+	{
+		std::vector<OmfgScript::TokenBase*> const& p = i.params();
+		switch(i.type())
+		{
+			case EventID::Creation:
+				creation = new Event(i.actions());
+			break;
+			
+			case EventID::GroundCollision:
+				groundCollision = new Event(i.actions());
+			break;
+			
+			case EventID::Death:
+				death = new Event(i.actions());
+			break;
+			
+			case EventID::Timer:
+				timer.push_back(new TimerEvent(i.actions(), p[0]->toInt(100), p[1]->toInt(0), p[2]->toInt(0)));
+			break;
+			
+			case EventID::DetectRange:
+			{
+				int detectFilter = 0;
+				if(p[2]->isList())
+				{
+					const_foreach(i, p[2]->toList())
+					{
+						OmfgScript::TokenBase& v = **i;
+						if ( v.isString() )
+						{
+							if( v.toString() == "worms" ) detectFilter |= 1;
+						}
+						else if ( v.isInt() )
+							detectFilter |= 1 << (v.toInt() + 1);
+					}
+				}
+				else
+				{
+					detectFilter = 1;
+				}
+				detectRanges.push_back( new DetectEvent(i.actions(), p[0]->toDouble(10.0), p[1]->toBool(true), detectFilter));
+			}
+			break;
+			
+			case EventID::CustomEvent:
+			{
+				size_t eventIndex = p[0]->toInt();
+				if ( eventIndex < customEvents.size() )
+				{
+					customEvents[eventIndex] = new Event(i.actions());
+				}
+			}
+			break;
+		}
+	}
+	
+	if(isSimpleParticleType())
+	{
+#ifndef DEDSERV
+		if(wupixels)
+		{
+			switch(bitmap_color_depth(screen))
+			{
+				default: newParticle = newParticle_SimpleParticle<SimpleParticle>; break;
+				case 32: newParticle = newParticle_SimpleParticle<SimpleParticle32wu>; break;
+				case 16: newParticle = newParticle_SimpleParticle<SimpleParticle16wu>; break;
+			}
+		}
+		else
+		{
+			switch(bitmap_color_depth(screen))
+			{
+				default: newParticle = newParticle_SimpleParticle<SimpleParticle>; break;
+				case 32: newParticle = newParticle_SimpleParticle<SimpleParticle32>; break;
+				case 16: newParticle = newParticle_SimpleParticle<SimpleParticle16>; break;
+			}
+		}
+#else
+		newParticle = newParticle_Dummy;
+#endif
+		cerr << filename.native_file_string() << ": blood" << endl;
+	}
+	else
+		newParticle = newParticle_Particle;
+		
+	if( colLayer >= 0 )
+		colLayer = Grid::CustomColLayerStart + colLayer;
+	else
+		colLayer = Grid::NoColLayer;
+			
+/*
+#ifndef DEDSERV
+	else if ( var == "light_radius" ) lightHax = genLight( cast<int>(val) );
+#else
+	else if ( var == "light_radius" ) ;
+#endif
+*/
+	return true;
 }
 
 #ifndef DEDSERV

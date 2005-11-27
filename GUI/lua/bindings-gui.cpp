@@ -183,6 +183,16 @@ LMETHOD(OmfgGUI::Wnd, gui_wnd_is_visible,
 	return 1;
 )
 
+LMETHOD(OmfgGUI::Wnd, gui_wnd_is_active,
+	lua_pushboolean(context, p->isActive());
+	return 1;
+)
+
+LMETHOD(OmfgGUI::Wnd, gui_wnd_deactivate,
+	p->doSetActivation(false);
+	return 0;
+)
+
 /*! Wnd:get_text()
 
 	Returns the text of the window.
@@ -243,6 +253,12 @@ LMETHOD(OmfgGUI::Wnd, gui_wnd_child,
 	return 1;
 )
 
+//! Edit inherits Wnd
+
+LMETHOD(OmfgGUI::Edit, gui_edit_set_lock,
+	p->setLock(lua_toboolean(context, 1));
+	return 0;
+)
 
 //! List inherits Wnd
 
@@ -385,10 +401,12 @@ void addGUIWndFunctions(LuaContext& context)
 		("attribute", l_gui_wnd_attribute)
 		("set_visibility", l_gui_wnd_set_visibility)
 		("is_visible", l_gui_wnd_is_visible)
+		("is_active", l_gui_wnd_is_active)
 		("get_text", l_gui_wnd_get_text)
 		("set_text", l_gui_wnd_set_text)
 		("focus", l_gui_wnd_focus)
 		("activate", l_gui_wnd_activate)
+		("deactivate", l_gui_wnd_deactivate)
 		("child", l_gui_wnd_child)
 		("switch_to", l_gui_wnd_switch_to)
 		//("bind", l_gui_wnd_bind)
@@ -408,6 +426,21 @@ void addGUIListFunctions(LuaContext& context)
 		("scroll_bottom", l_gui_list_scroll_bottom)
 	;
 }
+
+void addGUIEditFunctions(LuaContext& context)
+{
+	context.tableFunctions()
+		("set_lock", l_gui_edit_set_lock)
+	;
+}
+
+void GUIWndMetatable(LuaContext& context)
+{
+	lua_newtable(context);
+	lua_pushcfunction(context, l_gui_wnd_bind);
+	lua_setfield(context, -2, "__newindex");
+}
+
 #endif
 
 void initGUI(OmfgGUI::Context& gui, LuaContext& context)
@@ -422,21 +455,8 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 	context.function("gui_load_xml", l_gui_loadxml, 1);
 	lua_pushlightuserdata(context, static_cast<void *>(&gui));
 	context.function("gui_find", l_gui_find, 1);
-/*
-	lua_newtable(context); // Windows
-	
-	lua_newtable(context); // metatable of Windows
-	lua_pushlightuserdata(context, static_cast<void *>(&gui));
-	lua_pushcclosure(context, l_gui_windows_index, 1);
-	lua_setfield(context, -2, "__index");
-	lua_setmetatable(context, -2);
-	
-	lua_setfield(context, LUA_GLOBALSINDEX, "Windows");
-*/
 
-	lua_newtable(context);
-	lua_pushcfunction(context, l_gui_wnd_bind);
-	lua_setfield(context, -2, "__newindex");
+	GUIWndMetatable(context);
 	lua_pushstring(context, "__index");
 
 	lua_newtable(context);
@@ -447,12 +467,25 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 	//LuaReference ref = context.createReference();
 	context.regObjectKeep(OmfgGUI::Wnd::metaTable);
 	context.regObjectKeep(OmfgGUI::Button::metaTable);
-	context.regObjectKeep(OmfgGUI::Edit::metaTable);
+	
 	context.regObject(OmfgGUI::Group::metaTable);
+	
+	// GUI Edit method and metatable
+	
+	GUIWndMetatable(context);
+	lua_pushstring(context, "__index");
+	
+	lua_newtable(context);
+	
+	addGUIWndFunctions(context);
+	addGUIEditFunctions(context);
+	
+	lua_rawset(context, -3);
+	context.regObject(OmfgGUI::Edit::metaTable);
 	
 	// GUI List method and metatable
 	
-	lua_newtable(context);
+	GUIWndMetatable(context);
 	lua_pushstring(context, "__index");
 	
 	lua_newtable(context);

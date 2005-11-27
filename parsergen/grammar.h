@@ -15,7 +15,10 @@
 #include <cctype>
 #include <list>
 #include <string>
+#include <set>
 #include <exception>
+
+#include <iostream> // TEMP
 
 struct SyntaxError : public std::exception
 {
@@ -39,6 +42,7 @@ struct Element
 {
 	Element()
 	: sub(0), optional(false), mult(Once)
+	, func(NoFunc), firstSetIdx(0)
 	{
 	}
 	
@@ -49,26 +53,45 @@ struct Element
 		Repeat1,
 	};
 	
+	enum Func
+	{
+		NoFunc,
+		SkipTo,
+		SkipAfter,
+		Location,
+	};
+	
 	RepeatType mult;
 	bool optional;
 	Def* sub;
 	std::string code;
 	std::string child;
+	Func func;
+	std::set<int> first;
+	int firstSetIdx;
 };
 
 struct Option
 {
+	Option()
+	: firstSetIdx(0)
+	{
+	}
+	
 	void addElement(Element* el)
 	{
 		elements.push_back(el);
 	}
 	
 	std::list<Element *> elements;
+	std::set<int> first;
+	int firstSetIdx;
 };
 
 struct Def
 {
 	Def()
+	: inProgress(false)
 	{
 	}
 	
@@ -79,6 +102,7 @@ struct Def
 
 	std::string firstSet;
 	std::list<Option *> options;
+	bool inProgress;
 };
 
 struct Rule
@@ -96,7 +120,7 @@ struct Rule
 struct Token
 {
 	Token(std::string name_)
-	: name(name_)
+	: name(name_), linecounter(false), skip(false)
 	{
 	}
 	
@@ -104,6 +128,9 @@ struct Token
 	int idx;
 	std::string def;
 	std::string code;
+	std::string copy; // name of token to copy
+	bool linecounter;
+	bool skip;
 };
 
 template<class BaseT>
@@ -158,7 +185,7 @@ struct Grammar : public BaseT
 	
 	bool firstIdent()
 	{
-		return isalnum(cur());
+		return isalnum(cur()) || cur() == '@';
 	}
 	
 	std::string ident()
@@ -168,9 +195,11 @@ struct Grammar : public BaseT
 			std::string i;
 			for(; firstIdent(); nextInLexeme())
 			{
+				if(i.size() > 100)
+					syntaxError("Too long identifier");
 				i += cur();
 			}
-			
+						
 			return i;
 		}
 		else
@@ -238,9 +267,9 @@ struct Grammar : public BaseT
 	bool firstElement()
 	{
 		return firstIdent()
-			| cur() == '('
-			| cur() == '['
-			| cur() == '{';
+			|| cur() == '('
+			|| cur() == '['
+			|| cur() == '$';
 	}
 	
 	Element* element()
@@ -264,18 +293,42 @@ struct Grammar : public BaseT
 				next();
 			break;
 			
-			case '{':
-				code<'{', '}'>(el->code);
+			case '$':
+				next();
+				code<'(', ')'>(el->code);
 				doneLexeme();
 			break;
 			
 			default:
-				el->child = ident();
-				if(cur() == '<')
-				{
-					code<'<', '>'>(el->code);
-				}
+				std::string t = ident();
 				doneLexeme();
+				if(t == "@skipto")
+				{
+					el->func = Element::SkipTo;
+					el->child = ident();
+					doneLexeme();
+				}
+				else if(t == "@skipafter")
+				{
+					el->func = Element::SkipAfter;
+					el->child = ident();
+					doneLexeme();
+				}
+				else if(t == "@location")
+				{
+					el->func = Element::Location;
+					el->child = ident();
+					doneLexeme();
+				}
+				else
+				{
+					el->child = t;
+					if(cur() == '<')
+					{
+						code<'<', '>'>(el->code);
+					}
+					doneLexeme();
+				}
 			break;
 		}
 		
@@ -305,6 +358,9 @@ struct Grammar : public BaseT
 	{
 		std::auto_ptr<Def> d(new Def);
 		
+		if(cur() == '|') // Optional first bar
+			next();
+		
 		d->addOption(option());
 		while(cur() == '|')
 		{
@@ -323,78 +379,142 @@ struct Grammar : public BaseT
 			doneLexeme();
 		}
 		
-		while(firstIdent())
+		while(firstIdent() || cur() == '%')
 		{
-			std::string id = ident();
-			doneLexeme();
-			
-			if(cur() == '<')
+			if(cur() == '%')
 			{
-				std::auto_ptr<Rule> rule(new Rule(id));
-				
-				code<'<', '>'>(rule->args);
+				next();
+				std::string opt = ident();
 				doneLexeme();
 				
-				if(cur() != '=') syntaxError("Expected '=' in rule");
-				next();
-				
-				rule->def = def();
-				
-				if(cur() != ';') syntaxError("Expected ';' after rule");
-				next();
-				
-				this->addRule(rule.release());
-			}
-			else if(cur() == ':')
-			{
-				next();
-				
-				std::auto_ptr<Token> token(new Token(id));
-				
-				bool inStr = false, ignore = false;
-
-				while(true)
+				if(opt == "tokenbase")
 				{
-					int c = cur();
+					code<'{', '}'>(this->tokenbase);
+					doneLexeme();
+				}
+				else if(opt == "alias")
+				{
 					
-					if(c == '\\')
+					std::string name = ident();
+					doneLexeme();
+					std::string content;
+					code<'{', '}'>(content);
+					doneLexeme();
+					this->addAlias(name, content);
+				}
+				else if(opt == "namespace")
+				{
+					this->namespace_ = ident();
+					doneLexeme();
+				}
+				else if(opt == "token")
+				{
+					code<'{', '}'>(this->tokencontent);
+					doneLexeme();
+				}
+				else
+					syntaxError("Unknown option");
+				
+				if(cur() != ';') syntaxError("Expected ';' after option");
+				next();
+			}
+			else
+			{
+				std::string id = ident();
+				doneLexeme();
+				
+				if(cur() == '<')
+				{
+					std::auto_ptr<Rule> rule(new Rule(id));
+					
+					code<'<', '>'>(rule->args);
+					doneLexeme();
+					
+					if(cur() != '=') syntaxError("Expected '=' in rule");
+					next();
+					
+					rule->def = def();
+					
+					if(cur() != ';') syntaxError("Expected ';' after rule");
+					next();
+					
+					this->addRule(rule.release());
+				}
+				else if(cur() == ':')
+				{
+					next();
+					
+					std::auto_ptr<Token> token(new Token(id));
+					
+					bool inStr = false, ignore = false;
+	
+					while(true)
 					{
-						if(inStr)
-							ignore = true;
-					}
-					else if(c == '\"')
-					{
+						int c = cur();
+						
 						if(!ignore)
 						{
-							inStr = !inStr;
+							if(c == '\\')
+							{
+								ignore = true;
+							}
+							else if(c == '"')
+							{
+								inStr = !inStr;
+							}
+							else if(c == '{' || c == ';' || c == '=')
+							{
+								if(!inStr)
+									break;
+							}
 						}
 						else
 							ignore = false;
+						
+						if(c == -1)
+							syntaxError("Expected end of regular expression");
+						
+						nextInLexeme();
+						
+						token->def += (char)c;
 					}
-					else if(c == '{' || c == ';')
+					
+					if(cur() == '{')
 					{
-						if(!inStr)
-							break;
+						code<'{', '}'>(token->code);
+						doneLexeme();
+					}
+					else if(cur() == '=')
+					{
+						next();
+						
+						
+						while(firstIdent())
+						{
+							std::string t = ident();
+							doneLexeme();
+							if(t == "@linecounter")
+								token->linecounter = true;
+							else if(t == "@skip")
+								token->skip = true;
+							else
+							{
+								token->copy = t;
+								code<'<', '>'>(token->code);
+								doneLexeme();
+								break;
+							}
+						}
 					}
 					
-					nextInLexeme();
+					if(cur() != ';') syntaxError("Expected ';' after token");
+					next();
 					
-					token->def += (char)c;
+					this->addToken(token.release());
 				}
-				
-				if(cur() == '{')
-				{
-					code<'{', '}'>(token->code);
-					doneLexeme();
-				}
-				
-				if(cur() != ';') syntaxError("Expected ';' after token");
-				next();
-				
-				this->addToken(token.release());
+				else
+					syntaxError("Expected rule parameters or token definition");
 			}
-			else
-				syntaxError("Expected rule parameters or token definition");
 		}
 		//std::list<Node *>& nodes
 	}

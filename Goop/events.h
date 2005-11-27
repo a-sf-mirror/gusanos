@@ -22,9 +22,11 @@ public:
 	};
 		
 	Event(int flags_);
+	Event(std::vector<BaseAction*>&);
 	virtual ~Event();
 
 	bool addAction( const std::string& name, const std::vector<std::string>& params );
+	void swapActionList(std::vector<BaseAction*>& b); //TODO
 	void run( BaseObject *object, BaseObject *object2 = NULL, BaseWorm *worm = NULL, Weapon *weapon = NULL );
 	
 	//private:

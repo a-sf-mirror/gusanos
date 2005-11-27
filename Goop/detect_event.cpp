@@ -12,6 +12,13 @@ DetectEvent::DetectEvent( float range, bool detectOwner, int detectFilter)
 	//m_event = new Event;
 }
 
+DetectEvent::DetectEvent(std::vector<BaseAction*>& actions_, float range, bool detectOwner, int detectFilter)
+: Event(actions_)
+, m_range(range), m_detectOwner(detectOwner), m_detectFilter(detectFilter)
+{
+	
+}
+
 DetectEvent::~DetectEvent()
 {
 	//delete m_event;

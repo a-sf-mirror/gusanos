@@ -13,6 +13,7 @@
 #include "util/text.h"
 #include "util/angle.h"
 #include "util/vec.h"
+#include "util/macros.h"
 #include "base_object.h"
 #include "weapon.h"
 #include "worm.h"
@@ -21,44 +22,160 @@
 #include "glua.h"
 #include "script.h"
 
+#include "omfg_script.h"
+
 //#include <allegro.h>
 
 //#include <boost/random.hpp>
 
 using namespace std;
 
+OmfgScript::ActionFactory gameActions;
+
+template<class T>
+BaseAction* newAction(vector<OmfgScript::TokenBase*> const& params )
+{
+	return new T(params);
+}
+
+template<class T>
+BaseAction* oldAction(vector<string> const& params )
+{
+	return new T(params);
+}
+
 void registerGameActions()
 {
-	game.actionList["shoot_particles"] = shootParticles;
-	game.actionList["uniform_shoot_particles"] = uniformShootParticles;
-	game.actionList["create_explosion"] = createExplosion;
-	game.actionList["remove"] = remove;
-	game.actionList["play_sound"] = playSound;
-	game.actionList["play_random_sound"] = playRandomSound;
-	game.actionList["play_sound_static"] = playSoundStatic;
-	game.actionList["play_global_sound"] = playGlobalSound;
-	game.actionList["delay_fire"] = delayFire;
-	game.actionList["add_angle_speed"] = addAngleSpeed;
-	game.actionList["push"] = push;
-	game.actionList["damage"] = damage;
-	game.actionList["set_alpha_fade"] = setAlphaFade;
-	game.actionList["show_firecone"] = showFirecone;
-	game.actionList["custom_event"] = runCustomEvent;
-	game.actionList["run_script"] = runScript;
-	game.actionList["repel"] = repel;
-	game.actionList["damp"] = damp;
-	game.actionList["apply_map_effect"] = applyMapEffect;
-	game.actionList["put_particle"] = putParticle;
+	game.actionList["shoot_particles"] = oldAction<ShootParticles>;
+	game.actionList["uniform_shoot_particles"] = oldAction<UniformShootParticles>;
+	game.actionList["remove"] = oldAction<Remove>;
+	
+	game.actionList["create_explosion"] = oldAction<CreateExplosion>;
+	game.actionList["play_sound"] = oldAction<PlaySound>;
+	game.actionList["play_random_sound"] = oldAction<PlayRandomSound>;
+	game.actionList["play_sound_static"] = oldAction<PlaySoundStatic>;
+	game.actionList["play_global_sound"] = oldAction<PlayGlobalSound>;
+	game.actionList["delay_fire"] = oldAction<DelayFire>;
+	game.actionList["add_angle_speed"] = oldAction<AddAngleSpeed>;
+	game.actionList["push"] = oldAction<Push>;
+	game.actionList["damage"] = oldAction<Damage>;
+	game.actionList["set_alpha_fade"] = oldAction<SetAlphaFade>;
+	game.actionList["show_firecone"] = oldAction<ShowFirecone>;
+	game.actionList["custom_event"] = oldAction<RunCustomEvent>;
+	game.actionList["run_script"] = oldAction<RunScript>;
+	game.actionList["repel"] = oldAction<Repel>;
+	game.actionList["damp"] = oldAction<Damp>;
+	game.actionList["apply_map_effect"] = oldAction<ApplyMapEffect>;
+	game.actionList["put_particle"] = oldAction<PutParticle>;
+	
+	gameActions.add("shoot_particles", newAction<ShootParticles>)
+		("type", false)
+		("amount")
+		("speed")
+		("speed_var")
+		("motion_inheritance")
+		("amount_var")
+		("distribution")
+		("angle_offs")
+		("distance_offs")
+	;
+	
+	gameActions.add("uniform_shoot_particles", newAction<UniformShootParticles>)
+		("type", false)
+		("amount")
+		("speed")
+		("speed_var")
+		("motion_inheritance")
+		("amount_var")
+		("distribution")
+		("angle_offs")
+		("distance_offs")
+	;
+	
+	gameActions.add("remove", newAction<Remove>);
+	
+	gameActions.add("put_particle", newAction<PutParticle>)
+		("type", false)
+		("x", false)
+		("y", false)
+		("xspd")
+		("yspd")
+	;
+	
+	gameActions.add("create_explosion", newAction<CreateExplosion>)
+		("type", false)
+	;
+	gameActions.add("play_sound", newAction<PlaySound>)
+		("sound", false)	
+		("loudness")
+		("pitch")
+		("pitch_var")
+	;
+	gameActions.add("play_random_sound", newAction<PlayRandomSound>)
+		("loudness")
+		("pitch")
+		("pitch_var")
+		("sounds", false)
+	;
+	gameActions.add("play_sound_static", newAction<PlaySoundStatic>)
+		("sound", false)	
+		("loudness")
+		("pitch")
+		("pitch_var")
+	;
+	gameActions.add("play_global_sound", newAction<CreateExplosion>)
+		("sound", false)
+		("volume")
+		("volume_var")
+		("pitch")
+		("pitch_var")
+	;
+	gameActions.add("delay_fire", newAction<DelayFire>)
+		("time")
+		("time_var")
+	;
+	gameActions.add("add_angle_speed", newAction<AddAngleSpeed>)
+		("amount")
+		("amount_var")
+	;
+	gameActions.add("push", newAction<Push>)
+		("factor")
+	;
+	gameActions.add("damage", newAction<Damage>)
+		("amount")
+		("amount_var")
+	;
+	gameActions.add("set_alpha_fade", newAction<SetAlphaFade>)
+		("frames")
+		("dest")
+	;
+	gameActions.add("show_firecone", newAction<ShowFirecone>)
+		("sprite", false)
+		("frames")
+		("draw_distance")
+	;
+	gameActions.add("custom_event", newAction<RunCustomEvent>)
+		("index", false)
+	;
+	gameActions.add("run_script", newAction<RunScript>)
+		("name", false)
+	;
+	gameActions.add("repel", newAction<Repel>)
+		("max_force")
+		("max_distance")
+		("min_force")
+	;
+	gameActions.add("damp", newAction<Damp>)
+		("factor")
+	;
+	gameActions.add("apply_map_effect", newAction<ApplyMapEffect>)
+		("effect", false)
+	;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* shootParticles( const vector< string >& params )
-{
-	return new ShootParticles(params);
-}
 
 ShootParticles::ShootParticles( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
@@ -111,24 +228,24 @@ ShootParticles::ShootParticles( const vector< string >& params )
 	}
 }
 
+ShootParticles::ShootParticles( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+	type = partTypeList.load(params[0]->toString());
+	amount = params[1]->toInt(1);
+	speed = params[2]->toDouble(0.0);
+	speedVariation = params[3]->toDouble(0.0);
+	motionInheritance = params[4]->toDouble(0.0);
+	amountVariation = params[5]->toInt(0);
+	distribution = Angle(params[6]->toDouble(360.0));
+	angleOffset = AngleDiff(params[7]->toDouble(0.0));
+	distanceOffset = params[7]->toDouble(0.0);
+}
+
 void ShootParticles::run( ActionParams const& params )
 {
 	if (type)
 	{
-/*
-		Vec spd;
-		Angle tmpAngle;
-		char dir = params.object->getDir();
-		//for ( int i = 0; i < amount + rnd()*amountVariation; i++) //WTF??
-		int realAmount = amount + int(rnd()*amountVariation);
-		for ( int i = 0; i < realAmount; i++)
-		{
-			tmpAngle = params.object->getAngle() + angleOffset * dir + distribution * midrnd();
-			spd = Vec( tmpAngle, speed + midrnd()*speedVariation );
-			spd += params.object->spd * motionInheritance;
-			game.insertParticle( new Particle( type, params.object->pos + Vec( tmpAngle, (double)distanceOffset) , spd, params.object->getDir(), params.object->getOwner() ));
-		}
-*/
 		int dir = params.object->getDir();
 		Angle baseAngle(params.object->getAngle() + angleOffset * dir);
 		
@@ -157,11 +274,6 @@ ShootParticles::~ShootParticles()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* uniformShootParticles( const vector< string >& params )
-{
-	return new UniformShootParticles(params);
-}
 
 UniformShootParticles::UniformShootParticles( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
@@ -214,6 +326,20 @@ UniformShootParticles::UniformShootParticles( const vector< string >& params )
 	}
 }
 
+UniformShootParticles::UniformShootParticles( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+	type = partTypeList.load(params[0]->toString());
+	amount = params[1]->toInt(1);
+	speed = params[2]->toDouble(0.0);
+	speedVariation = params[3]->toDouble(0.0);
+	motionInheritance = params[4]->toDouble(0.0);
+	amountVariation = params[5]->toInt(0);
+	distribution = Angle(params[6]->toDouble(360.0));
+	angleOffset = AngleDiff(params[7]->toDouble(0.0));
+	distanceOffset = params[7]->toDouble(0.0);
+}
+
 void UniformShootParticles::run( ActionParams const& params )
 {
 	if (type)
@@ -249,11 +375,6 @@ UniformShootParticles::~UniformShootParticles()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* putParticle( const vector< string >& params )
-{
-	return new PutParticle(params);
-}
-
 PutParticle::PutParticle( const vector< string >& params )
 : BaseAction(0)
 {
@@ -288,6 +409,17 @@ PutParticle::PutParticle( const vector< string >& params )
 	}
 }
 
+PutParticle::PutParticle( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(0)
+{
+	type = partTypeList.load(params[0]->toString());
+	x = params[1]->toDouble();
+	y = params[2]->toDouble();
+	xspd = params[3]->toDouble(0.0);
+	yspd = params[4]->toDouble(0.0);
+	angle = Angle(params[5]->toDouble(0.0));
+}
+
 void PutParticle::run( ActionParams const& params )
 {
 	if (type)
@@ -304,11 +436,6 @@ PutParticle::~PutParticle()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* createExplosion( const vector< string >& params )
-{
-	return new CreateExplosion(params);
-}
-
 CreateExplosion::CreateExplosion( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
 {
@@ -317,6 +444,12 @@ CreateExplosion::CreateExplosion( const vector< string >& params )
 	{
 		type = expTypeList.load(params[0]);
 	}
+}
+
+CreateExplosion::CreateExplosion( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+	type = expTypeList.load(params[0]->toString());
 }
 
 void CreateExplosion::run( ActionParams const& params )
@@ -339,10 +472,6 @@ CreateExplosion::~CreateExplosion()
 
 	Pushes the second object in the direction the first object is moving.
 */
-BaseAction* push( const vector< string >& params )
-{
-	return new Push(params);
-}
 
 Push::Push( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
@@ -353,6 +482,12 @@ Push::Push( const vector< string >& params )
 	{
 		factor = cast<float>(params[0]);
 	}
+}
+
+Push::Push( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
+{
+	factor = params[0]->toDouble(0.0);
 }
 
 void Push::run( ActionParams const& params  )
@@ -367,11 +502,6 @@ Push::~Push()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* repel( const vector< string >& params )
-{
-	return new Repel(params);
-}
 
 Repel::Repel( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
@@ -393,6 +523,18 @@ Repel::Repel( const vector< string >& params )
 		minForce = cast<float>(params[2]);
 	}
 	
+	maxDistanceSqr = maxDistance*maxDistance;
+	forceDiffScaled = (minForce - maxForce) / maxDistance;
+}
+
+Repel::Repel( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
+{
+	// Sensible defaults?
+	maxForce = params[0]->toDouble(0.0);
+	maxDistance = params[1]->toDouble(0.0);
+	minForce = params[2]->toDouble(0.0);
+
 	maxDistanceSqr = maxDistance*maxDistance;
 	forceDiffScaled = (minForce - maxForce) / maxDistance;
 }
@@ -424,11 +566,6 @@ Repel::~Repel()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* damp( const vector< string >& params )
-{
-	return new Damp(params);
-}
-
 Damp::Damp( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject2)
 {
@@ -438,6 +575,12 @@ Damp::Damp( const vector< string >& params )
 	{
 		factor = cast<float>(params[0]);
 	}
+}
+
+Damp::Damp( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject2)
+{
+	factor = params[0]->toDouble(0.0);
 }
 
 void Damp::run( ActionParams const& params )
@@ -452,11 +595,6 @@ Damp::~Damp()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* damage( const vector< string >& params )
-{
-	return new Damage(params);
-}
 
 Damage::Damage( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
@@ -474,6 +612,13 @@ Damage::Damage( const vector< string >& params )
 	}
 }
 
+Damage::Damage( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject | BaseAction::RequiresObject2)
+{
+	m_damage = params[0]->toDouble(0.0);
+	m_damageVariation = params[1]->toDouble(0.0);
+}
+
 void Damage::run( ActionParams const& params )
 {
 	if ( params.object2 )
@@ -488,12 +633,12 @@ Damage::~Damage()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* remove( const vector< string >& params )
+Remove::Remove( const vector< string >& params )
+: BaseAction(BaseAction::RequiresObject)
 {
-	return new Remove(params);
 }
 
-Remove::Remove( const vector< string >& params )
+Remove::Remove( vector<OmfgScript::TokenBase*> const& params )
 : BaseAction(BaseAction::RequiresObject)
 {
 }
@@ -510,11 +655,6 @@ Remove::~Remove()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* playSound( const vector< string >& params )
-{
-	return new PlaySound(params);
-}
 
 PlaySound::PlaySound( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
@@ -544,6 +684,17 @@ PlaySound::PlaySound( const vector< string >& params )
 #endif
 }
 
+PlaySound::PlaySound( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+#ifndef DEDSERV
+	sound = soundList.load(params[0]->toString());
+	loudness = params[1]->toDouble(100.0);
+	pitch = params[2]->toDouble(1.0);
+	pitchVariation = params[3]->toDouble(0.0);
+#endif
+}
+
 void PlaySound::run( ActionParams const& params )
 {
 #ifndef DEDSERV
@@ -561,11 +712,6 @@ PlaySound::~PlaySound()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* playRandomSound( const vector< string >& params )
-{
-	return new PlayRandomSound(params);
-}
 
 PlayRandomSound::PlayRandomSound( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
@@ -599,6 +745,26 @@ PlayRandomSound::PlayRandomSound( const vector< string >& params )
 #endif
 }
 
+PlayRandomSound::PlayRandomSound( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+#ifndef DEDSERV
+	loudness = params[0]->toDouble(100.0);
+	pitch = params[1]->toDouble(1.0);
+	pitchVariation = params[2]->toDouble(0.0);
+
+	OmfgScript::TokenBase* l = params[3];
+	if(l->assertList())
+	{
+		const_foreach(s, l->toList())
+		{
+			if((*s)->assertString())
+				sounds.push_back(soundList.load((*s)->toString()));
+		}
+	}
+#endif
+}
+
 void PlayRandomSound::run( ActionParams const& params )
 {
 #ifndef DEDSERV
@@ -620,11 +786,6 @@ PlayRandomSound::~PlayRandomSound()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* playSoundStatic( const vector< string >& params )
-{
-	return new PlaySoundStatic(params);
-}
 
 PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
@@ -654,6 +815,18 @@ PlaySoundStatic::PlaySoundStatic( const vector< string >& params )
 #endif
 }
 
+PlaySoundStatic::PlaySoundStatic( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+#ifndef DEDSERV
+	sound = soundList.load(params[0]->toString());
+	loudness = params[1]->toDouble(100.0);
+	pitch = params[2]->toDouble(1.0);
+	pitchVariation = params[3]->toDouble(0.0);
+#endif
+}
+
+
 void PlaySoundStatic::run( ActionParams const& params )
 {
 #ifndef DEDSERV
@@ -671,11 +844,6 @@ PlaySoundStatic::~PlaySoundStatic()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* playGlobalSound( const vector< string >& params )
-{
-	return new PlayGlobalSound(params);
-}
 
 PlayGlobalSound::PlayGlobalSound( const vector< string >& params )
 : BaseAction(0)
@@ -710,6 +878,18 @@ PlayGlobalSound::PlayGlobalSound( const vector< string >& params )
 #endif
 }
 
+PlayGlobalSound::PlayGlobalSound( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(0)
+{
+#ifndef DEDSERV
+	sound = sound1DList.load(params[0]->toString());
+	volume = params[1]->toDouble(1.0);
+	volumeVariation = params[2]->toDouble(0.0);
+	pitch = params[3]->toDouble(1.0);
+	pitchVariation = params[4]->toDouble(0.0);
+#endif
+}
+
 void PlayGlobalSound::run( ActionParams const& params )
 {
 #ifndef DEDSERV
@@ -729,11 +909,6 @@ PlayGlobalSound::~PlayGlobalSound()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* delayFire( const vector< string >& params )
-{
-	return new DelayFire(params);
-}
-
 DelayFire::DelayFire( const vector< string >& params )
 : BaseAction(BaseAction::RequiresWeapon)
 {
@@ -747,6 +922,13 @@ DelayFire::DelayFire( const vector< string >& params )
 	{
 		delayTimeVariation = cast<int>(params[1]);
 	}
+}
+
+DelayFire::DelayFire( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresWeapon)
+{
+	delayTime = params[0]->toInt(0);
+	delayTimeVariation = params[1]->toInt(0);
 }
 
 void DelayFire::run( ActionParams const& params )
@@ -764,11 +946,6 @@ DelayFire::~DelayFire()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-
-BaseAction* showFirecone( const vector< string >& params )
-{
-	return new ShowFirecone(params);
-}
 
 ShowFirecone::ShowFirecone( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
@@ -792,11 +969,20 @@ ShowFirecone::ShowFirecone( const vector< string >& params )
 #endif
 }
 
+ShowFirecone::ShowFirecone( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+#ifndef DEDSERV
+	sprite = spriteList.load(params[0]->toString());
+	frames = params[1]->toInt(0);
+	drawDistance = params[2]->toDouble(0);
+#endif
+}
+
 void ShowFirecone::run( ActionParams const& params )
 {
 #ifndef DEDSERV
-	BaseWorm* w;
-	if( w = dynamic_cast<BaseWorm*>(params.object) )
+	if( BaseWorm* w = dynamic_cast<BaseWorm*>(params.object) )
 	{
 		w->showFirecone( sprite, frames, drawDistance );
 	}
@@ -811,11 +997,6 @@ ShowFirecone::~ShowFirecone()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* addAngleSpeed( const vector< string >& params )
-{
-	return new AddAngleSpeed(params);
-}
-
 AddAngleSpeed::AddAngleSpeed( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
 {
@@ -829,6 +1010,13 @@ AddAngleSpeed::AddAngleSpeed( const vector< string >& params )
 	{
 		speedVariation = cast<AngleDiff>(params[1]);
 	}
+}
+
+AddAngleSpeed::AddAngleSpeed( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+	speed = AngleDiff(params[0]->toDouble(0.0));
+	speedVariation = AngleDiff(params[1]->toDouble(0.0));
 }
 
 void AddAngleSpeed::run( ActionParams const& params )
@@ -847,11 +1035,6 @@ AddAngleSpeed::~AddAngleSpeed()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* setAlphaFade( const vector< string >& params )
-{
-	return new SetAlphaFade(params);
-}
-
 SetAlphaFade::SetAlphaFade( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject)
 {
@@ -865,6 +1048,13 @@ SetAlphaFade::SetAlphaFade( const vector< string >& params )
 	{
 		dest = cast<int>(params[1]);
 	}
+}
+
+SetAlphaFade::SetAlphaFade( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+	frames = params[0]->toInt(0);
+	dest = params[1]->toInt(0);
 }
 
 void SetAlphaFade::run( ActionParams const& params )
@@ -885,11 +1075,6 @@ SetAlphaFade::~SetAlphaFade()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* runCustomEvent( const vector< string >& params )
-{
-	return new RunCustomEvent(params);
-}
-
 RunCustomEvent::RunCustomEvent( const vector< string >& params )
 : BaseAction(BaseAction::RequiresObject2)
 {
@@ -898,6 +1083,12 @@ RunCustomEvent::RunCustomEvent( const vector< string >& params )
 	{
 		index = cast<int>(params[0]);
 	}
+}
+
+RunCustomEvent::RunCustomEvent( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject2)
+{
+	index = params[0]->toInt(0);
 }
 
 void RunCustomEvent::run( ActionParams const& params )
@@ -917,11 +1108,6 @@ RunCustomEvent::~RunCustomEvent()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* runScript( vector< string > const& params )
-{
-	return new RunScript(params);
-}
-
 RunScript::RunScript( vector< string > const& params )
 : BaseAction(0)
 , function(0)
@@ -937,6 +1123,22 @@ RunScript::RunScript( vector< string > const& params )
 			{
 				function = s->createFunctionRef(scriptName.substr(p + 1, scriptName.size() - p - 1));
 			}
+		}
+	}
+}
+
+RunScript::RunScript( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(0)
+, function(0)
+{
+	std::string const& scriptName = params[0]->toString();
+	std::string::size_type p = scriptName.find('.');
+	if(p != std::string::npos)
+	{
+		Script* s = scriptLocator.load(scriptName.substr(0, p));
+		if(s)
+		{
+			function = s->createFunctionRef(scriptName.substr(p + 1, scriptName.size() - p - 1));
 		}
 	}
 }
@@ -967,11 +1169,6 @@ RunScript::~RunScript()
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-BaseAction* applyMapEffect( vector< string > const& params )
-{
-	return new ApplyMapEffect(params);
-}
-
 ApplyMapEffect::ApplyMapEffect( vector< string > const& params )
 : BaseAction(BaseAction::RequiresObject)
 {
@@ -980,6 +1177,12 @@ ApplyMapEffect::ApplyMapEffect( vector< string > const& params )
 	{
 		effect = levelEffectList.load(params[0]);
 	}
+}
+
+ApplyMapEffect::ApplyMapEffect( vector<OmfgScript::TokenBase*> const& params )
+: BaseAction(BaseAction::RequiresObject)
+{
+	effect = levelEffectList.load(params[0]->toString());
 }
 
 void ApplyMapEffect::run( ActionParams const& params )

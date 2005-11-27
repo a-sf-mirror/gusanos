@@ -776,6 +776,28 @@ bool Wnd::mouseScroll(ulong newX, ulong newY, int offs)
 	return true;
 }
 
+bool Wnd::doKeyDown(int key)
+{
+	if(m_callbacks[OnKeyDown])
+	{
+		LuaContext& lua = m_context->luaContext();
+		int r = (lua.call(m_callbacks[OnKeyDown], 1), luaReference, key)();
+		if(r == 1)
+		{
+			bool v = lua_toboolean(lua, -1);
+			lua.pop(1);
+			if(v)
+				return false;
+		}
+	}
+	return keyDown(key);
+}
+	
+bool Wnd::doKeyUp(int key)
+{
+	return keyUp(key);
+}
+
 bool Wnd::keyDown(int key)
 {
 	return true;
@@ -812,6 +834,10 @@ bool Wnd::registerCallback(std::string const& name, LuaReference callb)
 	LuaCallbacks i = LuaCallbacksMax;
 	if(name == "onAction")
 		i = OnAction;
+	else if(name == "onKeyDown")
+		i = OnKeyDown;
+	else if(name == "onActivate")
+		i = OnActivate;
 	if(i != LuaCallbacksMax && !m_callbacks[i])
 	{
 		m_callbacks[i] = callb;

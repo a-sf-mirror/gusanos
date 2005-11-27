@@ -48,6 +48,11 @@ struct TimerEvent : public Event
 	, delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes)
 	{}
 	
+	TimerEvent(std::vector<BaseAction*>& actions, int _delay, int _delayVariation, int _triggerTimes)
+	: Event(actions)
+	, delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes)
+	{}
+	
 	~TimerEvent() {};
 	
 	int delay;
