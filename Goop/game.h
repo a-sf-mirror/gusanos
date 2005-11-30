@@ -15,7 +15,9 @@
 #include <list>
 #include <map>
 #include <boost/shared_ptr.hpp>
+#include <boost/filesystem/path.hpp>
 using boost::shared_ptr;
+namespace fs = boost::filesystem;
 #include <zoidcom.h>
 
 class BasePlayer;
@@ -144,7 +146,7 @@ public:
 	void unload();
 	void loadMod();
 	bool isLoaded();
-	void refreshResources();
+	void refreshResources(fs::path const& levelPath);
 	void refreshLevels();
 	bool changeLevel(const std::string& level, bool refresh = true);
 	bool changeLevelCmd(const std::string& level);

@@ -6,8 +6,7 @@
 #include "util/macros.h"
 
 DetectEvent::DetectEvent( float range, bool detectOwner, int detectFilter)
-: Event(Event::ProvidesObject | Event::ProvidesObject2)
-, m_range(range), m_detectOwner(detectOwner), m_detectFilter(detectFilter)
+: m_range(range), m_detectOwner(detectOwner), m_detectFilter(detectFilter)
 {
 	//m_event = new Event;
 }

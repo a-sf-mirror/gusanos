@@ -165,8 +165,8 @@ struct Parameters
 
 struct ActionDef
 {
-	ActionDef(ParamDef* paramDef_, ActionFactory::CreateFunc create_)
-	: paramDef(paramDef_), create(create_)
+	ActionDef(ParamDef* paramDef_, ActionFactory::CreateFunc create_, int requireMask_)
+	: paramDef(paramDef_), create(create_), requireMask(requireMask_)
 	{
 	}
 	
@@ -177,12 +177,13 @@ struct ActionDef
 	
 	ParamDef* paramDef;
 	ActionFactory::CreateFunc create;
+	int requireMask;
 };
 
 struct EventDef
 {
-	EventDef(std::string const& name_, ParamDef* paramDef_, int type_)
-	: name(name_), paramDef(paramDef_), type(type_)
+	EventDef(std::string const& name_, ParamDef* paramDef_, int type_, int provideMask_)
+	: name(name_), paramDef(paramDef_), type(type_), provideMask(provideMask_)
 	{
 	}
 	
@@ -194,6 +195,7 @@ struct EventDef
 	std::string name;
 	ParamDef* paramDef;
 	int type;
+	int provideMask;
 };
 
 int TokenBase::toColor(int r, int g, int b)
@@ -449,10 +451,10 @@ ActionFactory::~ActionFactory()
 	delete pimpl;
 }
 
-ParamProxy ActionFactory::add(std::string const& name, ActionFactory::CreateFunc createFunc)
+ParamProxy ActionFactory::add(std::string const& name, ActionFactory::CreateFunc createFunc, int requireMask)
 {
 	ParamDef* paramDef = new ParamDef;
-	pimpl->actionDefs[name] = new ActionDef(paramDef, createFunc);
+	pimpl->actionDefs[name] = new ActionDef(paramDef, createFunc, requireMask);
 	return ParamProxy(paramDef);
 }
 
@@ -699,10 +701,10 @@ Parser::~Parser()
 	delete pimpl;
 }
 
-ParamProxy Parser::addEvent(std::string const& name, int type)
+ParamProxy Parser::addEvent(std::string const& name, int type, int provideMask)
 {
 	ParamDef* paramDef = new ParamDef;
-	pimpl->eventDef[name] = new EventDef(name, paramDef, type);
+	pimpl->eventDef[name] = new EventDef(name, paramDef, type, provideMask);
 	return ParamProxy(paramDef);
 }
 
@@ -756,6 +758,11 @@ bool Parser::run()
 {
 	pimpl->rule_lines();
 	return pimpl->full();
+}
+
+bool Parser::incomplete()
+{
+	return pimpl->cur != 0;
 }
 
 void Parser::error(std::string const& msg)

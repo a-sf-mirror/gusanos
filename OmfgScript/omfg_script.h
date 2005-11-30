@@ -214,6 +214,16 @@ struct ParamProxy
 	ParamDef* paramDef;
 };
 
+namespace ActionParamFlags
+{
+enum type
+{
+	Object = (1<<0),
+	Object2 = (1<<1),
+	Weapon = (1<<2),
+};
+};
+
 struct ActionFactory : public Pimpl<ActionFactoryImpl>
 {
 	friend struct ParserImpl;
@@ -222,7 +232,7 @@ struct ActionFactory : public Pimpl<ActionFactoryImpl>
 	
 	typedef BaseAction*(*CreateFunc)( std::vector<TokenBase* > const & );
 	
-	ParamProxy add(std::string const& name, CreateFunc);
+	ParamProxy add(std::string const& name, CreateFunc, int requireMask);
 
 	ActionDef* operator[](std::string const& name);
 };
@@ -230,6 +240,8 @@ struct ActionFactory : public Pimpl<ActionFactoryImpl>
 struct Parser : public Pimpl<ParserImpl>
 {
 	static TokenBase globalDefault;
+	
+	
 	
 	struct EventIter
 	{
@@ -255,7 +267,7 @@ struct Parser : public Pimpl<ParserImpl>
 	
 	~Parser();
 	
-	ParamProxy addEvent(std::string const& name, int type);
+	ParamProxy addEvent(std::string const& name, int type, int provideMask);
 	
 	bool run();
 	
@@ -274,6 +286,8 @@ struct Parser : public Pimpl<ParserImpl>
 	TokenBase* getProperty(std::string const& name);
 	
 	TokenBase* getProperty(std::string const& a, std::string const& b);
+	
+	bool incomplete();
 	
 	void error(std::string const&);
 };

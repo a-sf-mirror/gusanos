@@ -175,7 +175,7 @@ bool ExpType::load2(fs::path const& filename)
 					string eventName = *iter;
 					if ( eventName == "creation" )
 					{
-						currEvent = new Event(Event::ProvidesObject);
+						currEvent = new Event();
 						creation = currEvent;
 					}
 					else if ( eventName == "detect_range" )
@@ -255,10 +255,12 @@ bool ExpType::load(fs::path const& filename)
 		return false;
 	
 	OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
-		
-	parser.addEvent("creation", EventID::Creation);
 	
-	parser.addEvent("detect_range", EventID::DetectRange)
+	namespace af = OmfgScript::ActionParamFlags;
+		
+	parser.addEvent("creation", EventID::Creation, af::Object);
+	
+	parser.addEvent("detect_range", EventID::DetectRange, af::Object | af::Object2)
 		("range")
 		("detect_owner")
 		("layers")
@@ -266,7 +268,8 @@ bool ExpType::load(fs::path const& filename)
 		
 	if(!parser.run())
 	{
-		parser.error("Trailing garbage");
+		if(parser.incomplete())
+			parser.error("Trailing garbage");
 		return false;
 	}
 

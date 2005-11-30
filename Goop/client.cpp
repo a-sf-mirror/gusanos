@@ -55,13 +55,15 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 		ZCom_requestZoidMode(_id, 1);
 		game.setMod( _reply.getStringStatic() );
 		game.changeLevel( _reply.getStringStatic() );
-		++network.connCount;
+		//++network.connCount;
+		network.incConnCount();
 	}
 } 
 
 void Client::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 {
-	--network.connCount;
+	//--network.connCount;
+	network.decConnCount();
 	Network::DConnEvents dcEvent = static_cast<Network::DConnEvents>( _reason.getInt(8) );
 	switch( dcEvent )
 	{

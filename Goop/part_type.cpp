@@ -309,17 +309,17 @@ bool PartType::load2(fs::path const& filename)
 					string eventName = *iter;
 					if ( eventName == "ground_collision" )
 					{
-						currEvent = new Event(Event::ProvidesObject);
+						currEvent = new Event();
 						groundCollision = currEvent;
 					}
 					else if ( eventName == "creation" )
 					{
-						currEvent = new Event(Event::ProvidesObject);
+						currEvent = new Event();
 						creation = currEvent;
 					}
 					else if ( eventName == "death" )
 					{
-						currEvent = new Event(Event::ProvidesObject);
+						currEvent = new Event();
 						death = currEvent;
 					}
 					else if ( eventName == "timer" )
@@ -380,7 +380,7 @@ bool PartType::load2(fs::path const& filename)
 						size_t eventIndex = cast<size_t>(*iter);
 						if ( eventIndex < customEvents.size() )
 						{
-							currEvent = new Event(Event::ProvidesObject | Event::ProvidesObject2);
+							currEvent = new Event();
 							customEvents[eventIndex] = currEvent;
 						}
 					}
@@ -474,24 +474,26 @@ bool PartType::load(fs::path const& filename)
 		return false;
 	
 	OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
+	
+	namespace af = OmfgScript::ActionParamFlags;
 		
-	parser.addEvent("creation", EventID::Creation);
+	parser.addEvent("creation", EventID::Creation, af::Object);
 	
-	parser.addEvent("death", EventID::Death);
+	parser.addEvent("death", EventID::Death, af::Object);
 	
-	parser.addEvent("ground_collision", EventID::GroundCollision);
+	parser.addEvent("ground_collision", EventID::GroundCollision, af::Object);
 	
-	parser.addEvent("timer", EventID::Timer)
+	parser.addEvent("timer", EventID::Timer, af::Object)
 		("delay")
 		("delay_var")
 		("max_trigger")
 	;
 	
-	parser.addEvent("custom_event", EventID::CustomEvent)
+	parser.addEvent("custom_event", EventID::CustomEvent, af::Object | af::Object2)
 		("index", false)
 	;
 	
-	parser.addEvent("detect_range", EventID::DetectRange)
+	parser.addEvent("detect_range", EventID::DetectRange, af::Object | af::Object2)
 		("range")
 		("detect_owner")
 		("layers")
@@ -499,7 +501,8 @@ bool PartType::load(fs::path const& filename)
 		
 	if(!parser.run())
 	{
-		parser.error("Trailing garbage");
+		if(parser.incomplete())
+			parser.error("Trailing garbage");
 		return false;
 	}
 

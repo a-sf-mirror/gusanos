@@ -17,6 +17,8 @@
 #include <list>
 #include <utility>
 #include <zoidcom.h>
+#include <boost/assign/list_inserter.hpp>
+using namespace boost::assign;
 
 using namespace std;
 
@@ -32,13 +34,56 @@ namespace
 		HTTP::Request* req;
 		HttpRequestCallback handler;
 	};
-
+	
+	struct LuaEventList
+	{
+		typedef std::map<std::string, LuaEventDef> MapT;
+		MapT stringToEvent;
+		std::vector<LuaEventDef*> events;
+		
+		LuaEventDef* add(std::string const& name, LuaReference ref)
+		{
+			int idx = events.size() + 1;
+			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, LuaEventDef(idx, ref)));
+			LuaEventDef* p = &r.first->second;
+			if(r.second)
+				events.push_back(p);
+			return p;
+		}
+		
+		LuaEventDef* assign(std::string const& name, LuaReference ref)
+		{
+			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, LuaEventDef(-1, ref)));
+			return &r.first->second;
+		}
+		
+		LuaEventDef* fromIndex(int idx)
+		{
+			if(idx >= 0 && idx < events.size())
+				return events[idx];
+			return 0;
+		}
+	};
+	
 	std::list<HttpRequest> requests;
 	std::string serverName;
 	std::string serverDesc;
 	HTTP::Host masterServer("comser.liero.org.pl");
 	int updateTimer = 0;
 	bool serverAdded = false;
+	bool m_host = false;
+	bool m_client = false; //? This wasn't initialized before
+	
+	int m_serverPort; // Neither was this
+	
+	std::string m_lastServerAddr;
+	bool m_reconnect = false;
+	int connCount = 0;
+	
+	ZoidCom* m_zcom = 0;
+	ZCom_Control* m_control = 0;
+	ZCom_ConnID m_serverID = ZCom_Invalid_ID;
+	LuaEventList luaEvents[Network::LuaEventGroup::Max];
 	
 	void processHttpRequests()
 	{
@@ -101,12 +146,22 @@ namespace
 	void registerToMasterServer()
 	{
 		std::list<std::pair<std::string, std::string> > data;
-		data.push_back(std::make_pair("action", "add"));
-		data.push_back(std::make_pair("title", serverName));
-		data.push_back(std::make_pair("desc", serverDesc));
-		data.push_back(std::make_pair("mod", game.getModName()));
-		data.push_back(std::make_pair("map", game.level.getName()));
+
+		push_back(data)
+			("action", "add")
+			("title", serverName)
+			("desc", serverDesc)
+			("mod", game.getModName())
+			("map", game.level.getName())
+		;
 		network.addHttpRequest(masterServer.post("gusserv.php", data), onServerAdded);
+	}
+	
+	void registerClasses() // Factorization of class registering in client and server
+	{
+		NetWorm::classID = m_control->ZCom_registerClass("worm");
+		BasePlayer::classID = m_control->ZCom_registerClass("player");
+		Game::classID = m_control->ZCom_registerClass("game");
 	}
 }
 
@@ -114,18 +169,20 @@ Network network;
 
 Network::Network()
 {
+/*
 	m_host = false;
 	m_zcom = NULL;
 	m_control = NULL;
 	connCount = 0;
-	m_reconnect = false;
+	m_reconnect = false;*/
 }
 
 Network::~Network()
 {
+/* What's with this?
 	m_host = false;
 	m_client = false;
-	m_serverID = ZCom_Invalid_ID;
+	m_serverID = ZCom_Invalid_ID;*/
 }
 
 void Network::log(char const* msg)
@@ -161,7 +218,10 @@ void Network::registerInConsole()
 	;
 }
 
-
+ZCom_ConnID Network::getServerID()
+{
+	return m_serverID;
+}
 
 void Network::update()
 {
@@ -188,7 +248,9 @@ void Network::update()
 			else
 			{
 				std::list<std::pair<std::string, std::string> > data;
-				data.push_back(std::make_pair("action", "update"));
+				push_back(data)
+					("action", "update")
+				;
 				network.addHttpRequest(masterServer.post("gusserv.php", data), onServerUpdate);
 			}
 		}
@@ -197,17 +259,14 @@ void Network::update()
 	processHttpRequests();
 }
 
-void Network::registerClasses() // Factorization of class registering in client and server
-{
-	NetWorm::classID = m_control->ZCom_registerClass("worm");
-	BasePlayer::classID = m_control->ZCom_registerClass("player");
-	Game::classID = m_control->ZCom_registerClass("game");
-}
+
 
 HTTP::Request* Network::fetchServerList()
 {
 	std::list<std::pair<std::string, std::string> > data;
-	data.push_back(std::make_pair("action", "list"));
+	push_back(data)
+		("action", "list")
+	;
 	return masterServer.post("gusserv.php", data);
 }
 
@@ -333,6 +392,35 @@ int Network::getServerPing()
 void Network::addHttpRequest(HTTP::Request* req, HttpRequestCallback handler)
 {
 	requests.push_back(HttpRequest(req, handler));
+}
+
+LuaEventDef* Network::addLuaEvent(LuaEventGroup::type type, char const* name, LuaReference ref)
+{
+	if(m_host)
+	{
+		return luaEvents[type].add(name, ref);
+	}
+	else if(m_client)
+	{
+		return luaEvents[type].assign(name, ref);
+	}
+	
+	return 0;
+}
+
+LuaEventDef* Network::indexToLuaEvent(LuaEventGroup::type type, int idx)
+{
+	return luaEvents[type].fromIndex(idx);
+}
+
+void Network::incConnCount()
+{
+	++connCount;
+}
+
+void Network::decConnCount()
+{
+	--connCount;
 }
 
 #endif

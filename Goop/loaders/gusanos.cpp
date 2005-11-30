@@ -78,7 +78,7 @@ namespace{
 						string eventName = *iter;
 						if ( eventName == "game_start" )
 						{
-							currEvent = new Event(0);
+							currEvent = new Event();
 							returnConf->gameStart = currEvent;
 						}
 						else

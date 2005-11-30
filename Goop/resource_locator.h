@@ -7,6 +7,7 @@
 #include <set>
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 #include <console.h> //For IStrCompare
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -106,6 +107,8 @@ struct ResourceLocator
 	
 	// Loads and returns the named resource or, if it was loaded already, returns a cached version
 	T* load(std::string const& name);
+	
+	fs::path const& getPathOf(std::string const& name);
 	
 	// Returns true if the named resource can be loaded
 	bool exists(std::string const& name);
@@ -234,6 +237,16 @@ T* ResourceLocator<T, Cache, ReturnResource>::load(std::string const& name)
 		i->second.cached = resource;
 	
 	return resource;
+}
+
+template<class T, bool Cache, bool ReturnResource>
+fs::path const& ResourceLocator<T, Cache, ReturnResource>::getPathOf(std::string const& name)
+{
+	typename NamedResourceMap::iterator i = m_namedResources.find(name);
+	if(i == m_namedResources.end())
+		throw std::runtime_error("Resource does not exist");
+		
+	return i->second.path;
 }
 
 template<class T, bool Cache, bool ReturnResource>

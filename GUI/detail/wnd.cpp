@@ -790,12 +790,20 @@ bool Wnd::doKeyDown(int key)
 				return false;
 		}
 	}
-	return keyDown(key);
+	if(!keyDown(key))
+		return false;
+	if(m_parent)
+		return m_parent->doKeyDown(key);
+	return true;
 }
 	
 bool Wnd::doKeyUp(int key)
 {
-	return keyUp(key);
+	if(!keyUp(key))
+		return false;
+	if(m_parent)
+		return m_parent->doKeyUp(key);
+	return true;
 }
 
 bool Wnd::keyDown(int key)

@@ -72,6 +72,7 @@ namespace
 	{
 		eHole = 0,
 		// Add here
+		LuaEvent,
 		NetEventsCount,
 	};
 	
@@ -365,7 +366,7 @@ void Game::init(int argc, char** argv)
 	m_modPath = "default/";
 	m_modName = "default";
 	setMod("default");
-	refreshResources();
+	refreshResources("default");
 
 	console.init();
 #ifndef DEDSERV
@@ -450,6 +451,14 @@ void Game::think()
 						int index = Encoding::decode(*data, levelEffectList.size());
 						BaseVec<int> v = level.intVectorEncoding.decode<BaseVec<int> >(*data);
 						level.applyEffect( levelEffectList[index], v.x, v.y );
+					}
+					break;
+					
+					case LuaEvent:
+					{
+						int index = data->getInt(8);
+						// Call the callback for lua event index
+						// stored in a vector in network.
 					}
 					break;
 					
@@ -624,7 +633,7 @@ bool Game::isLoaded()
 	return loaded;
 }
 
-void Game::refreshResources()
+void Game::refreshResources(fs::path const& levelPath)
 {
 #ifndef DEDSERV
 	fontLocator.addPath(fs::path("default/fonts"));
@@ -646,29 +655,29 @@ void Game::refreshResources()
 	
 	// These are added in reverse order compared to
 	// the resource locator paths! Fix maybe?
-	partTypeList.addPath(fs::path(level.getPath()) / "objects");
+	partTypeList.addPath(levelPath / "objects");
 	partTypeList.addPath(fs::path(nextMod) / "objects");
 	partTypeList.addPath(fs::path("default/objects"));
 	
-	expTypeList.addPath(fs::path(level.getPath()) / "objects");
+	expTypeList.addPath(levelPath / "objects");
 	expTypeList.addPath(fs::path(nextMod) / "objects");
 	expTypeList.addPath(fs::path("default/objects"));
 	
 #ifndef DEDSERV
-	soundList.addPath(fs::path(level.getPath()) / "sounds");
+	soundList.addPath(levelPath / "sounds");
 	soundList.addPath(fs::path(nextMod) / "sounds");
 	soundList.addPath(fs::path("default/sounds"));
 	
-	sound1DList.addPath(fs::path(level.getPath()) / "sounds");
+	sound1DList.addPath(levelPath / "sounds");
 	sound1DList.addPath(fs::path(nextMod) / "sounds");
 	sound1DList.addPath(fs::path("default/sounds"));
 #endif
 	
-	spriteList.addPath(fs::path(level.getPath()) / "sprites");
+	spriteList.addPath(levelPath / "sprites");
 	spriteList.addPath(fs::path(nextMod) / "sprites");
 	spriteList.addPath(fs::path("default/sprites"));
 	
-	levelEffectList.addPath(fs::path(level.getPath()) / "mapeffects");
+	levelEffectList.addPath(levelPath / "mapeffects");
 	levelEffectList.addPath(fs::path(nextMod) / "mapeffects");
 	levelEffectList.addPath(fs::path("default/mapeffects"));
 }
@@ -747,6 +756,8 @@ bool Game::changeLevel(const std::string& levelName, bool refresh )
 		
 	if(!levelLocator.exists(levelName))
 		return false;
+		
+	fs::path const& levelPath = levelLocator.getPathOf(levelName);
 	
 	unload();
 	LuaBindings::init();
@@ -755,7 +766,7 @@ bool Game::changeLevel(const std::string& levelName, bool refresh )
 	m_modPath = nextMod + "/";
 
 	level.setName(levelName);
-	refreshResources();
+	refreshResources(levelPath);
 	//cerr << "Loading level" << endl;
 	
 	

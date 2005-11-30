@@ -113,7 +113,7 @@ NUMBER : ("-")?[0-9]+"."[0-9]* {
 	double v;
 } ;
 
-SKIP : [\ \r] = @skip ;
+SKIP : [\ \r\t] = @skip ;
 COMMENT : "#"[^\n]* = @skip ;
 LINE : "\n" = @linecounter @skip ;
 QUOTESTRING : [\"][^\"]*[\"] = STRING<b + 1, e - 1> ;
@@ -205,12 +205,19 @@ parameter<Parameters& params> = $( TokenBase::ptr v; )
 	
 parameters<Parameters& params> = parameter<params> (COMMA parameter<params>)* ;
 
-action<std::vector<BaseAction*>& actions> =
+action<EventDef* event, std::vector<BaseAction*>& actions> =
 	STRING<name>
 	$(
 		ActionDef* action(self->getAction(name->str));
 		if(!action)
 		{
+	)
+			@skipafter RPARAN
+	$(
+		}
+		else if((action->requireMask & event->provideMask) != action->requireMask)
+		{
+			semanticError("Event does not provide the necessary requirements for this action");
 	)
 			@skipafter RPARAN
 	$(
@@ -247,7 +254,7 @@ event<> = ON STRING<name>
 	
 	LPARAN [parameters<*param>] RPARAN
 	$( std::vector<BaseAction*> actions; )
-	action<actions>*
+	action<event, actions>*
 	$(
 			param->checkParams();
 			if(param->flags & Parameters::Error)

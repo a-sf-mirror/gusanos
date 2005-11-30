@@ -110,7 +110,7 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 {
 	console.addLogMsg("* CONNECTION SPAWNED");
 	ZCom_requestDownstreamLimit(_id, 20, 200);
-	++network.connCount;
+	network.incConnCount();
 }
 
 void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
@@ -123,7 +123,7 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
 			(*iter)->deleteMe = true;
 		}
 	}
-	--network.connCount;
+	network.incConnCount();
 }
 
 bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)
