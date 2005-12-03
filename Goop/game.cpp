@@ -293,6 +293,7 @@ void Options::registerInConsole()
 		("CL_SPLITSCREEN", &splitScreenVar, 0)
 			
 		("RCON_PASSWORD", &rConPassword, "" )
+		("CL_SHOW_MAP_DEBUG", &showMapDebug, 0 )
 	;
 	maxWeapons = 5;
 	splitScreen = false;

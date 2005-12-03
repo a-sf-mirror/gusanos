@@ -41,18 +41,28 @@ struct WaterParticle
 	int count;
 };
 
-struct LevelEvents
+struct SpawnPoint
 {
-	LevelEvents() : gameStart(0), gameEnd(0)
+	SpawnPoint( const Vec& pos_ ) : pos( pos_ )
+	{
+	}
+	Vec pos;
+	// Team and more poop later
+};
+
+struct LevelConfig
+{
+	LevelConfig() : gameStart(0), gameEnd(0)
 	{
 	}
 	
-	~LevelEvents()
+	~LevelConfig()
 	{
 		delete gameStart;
 		delete gameEnd;
 	}
 	
+	std::vector<SpawnPoint> spawnPoints;
 	Event* gameStart;
 	Event* gameEnd;
 };
@@ -166,10 +176,10 @@ class Level
 	
 	bool loaded;
 	
-	void setEvents( LevelEvents* events )
+	void setEvents( LevelConfig* events )
 	{
-		delete m_events;
-		m_events = events;
+		delete m_config;
+		m_config = events;
 	}
 	
 	private:
@@ -179,7 +189,7 @@ class Level
 	
 	array<Material, 256> m_materialList;
 	
-	LevelEvents *m_events;
+	LevelConfig *m_config;
 	bool m_firstFrame;
 	
 	std::list<WaterParticle> m_water;

@@ -78,11 +78,11 @@ bool SpriteSet::load(fs::path const& filename)
 		
 		for (int y = 1; y < tempBitmap->h; ++y)
 		{
-			if( getpixel(tempBitmap,0,y) == makecol(255,0,0) ) // Red pixel marks the pivot of the sprite
+			if( gfx.compareRGB(getpixel(tempBitmap,0,y),makecol(255,0,0)) ) // Red pixel marks the pivot of the sprite
 			{
 				pivotY = y-lastY;
 			}
-			else if( getpixel(tempBitmap,0,y) == 0 || y == tempBitmap->h - 1 )
+			else if( gfx.compareRGB(getpixel(tempBitmap,0,y), 0) || y == tempBitmap->h - 1 )
 			{
 				++angleCount;
 				
@@ -92,11 +92,12 @@ bool SpriteSet::load(fs::path const& filename)
 				
 				for (int x = 1; x < tempBitmap->w; ++x)
 				{
-					if( getpixel(tempBitmap,x,0) == makecol(255,0,0) ) // Pivot again but for X axis
+					// Pivot again but for X axis
+					if( gfx.compareRGB(getpixel(tempBitmap,x,0), makecol(255,0,0)) )
 					{
 						pivotX = x-lastX;
 					}
-					else if(getpixel(tempBitmap,x,0) == 0 || x == tempBitmap->w - 1 )
+					else if(gfx.compareRGB(getpixel(tempBitmap,x,0), 0) || x == tempBitmap->w - 1 )
 					{
 						BITMAP* spriteFrame = create_bitmap(x-lastX+1, y-lastY+1);
 						blit(tempBitmap, spriteFrame, lastX, lastY, 0, 0, spriteFrame->w, spriteFrame->h);

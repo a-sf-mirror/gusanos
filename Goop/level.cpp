@@ -13,6 +13,7 @@
 #include "level_effect.h"
 #include "culling.h"
 #include "events.h"
+#include "game.h"
 
 
 #include <allegro.h>
@@ -78,7 +79,7 @@ Level::Level()
 {
 	loaded = false;
 	m_firstFrame = true;
-	m_events = 0;
+	m_config = 0;
 	
 #ifndef DEDSERV
 	image = NULL;
@@ -143,8 +144,8 @@ void Level::unload()
 	path = "";
 	m_firstFrame = true;
 	
-	delete m_events;
-	m_events = 0;
+	delete m_config;
+	m_config = 0;
 
 #ifndef DEDSERV
 	destroy_bitmap(image); image = NULL;
@@ -194,8 +195,8 @@ void Level::think()
 	if( m_firstFrame )
 	{
 		m_firstFrame = false;
-		if ( m_events && m_events->gameStart )
-			m_events->gameStart->run(0,0,0,0);
+		if ( m_config && m_config->gameStart )
+			m_config->gameStart->run(0,0,0,0);
 	}
 #ifndef DEDSERV
 	foreach_delete( wp, m_water )
@@ -271,6 +272,14 @@ void Level::draw(BITMAP* where, int x, int y)
 			blit(paralax,where,px,py,0,0,where->w,where->h);
 			masked_blit(image,where,x,y,0,0,where->w,where->h);
 		}
+
+		if ( game.options.showMapDebug )
+		{
+			foreach( s, m_config->spawnPoints )
+			{
+				circle( where, s->pos.x - x, s->pos.y - y, 4, makecol( 255,0,0 ) );
+			}
+		}
 	}
 }
 
@@ -284,8 +293,8 @@ void Level::specialDrawSprite( Sprite* sprite, BITMAP* where, const IVec& pos, c
 	int yMatStart = matPos.y - sprite->m_yPivot;
 	int xDrawStart = pos.x - sprite->m_xPivot;
 	int yDrawStart = pos.y - sprite->m_yPivot;
-	for ( int x = 0; x < sprite->m_bitmap->w ; ++x )
 	for ( int y = 0; y < sprite->m_bitmap->h ; ++y )
+	for ( int x = 0; x < sprite->m_bitmap->w ; ++x )
 	{
 		if ( getMaterial ( xMatStart + x , yMatStart + y ).draw_exps )
 		{
@@ -377,10 +386,17 @@ bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 
 Vec Level::getSpawnLocation()
 {
-	Vec pos = Vec(rnd() * material->w, rnd()*material->h);
-	while ( !getMaterial( static_cast<int>(pos.x), static_cast<int>(pos.y) ).worm_pass )
+	Vec pos;
+	if ( m_config && !m_config->spawnPoints.empty() )
+	{
+		pos = m_config->spawnPoints[ rndInt( m_config->spawnPoints.size() ) ].pos;
+	}else
 	{
 		pos = Vec(rnd() * material->w, rnd()*material->h);
+		while ( !getMaterial( static_cast<int>(pos.x), static_cast<int>(pos.y) ).worm_pass )
+		{
+			pos = Vec(rnd() * material->w, rnd()*material->h);
+		}
 	}
 	return pos;
 }

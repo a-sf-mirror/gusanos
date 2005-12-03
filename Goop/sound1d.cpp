@@ -33,7 +33,7 @@ Sound1D::~Sound1D()
 bool Sound1D::load(fs::path const& filename)
 {	
 	//cerr << "Loading sound: " << filename.native_file_string() << endl;
-	m_sound = FSOUND_Sample_Load( FSOUND_FREE, filename.native_file_string().c_str(), FSOUND_FORCEMONO, 0, 0 );
+	m_sound = FSOUND_Sample_Load( FSOUND_FREE, filename.native_file_string().c_str(), FSOUND_2D | FSOUND_FORCEMONO, 0, 0 );
 	if ( m_sound )
 	{
 		return true;
@@ -53,6 +53,8 @@ void Sound1D::play(float volume,float pitch, float volumeVariation, float pitchV
 			
 			float rndVolume = volume + midrnd()*volumeVariation;
 			FSOUND_SetVolume(chan, static_cast<int>(FSOUND_GetVolume(chan)*rndVolume) );
+			
+			FSOUND_SetLoopMode( chan, FSOUND_LOOP_OFF );
 			
 			FSOUND_SetPaused(chan, 0);
 		}

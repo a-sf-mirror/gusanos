@@ -26,7 +26,6 @@ extern OmfgScript::ActionFactory gameActions;
 #define GAME_ACTION(name_, body_) \
 class name_ : public BaseAction { \
 public: \
-	name_( const std::vector< std::string >& params ); \
 	name_( std::vector<OmfgScript::TokenBase*> const& params ); \
 	~name_(); \
 	virtual void run( ActionParams const& params ); \
@@ -104,13 +103,6 @@ GAME_ACTION(Remove,
 )
 
 GAME_ACTION(PlaySound,
-	Sound *sound;
-	float pitch;
-	float pitchVariation;
-	float loudness;
-)
-
-GAME_ACTION(PlayRandomSound,
 	std::vector<Sound*> sounds;
 	float pitch;
 	float pitchVariation;
@@ -118,14 +110,14 @@ GAME_ACTION(PlayRandomSound,
 )
 
 GAME_ACTION(PlaySoundStatic,
-	Sound *sound;
+	std::vector<Sound*> sounds;
 	float pitch;
 	float pitchVariation;
 	float loudness;
 )
 
 GAME_ACTION(PlayGlobalSound,
-	Sound1D *sound;
+	std::vector<Sound1D*> sounds;
 	float volume;
 	float volumeVariation;
 	float pitch;

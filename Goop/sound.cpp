@@ -55,6 +55,8 @@ void Sound::play(float volume,float pitch, float volumeVariation, float pitchVar
 			float rndVolume = pitch + rnd()*volumeVariation - volumeVariation / 2;
 			FSOUND_SetVolume(chan, static_cast<int>(FSOUND_GetVolume(chan)*rndVolume) );
 			
+			FSOUND_SetLoopMode( chan, FSOUND_LOOP_OFF );
+			
 			FSOUND_SetPaused(chan, 0);
 		}
 	}
@@ -74,6 +76,8 @@ void Sound::play2D(const Vec& pos, float loudness, float pitch, float pitchVaria
 			FSOUND_SetFrequency(chan, static_cast<int>(FSOUND_GetFrequency(chan) * rndPitch) );
 			
 			FSOUND_3D_SetMinMaxDistance(chan, loudness, 10000.0f);
+			
+			FSOUND_SetLoopMode( chan, FSOUND_LOOP_OFF );
 			
 			FSOUND_SetPaused(chan, 0);
 		}
@@ -97,6 +101,8 @@ void Sound::play2D(BaseObject* obj, float loudness, float pitch, float pitchVari
 			FSOUND_SetFrequency(chan, static_cast<int>(FSOUND_GetFrequency(chan) * rndPitch) );
 			
 			FSOUND_3D_SetMinMaxDistance(chan, loudness, 10000.0f);
+			
+			FSOUND_SetLoopMode( chan, FSOUND_LOOP_OFF );
 			
 			FSOUND_SetPaused(chan, 0);
 		}

@@ -564,7 +564,7 @@ bool PartType::load(fs::path const& filename)
 		
 	alpha = parser.getInt("alpha", 255);
 	wupixels = parser.getBool("wu_pixels", false);
-	distortMagnitude = parser.getDouble("distort_magnitude", 0.8);
+	distortMagnitude = parser.getDouble("distort_magnitude", 1);
 	
 	std::string const& blenderstr = parser.getString("blender", "none");
 	if(blenderstr == "add") blender = BlitterContext::Add;

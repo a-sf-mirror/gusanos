@@ -5,7 +5,10 @@
 #include "../events.h"
 #include "../game_actions.h"
 #include "../parser.h"
+#include "util/macros.h"
 #include <string>
+
+#include "omfg_script.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -30,83 +33,81 @@ bool GusanosLevelLoader::canLoad(fs::path const& path, std::string& name)
 
 namespace{
 
-	LevelEvents* loadConfig( fs::path const& filename )
+	enum type
 	{
-		
+		GameStart,
+		GameEnd
+	};
+
+	LevelConfig* loadConfig( fs::path const& filename )
+	{
 		fs::ifstream fileStream(filename);
+
+		if (!fileStream )
+			return false;
 		
-		LevelEvents* returnConf = new LevelEvents;
+		OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
 		
-		if ( fileStream )
-		{	
-			string parseLine;
-			Event *currEvent = NULL;
-			while ( portable_getline( fileStream, parseLine ) )
+		parser.addEvent("game_start", GameStart,0);
+		parser.addEvent("game_end", GameStart,0);
+		
+		if(!parser.run())
+		{
+			parser.error("Trailing garbage");
+			return false;
+		}
+		
+		LevelConfig* returnConf = new LevelConfig;
+		
+		OmfgScript::TokenBase* tmpProp = parser.getProperty("spawnpoints");
+		if ( tmpProp->isList() )
+		{
+			std::list<OmfgScript::TokenBase*>::const_iterator sp;
+			const_foreach(sp, tmpProp->toList())
 			{
+				OmfgScript::TokenBase& v = **sp;
+				if ( v.isList() )
 				{
-					string var;
-					string val;
-	
-					vector<string> tokens;
-					tokens = Parser::tokenize ( parseLine );
-					int lineID = Parser::identifyLine( tokens );
+					std::list<OmfgScript::TokenBase*> const& spParams = v.toList();
+					std::list<OmfgScript::TokenBase*>::const_iterator iter = spParams.begin();
 					
-					vector<string>::iterator iter = tokens.begin();
+					float x = 0;
+					float y = 0;
 					
-					if ( lineID == Parser::PROP_ASSIGMENT )
+					if ( iter != spParams.end() )
 					{
-						var = *iter;
-						iter++;
-						if ( iter != tokens.end() && *iter == "=")
-						{
-							iter++;
-							if ( iter != tokens.end() )
-								val = *iter;
-						}
-						
-						if ( var == "poop" );
-						else
-						{
-							std::cout << "Unknown variable on following line:" << std::endl;
-							std::cout << "\t" << parseLine << std::endl;
-						}
+						x = (*iter)->toDouble();
+						++iter;
+					}
+					if ( iter != spParams.end() )
+					{
+						y = (*iter)->toDouble();
+						++iter;
 					}
 					
-					if ( lineID == Parser::EVENT_START )
-					{
-						iter++;
-						string eventName = *iter;
-						if ( eventName == "game_start" )
-						{
-							currEvent = new Event();
-							returnConf->gameStart = currEvent;
-						}
-						else
-						{
-							std::cout << "Unknown event on following line:" << std::endl;
-							std::cout << "\t" << parseLine << std::endl;
-							std::cout << "Event name given: \"" << eventName << "\"" << std::endl;
-							std::cout << "----------------" << std::endl;
-							currEvent = 0;
-						}
-	
-					}
-					
-					if ( lineID == Parser::ACTION && currEvent )
-					{
-						if(!currEvent->addAction(*iter, Parser::getActionParams( tokens )))
-						{
-							//TODO: Add more info here
-							cerr << "Couldn't add action to event" << endl;
-						}
-					}
-					
-				}
+					returnConf->spawnPoints.push_back(SpawnPoint( Vec(x,y) ));
+				}// TODO: else error or sth?
 			}
-	
+		}
+		
+		OmfgScript::Parser::EventIter i(parser);
+		for(; i; ++i)
+		{
+			std::vector<OmfgScript::TokenBase*> const& p = i.params();
+			switch(i.type())
+			{
+				case GameStart:
+					returnConf->gameStart = new Event(i.actions());
+				break;
+				
+				case GameEnd:
+					returnConf->gameEnd = new Event(i.actions());
+				break;
+			}
 		}
 		return returnConf;
 	}
+
 }
 	
 bool GusanosLevelLoader::load(Level* level, fs::path const& path)

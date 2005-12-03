@@ -70,6 +70,8 @@ struct Options
 	int splitScreenVar;
 	bool splitScreen;
 	std::string rConPassword;
+	
+	int showMapDebug;
 };
 
 struct LevelEffectEvent
