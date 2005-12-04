@@ -42,13 +42,20 @@ Console::Console(int logMaxSize)
 Console::~Console()
 {
 	// Delete the registered variables
+/*
 	map<string, ConsoleItem*>::iterator tempvar = items.begin();
 	while (tempvar != items.end())
 	{
 		delete tempvar->second;
 		tempvar++;
+	}*/
+	
+	foreach(i, items)
+	{
+		delete i->second;
 	}
-	items.clear();
+	
+	//items.clear();
 }
 
 //============================= INTERFACE ====================================
@@ -132,7 +139,10 @@ void Console::clearTemporaries()
 	foreach_delete(i, items)
 	{	
 		if(i->second->temp)
+		{
+			delete i->second;
 			items.erase(i);
+		}
 	}
 }
 

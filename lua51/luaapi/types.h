@@ -18,6 +18,11 @@ struct LuaReference
 		return idx != 0;
 	}
 	
+	void reset()
+	{
+		idx = 0;
+	}
+	
 	int idx;
 };
 
@@ -56,6 +61,15 @@ struct LuaReference
 	lua_rawset(context, -3); \
 	name_##MetaTable = context.createReference(); }
 	
+#define CLASS_(name_, body_) { \
+	lua_newtable(context); \
+	lua_pushstring(context, "__index"); \
+	lua_newtable(context); \
+	context.tableFunctions() \
+		body_ ; \
+	lua_rawset(context, -3); \
+	name_::metaTable = context.createReference(); }
+	
 #define CLASSM(name_, meta_, body_) { \
 	lua_newtable(context); \
 	context.tableFunctions() \
@@ -66,6 +80,17 @@ struct LuaReference
 		body_ ; \
 	lua_rawset(context, -3); \
 	name_##MetaTable = context.createReference(); }
+	
+#define CLASSM_(name_, meta_, body_) { \
+	lua_newtable(context); \
+	context.tableFunctions() \
+		meta_ ; \
+	lua_pushstring(context, "__index"); \
+	lua_newtable(context); \
+	context.tableFunctions() \
+		body_ ; \
+	lua_rawset(context, -3); \
+	name_::metaTable = context.createReference(); }
 
 #define ENUM(name_, body_) { \
 	lua_pushstring(context, #name_); \
@@ -91,6 +116,16 @@ struct LuaReference
 	void* space_ = lua.pushObject(sizeof(t_)); \
 	t_* p_ = new (space_) t_ param_; \
 	lua_pushvalue(lua, -1); \
+	p_->luaReference = lua.createReference(); \
+	p_; \
+})
+
+#define lua_new(t_, param_, lua_) \
+({ \
+	LuaContext& lua = lua_; \
+	lua.push(t_::metaTable); \
+	void* space_ = lua.pushObject(sizeof(t_)); \
+	t_* p_ = new (space_) t_ param_; \
 	p_->luaReference = lua.createReference(); \
 	p_; \
 })

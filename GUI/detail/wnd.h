@@ -222,6 +222,11 @@ public:
 		m_context->setFocus(this);
 	}
 	
+	void setSubFocus(Wnd* p)
+	{
+		m_lastChildFocus = p;
+	}
+	
 	Context* context()
 	{
 		return m_context;

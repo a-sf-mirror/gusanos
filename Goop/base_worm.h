@@ -119,10 +119,6 @@ public:
 	virtual void pushLuaReference();
 	
 	void* operator new(size_t count);
-	/*
-	{
-		throw std::runtime_error("Don't use BaseWorm::operator new >:O");
-	}*/
 	
 	void operator delete(void* block)
 	{

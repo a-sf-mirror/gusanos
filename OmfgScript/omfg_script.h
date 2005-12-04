@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <stdexcept>
+#include "util/log.h"
 
 struct BaseAction;
 
@@ -27,19 +28,6 @@ protected:
 private:
 	Pimpl(Pimpl const&);
 	Pimpl operator=(Pimpl const&);
-};
-
-struct Location
-{
-	Location(std::string const& file_, int line_)
-	: file(file_), line(line_)
-	{
-	}
-	
-	void print(std::string const& msg) const;
-	
-	std::string const& file;
-	int line;
 };
 
 struct ParserImpl;

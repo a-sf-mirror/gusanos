@@ -165,12 +165,9 @@ struct ConsoleGrammar : public BaseT
 				return ret;
 			}
 			break;
-			
-			default:
-			{
-				return std::string(1, (char)nextInLexeme());
-			}
 		}
+		
+		return std::string(1, (char)nextInLexeme());
 	}
 	
 	char escape()
@@ -185,12 +182,10 @@ struct ConsoleGrammar : public BaseT
 				return (char)nextInLexeme();
 			}
 			break;
-			
-			default:
-			{
-				throw SyntaxError("Invalid escape sequence");
-			}
 		}
+		
+		throw SyntaxError("Invalid escape sequence");
+		return ' ';
 	}
 	
 	void argument(std::list<std::string>& arguments)

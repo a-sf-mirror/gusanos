@@ -48,7 +48,7 @@ namespace
 	int m_vsync = 0;
 	int m_clearBuffer = 0;
 	int m_filter = NO_FILTER;
-	int m_driver = 0;
+	int m_driver = GFX_AUTODETECT;
 	int m_bitdepth = 32;
 
 	BITMAP* m_doubleResBuffer = 0;

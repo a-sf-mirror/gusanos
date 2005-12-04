@@ -218,6 +218,7 @@ std::string runLua(LuaReference ref, std::list<std::string> const& args)
 {
 	AssertStack as(lua);
 	
+	lua.push(LuaContext::errorReport);
 	lua.pushReference(ref);
 	int params = 0;
 	
@@ -229,9 +230,14 @@ std::string runLua(LuaReference ref, std::list<std::string> const& args)
 		++params;
 	}
 
-	int r = lua.call(params, 1);
-	if(r != 1)
+	int r = lua.call(params, 1, -params-2);
+	if(r < 0)
+	{
+		//char const* err = lua_tostring(lua, -1);
+		lua.pop(2);
 		return "";
+	}
+	lua_remove(lua, -1-1);
 	
 	if(char const* s = lua_tostring(lua, -1))
 	{
@@ -356,6 +362,14 @@ void init()
 	lua_pushboolean(context, 0);
 #endif
 	lua_rawset(context, LUA_GLOBALSINDEX);
+	
+	lua_newtable(context); // Key table
+	for(size_t i = 0; i < keyNames.size(); ++i)
+	{
+		lua_pushinteger(context, i);
+		lua_setfield(context, -2, keyNames[i].c_str());
+	}
+	lua_setfield(context, LUA_GLOBALSINDEX, "Keys");
 	
 	cerr << "LuaBindings::init() done." << endl;
 }

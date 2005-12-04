@@ -227,6 +227,35 @@ LMETHOD(OmfgGUI::Wnd, gui_wnd_focus,
 	return 0;
 )
 
+/*! Wnd:set_sub_focus()
+
+	Sets a window that will be focused when
+	this window is focused.
+*/
+LMETHOD(OmfgGUI::Wnd, gui_wnd_set_sub_focus,
+	OmfgGUI::Wnd* sub = static_cast<OmfgGUI::Wnd*>(lua_touserdata(context, 2));
+	
+	// Make sure that 'sub' is a child of 'p'
+	OmfgGUI::Wnd* parent = sub->getParent();
+	while(parent && parent != p)
+		parent = parent->getParent();
+	
+	if(!parent)
+		return 0; // 'sub' isn't a child
+	
+	parent = sub->getParent();
+	while(parent)
+	{
+		parent->setSubFocus(sub);
+		if(parent == p)
+			return 0;
+		sub = parent;
+		parent = parent->getParent();
+	}
+
+	return 0;
+)
+
 /*! Wnd:activate()
 
 	Makes the window recieve input from now on until it's deactivated.
@@ -405,6 +434,7 @@ void addGUIWndFunctions(LuaContext& context)
 		("get_text", l_gui_wnd_get_text)
 		("set_text", l_gui_wnd_set_text)
 		("focus", l_gui_wnd_focus)
+		("set_sub_focus", l_gui_wnd_set_sub_focus)
 		("activate", l_gui_wnd_activate)
 		("deactivate", l_gui_wnd_deactivate)
 		("child", l_gui_wnd_child)

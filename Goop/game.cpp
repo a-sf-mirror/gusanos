@@ -458,8 +458,10 @@ void Game::think()
 					case LuaEvent:
 					{
 						int index = data->getInt(8);
-						// Call the callback for lua event index
-						// stored in a vector in network.
+						if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Game, index))
+						{
+							event->call(data);
+						}
 					}
 					break;
 					

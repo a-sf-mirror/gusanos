@@ -18,11 +18,6 @@ class BaseAction;
 namespace OmfgScript
 {
 	
-void Location::print(std::string const& msg) const
-{
-	std::cerr << file << ':' << line << ": " << msg << '\n';
-}
-
 struct ParamDef
 {
 	struct Param

@@ -23,8 +23,7 @@ class WeaponType : public ResourceBase
 	~WeaponType();
 	
 	bool load(const fs::path &filename);
-	bool load2(const fs::path &filename);
-	
+
 	int ammo;
 	int reloadTime;
 	

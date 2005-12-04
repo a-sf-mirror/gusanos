@@ -6,6 +6,8 @@
 #include "util/text.h"
 #include "parser.h"
 #include "sprite_set.h"
+#include "omfg_script.h"
+#include "game_actions.h"
 
 #include <allegro.h>
 #include <string>
@@ -33,50 +35,27 @@ LevelEffect::~LevelEffect()
 
 bool LevelEffect::load(fs::path const& filename)
 {
-
 	fs::ifstream fileStream(filename);
 
-	if ( fileStream )
+	if (!fileStream )
+		return false;
+	
+	OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
+	
+	if(!parser.run())
 	{
-		string parseLine;
-		while ( portable_getline( fileStream, parseLine ) )
-		{
-			string var;
-			string val;
-		
-			vector<string> tokens;
-			tokens = Parser::tokenize ( parseLine );
-			int lineID = Parser::identifyLine( tokens );
-			
-			vector<string>::iterator iter = tokens.begin();
-			
-			if ( lineID == Parser::PROP_ASSIGMENT )
-			{
-				var = *iter;
-				iter++;
-				if ( iter != tokens.end() && *iter == "=")
-				{
-					iter++;
-					if ( iter != tokens.end() )
-						val = *iter;
-				}
-								
-				if ( var == "mask" ) mask = spriteList.load(val);
-
-				else
-				{
-					std::cout << "Unknown variable on following line:" << std::endl;
-					std::cout << "\t" << parseLine << std::endl;
-				}
-			}
-			
-		}
-		//fileStream.close(); // Use RAII ffs >:o
-		return true;
-	} else
-	{
+		if(parser.incomplete())
+			parser.error("Trailing garbage");
 		return false;
 	}
+	
+	{
+		OmfgScript::TokenBase* v = parser.getProperty("mask");
+		if(!v->isDefault())
+			mask = spriteList.load(v->toString());
+	}
+
+	return true;
 }
 
 

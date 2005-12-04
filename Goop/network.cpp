@@ -3,12 +3,14 @@
 #include "server.h"
 #include "client.h"
 #include "game.h"
+#include "glua.h"
 #include "gconsole.h"
 //#include "text.h"
 #include "net_worm.h"
 #include "base_player.h"
 #include "http.h"
 #include "util/macros.h"
+#include "lua/bindings-network.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -21,6 +23,8 @@
 using namespace boost::assign;
 
 using namespace std;
+
+LuaReference LuaEventDef::metaTable;
 
 namespace
 {
@@ -37,24 +41,36 @@ namespace
 	
 	struct LuaEventList
 	{
-		typedef std::map<std::string, LuaEventDef> MapT;
+		typedef std::map<std::string, LuaEventDef*> MapT;
 		MapT stringToEvent;
 		std::vector<LuaEventDef*> events;
 		
 		LuaEventDef* add(std::string const& name, LuaReference ref)
 		{
 			int idx = events.size() + 1;
-			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, LuaEventDef(idx, ref)));
-			LuaEventDef* p = &r.first->second;
-			if(r.second)
-				events.push_back(p);
-			return p;
+			LuaEventDef* event = lua_new(LuaEventDef, (idx, ref), lua);
+			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, event));
+			if(!r.second)
+			{
+				r.first->second->idx = idx;
+				delete event;
+				event = r.first->second;
+			}
+			events.push_back(event);
+			return event;
 		}
 		
 		LuaEventDef* assign(std::string const& name, LuaReference ref)
 		{
-			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, LuaEventDef(-1, ref)));
-			return &r.first->second;
+			LuaEventDef* event = lua_new(LuaEventDef, (-1, ref), lua);
+			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, event));
+			if(!r.second)
+			{
+				r.first->second->callb = ref;
+				delete event;
+				event = r.first->second; 
+			}
+			return event;
 		}
 		
 		LuaEventDef* fromIndex(int idx)
@@ -166,6 +182,19 @@ namespace
 }
 
 Network network;
+
+void LuaEventDef::call(ZCom_BitStream* s)
+{
+	(lua.call(callb), luaReference, lua.fullReference(*s, LuaBindings::bitStreamMetaTable))();
+}
+
+LuaEventDef::~LuaEventDef()
+{
+	lua.destroyReference(luaReference);
+	luaReference.reset();
+	lua.destroyReference(callb);
+	callb.reset();
+}
 
 Network::Network()
 {
@@ -397,13 +426,9 @@ void Network::addHttpRequest(HTTP::Request* req, HttpRequestCallback handler)
 LuaEventDef* Network::addLuaEvent(LuaEventGroup::type type, char const* name, LuaReference ref)
 {
 	if(m_host)
-	{
 		return luaEvents[type].add(name, ref);
-	}
 	else if(m_client)
-	{
 		return luaEvents[type].assign(name, ref);
-	}
 	
 	return 0;
 }

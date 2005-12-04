@@ -21,6 +21,7 @@ namespace LuaBindings
 {
 	
 LuaReference socketMetaTable;
+LuaReference bitStreamMetaTable;
 
 class LuaSocket : public TCP::Socket
 {
@@ -159,16 +160,61 @@ LMETHOD(LuaSocket, tcp_destroy,
 	p->~LuaSocket();
 	return 0;
 )
+
+METHOD(ZCom_BitStream, bitStream_addInt,
+	int bits = 32;
+	if(lua_gettop(context) >= 3)
+		bits = lua_tointeger(context, 3);
+	p->addInt(lua_tointeger(context, 2), bits);
+	context.pushvalue(1);
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_getInt,
+	int bits = 32;
+	if(lua_gettop(context) >= 2)
+		bits = lua_tointeger(context, 2);
+	context.push(static_cast<int>(p->getInt(bits)));
+	return 1;
+)
+
+LMETHOD(LuaEventDef, luaEvent_send,
 	
+	return 0;
+)
+
+int l_network_game_event(lua_State* L)
+{
+	LuaContext context(L);
+	char const* name = lua_tostring(context, 1);
+	if(!name) return 0;
+	lua_pushvalue(context, 2);
+	LuaEventDef* event = network.addLuaEvent(Network::LuaEventGroup::Game, name, context.createReference());
+	context.push(event->luaReference);
+	return 1;
+}
+
 void initNetwork(LuaContext& context)
 {
-	context.function("tcp_connect", l_tcp_connect);
+	context.functions()
+		("tcp_connect", l_tcp_connect)
+		("network_game_event", l_network_game_event)
+	;
 	
 	CLASSM(socket,
 		("__gc", l_tcp_destroy)
 	,
 		("send", l_tcp_send)
 		("think", l_tcp_think)
+	)
+	
+	CLASS_(LuaEventDef,
+		//("send", )
+	)
+	
+	CLASS(bitStream,
+		("add_int", l_bitStream_addInt)
+		("get_int", l_bitStream_getInt)
 	)
 }
 

@@ -102,7 +102,7 @@ public:
 			
 			if(r < 0)
 			{
-				m_context.pop(1);
+				m_context.pop(2);
 				m_context.destroyReference(m_ref);
 				return 0;
 			}
@@ -114,6 +114,18 @@ public:
 		LuaReference m_ref;
 		int m_params;
 		int m_returns;
+	};
+	
+	template<class T>
+	struct FullReference
+	{
+		FullReference(T& x_, LuaReference metatable_)
+		: x(x_), metatable(metatable_)
+		{
+		}
+		
+		T& x;
+		LuaReference metatable;
 	};
 	
 	static int errorReport(lua_State* L);
@@ -172,6 +184,17 @@ public:
 		return *this;
 	}
 	
+	template<class T>
+	LuaContext& push(FullReference<T> const& v)
+	{
+		T** i = (T **)lua_newuserdata (m_State, sizeof(T *));
+		*i = &v.x;
+		pushReference(v.metatable);
+		
+		lua_setmetatable(m_State, -2);
+		return *this;
+	}
+	
 	LuaContext& push(bool v)
 	{
 		lua_pushboolean(m_State, v);
@@ -201,6 +224,12 @@ public:
 			lua_rawseti(m_State, -2, n + 1);
 		}
 		return *this;
+	}
+	
+	template<class T>
+	static FullReference<T> fullReference(T& x, LuaReference metatable)
+	{
+		return FullReference<T>(x, metatable); 
 	}
 	
 	template<class T>

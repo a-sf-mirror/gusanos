@@ -27,8 +27,7 @@ class ExpType
 		~ExpType();
 	
 		bool load(fs::path const& filename);
-		bool load2(fs::path const& filename);
-		
+
 		int timeout;
 		int timeoutVariation;
 

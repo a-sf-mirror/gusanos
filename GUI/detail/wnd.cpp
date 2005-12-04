@@ -2,6 +2,7 @@
 
 #include "luaapi/types.h"
 #include "luaapi/context.h"
+#include "util/log.h"
 
 #include <iostream>
 #include <boost/lexical_cast.hpp>
@@ -791,7 +792,9 @@ bool Wnd::doKeyDown(int key)
 		}
 	}
 	if(!keyDown(key))
+	{
 		return false;
+	}
 	if(m_parent)
 		return m_parent->doKeyDown(key);
 	return true;

@@ -17,13 +17,32 @@ typedef boost::function<void (HTTP::Request*)> HttpRequestCallback;
 
 struct LuaEventDef
 {
+	static LuaReference metaTable;
+	
 	LuaEventDef(size_t idx_, LuaReference callb_)
 	: idx(idx_), callb(callb_)
 	{
 	}
 	
+	~LuaEventDef();
+	
+	void call(ZCom_BitStream*);
+	
+	void* operator new(size_t count);
+	
+	void operator delete(void* block)
+	{
+		// Lua frees the memory
+	}
+	
+	void* operator new(size_t count, void* space)
+	{
+		return space;
+	}
+	
 	int       idx;
 	LuaReference callb;
+	LuaReference luaReference;
 };
 
 class Network

@@ -90,47 +90,23 @@ bool Edit::keyDown(int key)
 			case KEY_ENTER:
 				if(!doAction())
 					doSetActivation(false);
+				return false;
 			break;
-			
-/*
-			case KEY_LSHIFT: case KEY_RSHIFT:
-				m_select = true;
-			break;
-*/
 		}
-		
-		return false;
 	}
 	else
 	{
-		if(key == KEY_ENTER)
-		{
-			doSetActivation(true);
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-/*
-bool Edit::keyUp(int key)
-{
-	if(m_active)
-	{
 		switch(key)
 		{
-			case KEY_LSHIFT: case KEY_RSHIFT:
-				m_select = false;
+			case KEY_ENTER:
+				doSetActivation(true);
+				return false;
 			break;
 		}
-		
-		return false;
 	}
 	
 	return true;
 }
-*/
 
 bool Edit::charPressed(char c, int key)
 {
@@ -201,6 +177,7 @@ bool Edit::charPressed(char c, int key)
 			break;
 			
 			case KEY_ENTER:
+			case KEY_ESC:
 				// Ignore
 			break;
 			
