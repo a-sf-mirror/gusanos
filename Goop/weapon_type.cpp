@@ -68,6 +68,8 @@ bool WeaponType::load(fs::path const& filename)
 
 	if (!fileStream )
 		return false;
+		
+	fileName = filename;
 	
 	OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
 	

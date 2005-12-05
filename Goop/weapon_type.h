@@ -51,7 +51,7 @@ class WeaponOrder
 	public:
 	bool operator () ( WeaponType* weap1, WeaponType* weap2)
 	{
-		if ( weap1->fileName.string() < weap2->fileName.string() )
+		if ( weap1->fileName.leaf() < weap2->fileName.leaf() )
 			return true;
 		return false;
 	}
