@@ -140,7 +140,10 @@ namespace
 		else
 		{
 			serverAdded = false;
-			cerr << "Failed to register to master server" << endl;
+			if(req->getError() == TCP::Socket::ErrorTimeout)
+				cerr << "Registration to master server timed out" << endl;
+			else
+				cerr << "Failed to register to master server" << endl;
 		}
 		delete req;
 	}
@@ -178,6 +181,21 @@ namespace
 		NetWorm::classID = m_control->ZCom_registerClass("worm");
 		BasePlayer::classID = m_control->ZCom_registerClass("player");
 		Game::classID = m_control->ZCom_registerClass("game");
+	}
+	
+	std::string setProxy(std::list<std::string> const& args) 
+	{
+		if(args.size() >= 2)
+		{
+			let_(i, args.begin());
+			std::string const& addr = *i++;
+			int port = cast<int>(*i++);
+			
+			masterServer.options.setProxy(addr, port);
+			
+			return "";
+		}
+		return "NET_SET_PROXY"; //TODO: help
 	}
 }
 
@@ -244,6 +262,10 @@ void Network::registerInConsole()
 		("NET_SERVER_PORT", &m_serverPort, 9898)
 		("NET_SERVER_NAME", &serverName, "Unnamed server")
 		("NET_SERVER_DESC", &serverDesc, "")
+	;
+	
+	console.registerCommands()
+		("NET_SET_PROXY", setProxy) 
 	;
 }
 

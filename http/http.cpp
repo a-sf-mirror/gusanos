@@ -13,6 +13,7 @@
 #include <utility>
 #include "util/macros.h"
 #include "util/text.h"
+#include "util/log.h"
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
@@ -102,7 +103,8 @@ void Request::switchState(Request::State newState)
 
 bool Request::think()
 {
-	TCP::Socket::think();
+	if(TCP::Socket::think())
+		return true;
 	
 	if(connected)
 	{
@@ -251,8 +253,11 @@ Request* Host::query(
 {
 	sockaddr_in server;
 	
-	if(!hp) // Address not resolved
+	if(!hp || options.changed) // Address not resolved
 	{
+		options.changed = false;
+		delete hp; hp = 0;
+		DLOG("Proxy: " << options.proxy);
 		if(!(hp = TCP::resolveHost( (options.hasProxy ? options.proxy : host) )))
 			return 0;
 	}

@@ -4,6 +4,7 @@
 
 #include "../network.h"
 #include "sockets.h"
+#include "util/log.h"
 #include "tcp.h"
 
 #include <iostream>
@@ -41,16 +42,24 @@ public:
 	
 	void think()
 	{
+		static bool d = true;
+		bool r = d; d = false;
+		
+		if(r) DLOG("Start");
+		
 		if(error)
 		{
 			cerr << "Error!" << endl;
 			error = ErrorNone;
 		}
 		
+		if(r) DLOG("Before think()");
 		TCP::Socket::think();
+		if(r) DLOG("After think()");
 		
 		if(connected)
 		{
+			if(r) DLOG("Connected, sending data...");
 			if(dataSender) // We're still sending data
 			{
 				if(dataSender->resume())
@@ -72,17 +81,10 @@ public:
 				}
 			}
 			
+			if(r) DLOG("Reading chunk");
 			if(readChunk())
 				return;
-			/*
-			if(dataBegin != dataEnd)
-			{
-				(context.call(recvCallback), luaReference, std::make_pair(dataBegin, dataEnd))();
-			}
-			*/
 		}
-		
-		
 	}
 	
 	char const* begin()
@@ -152,6 +154,7 @@ LMETHOD(LuaSocket, tcp_think,
 	p->think();
 	if(p->begin() == p->end())
 		return 0;
+	DLOG((void *)p->begin() << ", " << (void *)p->end() << ", size: " << (p->end() - p->begin()));
 	lua_pushlstring(context, p->begin(), p->end() - p->begin()); 
 	return 1;
 )

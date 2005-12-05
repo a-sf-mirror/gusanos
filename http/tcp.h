@@ -1,6 +1,8 @@
 #ifndef OMFG_TCP_H
 #define OMFG_TCP_H
 
+#include <ctime>
+
 namespace TCP
 {
 	
@@ -15,6 +17,7 @@ struct Socket
 		ErrorSend,
 		ErrorRecv,
 		ErrorDisconnect,
+		ErrorTimeout,
 	};
 	
 	struct ResumeSend
@@ -36,6 +39,18 @@ struct Socket
 	: s(s_), connected(false), connecting(true)
 	, error(ErrorNone)
 	{
+		resetTimer();
+	}
+	
+	void checkTimeout()
+	{
+		if(time(0) > t + 10)
+			error = ErrorTimeout;
+	}
+	
+	void resetTimer()
+	{
+		t = time(0);
 	}
 	
 	bool think();
@@ -47,6 +62,8 @@ struct Socket
 	ResumeSend* send(ResumeSend* r, char const* b, char const* e);
 	
 	bool trySend(char const*& b, char const* e);
+	
+	Error getError() { return error; }
 	
 	~Socket();
 	
@@ -60,6 +77,7 @@ protected:
 	char const* dataBegin;
 	char const* dataEnd;
 	Error error;
+	time_t t;
 };
 
 }

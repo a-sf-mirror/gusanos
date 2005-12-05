@@ -48,10 +48,13 @@ bool Socket::think()
 			
 			connected = true;
 			connecting = false;
+			resetTimer();
 		}
+		else
+			checkTimeout();
 	}
 	
-	return false;
+	return error != ErrorNone;
 }
 
 bool Socket::readChunk()
@@ -68,14 +71,19 @@ bool Socket::readChunk()
 		}
 		dataBegin = staticBuffer;
 		dataEnd = staticBuffer + r;
+		resetTimer();
 	}
 	else if(sockError() != EWOULDBLOCK)
 	{
 		error = ErrorRecv;
 		return true; // Error
 	}
+	else
+	{
+		checkTimeout();
+	}
 	
-	return false;
+	return error != ErrorNone;
 }
 
 bool Socket::ResumeSend::resume()
@@ -133,6 +141,8 @@ bool Socket::trySend(char const*& b, char const* e)
 			error = ErrorSend;
 			return true;
 		}
+		else
+			checkTimeout();
 	}
 	else
 	{
@@ -141,7 +151,7 @@ bool Socket::trySend(char const*& b, char const* e)
 			return true;
 	}
 	
-	return false;
+	return error != ErrorNone;
 }
 
 }

@@ -101,32 +101,32 @@ struct LuaReference
 
 #define LUA_NEW_(t_, param_, lua_) \
 ({ \
-	LuaContext& lua = lua_; \
-	lua.pushRegObject(t_::metaTable); \
-	void* space_ = lua.pushObject(sizeof(t_)); \
+	LuaContext& lua_once_ = lua_; \
+	lua_once_.pushRegObject(t_::metaTable); \
+	void* space_ = lua_once_.pushObject(sizeof(t_)); \
 	t_* p_ = new (space_) t_ param_; \
-	p_->luaReference = lua.createReference(); \
+	p_->luaReference = lua_once_.createReference(); \
 	p_; \
 })
 
 #define LUA_NEW_KEEP(t_, param_, lua_) \
 ({ \
-	LuaContext& lua = lua_; \
-	lua.pushRegObject(t_::metaTable); \
-	void* space_ = lua.pushObject(sizeof(t_)); \
+	LuaContext& lua_once_ = lua_; \
+	lua_once_.pushRegObject(t_::metaTable); \
+	void* space_ = lua_once_.pushObject(sizeof(t_)); \
 	t_* p_ = new (space_) t_ param_; \
-	lua_pushvalue(lua, -1); \
-	p_->luaReference = lua.createReference(); \
+	lua_pushvalue(lua_once_, -1); \
+	p_->luaReference = lua_once_.createReference(); \
 	p_; \
 })
 
 #define lua_new(t_, param_, lua_) \
 ({ \
-	LuaContext& lua = lua_; \
-	lua.push(t_::metaTable); \
-	void* space_ = lua.pushObject(sizeof(t_)); \
+	LuaContext& lua_once_ = lua_; \
+	lua_once_.push(t_::metaTable); \
+	void* space_ = lua_once_.pushObject(sizeof(t_)); \
 	t_* p_ = new (space_) t_ param_; \
-	p_->luaReference = lua.createReference(); \
+	p_->luaReference = lua_once_.createReference(); \
 	p_; \
 })
 
