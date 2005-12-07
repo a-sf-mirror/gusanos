@@ -7,6 +7,8 @@
 #include "resource_base.h"
 #include "game_actions.h"
 #include "omfg_script.h"
+#include "util/macros.h"
+#include "timer_event.h"
 
 #include <string>
 #include <vector>
@@ -47,6 +49,21 @@ WeaponType::~WeaponType()
 	delete primaryReleased;
 	delete outOfAmmo;
 	delete reloadEnd;
+	
+	foreach( t, timer )
+	{
+		delete (*t);
+	}
+	
+	foreach( t, activeTimer )
+	{
+		delete (*t);
+	}
+	
+	foreach( t, shootTimer )
+	{
+		delete (*t);
+	}
 }
 
 
@@ -59,6 +76,7 @@ enum type
 	PrimaryRelease,
 	OutOfAmmo,
 	ReloadEnd,
+	Timer
 };
 }
 
@@ -80,6 +98,13 @@ bool WeaponType::load(fs::path const& filename)
 	parser.addEvent("primary_release", EventID::PrimaryRelease, af::Weapon | af::Object);
 	parser.addEvent("out_of_ammo", EventID::OutOfAmmo, af::Weapon | af::Object);
 	parser.addEvent("reload_end", EventID::ReloadEnd, af::Weapon | af::Object);
+	
+	parser.addEvent("timer", EventID::Timer, af::Weapon | af::Object)
+		("delay")
+		("delay_var")
+		("max_trigger")
+		("start_delay")
+	;
 	
 	if(!parser.run())
 	{
@@ -134,6 +159,10 @@ bool WeaponType::load(fs::path const& filename)
 			
 			case EventID::ReloadEnd:
 				reloadEnd = new Event(i.actions());
+			break;
+			
+			case EventID::Timer:
+				timer.push_back(new TimerEvent(i.actions(), p[0]->toInt(100), p[1]->toInt(0), p[2]->toInt(0), p[3]->toInt(0) ) );
 			break;
 		}
 	}

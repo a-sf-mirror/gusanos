@@ -977,6 +977,7 @@ BaseWorm* Game::addWorm(bool isAuthority)
 		Worm* worm = LUA_NEW(Worm, ());
 		returnWorm = worm;
 	}
+	if ( !returnWorm ) allegro_message("moo");
 #ifdef USE_GRID
 	objects.insertImmediately(returnWorm, Grid::WormColLayer, Grid::WormRenderLayer);
 	objects.insertImmediately(returnWorm->getNinjaRopeObj(), 1, 1);

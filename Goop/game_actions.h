@@ -140,6 +140,13 @@ GAME_ACTION(AddAngleSpeed,
 	AngleDiff speedVariation;
 )
 
+GAME_ACTION(AddSpeed,
+	float speed;
+	float speedVariation;
+	AngleDiff offs;
+	Angle offsVariation;
+)
+
 GAME_ACTION(SetAlphaFade,
 	int frames;
 	int dest;

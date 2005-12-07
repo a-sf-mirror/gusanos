@@ -2,6 +2,7 @@
 #define WEAPON_H
 
 #include <zoidcom.h>
+#include "timer_event.h"
 //#include <cstddef>
 
 class BITMAP;
@@ -65,6 +66,8 @@ private:
 	int inactiveTime;
 	int reloadTime;
 	
+	std::vector< TimerEvent::State > timer;
+
 	WeaponType* m_type;
 	BaseWorm* m_owner;
 };

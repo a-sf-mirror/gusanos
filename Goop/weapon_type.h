@@ -14,6 +14,7 @@ namespace fs = boost::filesystem;
 class SpriteSet;
 #endif
 class Event;
+class TimerEvent;
 
 class WeaponType : public ResourceBase
 {
@@ -38,6 +39,10 @@ class WeaponType : public ResourceBase
 #endif
 	std::string name;
 	fs::path fileName;
+
+	std::vector< TimerEvent* > timer;
+	std::vector< TimerEvent* > activeTimer;
+	std::vector< TimerEvent* > shootTimer;
 
 	Event *primaryShoot;
 	Event *primaryPressed;

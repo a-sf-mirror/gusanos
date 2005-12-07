@@ -33,6 +33,18 @@ struct TimerEvent : public Event
 			count = event->delay + rndInt(event->delayVariation+1);
 		}
 		
+		void completeReset()
+		{
+			if ( event->startDelay < 0 )
+			{
+				count = event->delay + rndInt(event->delayVariation+1);
+			}else
+			{
+				count = event->startDelay;
+			}
+			triggerCount = 0;
+		}
+		
 		int count;
 		int triggerCount;
 		TimerEvent* event;
@@ -40,16 +52,24 @@ struct TimerEvent : public Event
 
 	State createState()
 	{
-		return State( this, delay + rndInt(delayVariation+1) );
+		int tmpCount;
+		if ( startDelay < 0 )
+		{
+			tmpCount = delay + rndInt(delayVariation+1);
+		}else
+		{
+			tmpCount = startDelay;
+		}
+		return State( this, tmpCount );
 	}
 	
-	TimerEvent(int _delay, int _delayVariation, int _triggerTimes)
-	: delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes)
+	TimerEvent(int _delay, int _delayVariation, int _triggerTimes, int _startDelay = -1)
+	: delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes), startDelay(_startDelay)
 	{}
 	
-	TimerEvent(std::vector<BaseAction*>& actions, int _delay, int _delayVariation, int _triggerTimes)
+	TimerEvent(std::vector<BaseAction*>& actions, int _delay, int _delayVariation, int _triggerTimes, int _startDelay = -1)
 	: Event(actions)
-	, delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes)
+	, delay(_delay), delayVariation(_delayVariation), triggerTimes(_triggerTimes), startDelay(_startDelay)
 	{}
 	
 	~TimerEvent() {};
@@ -57,6 +77,7 @@ struct TimerEvent : public Event
 	int delay;
 	int delayVariation;
 	int triggerTimes;
+	int startDelay;
 };
 
 #endif

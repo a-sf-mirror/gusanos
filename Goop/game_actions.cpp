@@ -111,6 +111,12 @@ void registerGameActions()
 		("amount")
 		("amount_var")
 	;
+	gameActions.add("add_speed", newAction<AddSpeed>, af::Object)
+		("amount")
+		("amount_var")
+		("offs")
+		("offs_var")
+	;
 	
 	gameActions.add("push", newAction<Push>, af::Object | af::Object2)
 		("factor")
@@ -602,6 +608,30 @@ void AddAngleSpeed::run( ActionParams const& params )
 }
 
 AddAngleSpeed::~AddAngleSpeed()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+AddSpeed::AddSpeed( vector<OmfgScript::TokenBase*> const& params )
+{
+	speed = params[0]->toDouble(0.0);
+	speedVariation = params[1]->toDouble(0.0);
+	offs = AngleDiff(params[2]->toDouble(0.0));
+	offsVariation = Angle(params[3]->toDouble(0.0));
+}
+
+void AddSpeed::run( ActionParams const& params  )
+{
+	int dir = params.object->getDir();
+	Angle angle(params.object->getAngle() + offs * dir);
+	if(offsVariation) angle += offsVariation * midrnd();
+	params.object->spd += Vec(angle, speed + midrnd()*speedVariation );
+}
+
+AddSpeed::~AddSpeed()
 {
 }
 

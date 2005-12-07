@@ -5,6 +5,8 @@
 #include "game.h"
 #include "util/vec.h"
 #include "util/angle.h"
+#include "util/macros.h"
+#include "timer_event.h"
 
 #include "network.h"
 
@@ -19,6 +21,11 @@ Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 	inactiveTime = 0;
 	reloading = false;
 	reloadTime = 0;
+	
+	foreach(i, m_type->timer)
+	{
+		timer.push_back( (*i)->createState() );
+	}
 }
 
 Weapon::~Weapon()
@@ -36,6 +43,14 @@ void Weapon::reset()
 
 void Weapon::think( bool isFocused, size_t index )
 {
+	foreach(t, timer)
+	{
+		if ( t->tick() )
+		{
+			t->event->run(m_owner,0,0,this);
+		}
+	}
+	
 	if (inactiveTime > 0) inactiveTime--;
 	else if ( isFocused )
 	{
@@ -95,7 +110,7 @@ void Weapon::drawBottom(BITMAP* where, int x, int y )
 		{
 			inc = direction / fabs(direction.y);
 		}
-		
+
 		if ( m_type->laserSightRange > 0 )
 		{
 			intensityInc = - (m_type->laserSightIntensity / m_type->laserSightRange) * inc.length();
