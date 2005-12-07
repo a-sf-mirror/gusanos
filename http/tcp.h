@@ -35,16 +35,16 @@ struct Socket
 		bool resume();
 	};
 	
-	Socket(int s_)
+	Socket(int s_, int timeOut_ = 10)
 	: s(s_), connected(false), connecting(true)
-	, error(ErrorNone)
+	, error(ErrorNone), timeOut(timeOut_)
 	{
 		resetTimer();
 	}
 	
 	void checkTimeout()
 	{
-		if(time(0) > t + 10)
+		if(time(0) > t + timeOut)
 			error = ErrorTimeout;
 	}
 	
@@ -78,6 +78,7 @@ protected:
 	char const* dataEnd;
 	Error error;
 	time_t t;
+	int timeOut;
 };
 
 }

@@ -257,7 +257,6 @@ Request* Host::query(
 	{
 		options.changed = false;
 		delete hp; hp = 0;
-		DLOG("Proxy: " << options.proxy);
 		if(!(hp = TCP::resolveHost( (options.hasProxy ? options.proxy : host) )))
 			return 0;
 	}
