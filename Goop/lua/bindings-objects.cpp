@@ -1,11 +1,13 @@
 #include "bindings-objects.h"
 
+#include "bindings-resources.h"
 #include "luaapi/types.h"
 
 #include "../base_player.h"
 #include "../player.h"
 #include "../base_worm.h"
 #include "../particle.h"
+#include "../weapon.h"
 #include "../game.h" //Do we need this?
 #include "../glua.h"
 
@@ -24,6 +26,7 @@ namespace LuaBindings
 LuaReference wormMetaTable(0);
 LuaReference baseObjectMetaTable(0);
 LuaReference particleMetaTable(0);
+LuaReference weaponMetaTable(0);
 
 int shootFromObject(lua_State* L, BaseObject* object)
 {
@@ -168,6 +171,24 @@ int l_worm_shoot(lua_State* L)
 	return shootFromObject(L, object);
 }
 
+/*! Worm:getAngle()
+
+	Returns the current angle of the worm.
+*/
+
+LMETHOD(BaseWorm, worm_getAngle,
+	lua_pushnumber(context, p->getAngle().toDeg());
+	return 1;
+)
+
+LMETHOD(BaseWorm, worm_current_weapon,
+	if(Weapon* w = p->getCurrentWeapon())
+	{
+		context.pushFullReference(*w, weaponMetaTable);
+		return 1;
+	}
+	return 0;
+)
 
 /*! Object:remove()
 
@@ -304,6 +325,16 @@ int l_baseObject_shoot(lua_State* L)
 	return shootFromObject(L, object);
 }
 
+/*! Object:getAngle()
+
+	Returns the current angle of the particle.
+*/
+
+METHOD(BaseObject, baseObject_getAngle,
+	lua_pushnumber(context, p->getAngle().toDeg());
+	return 1;
+)
+
 //! Particle inherits Object
 
 /*! Particle:setAngle(angle)
@@ -318,28 +349,38 @@ int l_particle_setAngle(lua_State* L)
 	return 0;
 }
 
-/*! Particle:getAngle()
-
-	Returns the current angle of the particle.
-*/
-
-int l_particle_getAngle(lua_State* L)
-{
-	Particle* p = *static_cast<Particle **>(lua_touserdata (L, 1));
-	lua_pushnumber(L, p->getAngle().toDeg());
+METHOD(Weapon, weaponinstr_reloading,
+	context.push(p->reloading);
 	return 1;
-}
+)
 
+METHOD(Weapon, weaponinstr_reload_time,
+	context.push(p->getReloadTime());
+	return 1;
+)
+
+METHOD(Weapon, weaponinstr_ammo,
+	context.push(p->getAmmo());
+	return 1;
+)
+
+METHOD(Weapon, weaponinstr_type,
+	context.pushFullReference(*p->getType(), weaponTypeMetaTable);
+	return 1;
+)
 
 void addBaseObjectFunctions(LuaContext& context)
 {
-	context.tableFunction("remove", l_baseObject_remove);
-	context.tableFunction("pos", l_baseObject_pos);
-	context.tableFunction("spd", l_baseObject_spd);
-	context.tableFunction("push", l_baseObject_push);
-	context.tableFunction("get_closest_worm", l_baseObject_getClosestWorm);
-	context.tableFunction("data", l_baseObject_data);
-	context.tableFunction("shoot", l_baseObject_shoot);
+	context.tableFunctions()
+		("remove", l_baseObject_remove)
+		("pos", l_baseObject_pos)
+		("spd", l_baseObject_spd)
+		("push", l_baseObject_push)
+		("get_closest_worm", l_baseObject_getClosestWorm)
+		("data", l_baseObject_data)
+		("shoot", l_baseObject_shoot)
+		("get_angle", l_baseObject_getAngle)
+	;
 }
 
 void initObjects()
@@ -366,8 +407,9 @@ void initObjects()
 	
 	addBaseObjectFunctions(context);
 
-	context.tableFunction("set_angle", l_particle_setAngle);
-	context.tableFunction("get_angle", l_particle_getAngle);
+	context.tableFunctions()
+		("set_angle", l_particle_setAngle)
+	;
 
 	lua_rawset(context, -3);
 	particleMetaTable = context.createReference();
@@ -381,17 +423,29 @@ void initObjects()
 	
 	//NOT COMPATIBLE: addBaseObjectFunctions(context); // BaseWorm inherits from BaseObject
 
-	context.tableFunction("remove", l_worm_remove);
-	context.tableFunction("pos", l_worm_pos);
-	context.tableFunction("spd", l_worm_spd);
-	context.tableFunction("push", l_worm_push);
-	context.tableFunction("data", l_worm_data);
-	context.tableFunction("get_player", l_worm_getPlayer);
-	context.tableFunction("get_health", l_worm_getHealth);
-	context.tableFunction("shoot", l_worm_shoot);
+	context.tableFunctions()
+		("remove", l_worm_remove)
+		("pos", l_worm_pos)
+		("spd", l_worm_spd)
+		("push", l_worm_push)
+		("data", l_worm_data)
+		("get_player", l_worm_getPlayer)
+		("get_health", l_worm_getHealth)
+		("shoot", l_worm_shoot)
+		("get_angle", l_worm_getAngle)
+		("current_weapon", l_worm_current_weapon)
+	;
+	
 		
 	lua_rawset(context, -3);
 	wormMetaTable = context.createReference();
+	
+	CLASS(weapon,
+		("is_reloading", l_weaponinstr_reloading)
+		("reload_time", l_weaponinstr_reload_time)
+		("ammo", l_weaponinstr_ammo)
+		("type", l_weaponinstr_type)
+	)
 }
 
 }

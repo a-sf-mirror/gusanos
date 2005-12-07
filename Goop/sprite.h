@@ -35,6 +35,7 @@ public:
 	
 	// To ease transition
 	void draw(BITMAP *where, int x, int y/*, bool flipped = false*/, int alignment = 0);
+
 #endif
 
 	int getWidth()

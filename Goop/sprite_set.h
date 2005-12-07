@@ -4,6 +4,7 @@
 #include "resource_list.h"
 #include "util/angle.h"
 #include "util/cache.h"
+#include "util/rect.h"
 #include <allegro.h>
 #include <string>
 #include <vector>
@@ -14,6 +15,7 @@ namespace fs = boost::filesystem;
 
 class Sprite;
 
+class BlitterContext;
 
 class SpriteSet
 {
@@ -33,6 +35,8 @@ public:
 	Sprite* getSprite( size_t frame = 0 );
 #ifndef DEDSERV
 	Sprite* getColoredSprite( size_t frame, SpriteSet* mask, int color, Angle angle = Angle(0.0) );
+	
+	void drawSkinnedBox(BITMAP* b, BlitterContext& blitter, Rect const& rect, int backgroundColor);
 #endif
 
 	void flipSprites();

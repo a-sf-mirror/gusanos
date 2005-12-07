@@ -28,7 +28,7 @@ class LuaSocket : public TCP::Socket
 {
 public:
 	LuaSocket(int s_ /*LuaReference ref, int s_, LuaContext context_, LuaReference recvCallback_*/)
-	: TCP::Socket(s_) //, context(context_), recvCallback(recvCallback_)
+	: TCP::Socket(s_, 10*60) //, context(context_), recvCallback(recvCallback_)
 	, dataSender(0) //, luaReference(ref)
 	{
 	}

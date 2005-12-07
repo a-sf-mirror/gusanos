@@ -66,7 +66,7 @@ int l_sprites_load(lua_State* L)
 	return 1;
 }
 
-LMETHOD(SpriteSet, sprites_render,
+METHOD(SpriteSet, sprites_render,
 	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(context, 2));
 		
 	int frame = lua_tointeger(context, 3);
@@ -76,6 +76,27 @@ LMETHOD(SpriteSet, sprites_render,
 	
 	return 0;
 )
+
+METHOD(SpriteSet, sprites_render_skinned_box,
+	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(context, 2));
+	
+	int x1 = lua_tointeger(context, 3);
+	int y1 = lua_tointeger(context, 4);
+	int x2 = lua_tointeger(context, 5);
+	int y2 = lua_tointeger(context, 6);
+	int cr = lua_tointeger(context, 7);
+	int cg = lua_tointeger(context, 8);
+	int cb = lua_tointeger(context, 9);
+	p->drawSkinnedBox(b, blitter, Rect(x1, y1, x2, y2), makecol(cr, cg, cb));
+	
+	return 0;
+)
+
+METHOD(SpriteSet, sprites_frames,
+	context.push(static_cast<int>(p->getFramesWidth()));
+	return 1;
+)
+
 
 /*! font_load(name)
 
@@ -249,6 +270,16 @@ METHOD(WeaponType, weapon_name,
 	return 1;
 )
 
+METHOD(WeaponType, weapon_reload_time,
+	context.push(p->reloadTime);
+	return 1;
+)
+
+METHOD(WeaponType, weapon_ammo,
+	context.push(p->ammo);
+	return 1;
+)
+
 BINOP(WeaponType, weapon_eq,
 	context.push(a == b);
 	return 1;
@@ -318,6 +349,8 @@ void initResources()
 		("next", l_weapon_next)
 		("prev", l_weapon_prev)
 		("name", l_weapon_name)
+		("reload_time", l_weapon_reload_time)
+		("ammo", l_weapon_ammo)
 	)
 
 #ifndef DEDSERV
@@ -337,6 +370,8 @@ void initResources()
 	
 	CLASS(sprites,
 		("render", l_sprites_render)
+		("render_skinned_box", l_sprites_render_skinned_box)
+		("frames", l_sprites_frames)
 	)
 
 #endif

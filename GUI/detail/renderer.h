@@ -117,10 +117,11 @@ public:
 	virtual Rect const& getClip() = 0;
 	virtual Rect const& getViewportRect() = 0;
 	
-	virtual void setBlending(int alpha) = 0;
+	virtual void setAddBlender(int alpha) = 0;
+	virtual void setAlphaBlender(int alpha) = 0;
 	virtual void resetBlending() = 0;
 	
-	void drawSkinnedBox(BaseSpriteSet const& skin, Rect const& rect, RGB const& backgroundColor);
+	virtual void drawSkinnedBox(BaseSpriteSet const& skin, Rect const& rect, RGB const& backgroundColor) = 0;
 	
 	virtual ~Renderer()
 	{}

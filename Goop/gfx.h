@@ -29,12 +29,13 @@ public:
 	void doubleResChange();
 	int  getGraphicsDriver(); // Selects and returns graphics driver
 	
-	void fullscreen( int oldValue );
-	void doubleRes( int oldValue );
+	//void fullscreen( int oldValue );
+	//void doubleRes( int oldValue );
 	
 	void updateScreen();
-
 	
+	static int getScalingFactor();
+
 	inline bool compareRGB( int c1, int c2 )
 	{
 		return ( getr(c1) == getr(c2) && getg(c1) == getg(c2) && getb(c1) == getb(c2) );

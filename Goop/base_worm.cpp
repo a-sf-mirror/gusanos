@@ -837,6 +837,7 @@ void BaseWorm::draw(Viewport* viewport)
 			int renderX = x;
 			int renderY = y;
 			
+			/*
 			if ( m_weapons[currentWeapon] && m_weapons[currentWeapon]->reloading )
 			{
 				IVec crosshair = IVec(getAngle(), 25.0) + rPos;
@@ -847,7 +848,7 @@ void BaseWorm::draw(Viewport* viewport)
 			{
 				Vec crosshair = Vec(getAngle(), rnd()*10.0+20.0);
 				putpixel(where, x+static_cast<int>( crosshair.x ), y+static_cast<int>(crosshair.y), makecol(255,0,0));
-			}
+			}*/
 			
 			
 			if (m_ninjaRope->active)
@@ -884,15 +885,16 @@ void BaseWorm::draw(Viewport* viewport)
 				game.infoFont->draw(where, weaponName, wx, wy);
 			}
 			
-			if ( true && m_owner && !dynamic_cast<Player*>(m_owner) )
+			/*
+			if ( false && m_owner && !dynamic_cast<Player*>(m_owner) )
 			{
 				std::string const& playerName = m_owner->m_name;
-				std::pair<int, int> dim = game.infoFont->getDimensions(playerName);
+				std::pair<int, int> dim = game.infoFont->getDimensions(playerName, 0, Font::Formatting);
 				int wx = x - dim.first / 2;
 				int wy = y - dim.second / 2 - 10;
 								
-				game.infoFont->draw(where, playerName, wx, wy);
-			}
+				game.infoFont->draw(where, playerName, wx, wy, 0, 256, 255, 255, 255, Font::Formatting);
+			}*/
 		}
 		
 #ifdef DEBUG_WORM_REACTS

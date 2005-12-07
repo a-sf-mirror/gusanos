@@ -90,11 +90,35 @@ namespace
 			return "UNABLE TO SAVE SCREENSHOT";
 	}
 	
+	void fullscreen( int oldValue )
+	{
+		if(m_fullscreen == oldValue)
+			return;
+			
+		if(gfx)
+		{
+			gfx.fullscreenChange();
+			clear_keybuf();
+		}
+	}
+	
+	void doubleRes( int oldValue )
+	{
+		if(m_doubleRes == oldValue)
+			return;
+			
+		if(gfx)
+		{
+			gfx.doubleResChange();
+			clear_keybuf();
+		}
+	}
 #endif
 }
 
 #ifndef DEDSERV
 
+/*
 void Gfx::fullscreen( int oldValue )
 {
 	if(m_fullscreen == oldValue)
@@ -118,7 +142,7 @@ void Gfx::doubleRes( int oldValue )
 		clear_keybuf();
 	}
 }
-
+*/
 #endif
 Gfx::Gfx()
 #ifndef DEDSERV
@@ -166,8 +190,10 @@ void Gfx::registerInConsole()
 	;
 	
 	console.registerVariables()
-		("VID_FULLSCREEN", &m_fullscreen, 0, boost::bind(&Gfx::fullscreen, this, _1))
-		("VID_DOUBLERES", &m_doubleRes, 0, boost::bind(&Gfx::doubleRes, this, _1))
+		//("VID_FULLSCREEN", &m_fullscreen, 0, boost::bind(&Gfx::fullscreen, this, _1))
+		("VID_FULLSCREEN", &m_fullscreen, 0, fullscreen)
+		//("VID_DOUBLERES", &m_doubleRes, 0, boost::bind(&Gfx::doubleRes, this, _1))
+		("VID_DOUBLERES", &m_doubleRes, 0, doubleRes)
 		("VID_VSYNC", &m_vsync, 0)
 		("VID_CLEAR_BUFFER", &m_clearBuffer, 0)
 		("VID_BITDEPTH", &m_bitdepth, 32)
@@ -636,6 +662,11 @@ void Gfx::doubleResChange()
 		m_doubleResBuffer = NULL;
 	}
 	fullscreenChange();
+}
+
+int Gfx::getScalingFactor()
+{
+	return m_doubleRes ? 2 : 1;
 }
 
 #endif

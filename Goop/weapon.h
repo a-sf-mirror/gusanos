@@ -50,6 +50,8 @@ public:
 	
 	WeaponType* getType() { return m_type; }
 	
+	int getReloadTime() { return reloadTime; }
+	int getAmmo() { return ammo; }
 	
 	bool reloading;
 

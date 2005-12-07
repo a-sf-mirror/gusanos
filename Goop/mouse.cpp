@@ -1,5 +1,5 @@
 #include "mouse.h"
-#include <allegro.h>
+#include "gfx.h"
 
 MouseHandler mouseHandler;
 
@@ -84,8 +84,8 @@ void MouseHandler::poll()
 	int newPosY = mouse_y;
 	int newPosZ = mouse_z;
 	
-	newPosX /= 2;
-	newPosY /= 2;
+	newPosX /= gfx.getScalingFactor();
+	newPosY /= gfx.getScalingFactor();
 	
 	if(newPosX != posX
 	|| newPosY != posY)

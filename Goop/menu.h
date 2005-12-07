@@ -83,8 +83,11 @@ struct AllegroRenderer : public Renderer
 	virtual Rect const& getClip();
 	virtual Rect const& getViewportRect();
 	
-	virtual void setBlending(int alpha);
+	virtual void setAddBlender(int alpha);
+	virtual void setAlphaBlender(int alpha);
 	virtual void resetBlending();
+	
+	void drawSkinnedBox(BaseSpriteSet const& skin, Rect const& rect, RGB const& backgroundColor);
 	
 /*
 	void rectfill32(BITMAP* where, int x1, int y1, int x2, int y2, int colour);

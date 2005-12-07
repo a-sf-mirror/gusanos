@@ -13,6 +13,10 @@
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
 
+#ifndef DEDSERV
+#include "blitters/context.h"
+#endif
+
 using namespace std;
 
 ResourceList<SpriteSet> spriteList;
@@ -198,6 +202,40 @@ Sprite* SpriteSet::getColoredSprite( size_t frame, SpriteSet* mask, int color, A
 	SpriteSet* s = m_coloredCache[std::make_pair(mask, color)];
 	
 	return s->getSprite(frame, angle);
+}
+
+
+void SpriteSet::drawSkinnedBox(BITMAP* b, BlitterContext& blitter, Rect const& rect, int backgroundColor)
+{
+	int skinWidth = getSprite(0)->getWidth(), skinHeight = getSprite(0)->getHeight();
+		
+	int x, y;
+
+	blitter.rectfill(b, rect.x1 + skinWidth, rect.y1 + skinHeight, rect.x2 - skinWidth - 1, rect.y2 - skinHeight - 1, backgroundColor);
+	for(y = rect.y1 + skinHeight; y < rect.y2 - skinHeight * 2; y += skinHeight)
+	{
+		getSprite(4)->draw(b, rect.x1, y, blitter);
+		getSprite(5)->draw(b, rect.x2 - skinWidth, y, blitter);
+	}
+	
+	int cutOff = skinHeight*2 - rect.y2 + y;
+	getSprite(4)->drawCut(b, rect.x1, y, blitter, 0, 0, 0, cutOff, 0);
+	getSprite(5)->drawCut(b, rect.x2 - skinWidth, y, blitter, 0, 0, 0, cutOff, 0);
+	
+	for(x = rect.x1 + skinWidth; x < rect.x2 - skinWidth * 2; x += skinWidth)
+	{
+		getSprite(6)->draw(b, x, rect.y1, blitter);
+		getSprite(7)->draw(b, x, rect.y2 - skinHeight, blitter);
+	}
+	
+	cutOff = skinWidth*2 - rect.x2 + x;
+	getSprite(6)->drawCut(b, x, rect.y1, blitter, 0, 0, 0, 0, cutOff);
+	getSprite(7)->drawCut(b, x, rect.y2 - skinWidth, blitter, 0, 0, 0, 0, cutOff);
+	
+	getSprite(0)->draw(b, rect.x1, rect.y1, blitter);
+	getSprite(1)->draw(b, rect.x2 - skinWidth, rect.y1, blitter);
+	getSprite(2)->draw(b, rect.x1, rect.y2 - skinHeight, blitter);
+	getSprite(3)->draw(b, rect.x2 - skinWidth, rect.y2 - skinHeight, blitter);
 }
 
 #endif

@@ -124,7 +124,10 @@ namespace
 		}
 		else
 		{
-			cerr << "Failed to unregister from master server" << endl;
+			if(req->getError() == TCP::Socket::ErrorTimeout)
+				cerr << "Unregistration from master server timed out" << endl;
+			else
+				cerr << "Failed to unregister from master server" << endl;
 		}
 		serverAdded = false;
 		delete req;
@@ -156,7 +159,10 @@ namespace
 		}
 		else
 		{
-			cerr << "Failed to send update to master server" << endl;
+			if(req->getError() == TCP::Socket::ErrorTimeout)
+				cerr << "Master server update timed out" << endl;
+			else
+				cerr << "Failed to send update to master server" << endl;
 			serverAdded = false; // Maybe the server was droped, try to reregister it
 		}
 		delete req;

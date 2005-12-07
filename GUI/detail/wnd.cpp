@@ -388,7 +388,19 @@ void Wnd::applyFormatting(Context::GSSpropertyMap const& f)
 			{
 				m_formatting.alpha = lexical_cast<int>(*v);
 			}
-		}		
+		}
+		else if(i->first == "blender")
+		{
+			EACH_VALUE(v)
+			{
+				if(*v == "add")
+					m_formatting.blender = Formatting::Add;
+				else if(*v == "alpha")
+					m_formatting.blender = Formatting::Alpha;
+				else if(*v == "none")
+					m_formatting.blender = Formatting::None;
+			}
+		}
 	}
 	
 	#undef EACH_VALUE
@@ -548,10 +560,23 @@ bool Wnd::doRender(Rect const& clip)
 		return false;
 	renderer->setClip(rect);
 	
-	if(m_formatting.alpha != 255)
-		renderer->setBlending(m_formatting.alpha);
-	else
-		renderer->resetBlending();
+	switch(m_formatting.blender)
+	{
+		case Formatting::Add:
+			if(m_formatting.alpha > 0)
+				renderer->setAddBlender(m_formatting.alpha);
+			else
+				renderer->resetBlending();
+		break;
+		
+		case Formatting::Alpha:
+			if(m_formatting.alpha < 255)
+				renderer->setAlphaBlender(m_formatting.alpha);
+			else
+				renderer->resetBlending();
+		break;
+		default: renderer->resetBlending();	
+	}
 	
 	if(!render())
 		return false;

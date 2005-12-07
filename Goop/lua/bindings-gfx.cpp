@@ -7,7 +7,6 @@
 #ifndef DEDSERV
 #include "../viewport.h"
 #include "../gfx.h"
-#include "../blitters/context.h"
 #endif
 
 #include <cmath>
@@ -66,6 +65,15 @@ int l_gfx_set_alpha(lua_State* L)
 	return 0;
 }
 
+int l_gfx_set_add(lua_State* L)
+{
+#ifndef DEDSERV
+	int alpha = lua_tointeger(L, 1);
+	blitter.set(BlitterContext::add(), alpha);
+#endif
+	return 0;
+}
+
 /*! gfx_reset_blending()
 
 	Deactivates any blender that was active.
@@ -110,6 +118,7 @@ void initGfx()
 	context.functions()
 		("gfx_draw_box", l_gfx_draw_box)
 		("gfx_set_alpha", l_gfx_set_alpha)
+		("gfx_set_add", l_gfx_set_add)
 		("gfx_reset_blending", l_gfx_reset_blending)
 	;
 

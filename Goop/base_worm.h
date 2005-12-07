@@ -92,7 +92,7 @@ public:
 	virtual void setWeapons( std::vector<WeaponType*> const& weaps);
 	virtual void clearWeapons();
 	
-	Weapon* getCurrentWeapon(); // Where and what for is this used?
+	Weapon* getCurrentWeapon(); // Where and what for is this used? Lua maybe? >:O
 	
 	// getWeaponIndexOffset can be used to get the currentWeapon index or 
 	//to get the one to the right or the left or the one 1000 units to the 

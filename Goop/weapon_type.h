@@ -46,9 +46,8 @@ class WeaponType : public ResourceBase
 	Event *reloadEnd;
 };
 
-class WeaponOrder
+struct WeaponOrder
 {
-	public:
 	bool operator () ( WeaponType* weap1, WeaponType* weap2)
 	{
 		if ( weap1->fileName.leaf() < weap2->fileName.leaf() )

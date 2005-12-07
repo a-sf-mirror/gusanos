@@ -9,6 +9,7 @@ namespace LuaBindings
 	
 	extern LuaReference fontMetaTable;
 	extern LuaReference partTypeMetaTable;
+	extern LuaReference weaponTypeMetaTable;
 	extern LuaReference spritesMetaTable;
 }
 

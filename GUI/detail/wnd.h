@@ -294,9 +294,17 @@ protected:
 			HasBottom = 1 << 3,
 		};
 		
+		enum Blender
+		{
+			None = 0,
+			Alpha,
+			Add
+		};
+		
 		Formatting()
 		: width(50), height(50), spacing(5), padding(5), flags(0)
 		, alpha(255), rect(10, 10, 0, 0), fontColor(255, 255, 255)
+		, blender(Alpha)
 		{
 			
 		}
@@ -339,6 +347,7 @@ protected:
 	
 		Rect        rect;
 		RGB         fontColor;
+		Blender     blender;
 
 	} m_formatting;
 };

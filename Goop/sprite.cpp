@@ -207,5 +207,7 @@ void Sprite::draw(BITMAP *where, int x, int y, BlitterContext const& blender/*, 
 		blender.drawSprite(where, m_bitmap, x - _x, y - _y);
 	}
 }
+
+
 #endif
 
