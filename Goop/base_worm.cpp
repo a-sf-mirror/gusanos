@@ -661,7 +661,7 @@ Vec BaseWorm::getWeaponPos()
 #ifndef DEDSERV
 Vec BaseWorm::getRenderPos()
 {
-	return renderPos - Vec(0,0.5);
+	return renderPos;// - Vec(0,0.5);
 }
 #endif
 /*

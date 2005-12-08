@@ -41,6 +41,10 @@ public:
 	
 	int getColour();
 	Vec& getPosReference();
+	float& getLengthReference()
+	{
+		return m_length;
+	}
 	
 	bool active;
 	bool attached;

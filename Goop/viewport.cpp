@@ -175,9 +175,9 @@ void Viewport::render(BasePlayer* player)
 			BaseWorm* worm = (*playerIter)->getWorm();
 			if( worm && worm->isActive() )
 			{
-				Vec renderPos = worm->getRenderPos();
-				int x = (int)renderPos.x - offX;
-				int y = (int)renderPos.y - offY;
+				IVec renderPos( worm->getRenderPos() );
+				int x = renderPos.x - offX;
+				int y = renderPos.y - offY;
 				bool ownViewport = (*playerIter == player);
 				
 				//lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
