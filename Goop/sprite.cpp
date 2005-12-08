@@ -8,6 +8,7 @@
 
 #include <allegro.h>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -50,9 +51,9 @@ inline int scaleColor(int a, int b, int bmax)
 inline int brightenColor(int a, int b)
 {
 	return makecol(
-		getr(a) + b,
-		getg(a) + b,
-		getb(a) + b);
+		std::min(getr(a) + b, 255),
+		std::min(getg(a) + b, 255),
+		std::min(getb(a) + b, 255));
 }
 
 #ifndef DEDSERV
@@ -71,6 +72,7 @@ Sprite::Sprite(Sprite const& b, Sprite const& mask, int color)
 
 	int unchanged = makecol(255, 0, 255);
 	int wormColor = makecol(0, 0, 0);
+	int max = getr(makecol(255, 0, 0));
 	
 	BITMAP* maskBitmap = mask.m_bitmap;
 	BITMAP* srcBitmap = b.m_bitmap;

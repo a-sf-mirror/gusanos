@@ -58,7 +58,7 @@ public:
 	LuaReference luaReference;
 	
 	BITMAP* dest;
-	BITMAP* testFade;
+	BITMAP* fadeBuffer;
 	
 private:
 

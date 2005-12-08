@@ -266,6 +266,13 @@ int l_baseObject_data(lua_State* L)
 	return 1;
 }
 
+METHOD(BaseObject, baseObject_getPlayer,
+	if(!p->getOwner())
+		return 0;
+	lua.pushReference(p->getOwner()->luaReference);
+	return 1;
+)
+
 /*! Object:get_closest_worm()
 
 	Returns the closest worm that fulfills these requirements:
@@ -376,6 +383,7 @@ void addBaseObjectFunctions(LuaContext& context)
 		("pos", l_baseObject_pos)
 		("spd", l_baseObject_spd)
 		("push", l_baseObject_push)
+		("get_player", l_baseObject_getPlayer)
 		("get_closest_worm", l_baseObject_getClosestWorm)
 		("data", l_baseObject_data)
 		("shoot", l_baseObject_shoot)

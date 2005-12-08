@@ -63,6 +63,7 @@ public:
 	BITMAP* buffer;
 
 	int m_distortionAA;
+	int darkMode;
 	
 	int m_haxWormLight; //TEMP HAX
 #endif

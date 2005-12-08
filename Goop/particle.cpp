@@ -299,7 +299,7 @@ void Particle::drawLine2Origin( Viewport* viewport, BlitterContext const& blitte
 		blitter.linewu(viewport->dest, rOPos.x, rOPos.y, rPos.x, rPos.y, m_type->colour);
 	}
 	else
-	{	
+	{
 		IVec rPos = viewport->convertCoords( IVec(pos) );
 		IVec rOPos = viewport->convertCoords( IVec(m_origin) );
 		line(viewport->dest, rOPos.x,rOPos.y,rPos.x,rPos.y,m_type->colour); //TODO: Change to use blitter
@@ -348,7 +348,7 @@ void Particle::draw(Viewport* viewport)
 	{
 		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
 	}
-	if ( m_type->lightHax )
+	if ( gfx.darkMode && m_type->lightHax )
 	{
 		game.level.culledDrawLight( m_type->lightHax, viewport, IVec(pos), (int)m_alpha );
 	}

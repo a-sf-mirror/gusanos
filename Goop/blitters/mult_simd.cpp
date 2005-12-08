@@ -8,7 +8,7 @@
 namespace Blitters
 {
 	
-void drawSprite_mult_32_with_8_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb)
+void drawSprite_mult_8_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb)
 {
 	typedef Pixel32 pixel_t_dest_1;
 	typedef Pixel32 pixel_t_dest_2; // Doesn't matter what this is

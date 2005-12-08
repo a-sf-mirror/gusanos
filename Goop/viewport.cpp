@@ -33,7 +33,7 @@ Viewport::~Viewport()
 	lua.destroyReference(luaReference);
 	destroy_bitmap(dest);
 	sfx.freeListener(m_listener);
-	destroy_bitmap(testFade);
+	destroy_bitmap(fadeBuffer);
 }
 
 struct TestCuller
@@ -91,7 +91,7 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 	
 	m_listener = sfx.newListener();
 
-	testFade = create_bitmap_ex(8, width, height);
+	fadeBuffer = create_bitmap_ex(8, width, height);
 
 	if(!testLight)
 	{
@@ -118,7 +118,7 @@ void Viewport::drawLight(IVec const& v)
 	Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
 	r &= Rect(testLight) + loff;
 	
-	Culler<TestCuller> testCuller(TestCuller(testFade, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
+	Culler<TestCuller> testCuller(TestCuller(fadeBuffer, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
 
 	testCuller.cullOmni(v.x, v.y);
 }
@@ -131,10 +131,8 @@ void Viewport::render(BasePlayer* player)
 	
 	game.level.draw(dest, offX, offY);
 
-#if 0
-	if ( game.level.lightmap )
-		blit( game.level.lightmap, testFade, offX,offY, 0, 0, testFade->w, testFade->h );
-#endif
+	if ( gfx.darkMode && game.level.lightmap )
+		blit( game.level.lightmap, fadeBuffer, offX,offY, 0, 0, fadeBuffer->w, fadeBuffer->h );
 
 #ifdef USE_GRID
 	for ( Grid::iterator iter = game.objects.beginAll(); iter; ++iter)
@@ -186,23 +184,14 @@ void Viewport::render(BasePlayer* player)
 		}
 	}
 
-#if 0
-	Blitters::drawSprite_mult_32_with_8(dest, testFade, 0, 0, 0, 0, 0, 0);
-#endif
+	if(gfx.darkMode)	
+		drawSprite_mult_8(dest, fadeBuffer, 0, 0);
 	
 	if(BaseWorm* worm = player->getWorm())
 	{
 		EACH_CALLBACK(i, viewportRender)
 		{
 			//lua.callReference(0, *i, luaReference, worm->luaReference);
-			lua.push(luaReference);
-			if(!lua_getmetatable(lua, -1))
-			{
-				throw ":O";
-			}
-			else
-				lua.pop(1);
-			lua.pop(1);
 			(lua.call(*i), luaReference, worm->luaReference)();
 		}
 	}

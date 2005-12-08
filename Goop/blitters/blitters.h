@@ -85,8 +85,7 @@ void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 void drawSprite_blendalpha_32_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blendtint_8_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color);
 void drawSprite_multsec_32_with_8(BITMAP* where, BITMAP* from, BITMAP* secondary, int x, int y, int sx, int sy, int cutl, int cutt, int cutr, int cutb);
-void drawSprite_mult_32_with_8(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb);
-void drawSprite_mult_32_with_8_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb);
+void drawSprite_mult_8_to_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb);
 
 void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
@@ -95,6 +94,8 @@ void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl
 void drawSprite_blendalpha_32_to_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact);
 void drawSprite_blendtint_8_to_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact, int color);
+void drawSprite_mult_8_to_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb);
+void drawSprite_mult_8_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb);
 
 void drawSpriteLine_add_32(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
 void drawSpriteLine_add_16(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
@@ -292,6 +293,10 @@ inline void drawSprite_solid(BITMAP* where, BITMAP* from, int x, int y)
 	draw_sprite(where, from, x, y);
 }
 
+inline void drawSprite_mult_8(BITMAP* where, BITMAP* from, int x, int y)
+{
+	SELECT_SSE_OR_3DNOW_32(drawSprite_mult_8_to, (where, from, x, y, 0, 0, 0, 0));
+}
 
 inline void drawSpriteCut_add(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {

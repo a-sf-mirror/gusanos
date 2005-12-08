@@ -342,7 +342,7 @@ void Level::culledDrawLight( Sprite* sprite, Viewport* viewport, const IVec& pos
 	Culler<AddCuller> addCuller(
 		AddCuller(
 			*this,
-			viewport->testFade,
+			viewport->fadeBuffer,
 			renderBitmap,
 			alpha,
 			off.x,

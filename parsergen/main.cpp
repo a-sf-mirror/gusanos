@@ -612,7 +612,7 @@ struct Handler
 		"size_t l = limit - begin;\n"
 		"if(buffer)\n"
 		"	memmove(buffer, begin, l);\n" // Move the beginning of the token to the beginning of the buffer
-		"size_t newSize = std::max(static_cast<size_t>(16), l + s);\n"
+		"size_t newSize = std::max(static_cast<size_t>(1024), l + s);\n"
 		"buffer = (char *)realloc(buffer, newSize);\n"
 		"size_t toRead = newSize - l;\n"
 		"size_t amountRead = self->read(&buffer[l], toRead);"

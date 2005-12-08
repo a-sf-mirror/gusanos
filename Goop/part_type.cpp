@@ -246,6 +246,11 @@ bool PartType::load(fs::path const& filename)
 		if(!v->isDefault())
 			sprite = spriteList.load(v->toString());
 	}
+	{
+		OmfgScript::TokenBase* v = parser.getProperty("light_radius");
+		if(!v->isDefault())
+			lightHax = genLight(v->toInt(0));
+	}
 #endif
 	invisible = parser.getBool("invisible", false);
 	culled = parser.getBool("occluded", false);
@@ -279,6 +284,7 @@ bool PartType::load(fs::path const& filename)
 	else if ( var == "light_radius" ) ;
 #endif
 */
+	
 
 	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
 	{
