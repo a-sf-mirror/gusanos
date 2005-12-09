@@ -67,6 +67,8 @@ private:
 	int reloadTime;
 	
 	std::vector< TimerEvent::State > timer;
+	std::vector< TimerEvent::State > activeTimer;
+	std::vector< TimerEvent::State > shootTimer;
 
 	WeaponType* m_type;
 	BaseWorm* m_owner;

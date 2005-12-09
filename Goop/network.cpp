@@ -184,9 +184,9 @@ namespace
 	
 	void registerClasses() // Factorization of class registering in client and server
 	{
-		NetWorm::classID = m_control->ZCom_registerClass("worm");
-		BasePlayer::classID = m_control->ZCom_registerClass("player");
-		Game::classID = m_control->ZCom_registerClass("game");
+		NetWorm::classID = m_control->ZCom_registerClass("worm",0);
+		BasePlayer::classID = m_control->ZCom_registerClass("player",0);
+		Game::classID = m_control->ZCom_registerClass("game",0);
 	}
 	
 	std::string setProxy(std::list<std::string> const& args) 

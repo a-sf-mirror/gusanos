@@ -113,7 +113,7 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 	network.incConnCount();
 }
 
-void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
+void Server::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata)
 {
 	console.addLogMsg("* A CONNECTION WAS CLOSED");
 	for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)

@@ -74,14 +74,14 @@ void BasePlayer::think()
 	{
 		while ( m_node->checkEventWaiting() )
 		{
-			ZCom_Node::eEvent type;
+			eZCom_Event type;
 			eZCom_NodeRole    remote_role;
 			ZCom_ConnID       conn_id;
 			
 			ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
 			switch ( type )
 			{
-				case ZCom_Node::eEvent_User:
+				case eZCom_EventUser:
 				if ( data )
 				{
 #ifdef COMPACT_EVENTS
@@ -173,12 +173,12 @@ void BasePlayer::think()
 					}
 				}
 				break;
-				case ZCom_Node::eEvent_Init:
+				case eZCom_EventInit:
 				{
 					sendSyncMessage( conn_id );
 				}
 				break;
-				case ZCom_Node::eEvent_AuthorityRemoved:
+				case eZCom_EventRemoved:
 				{
 					deleteMe = true;
 				}

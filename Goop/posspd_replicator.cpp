@@ -11,7 +11,7 @@ using std::endl;
 PosSpdReplicator::PosSpdReplicator(ZCom_ReplicatorSetup *_setup,
 	Vec *pos, Vec *spd, Encoding::VectorEncoding& encoding_,
 	Encoding::DiffVectorEncoding& diffEncoding_)
-: ZCom_ReplicatorBasic(cZCom_RType_boolp, _setup)
+: ZCom_ReplicatorBasic(_setup)
 , m_posPtr(pos)
 , m_spdPtr(spd)
 , m_repCount(0)
@@ -34,7 +34,7 @@ bool PosSpdReplicator::checkState()
 	return s;
 }
 
-zU32 PosSpdReplicator::packData(ZCom_BitStream *_stream)
+void PosSpdReplicator::packData(ZCom_BitStream *_stream)
 {
 #ifdef COMPACT_FLOATS
 /*
@@ -61,10 +61,9 @@ zU32 PosSpdReplicator::packData(ZCom_BitStream *_stream)
 		_stream->addBool(false);
 	}
 
-	return 1;
 }
 
-zU32 PosSpdReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 _estimated_time_sent)
+void PosSpdReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 _estimated_time_sent)
 {
 	if (_store)
 	{
@@ -105,7 +104,6 @@ zU32 PosSpdReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 _es
 			*m_spdPtr = diffEncoding.decode<Vec>(*_stream);
 		}
 	}
-	return 1;
 }
 
 void* PosSpdReplicator::peekData()

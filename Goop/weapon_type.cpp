@@ -76,7 +76,8 @@ enum type
 	PrimaryRelease,
 	OutOfAmmo,
 	ReloadEnd,
-	Timer
+	Timer,
+	ActiveTimer
 };
 }
 
@@ -100,6 +101,13 @@ bool WeaponType::load(fs::path const& filename)
 	parser.addEvent("reload_end", EventID::ReloadEnd, af::Weapon | af::Object);
 	
 	parser.addEvent("timer", EventID::Timer, af::Weapon | af::Object)
+		("delay")
+		("delay_var")
+		("max_trigger")
+		("start_delay")
+	;
+	
+	parser.addEvent("active_timer", EventID::ActiveTimer, af::Weapon | af::Object)
 		("delay")
 		("delay_var")
 		("max_trigger")
@@ -163,6 +171,10 @@ bool WeaponType::load(fs::path const& filename)
 			
 			case EventID::Timer:
 				timer.push_back(new TimerEvent(i.actions(), p[0]->toInt(100), p[1]->toInt(0), p[2]->toInt(0), p[3]->toInt(0) ) );
+			break;
+			
+			case EventID::ActiveTimer:
+				activeTimer.push_back(new TimerEvent(i.actions(), p[0]->toInt(100), p[1]->toInt(0), p[2]->toInt(0), p[3]->toInt(0) ) );
 			break;
 		}
 	}

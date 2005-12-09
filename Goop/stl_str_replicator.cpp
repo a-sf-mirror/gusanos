@@ -6,7 +6,7 @@
 using namespace std;
 
 STLStringReplicator::STLStringReplicator(ZCom_ReplicatorSetup *_setup, string *_data) : 
-	ZCom_ReplicatorBasic(cZCom_RType_boolp, _setup),
+	ZCom_ReplicatorBasic(_setup),
 	m_ptr(_data)
 {
 	m_flags |= ZCOM_REPLICATOR_INITIALIZED;
@@ -19,13 +19,12 @@ bool STLStringReplicator::checkState()
 	return s;
 }
 
-zU32 STLStringReplicator::packData(ZCom_BitStream *_stream)
+void STLStringReplicator::packData(ZCom_BitStream *_stream)
 {
 	_stream->addString( m_ptr->c_str() );
-	return 1;
 }
 
-zU32 STLStringReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 _estimated_time_sent)
+void STLStringReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 _estimated_time_sent)
 {
 	if (_store)
 	{
@@ -35,7 +34,6 @@ zU32 STLStringReplicator::unpackData(ZCom_BitStream *_stream, bool _store, zU32 
 	{
 		_stream->getStringStatic();
 	}
-	return 1;
 }
 
 void* STLStringReplicator::peekData()

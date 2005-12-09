@@ -203,7 +203,7 @@ private:
 public:
 
 	BasicAngleReplicator(ZCom_ReplicatorSetup* setup, Type* data)
-	: ZCom_ReplicatorBasic(cZCom_RType_boolp, setup),
+	: ZCom_ReplicatorBasic(setup),
 	m_ptr(data)
 	{
 		m_flags |= ZCOM_REPLICATOR_INITIALIZED;
@@ -221,18 +221,16 @@ public:
 	
 	bool checkInitialState() { return true; }
 	
-	zU32 packData(ZCom_BitStream *stream)
+	void packData(ZCom_BitStream *stream)
 	{
 		stream->addInt(*m_ptr, Type::prec);
-		return 1;
 	}
 	
-	zU32 unpackData(ZCom_BitStream* stream, bool store, zU32 estimated_time_sent)
+	void unpackData(ZCom_BitStream* stream, bool store, zU32 estimated_time_sent)
 	{
 		Type angle(T(stream->getInt(Type::prec)));
 		if(store)
 			*m_ptr = angle;
-		return 1;
 	}
 	
 	void Process(eZCom_NodeRole localrole, zU32 simulation_time_passed) {}

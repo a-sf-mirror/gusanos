@@ -32,9 +32,9 @@ public:
 	
 	bool checkInitialState() { return true; }
 	
-	zU32 packData(ZCom_BitStream *_stream);
+	void packData(ZCom_BitStream *_stream);
 	
-	zU32 unpackData(ZCom_BitStream *_stream, bool _store, zU32 _estimated_time_sent);
+	void unpackData(ZCom_BitStream *_stream, bool _store, zU32 _estimated_time_sent);
 	
 	void Process(eZCom_NodeRole _localrole, zU32 _simulation_time_passed) {}
 	

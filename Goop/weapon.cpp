@@ -26,6 +26,11 @@ Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 	{
 		timer.push_back( (*i)->createState() );
 	}
+	
+	foreach(i, m_type->activeTimer)
+	{
+		activeTimer.push_back( (*i)->createState() );
+	}
 }
 
 Weapon::~Weapon()
@@ -39,6 +44,19 @@ void Weapon::reset()
 	inactiveTime = 0;
 	reloading = false;
 	reloadTime = 0;
+	
+	foreach(t, timer)
+	{
+		t->completeReset();
+	}
+	foreach(t, activeTimer)
+	{
+		t->completeReset();
+	}
+	foreach(t, shootTimer)
+	{
+		t->completeReset();
+	}
 }
 
 void Weapon::think( bool isFocused, size_t index )
@@ -48,6 +66,23 @@ void Weapon::think( bool isFocused, size_t index )
 		if ( t->tick() )
 		{
 			t->event->run(m_owner,0,0,this);
+		}
+	}
+	
+	if ( isFocused )
+	{
+		foreach(t, activeTimer)
+		{
+			if ( t->tick() )
+			{
+				t->event->run(m_owner,0,0,this);
+			}
+		}
+	}else
+	{
+		foreach(t, activeTimer)
+		{
+			t->completeReset();
 		}
 	}
 	

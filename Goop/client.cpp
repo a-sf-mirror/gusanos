@@ -60,33 +60,45 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 	}
 } 
 
-void Client::ZCom_cbConnectionClosed( ZCom_ConnID _id, ZCom_BitStream &_reason )
+void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata)
 {
 	//--network.connCount;
 	network.decConnCount();
-	Network::DConnEvents dcEvent = static_cast<Network::DConnEvents>( _reason.getInt(8) );
-	switch( dcEvent )
+	switch( _reason )
 	{
-		case Network::ServerMapChange:
+		case eZCom_ClosedDisconnect:
+		Network::DConnEvents dcEvent = static_cast<Network::DConnEvents>( _reasondata.getInt(8) );
+		switch( dcEvent )
 		{
-			console.addLogMsg("* SERVER CHANGED MAP");
-			network.reconnect();
+			case Network::ServerMapChange:
+			{
+				console.addLogMsg("* SERVER CHANGED MAP");
+				network.reconnect();
+			}
+			break;
+			case Network::Quit:
+			{
+				console.addLogMsg("* CONNECTION CLOSED BY SERVER");
+			}
+			break;
+			case Network::Kick:
+			{
+				console.addLogMsg("* YOU WERE KICKED");
+			}
+			break;
+			default:
+			{
+				console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");
+			}
+			break;
 		}
 		break;
-		case Network::Quit:
-		{
-			console.addLogMsg("* CONNECTION CLOSED BY SERVER");
-		}
-		break;
-		case Network::Kick:
-		{
-			console.addLogMsg("* YOU WERE KICKED");
-		}
-		break;
-		default:
-		{
+		
+		case eZCom_ClosedTimeout:
 			console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");
-		}
+		break;
+		
+		default:
 		break;
 	}
 }
@@ -103,7 +115,7 @@ void Client::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _n
 	}
 }
 
-void Client::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested_class, eZCom_NodeRole _role, ZCom_NodeID _net_id)
+void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata, eZCom_NodeRole _role, ZCom_NodeID _net_id )
 {
 	// check the requested class
 	if ( _requested_class == NetWorm::classID )
