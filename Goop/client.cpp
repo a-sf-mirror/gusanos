@@ -1,6 +1,8 @@
 #include "client.h"
 #include "gconsole.h"
 #include "net_worm.h"
+#include "particle.h"
+#include "part_type.h"
 #include "base_player.h"
 #include "game.h"
 #include "network.h"
@@ -98,7 +100,7 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 		}
 		
 		case eZCom_ClosedTimeout:
-			console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");
+			console.addLogMsg("* CONNECTION TIMEDOUT");
 		break;
 		
 		default:
@@ -123,10 +125,7 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requeste
 	// check the requested class
 	if ( _requested_class == NetWorm::classID )
 	{
-		if(true)
-		{
-			game.addWorm(false);
-		}
+		game.addWorm(false);
 	}else if ( _requested_class == BasePlayer::classID )
 	{
 		// Creates a player class depending on the role
@@ -139,6 +138,10 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requeste
 			BasePlayer* player = game.addPlayer ( Game::PROXY );
 			player->assignNetworkRole(false);
 		}
+	}else if( _requested_class == Particle::classID )
+	{
+		int typeIndex = Encoding::decode(*_announcedata, partTypeList.size());
+		newParticle_requested(partTypeList[typeIndex],Vec(),Vec(),1,0,Angle());
 	}else
 	{
 		console.addLogMsg("* ERROR: INVALID DYNAMIC NODE REQUEST");

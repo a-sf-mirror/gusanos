@@ -14,7 +14,7 @@ class PosSpdReplicator : public ZCom_ReplicatorBasic
 {
 	private:
 		
-		static const int speedRepTime = 8;
+		static const int speedRepTime = 0;
 		static const int speedPrec = 16;
 		
 		Vec*	m_posPtr;

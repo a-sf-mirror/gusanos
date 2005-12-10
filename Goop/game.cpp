@@ -565,6 +565,7 @@ void Game::loadMod()
 	infoFont = fontLocator.load("minifont");
 #endif
 	levelEffectList.indexate();
+	partTypeList.indexate();
 	if (weaponList.size() > 0 )
 	{
 		loaded = true;

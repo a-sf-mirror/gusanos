@@ -214,7 +214,7 @@ def parserGenEmitter(target, source, env):
 	
 def parserBuilderFunc(target, source, env):
 	os.system('%s %s %s' % (parserGen[0].abspath, str(source[0]), str(target[0]) + '.re'))
-	os.system('re2c -bi %s > %s' % (str(target[0]) + '.re', str(target[0])))
+	os.system('re2c %s > %s' % (str(target[0]) + '.re', str(target[0])))
 	return None
 	
 parserBuilder = Builder(action = parserBuilderFunc,

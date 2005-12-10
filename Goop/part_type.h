@@ -10,6 +10,7 @@
 #endif
 #include "events.h"
 #include "util/angle.h"
+#include "resource_base.h"
 
 #include <string>
 #include <vector>
@@ -28,7 +29,9 @@ class TimerEvent;
 
 typedef void (*NewParticleFunc)(PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle);
 
-class PartType
+void newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle );
+
+class PartType : public ResourceBase
 {
 	public:
 		
@@ -77,6 +80,11 @@ class PartType
 	bool wupixels;
 	bool invisible;
 	bool culled;
+	
+	bool syncPos;
+	bool syncSpd;
+	bool syncAngle;
+	bool needsNode;
 	
 	int simpleParticle_timeout;
 	int simpleParticle_timeoutVariation;

@@ -8,6 +8,7 @@
 //#include "text.h"
 #include "net_worm.h"
 #include "base_player.h"
+#include "particle.h"
 #include "http.h"
 #include "util/macros.h"
 #include "lua/bindings-network.h"
@@ -187,6 +188,7 @@ namespace
 		NetWorm::classID = m_control->ZCom_registerClass("worm",0);
 		BasePlayer::classID = m_control->ZCom_registerClass("player",0);
 		Game::classID = m_control->ZCom_registerClass("game",0);
+		Particle::classID = m_control->ZCom_registerClass("particle",ZCOM_CLASSFLAG_ANNOUNCEDATA);
 	}
 	
 	std::string setProxy(std::list<std::string> const& args) 

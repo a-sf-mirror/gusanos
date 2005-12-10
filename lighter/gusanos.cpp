@@ -106,20 +106,28 @@ int main(int argc, char **argv)
 {
 
 	float fadeDistance= 200;
+	float prob = 1;
 
 	/* Broken
 	for(int i = 0; i < argc; ++i)
 	{
 		const char* arg = argv[i];
-		if(arg[0] == '-f')
+		if(arg[0] == '-')
 		{
 			switch(arg[1])
 			{
-				case 'i':
+				case 'f':
 					if(++i >= argc)
 						break;
 						
 					fadeDistance = cast<float>(argv[i]);
+				break;
+				
+				case 'p':
+					if(++i >= argc)
+						break;
+						
+					prob = cast<float>(argv[i]);
 				break;
 			}
 		}
@@ -220,23 +228,27 @@ int main(int argc, char **argv)
 			{
 				int color = 0;
 				float minDistanceSqr = -1;
+				int appliedCount = 0;
 				for ( int n = 0; n < lightSources.size() ; ++n )
 				{
-					
-					if ( !level.preciseTrace( lightSources[n].x+0.5f, lightSources[n].y + 0.5f, x, y, pred ) )
+					if ( rnd() < prob )
 					{
-						float tmpDist = ( Vec(lightSources[n]) - Vec(x,y) ).lengthSqr();
-						if ( tmpDist < minDistanceSqr || minDistanceSqr < 0 ) minDistanceSqr = tmpDist;
-						color += 255;
+						++appliedCount;
+						if ( !level.preciseTrace( lightSources[n].x+0.5f, lightSources[n].y + 0.5f, x, y, pred ) )
+						{
+							float tmpDist = ( Vec(lightSources[n]) - Vec(x,y) ).lengthSqr();
+							if ( tmpDist < minDistanceSqr || minDistanceSqr < 0 ) minDistanceSqr = tmpDist;
+							color += 255;
+						}
 					}
 				}
 				if ( color != 0 )
 				{
-					float fade = 1 - sqrt(minDistanceSqr)/200;
+					float fade = 1 - minDistanceSqr/(fadeDistance*fadeDistance);
 					//float fade = sqrt( 1 / (sqrt(minDistanceSqr)*0.1f) );
 					if ( fade < 0 ) fade = 0;
 					color *= fade;
-					color /= lightSources.size();
+					color /= appliedCount;
 					if ( color > 255 ) color = 255;
 				}
 				putpixel( lightmap,x,y,makecol(color,color,color) );

@@ -17,6 +17,7 @@
 #include "parser.h"
 #include "detect_event.h"
 #include "timer_event.h"
+#include "network.h"
 
 #include "particle.h"
 #include "simple_particle.h"
@@ -37,9 +38,31 @@ using namespace std;
 
 ResourceList<PartType> partTypeList;
 
+void newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle )
+{
+	assert(type->needsNode);
+	
+	Particle* particle = new Particle(type, pos_, spd_, dir, owner, angle);
+	particle->assignNetworkRole( false );
+	
+#ifdef USE_GRID
+	if(type->colLayer != Grid::NoColLayer)
+		game.objects.insert( particle, type->colLayer, type->renderLayer);
+	else
+		game.objects.insert( particle, type->renderLayer);
+#else
+	game.objects.insert( type->colLayer, type->renderLayer, particle );	
+#endif
+}
+
 void newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
-	BaseObject* particle = new Particle(type, pos_, spd_, dir, owner, angle);
+	if( type->needsNode && network.isClient() ) return;
+	
+	Particle* particle = new Particle(type, pos_, spd_, dir, owner, angle);
+	
+	if ( type->needsNode && network.isHost() )
+		particle->assignNetworkRole( true );
 	
 #ifdef USE_GRID
 	if(type->colLayer != Grid::NoColLayer)
@@ -77,7 +100,7 @@ void newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(
 #endif
 
 PartType::PartType()
-: newParticle(0), wupixels(0)
+: ResourceBase(), newParticle(0), wupixels(0)
 , invisible(false)
 {
 	gravity			= 0;
@@ -96,6 +119,11 @@ PartType::PartType()
 	colLayer		= 0;
 	health			= 100;
 	radius			= 0;
+	
+	syncPos = false;
+	syncSpd = false;
+	syncAngle = false;
+	needsNode = false;
 	
 	renderLayer = Grid::WormRenderLayer;
 #ifndef DEDSERV
@@ -148,7 +176,8 @@ bool PartType::isSimpleParticleType()
 	|| damping != 1.f
 	|| acceleration != 0.f || !groundCollision
 	|| death || timer.size() > 1 || line2Origin
-	|| detectRanges.size() > 0)
+	|| detectRanges.size() > 0
+	|| needsNode )
 	{
 		return false;
 	}
@@ -257,6 +286,10 @@ bool PartType::load(fs::path const& filename)
 	animOnGround = parser.getBool("anim_on_ground");
 	renderLayer = parser.getInt("render_layer", Grid::WormRenderLayer);
 	colLayer = parser.getInt("col_layer", 0);
+	
+	syncPos = parser.getBool("sync_pos", false);
+	syncSpd = parser.getBool("sync_spd", false);
+	syncAngle = parser.getBool("sync_angle", false);
 	
 	animDuration = parser.getInt("anim_duration", 100);
 	gravity = parser.getDouble("gravity", 0.0);
@@ -372,6 +405,8 @@ bool PartType::load(fs::path const& filename)
 		}
 	}
 	
+	needsNode = syncPos || syncSpd || syncAngle;
+	
 	if(isSimpleParticleType())
 	{
 #ifndef DEDSERV
@@ -406,13 +441,6 @@ bool PartType::load(fs::path const& filename)
 	else
 		colLayer = Grid::NoColLayer;
 			
-/*
-#ifndef DEDSERV
-	else if ( var == "light_radius" ) lightHax = genLight( cast<int>(val) );
-#else
-	else if ( var == "light_radius" ) ;
-#endif
-*/
 	return true;
 }
 

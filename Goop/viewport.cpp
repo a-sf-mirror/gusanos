@@ -166,6 +166,9 @@ void Viewport::render(BasePlayer* player)
 	}
 #endif
 
+	if(gfx.darkMode)
+	drawSprite_mult_8(dest, fadeBuffer, 0, 0);
+
 	EACH_CALLBACK(i, wormRender)
 	{
 		for(list<BasePlayer*>::iterator playerIter = game.players.begin(); playerIter != game.players.end(); ++playerIter)
@@ -183,9 +186,6 @@ void Viewport::render(BasePlayer* player)
 			}
 		}
 	}
-
-	if(gfx.darkMode)	
-		drawSprite_mult_8(dest, fadeBuffer, 0, 0);
 	
 	if(BaseWorm* worm = player->getWorm())
 	{

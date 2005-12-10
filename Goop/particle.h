@@ -7,6 +7,7 @@
 #include "util/angle.h"
 #include "timer_event.h"
 #include <vector>
+#include <zoidcom.h>
 
 #ifndef DEDSERV
 class Sprite;
@@ -19,10 +20,13 @@ class BasePlayer;
 class Particle : public BaseObject
 {
 public:
+
+	static ZCom_ClassID  classID;
 		
 	Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0));
 	~Particle();
 
+	void assignNetworkRole( bool authority );
 #ifndef DEDSERV
 	void draw(Viewport* viewport);
 #endif
@@ -36,6 +40,7 @@ public:
 	void customEvent( size_t index );
 	virtual void pushLuaReference();
 	void damage(float amount, BasePlayer* damager );
+	void remove();
 	
 	int getDir() { return m_dir; }
 	
@@ -68,6 +73,8 @@ private:
 	BaseAnimator* m_animator;
 #endif
 	Vec m_origin;
+	
+	ZCom_Node *m_node;
 };
 
 #endif  // _PARTICLE_H_

@@ -20,6 +20,9 @@
 #include "util/macros.h"
 #include "util/vec.h"
 #include "util/angle.h"
+#include "network.h"
+#include <zoidcom.h>
+#include "posspd_replicator.h"
 
 
 
@@ -31,6 +34,8 @@
 using namespace std;
 
 static boost::pool<> particlePool(sizeof(Particle));
+
+ZCom_ClassID Particle::classID = ZCom_Invalid_ID;
 
 void* Particle::operator new(size_t count)
 {
@@ -53,6 +58,7 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 , m_alphaDest(255), m_sprite(m_type->sprite)
 #endif
 , m_origin(pos_)
+, m_node(0)
 {
 	m_angle.clamp();
 	
@@ -86,6 +92,42 @@ Particle::~Particle()
 #ifndef DEDSERV
 	delete m_animator;
 #endif
+	delete m_node;
+}
+
+void Particle::assignNetworkRole( bool authority )
+{
+	m_node = new ZCom_Node();
+	if (!m_node)
+	{
+		allegro_message("ERROR: Unable to create particle node.");
+	}
+
+	m_node->beginReplicationSetup(0);
+	
+		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, 0, -1, 1000);
+		
+		m_node->addReplicator(new PosSpdReplicator( &posSetup, &pos, &spd, game.level.vectorEncoding, game.level.diffVectorEncoding ), true);
+		
+	m_node->endReplicationSetup();
+
+	ZCom_BitStream *type = new ZCom_BitStream;
+	Encoding::encode(*type, m_type->getIndex(), partTypeList.size());
+	m_node->setAnnounceData( type );
+
+	if( authority )
+	{
+		m_node->setEventNotification(false, false); // Enables the eEvent_Init.
+		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
+			allegro_message("ERROR: Unable to register particle authority node.");
+	}else
+	{
+		m_node->setEventNotification(false, true); // Same but for the remove event.
+		if( !m_node->registerRequestedNode( classID, network.getZControl() ) )
+		allegro_message("ERROR: Unable to register particle requested node.");
+	}
+
+	m_node->applyForZoidLevel(1);
 }
 
 inline Vec getCorrection( const Vec& objPos, const Vec& pointPos, float radius )
@@ -145,6 +187,30 @@ Vec getCorrectionBox( const Vec& objPos, const IVec& boxPos, float radius )
 
 void Particle::think()
 {
+
+	if ( m_node )
+	{
+		while ( m_node->checkEventWaiting() )
+		{
+			eZCom_Event type;
+			eZCom_NodeRole    remote_role;
+			ZCom_ConnID       conn_id;
+			
+			ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
+			switch ( type )
+			{
+				case eZCom_EventRemoved:
+				{
+					deleteMe = true;
+				}
+				break;
+				
+				default: break;
+			}
+		}
+	}
+	if ( deleteMe ) return;
+	
 	for ( int i = 0; i < m_type->repeat; ++i)
 	{
 		if ( m_health <= 0 && m_type->death )
@@ -286,6 +352,14 @@ void Particle::customEvent( size_t index )
 void Particle::damage( float amount, BasePlayer* damager )
 {
 	m_health -= amount;
+}
+
+void Particle::remove()
+{
+	if ( !m_node || m_node->getRole() == eZCom_RoleAuthority )
+	{
+		deleteMe = true;
+	}
 }
 
 #ifndef DEDSERV
