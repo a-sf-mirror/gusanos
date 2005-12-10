@@ -6,7 +6,7 @@
 #include "util/vec.h"
 #include "encoding.h"
 #include <utility>
-
+#include <stdexcept>
 
 #define COMPACT_FLOATS
 
@@ -26,7 +26,14 @@ public:
 	VectorReplicator(ZCom_ReplicatorSetup *_setup, Vec *_data, Encoding::VectorEncoding& encoding_);
 	
 	// TODO: Implement this for safeness sake
-	ZCom_Replicator* Duplicate(ZCom_Replicator *_dest) { return NULL; } 
+	ZCom_Replicator* Duplicate(ZCom_Replicator *_dest)
+	{
+		if(_dest)
+			*_dest = *this;
+		else
+			return new VectorReplicator(*this);
+		return 0;
+	}
 	
 	bool checkState();
 	

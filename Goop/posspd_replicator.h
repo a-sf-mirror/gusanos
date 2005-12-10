@@ -6,7 +6,7 @@
 #include "util/vec.h"
 #include "encoding.h"
 #include <utility>
-
+#include <stdexcept>
 
 #define COMPACT_FLOATS
 
@@ -34,7 +34,14 @@ class PosSpdReplicator : public ZCom_ReplicatorBasic
 		PosSpdReplicator(ZCom_ReplicatorSetup *_setup, Vec *pos, Vec *spd, Encoding::VectorEncoding& encoding_, Encoding::DiffVectorEncoding& diffEncoding_);
 	
 	// TODO: Implement this for safeness sake
-		ZCom_Replicator* Duplicate(ZCom_Replicator *_dest) { return NULL; } 
+		ZCom_Replicator* Duplicate(ZCom_Replicator *_dest)
+		{
+			if(_dest)
+				*_dest = *this;
+			else
+				return new PosSpdReplicator(*this);
+			return 0;
+		}
 	
 		bool checkState();
 	

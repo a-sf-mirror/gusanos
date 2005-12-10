@@ -4,7 +4,7 @@
 #include <climits>
 #include <iostream>
 #include <zoidcom.h>
-//#include "vec.h"
+#include <stdexcept>
 
 template<class T>
 class BasicAngle
@@ -210,7 +210,14 @@ public:
 	}
 	
 	// TODO: Implement this for safeness sake
-	ZCom_Replicator* Duplicate(ZCom_Replicator *_dest) { return 0; } 
+	ZCom_Replicator* Duplicate(ZCom_Replicator *_dest)
+	{
+		if(_dest)
+			*_dest = *this;
+		else
+			return new BasicAngleReplicator(*this);
+		return 0;
+	}
 	
 	bool checkState()
 	{

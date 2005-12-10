@@ -59,6 +59,7 @@ public:
 		CHAT_MSG,
 		COLOR_CHANGE,
 		SELECT_WEAPONS,
+		TEAM_CHANGE,
 		//
 		EVENT_COUNT,
 	};
@@ -141,6 +142,7 @@ public:
 	
 	std::string m_name;
 	int colour;
+	int team;
 
 	LuaReference luaReference;
 	LuaReference luaData;
@@ -161,6 +163,8 @@ protected:
 	
 	void changeColor_( int colour_ );
 	void colorChangePetition_( int colour_ );
+	void changeTeam_( int team_ );
+	void teamChangePetition_( int team_ );
 
 	BaseWorm* m_worm;
 	shared_ptr<PlayerOptions> m_options;

@@ -81,11 +81,6 @@ int shootFromObject(lua_State* L, BaseObject* object)
 
 //! Worm inherits Object
 
-/*! Worm:get_player()
-
-	Returns a Player object of the player that owns this worm.
-*/
-
 int l_worm_getPlayer(lua_State* L)
 {
 	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
@@ -266,6 +261,10 @@ int l_baseObject_data(lua_State* L)
 	return 1;
 }
 
+/*! Object:get_player()
+
+	Returns a Player object of the player that owns this object.
+*/
 METHOD(BaseObject, baseObject_getPlayer,
 	if(!p->getOwner())
 		return 0;
@@ -332,7 +331,7 @@ int l_baseObject_shoot(lua_State* L)
 	return shootFromObject(L, object);
 }
 
-/*! Object:getAngle()
+/*! Object:get_angle()
 
 	Returns the current angle of the particle.
 */
@@ -344,7 +343,7 @@ METHOD(BaseObject, baseObject_getAngle,
 
 //! Particle inherits Object
 
-/*! Particle:setAngle(angle)
+/*! Particle:set_angle(angle)
 
 	Changes the angle of the particle to //angle//.
 */
@@ -356,21 +355,39 @@ int l_particle_setAngle(lua_State* L)
 	return 0;
 }
 
+/*! Weapon:is_reloading()
+
+	Returns true if this weapon is reloading.
+*/
+
 METHOD(Weapon, weaponinstr_reloading,
 	context.push(p->reloading);
 	return 1;
 )
 
+/*! Weapon:reload_time()
+
+	Returns the reload time left on this weapon.
+	Does only make sense if is_reloading() is true.
+*/
 METHOD(Weapon, weaponinstr_reload_time,
 	context.push(p->getReloadTime());
 	return 1;
 )
 
+/*! Weapon:ammo()
+
+	Returns the amount of ammo left in this weapon.
+*/
 METHOD(Weapon, weaponinstr_ammo,
 	context.push(p->getAmmo());
 	return 1;
 )
 
+/*! Weapon:type()
+
+	Returns the weapon type in the form of a WeaponType object.
+*/
 METHOD(Weapon, weaponinstr_type,
 	context.pushFullReference(*p->getType(), weaponTypeMetaTable);
 	return 1;

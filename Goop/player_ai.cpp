@@ -92,7 +92,7 @@ bool check_materials( int x1, int y1, int x2, int y2 )
    }
 }
 
-PlayerAI::PlayerAI()
+PlayerAI::PlayerAI(int team_)
 : BasePlayer(shared_ptr<PlayerOptions>(new PlayerOptions("bot")))
 , m_pathSteps(100), m_thinkTime(0)
 , m_target(0)
@@ -101,6 +101,7 @@ PlayerAI::PlayerAI()
 , m_shooting(false)
 {
 	colour = universalColor(rndInt(256), rndInt(256), rndInt(256));
+	team = team_;
 }
 
 PlayerAI::~PlayerAI()
@@ -123,6 +124,7 @@ void PlayerAI::getTarget()
 	for ( Grid::iterator worm = game.objects.beginColLayer(Grid::WormColLayer); worm; ++worm)
 	{
 		if ( worm->getOwner() != this )
+		if ( !game.options.teamPlay || (worm->getOwner()->team != team || team == -1) )
 		if ( BaseWorm * tmpWorm = dynamic_cast<BaseWorm*>(&*worm) )
 		if ( tmpWorm->isActive() )
 		{

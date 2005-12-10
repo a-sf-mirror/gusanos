@@ -917,7 +917,7 @@ void BaseWorm::respawn()
 {
 	// Check if its already allowed to respawn
 	if ( m_timeSinceDeath > game.options.minRespawnTime )
-		respawn( game.level.getSpawnLocation() );
+		respawn( game.level.getSpawnLocation( m_owner ) );
 }
 
 void BaseWorm::respawn( const Vec& newPos)

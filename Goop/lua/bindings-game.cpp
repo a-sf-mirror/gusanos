@@ -95,6 +95,15 @@ LMETHOD(BasePlayer, player_name,
 	return 1;
 )
 
+/*! Player:team()
+
+	Returns the team number of the player.
+*/
+LMETHOD(BasePlayer, player_team,
+	context.push(p->team);
+	return 1;
+)
+
 /*! Player:data()
 
 	Returns a lua table associated with this player.
@@ -248,6 +257,7 @@ void initGame()
 		("kills", l_player_kills)
 		("deaths", l_player_deaths)
 		("name", l_player_name)
+		("team", l_player_team)
 		("say", l_player_say)
 		("data", l_player_data)
 		("select_weapons", l_player_selectWeapons)

@@ -6,6 +6,7 @@
 #include "viewport.h"
 #endif
 #include "material.h"
+#include "base_player.h"
 #include "sprite_set.h"
 #include "sprite.h"
 #include "util/vec.h"
@@ -277,7 +278,8 @@ void Level::draw(BITMAP* where, int x, int y)
 		{
 			foreach( s, m_config->spawnPoints )
 			{
-				circle( where, s->pos.x - x, s->pos.y - y, 4, makecol( 255,0,0 ) );
+				int c = (s->team == 0 ? makecol( 255,0,0 ) : makecol( 0, 255, 0 ));
+				circle( where, s->pos.x - x, s->pos.y - y, 4, c );
 			}
 		}
 	}
@@ -384,20 +386,49 @@ bool Level::applyEffect(LevelEffect* effect, int drawX, int drawY )
 	return returnValue;
 }
 
-Vec Level::getSpawnLocation()
+namespace
 {
-	Vec pos;
-	if ( m_config && !m_config->spawnPoints.empty() )
+	bool canPlayerRespawn(BasePlayer* player, SpawnPoint const& point)
 	{
-		pos = m_config->spawnPoints[ rndInt( m_config->spawnPoints.size() ) ].pos;
-	}else
+		if(game.options.teamPlay && point.team != -1 && point.team != player->team)
+			return false;
+		return true;
+	}
+}
+
+Vec Level::getSpawnLocation(BasePlayer* player)
+{
+	if(m_config)
 	{
-		pos = Vec(rnd() * material->w, rnd()*material->h);
-		while ( !getMaterial( static_cast<int>(pos.x), static_cast<int>(pos.y) ).worm_pass )
+		int alt = 0;
+		foreach(i, m_config->spawnPoints)
 		{
-			pos = Vec(rnd() * material->w, rnd()*material->h);
+			if(canPlayerRespawn(player, *i))
+				++alt;
+		}
+		
+		if(alt > 0)
+		{
+			int idx = rndInt(alt);
+			foreach(i, m_config->spawnPoints)
+			{
+				if(canPlayerRespawn(player, *i) && --idx < 0)
+				{
+					return i->pos;
+				}
+			}
 		}
 	}
+	
+	Vec pos;
+		
+	//pos = Vec(rnd() * material->w, rnd()*material->h);
+	
+	do
+	{
+		pos = Vec(rnd() * material->w, rnd()*material->h);
+	} while ( !getMaterial( static_cast<int>(pos.x), static_cast<int>(pos.y) ).worm_pass );
+
 	return pos;
 }
 

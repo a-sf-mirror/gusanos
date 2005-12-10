@@ -46,10 +46,12 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		m_node->addReplicator(new VectorReplicator( &nrSetup, &m_ninjaRope->getPosReference(), game.level.vectorEncoding ), true);
 		
 		m_node->addReplicationFloat ((zFloat*)&m_ninjaRope->getLengthReference(), 16, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
+		//m_node->addReplicationInt ((zS32*)&m_ninjaRope->getLengthReference(), 32, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH);
 		
 		static ZCom_ReplicatorSetup angleSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH );
 				
 		m_node->addReplicationFloat ((zFloat*)&health, 16, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+		//m_node->addReplicationInt ((zS32*)&health, 32, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
 		
 		m_node->addReplicator(new AngleReplicator( &angleSetup, &aimAngle), true );
 		
@@ -68,7 +70,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	{
 		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
-		allegro_message("ERRORBasePlayer: Unable to register worm authority node.");
+			allegro_message("ERROR: Unable to register worm authority node.");
 	}else
 	{
 		if( !m_node->registerRequestedNode( classID, network.getZControl() ) )

@@ -20,6 +20,7 @@ using boost::array;
 class Sprite;
 class LevelEffect;
 class Viewport;
+class BasePlayer;
 struct BlitterContext;
 
 struct WaterParticle
@@ -43,11 +44,14 @@ struct WaterParticle
 
 struct SpawnPoint
 {
-	SpawnPoint( const Vec& pos_ ) : pos( pos_ )
+	SpawnPoint( const Vec& pos_, int team_ )
+	: pos( pos_ ), team(team_)
 	{
 	}
 	Vec pos;
-	// Team and more poop later
+	int team;
+	
+	// more poop later
 };
 
 struct LevelConfig
@@ -91,7 +95,7 @@ class Level
 	/*
 	const Material& getMaterial(int x, int y);*/
 	
-	Vec getSpawnLocation();
+	Vec getSpawnLocation(BasePlayer* player);
 	
 	Material const& getMaterial(unsigned int x, unsigned int y) const
 	{

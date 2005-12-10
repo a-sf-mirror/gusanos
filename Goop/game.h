@@ -70,6 +70,7 @@ struct Options
 	int splitScreenVar;
 	bool splitScreen;
 	std::string rConPassword;
+	int teamPlay;
 	
 	int showMapDebug;
 };
@@ -152,9 +153,9 @@ public:
 	void refreshLevels();
 	bool changeLevel(const std::string& level, bool refresh = true);
 	bool changeLevelCmd(const std::string& level);
-	void addBot();
+	void addBot( int team = -1 );
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
-	BasePlayer* addPlayer( PLAYER_TYPE player );
+	BasePlayer* addPlayer( PLAYER_TYPE player, int team = -1 );
 	BaseWorm* addWorm(bool isAuthority); // Creates a worm class depending on the network condition.
 	
 	void assignNetworkRole( bool authority );

@@ -11,7 +11,7 @@
 class PlayerAI : public BasePlayer
 {
 	public:
-	PlayerAI();
+	PlayerAI(int team_);
 	~PlayerAI();
 	void getTarget();	//Find target
 	void getPath();		//Create path for AI worm to follow (to get to target)

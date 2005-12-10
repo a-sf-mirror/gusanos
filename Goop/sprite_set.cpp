@@ -211,31 +211,33 @@ void SpriteSet::drawSkinnedBox(BITMAP* b, BlitterContext& blitter, Rect const& r
 		
 	int x, y;
 
-	blitter.rectfill(b, rect.x1 + skinWidth, rect.y1 + skinHeight, rect.x2 - skinWidth - 1, rect.y2 - skinHeight - 1, backgroundColor);
-	for(y = rect.y1 + skinHeight; y < rect.y2 - skinHeight * 2; y += skinHeight)
+	blitter.rectfill(b, rect.x1 + skinWidth, rect.y1 + skinHeight, rect.x2 - skinWidth, rect.y2 - skinHeight, backgroundColor);
+	int lim = rect.y2 - skinHeight * 2 + 1;
+	for(y = rect.y1 + skinHeight; y < lim; y += skinHeight)
 	{
 		getSprite(4)->draw(b, rect.x1, y, blitter);
-		getSprite(5)->draw(b, rect.x2 - skinWidth, y, blitter);
+		getSprite(5)->draw(b, rect.x2 - skinWidth + 1, y, blitter);
 	}
 	
-	int cutOff = skinHeight*2 - rect.y2 + y;
+	int cutOff = y - lim;
 	getSprite(4)->drawCut(b, rect.x1, y, blitter, 0, 0, 0, cutOff, 0);
-	getSprite(5)->drawCut(b, rect.x2 - skinWidth, y, blitter, 0, 0, 0, cutOff, 0);
+	getSprite(5)->drawCut(b, rect.x2 - skinWidth + 1, y, blitter, 0, 0, 0, cutOff, 0);
 	
-	for(x = rect.x1 + skinWidth; x < rect.x2 - skinWidth * 2; x += skinWidth)
+	lim = rect.x2 - skinWidth * 2 + 1;
+	for(x = rect.x1 + skinWidth; x < lim; x += skinWidth)
 	{
 		getSprite(6)->draw(b, x, rect.y1, blitter);
-		getSprite(7)->draw(b, x, rect.y2 - skinHeight, blitter);
+		getSprite(7)->draw(b, x, rect.y2 - skinHeight + 1, blitter);
 	}
 	
-	cutOff = skinWidth*2 - rect.x2 + x;
+	cutOff = x - lim;
 	getSprite(6)->drawCut(b, x, rect.y1, blitter, 0, 0, 0, 0, cutOff);
-	getSprite(7)->drawCut(b, x, rect.y2 - skinWidth, blitter, 0, 0, 0, 0, cutOff);
+	getSprite(7)->drawCut(b, x, rect.y2 - skinWidth + 1, blitter, 0, 0, 0, 0, cutOff);
 	
 	getSprite(0)->draw(b, rect.x1, rect.y1, blitter);
-	getSprite(1)->draw(b, rect.x2 - skinWidth, rect.y1, blitter);
-	getSprite(2)->draw(b, rect.x1, rect.y2 - skinHeight, blitter);
-	getSprite(3)->draw(b, rect.x2 - skinWidth, rect.y2 - skinHeight, blitter);
+	getSprite(1)->draw(b, rect.x2 - skinWidth + 1, rect.y1, blitter);
+	getSprite(2)->draw(b, rect.x1, rect.y2 - skinHeight + 1, blitter);
+	getSprite(3)->draw(b, rect.x2 - skinWidth + 1, rect.y2 - skinHeight + 1, blitter);
 }
 
 #endif

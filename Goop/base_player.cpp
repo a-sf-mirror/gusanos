@@ -33,6 +33,7 @@ BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options)
 , m_node(0), m_interceptor(0)
 , m_isAuthority(false)
 , colour(options->colour)
+, team(options->team)
 , luaData(0)
 {
 	localChangeName(m_options->name);
@@ -132,6 +133,7 @@ void BasePlayer::think()
 							stats->deaths = data->getInt(32);
 							m_name = data->getStringStatic();
 							colour = data->getInt(24);
+							team = data->getSignedInt(8);
 							m_options->uniqueID = static_cast<unsigned int>(data->getInt(32));
 						}
 						break;
@@ -145,6 +147,12 @@ void BasePlayer::think()
 						case COLOR_CHANGE:
 						{
 							changeColor_(data->getInt(24));
+						}
+						break;
+						
+						case TEAM_CHANGE:
+						{
+							changeTeam_(data->getSignedInt(8));
 						}
 						break;
 						
@@ -219,6 +227,19 @@ void BasePlayer::think()
 		}
 		else
 			changeColor_(m_options->colour);
+	}
+	
+	if( m_options->teamChanged() )
+	{
+		if ( m_node )
+		{
+			if(m_isAuthority)
+				changeTeam_(m_options->team);
+			else
+				teamChangePetition_(m_options->team);
+		}
+		else
+			changeTeam_(m_options->team);
 	}
 }
 
@@ -343,6 +364,36 @@ void BasePlayer::colorChangePetition_( int colour_ )
 	}
 }
 
+void BasePlayer::changeTeam_( int team_ )
+{
+	if(m_isAuthority)
+	{
+		team = team_;
+		if ( m_node )
+		{
+			ZCom_BitStream *data = new ZCom_BitStream;
+			addEvent(data, TEAM_CHANGE);
+			data->addSignedInt( team, 8 );
+			m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+		}
+	}
+	else
+	{
+		team = team_;
+	}
+}
+
+void BasePlayer::teamChangePetition_( int team_ )
+{
+	if ( m_node )
+	{
+		ZCom_BitStream *data = new ZCom_BitStream;
+		addEvent(data, TEAM_CHANGE);
+		data->addSignedInt( team_, 8 );
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, data);
+	}
+}
+
 void BasePlayer::sendChatMsg( std::string const& message )
 {
 	game.displayChatMsg( m_name, message );
@@ -404,7 +455,7 @@ void BasePlayer::assignNetworkRole( bool authority )
 		allegro_message("ERROR: Unable to create player node.");
 	}
 
-	m_node->beginReplicationSetup(0);
+	m_node->beginReplicationSetup(1);
 		//m_node->addReplicationInt( (zS32*)&deaths, 32, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL , 0);
 		m_node->setInterceptID( static_cast<ZCom_InterceptID>(WormID) );
 		m_node->addReplicationInt( (zS32*)&m_wormID, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , INVALID_NODE_ID);
@@ -445,6 +496,7 @@ void BasePlayer::sendSyncMessage( ZCom_ConnID id )
 	data->addInt(stats->deaths, 32);
 	data->addString( m_name.c_str() );
 	data->addInt(colour, 24);
+	data->addSignedInt(static_cast<int>(m_options->team), 8);
 	data->addInt(static_cast<int>(m_options->uniqueID), 32);
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }

@@ -66,13 +66,14 @@ namespace{
 			const_foreach(sp, tmpProp->toList())
 			{
 				OmfgScript::TokenBase& v = **sp;
-				if ( v.isList() )
+				if ( v.assertList() )
 				{
 					std::list<OmfgScript::TokenBase*> const& spParams = v.toList();
 					std::list<OmfgScript::TokenBase*>::const_iterator iter = spParams.begin();
 					
 					float x = 0;
 					float y = 0;
+					int team = -1;
 					
 					if ( iter != spParams.end() )
 					{
@@ -84,9 +85,14 @@ namespace{
 						y = (*iter)->toDouble();
 						++iter;
 					}
+					if ( iter != spParams.end() )
+					{
+						team = (*iter)->toInt();
+						++iter;
+					}
 					
-					returnConf->spawnPoints.push_back(SpawnPoint( Vec(x,y) ));
-				}// TODO: else error or sth?
+					returnConf->spawnPoints.push_back(SpawnPoint( Vec(x,y), team ));
+				}
 			}
 		}
 		

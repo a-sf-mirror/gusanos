@@ -105,6 +105,10 @@ private:
 	LuaReference luaReference;
 };
 
+/*! tcp_connect(addr, port)
+	
+	Returns a TCPSocket object connecting to //addr// on port //port//.
+*/
 int l_tcp_connect(lua_State* L)
 {
 	LuaContext context(L);
@@ -142,6 +146,10 @@ int l_tcp_connect(lua_State* L)
 	return 1;
 }
 
+/*! TCPSocket:send(data)
+	
+	Sends //data// on the socket.
+*/
 LMETHOD(LuaSocket, tcp_send,
 	size_t len;
 	char const* s = lua_tolstring(context, 2, &len);
@@ -150,12 +158,19 @@ LMETHOD(LuaSocket, tcp_send,
 	return 0;
 )
 
+/*! TCPSocket:think()
+	
+	Processes data sending and recieving.
+	If there's data recieved, it's returned as a string.
+	If there's no data recieved, nil is returned. 
+	Must be called regularly for data sends and connection to finish.
+*/
 LMETHOD(LuaSocket, tcp_think,
 	p->think();
 	if(p->begin() == p->end())
 		return 0;
 	DLOG((void *)p->begin() << ", " << (void *)p->end() << ", size: " << (p->end() - p->begin()));
-	lua_pushlstring(context, p->begin(), p->end() - p->begin()); 
+	lua_pushlstring(context, p->begin(), p->end() - p->begin());
 	return 1;
 )
 

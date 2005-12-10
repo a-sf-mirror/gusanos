@@ -609,20 +609,25 @@ struct Handler
 		
 		s <<
 		"void fill(size_t s) {\n"
+		//"std::cout << \"fill begin (\" << (void*)begin << \", \" << (void*)marker << \", \" << (void*)curp << \", \" << (void*)limit << \")\\n\";"
 		"size_t l = limit - begin;\n"
 		"if(buffer)\n"
 		"	memmove(buffer, begin, l);\n" // Move the beginning of the token to the beginning of the buffer
 		"size_t newSize = std::max(static_cast<size_t>(1024), l + s);\n"
 		"buffer = (char *)realloc(buffer, newSize);\n"
 		"size_t toRead = newSize - l;\n"
-		"size_t amountRead = self->read(&buffer[l], toRead);"
-		"if(amountRead < toRead) { buffer[l+amountRead] = '\\0'; ++amountRead; }" // Add a null char at the end and increase read size
-		"newSize = l + amountRead;\n"
+		//"std::cout << \"to read: \" << toRead;\n"
+		"size_t amountRead = self->read(&buffer[l], toRead);\n"
+		//"std::cout << \", amount read: \" << amountRead << '\\n';\n"
+		"if(amountRead < toRead) { memset(&buffer[l+amountRead], 0, toRead-amountRead); }\n" // Add null chars at the end
+		//"std::cout << \"fill size: \" << newSize << '\\n';\n"
 		"ptrdiff_t offs = buffer - begin;\n"
 		"curp += offs;\n"
 		"marker += offs;\n"
 		"begin = buffer;\n"
-		"limit = buffer + newSize;\n}\n";
+		"limit = buffer + newSize;\n"
+		//"std::cout << \"fill end (\" << (void*)begin << \", \" << (void*)marker << \", \" << (void*)curp << \", \" << (void*)limit << \")\" << std::endl;"
+		"}\n";
 		
 		
 		/*
@@ -709,7 +714,7 @@ struct Handler
 		}
 		
 		s <<
-		name << "() : cur(-1), begin(0), buffer(0), curp(0), limit(0), line(1), syncTokens(false), error(false) {\n";
+		name << "() : cur(-1), begin(0), marker(0), buffer(0), curp(0), limit(0), line(1), syncTokens(false), error(false) {\n";
 		
 		foreach(i, tokensets)
 		{

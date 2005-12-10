@@ -3,6 +3,7 @@
 
 #include <zoidcom.h>
 #include <string>
+#include <stdexcept>
 
 class STLStringReplicator : public ZCom_ReplicatorBasic
 {
@@ -16,7 +17,14 @@ class STLStringReplicator : public ZCom_ReplicatorBasic
 		STLStringReplicator(ZCom_ReplicatorSetup *_setup, std::string *_data);
 	
 	// TODO: Implement this for safeness sake
-		ZCom_Replicator* Duplicate(ZCom_Replicator *_dest) { return NULL; } 
+		ZCom_Replicator* Duplicate(ZCom_Replicator *_dest)
+		{
+			if(_dest)
+				*_dest = *this;
+			else
+				return new STLStringReplicator(*this);
+			return 0;
+		}
 	
 		bool checkState();
 	

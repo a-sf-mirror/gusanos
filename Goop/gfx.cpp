@@ -295,6 +295,7 @@ void Gfx::updateScreen()
 								
 							}
 							
+							src = (Pixel32 *)buffer->line[y];
 							dest1 = bmp_write_line(screen, y*2 + 1);
 							
 							for(int x = 0; x < 320; ++x)

@@ -149,7 +149,14 @@ string gameCmd(const list<string> &args)
 
 string addbotCmd(const list<string> &args)
 {
-	game.addBot();
+	int team = -1;
+	list<string>::const_iterator i = args.begin();
+	if(i != args.end())
+	{
+		team = cast<int>(*i);
+		++i;
+	}
+	game.addBot(team);
 	return "";
 }
 
@@ -286,6 +293,7 @@ void Options::registerInConsole()
 
 		("SV_MAX_RESPAWN_TIME", &maxRespawnTime, -1 )
 		("SV_MIN_RESPAWN_TIME", &minRespawnTime, 100 )
+		("SV_TEAM_PLAY", &teamPlay, 0)
 
 		("HOST", &host, 0)
 		
@@ -791,9 +799,10 @@ void Game::assignNetworkRole( bool authority )
 		allegro_message("ERROR: Unable to create game node.");
 	}
 
-	m_node->beginReplicationSetup(0);
+	m_node->beginReplicationSetup(2);
 		//m_node->addReplicationInt( (zS32*)&deaths, 32, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL , 0);
 	m_node->addReplicationInt( (zS32*)&options.worm_gravity, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_RARELYCHANGED, ZCOM_REPRULE_AUTH_2_ALL );
+	m_node->addReplicationInt( (zS32*)&options.teamPlay, 1, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_RARELYCHANGED, ZCOM_REPRULE_AUTH_2_ALL );
 	
 	m_node->endReplicationSetup();
 
@@ -915,7 +924,7 @@ void Game::insertExplosion( Explosion* explosion )
 #endif
 }
 
-BasePlayer* Game::addPlayer( PLAYER_TYPE type )
+BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 {
 	switch(type)
 	{
@@ -956,7 +965,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type )
 		
 		case AI:
 		{
-			PlayerAI* player = LUA_NEW(PlayerAI, ());
+			PlayerAI* player = LUA_NEW(PlayerAI, (team));
 			players.push_back( player );
 			return player;
 		}
@@ -989,12 +998,12 @@ BaseWorm* Game::addWorm(bool isAuthority)
 	return returnWorm;
 }
 
-void Game::addBot()
+void Game::addBot(int team)
 {
 	if ( loaded && level.isLoaded() )
 	{
 		BaseWorm* worm = addWorm(true); 
-		BasePlayer* player = addPlayer(AI);
+		BasePlayer* player = addPlayer(AI, team);
 		if ( network.isHost() ) player->assignNetworkRole(true);
 		player->assignWorm(worm);
 	}

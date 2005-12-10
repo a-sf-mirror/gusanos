@@ -71,7 +71,9 @@ inline void encodeEliasGamma(ZCom_BitStream& stream, unsigned int n)
 		throw std::runtime_error("encodeEliasGamma can't encode 0");
 		
 	int prefix = bitsOf(n);
-	stream.addInt(0, prefix - 1);
+
+	for(int i = 0; i < prefix - 1; ++i)
+		encodeBit(stream, 0);
 		
 	eliasCodedBits += prefix*2 - 1;
 	++eliasInvokations;

@@ -30,6 +30,7 @@ void Client::requestPlayer(PlayerOptions const& playerOptions)
 	req->addInt(Network::PLAYER_REQUEST,8);
 	req->addString( playerOptions.name.c_str() );
 	req->addInt(playerOptions.colour, 24);
+	req->addSignedInt(playerOptions.team, 8);
 	req->addInt(playerOptions.uniqueID, 32);
 	std::cerr << "Sent ID: " << playerOptions.uniqueID << std::endl;
 	ZCom_sendData( network.getServerID(), req, eZCom_ReliableOrdered );
@@ -67,32 +68,34 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 	switch( _reason )
 	{
 		case eZCom_ClosedDisconnect:
-		Network::DConnEvents dcEvent = static_cast<Network::DConnEvents>( _reasondata.getInt(8) );
-		switch( dcEvent )
 		{
-			case Network::ServerMapChange:
+			Network::DConnEvents dcEvent = static_cast<Network::DConnEvents>( _reasondata.getInt(8) );
+			switch( dcEvent )
 			{
-				console.addLogMsg("* SERVER CHANGED MAP");
-				network.reconnect();
-			}
-			break;
-			case Network::Quit:
-			{
-				console.addLogMsg("* CONNECTION CLOSED BY SERVER");
-			}
-			break;
-			case Network::Kick:
-			{
-				console.addLogMsg("* YOU WERE KICKED");
-			}
-			break;
-			default:
-			{
-				console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");
+				case Network::ServerMapChange:
+				{
+					console.addLogMsg("* SERVER CHANGED MAP");
+					network.reconnect();
+				}
+				break;
+				case Network::Quit:
+				{
+					console.addLogMsg("* CONNECTION CLOSED BY SERVER");
+				}
+				break;
+				case Network::Kick:
+				{
+					console.addLogMsg("* YOU WERE KICKED");
+				}
+				break;
+				default:
+				{
+					console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");
+				}
+				break;
 			}
 			break;
 		}
-		break;
 		
 		case eZCom_ClosedTimeout:
 			console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");

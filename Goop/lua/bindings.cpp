@@ -106,6 +106,10 @@ int l_connect(lua_State* L)
 	return 0;
 }
 
+/*! host(map)
+
+	Hosts a networked game with the current mod and map //map//.
+*/
 int l_host(lua_State* L)
 {
 	char const* map = lua_tostring(L, 1);
@@ -297,6 +301,12 @@ void serverListCallb(lua_State* L, LuaReference ref, HTTP::Request* req)
 	lua.call(1, 0);
 }
 
+/*! fetch_server_list(handler)
+
+	Fetches the server list from the master server and calls
+	//handler// with one parameter containing an array of
+	the servers.
+*/
 int l_fetch_server_list(lua_State* L)
 {
 	lua_pushvalue(L, 1);

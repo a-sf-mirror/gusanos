@@ -64,6 +64,16 @@ void startGame(const std::string&)
     //menu = false;
 }
 
+/*
+std::ostream& operator<<(std::ostream& s, ZCom_BitStream::BitPos const& v)
+{
+	s << (v.pos * 8 + v.bit);
+	return s;
+}
+
+#include <bitset>
+*/
+
 int main(int argc, char **argv)
 {
 	game.init(argc, argv);

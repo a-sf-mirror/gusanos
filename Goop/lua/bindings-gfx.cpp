@@ -65,6 +65,12 @@ int l_gfx_set_alpha(lua_State* L)
 	return 0;
 }
 
+/*! gfx_set_add(alpha)
+
+	Activates the add blender.
+	//alpha// is a value in [0, 255] that specifies the scaling factor
+	of things drawn after this is called.
+*/
 int l_gfx_set_add(lua_State* L)
 {
 #ifndef DEDSERV
@@ -98,11 +104,19 @@ METHOD(Viewport, viewport_getBitmap,
 	return 1;
 )
 
+/*! Bitmap:w()
+
+	Returns the width of this bitmap.
+*/
 METHOD(BITMAP, bitmap_w,
 	lua_pushinteger(context, p->w);
 	return 1;
 )
 
+/*! Bitmap:h()
+
+	Returns the width of this bitmap.
+*/
 METHOD(BITMAP, bitmap_h,
 	lua_pushinteger(context, p->h);
 	return 1;

@@ -45,6 +45,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 		{
 			std::string name = _data.getStringStatic();
 			int colour = _data.getInt(24);
+			int team = _data.getSignedInt(8);
 			unsigned int uniqueID = static_cast<unsigned int>(_data.getInt(32));
 
 			BaseWorm* worm = game.addWorm(true);
@@ -72,6 +73,7 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 			}
 			
 			player->colour = colour;
+			player->team = team;
 			player->localChangeName( name );
 			console.addLogMsg( "* " + player->m_name + " HAS JOINED THE GAME");
 			player->assignNetworkRole(true);

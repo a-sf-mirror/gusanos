@@ -51,6 +51,12 @@ enum FontFlags
 
 #ifndef DEDSERV
 
+/*! sprites_load(name)
+
+	Loads and returns a SpriteSet object of the sprite set with the passed name.
+	
+	If the sprite set couldn't be loaded, nil is returned.
+*/
 int l_sprites_load(lua_State* L)
 {
 	LuaContext context(L);
@@ -66,6 +72,10 @@ int l_sprites_load(lua_State* L)
 	return 1;
 }
 
+/*! SpriteSet:render(bitmap, frame, x, y)
+
+	Draws the frame //frame// of the sprite set on //bitmap// with the pivot at position (x, y).
+*/
 METHOD(SpriteSet, sprites_render,
 	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(context, 2));
 		
@@ -77,6 +87,11 @@ METHOD(SpriteSet, sprites_render,
 	return 0;
 )
 
+/*! SpriteSet:render(bitmap, x1, y1, x2, y2, r, g, b)
+
+	Draws the sprite set as a skinned box with the rectangle (x1, y1) - (x2, y2)
+	and background color (r, g, b).
+*/
 METHOD(SpriteSet, sprites_render_skinned_box,
 	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(context, 2));
 	
@@ -92,6 +107,10 @@ METHOD(SpriteSet, sprites_render_skinned_box,
 	return 0;
 )
 
+/*! SpriteSet:frames()
+
+	Returns the number of frames in this sprite set.
+*/
 METHOD(SpriteSet, sprites_frames,
 	context.push(static_cast<int>(p->getFramesWidth()));
 	return 1;
@@ -118,12 +137,20 @@ int l_font_load(lua_State* L)
 
 	return 1;
 }
-/*! Font:render(bitmap, string, x, y[, r, g, b])
+
+/*! Font:render(bitmap, string, x, y[, r, g, b[, flags]])
 
 	Draws the text 'string' on 'bitmap' at the position (x, y).
 	
 	If (r, g, b) is supplied, it draws the text with that color,
 	otherwise it draws the text white.
+
+	//flags// can be a sum of these values:
+	Font.None : No flags.
+	Font.CenterV : Center the text vertically with y at the middle.
+	Font.CenterH : Center the text horizontally with x at the middle.
+	Font.Shadow : Draw a shadow under the text.
+	Font.Formatting : Draw the text with formatting.
 */
 int l_font_render(lua_State* L)
 {
@@ -241,12 +268,20 @@ int l_weapon_random(lua_State* L)
 	return 1;
 }
 
+/*! weapon_count()
+
+	Returns the total number of weapons.
+*/
 int l_weapon_count(lua_State* L)
 {
 	lua_pushinteger(L, game.weaponList.size());
 	return 1;
 }
 
+/*! WeaponType:next()
+
+	Returns the next weapon type after this one.
+*/
 METHOD(WeaponType, weapon_next,
 	size_t n = p->getIndex() + 1;
 	if(n >= game.weaponList.size())
@@ -255,6 +290,10 @@ METHOD(WeaponType, weapon_next,
 	return 1;
 )
 
+/*! WeaponType:prev()
+
+	Returns the previous weapon type after this one.
+*/
 METHOD(WeaponType, weapon_prev,
 	size_t n = p->getIndex();
 	if(n == 0)
@@ -265,16 +304,28 @@ METHOD(WeaponType, weapon_prev,
 	return 1;
 )
 
+/*! WeaponType:name()
+
+	Returns the name of this weapon type.
+*/
 METHOD(WeaponType, weapon_name,
 	lua_pushstring(context, p->name.c_str());
 	return 1;
 )
 
+/*! WeaponType:reload_time()
+
+	Returns the time it takes for this weapon type to reload.
+*/
 METHOD(WeaponType, weapon_reload_time,
 	context.push(p->reloadTime);
 	return 1;
 )
 
+/*! WeaponType:ammo()
+
+	Returns the amount of ammo for this weapon type when reloaded.
+*/
 METHOD(WeaponType, weapon_ammo,
 	context.push(p->ammo);
 	return 1;
@@ -285,6 +336,10 @@ BINOP(WeaponType, weapon_eq,
 	return 1;
 )
 
+/*! maps()
+
+	Returns an iterator that iterates through all maps.
+*/
 int l_maps(lua_State* L)
 {
 	LuaContext context(L);

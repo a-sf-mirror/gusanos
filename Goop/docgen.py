@@ -179,6 +179,10 @@ for i in os.listdir('.'):
 		
 pathToDocs = sys.argv[1]
 
-os.makedirs(pathToDocs)
+try:
+	os.makedirs(pathToDocs)
+except:
+	pass
+
 
 generate()
