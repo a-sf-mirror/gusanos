@@ -292,6 +292,7 @@ GConsole::GConsole()
 #ifndef DEDSERV
 	m_lockRefCount.assign(0);
 #endif
+	scrolling = false;
 }
 
 //============================= INTERFACE ====================================
@@ -352,6 +353,8 @@ void GConsole::init()
 	;
 	
 	currentCommand = commandsLog.end(); //To workaround a crashbug with uninitialized iterator
+	logRenderPos = log.rbegin();
+	scrolling = false;
 }
 
 void GConsole::shutDown()
@@ -400,7 +403,16 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 		y -= dim.second;
 		m_font->draw(where, e.base(), b.base(), 5, y);
 		
-		for(list<string>::reverse_iterator msgiter = log.rbegin();
+		list<string>::reverse_iterator msgiter;
+		if ( scrolling )
+		{
+			msgiter = logRenderPos;
+		}else
+		{
+			msgiter = log.rbegin();
+		}
+		
+		for(;
 		    msgiter != log.rend() && y > 0;
 		    ++msgiter)
 		{
@@ -451,107 +463,6 @@ void GConsole::render(BITMAP* where, bool fullScreen)
 void GConsole::checkInput()
 {
 	keyHandler.pollKeyboard();
-	
-	/*
-	KeyEvent event = keyHandler.getEvent();
-
-	while (event.type != KEY_EVENT_NONE) // While the event is not an end of list event
-	{
-		
-		// Key Tilde is hardcoded to toogle the console (quake does the same so.. NO COMPLAINTS! :P)
-		if ( (event.type == KEY_EVENT_PRESS) && (event.key == m_consoleKey) )
-		{
-			if ( m_mode == CONSOLE_MODE_INPUT )	// If the console is in input mode toogle to Binding mode
-				m_mode = CONSOLE_MODE_BINDINGS;
-			else											// If not toogle to input
-			{
-				m_mode = CONSOLE_MODE_INPUT;
-				clear_keybuf();						// Clear allegro buffer so that old keys dont bother
-				m_inputBuff.clear();
-				currentCommand = commandsLog.end();
-			}
-		}else	// If the key was not Tilde continue to analize its bingings
-		{
-			if ( m_mode == CONSOLE_MODE_BINDINGS )		// Only if in bindings mode
-			{
-				if (event.type == KEY_EVENT_PRESS)
-				{
-					analizeKeyEvent(true, event.key);
-				}else
-				{
-					analizeKeyEvent(false, event.key);
-				}
-			} else if ( m_mode == CONSOLE_MODE_INPUT )
-			{
-				if ( (event.type == KEY_EVENT_PRESS) && (event.key == KEY_UP) )
-				{
-					clear_keybuf();
-					if (currentCommand != commandsLog.begin() )
-						currentCommand--;
-					if ( currentCommand == commandsLog.end() )
-					{
-						m_inputBuff.clear();
-					}else
-					{
-						m_inputBuff = *currentCommand;
-					}
-				}
-				if ( (event.type == KEY_EVENT_PRESS) && (event.key == KEY_DOWN) )
-				{
-					clear_keybuf();
-					if (currentCommand != commandsLog.end() )
-						currentCommand++;
-					if ( currentCommand == commandsLog.end() )
-					{
-						m_inputBuff.clear();
-					}else
-					{
-						m_inputBuff = *currentCommand;
-					}
-				}
-			}
-		}
-
-		event = keyHandler.getEvent();	// Get next key event
-	}
-	
-	if ( m_mode == CONSOLE_MODE_INPUT ) // console is in input read mode so..
-	{
-		if (keypressed())
-		{
-			char key;
-			key=readkey();
-			key=toupper(key);
-			if (key == 8)//Backspace
-			{
-				if (!m_inputBuff.empty()) //if the string is not already empty...
-					m_inputBuff.erase(m_inputBuff.length()-1); //delete last char
-			}
-			else if (key == 13) //Enter
-			{
-				addLogMsg(']'+m_inputBuff); //add the text to the console log
-				console.parseLine(m_inputBuff); //parse the text
-				commandsLog.push_back(m_inputBuff); //add the text to the commands log too
-				currentCommand = commandsLog.end(); //reset the command log position
-				m_inputBuff.clear(); // and then clear the buffer
-			}
-			else if (key == '\t') //Tab
-			{
-				string autoCompText = autoComplete( m_inputBuff );
-				if (m_inputBuff == autoCompText)
-				{
-					listItems(m_inputBuff);
-				}else
-				{
-					m_inputBuff = autoCompText;
-				}
-			}
-			else // No special keys where detected so the char gets added to the string
-			{
-				m_inputBuff += key;
-			}
-		}
-	}*/
 }
 
 bool GConsole::eventKeyDown(int k)
@@ -609,6 +520,40 @@ bool GConsole::eventKeyDown(int k)
 			{
 				m_inputBuff = *currentCommand;
 			}
+		}
+		else if ( k == KEY_PGUP )
+		{
+			clear_keybuf();
+			if ( !scrolling )
+			{
+				logRenderPos = log.rbegin();
+				scrolling = true;
+			}
+			
+			for ( int i = 0; logRenderPos != log.rend() && i < 3; ++i, ++logRenderPos )
+			{
+				
+			}
+		}
+		else if ( k == KEY_PGDN )
+		{
+			clear_keybuf();
+			if ( scrolling )
+			{
+				for ( int i = 0; logRenderPos != log.rbegin() && i < 3; ++i, --logRenderPos )
+				{
+					
+				}
+				if ( logRenderPos == log.rbegin() )
+				{
+					scrolling = false;
+				}
+			}
+		}
+		else if ( k == KEY_END )
+		{
+			clear_keybuf();
+			scrolling = false;
 		}
 		
 		return false;

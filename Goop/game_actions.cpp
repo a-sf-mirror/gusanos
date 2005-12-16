@@ -125,6 +125,7 @@ void registerGameActions()
 	gameActions.add("damage", newAction<Damage>, af::Object | af::Object2)
 		("amount")
 		("amount_var")
+		("max_distance")
 	;
 	
 	gameActions.add("set_alpha_fade", newAction<SetAlphaFade>, af::Object)
@@ -383,12 +384,19 @@ Damage::Damage( vector<OmfgScript::TokenBase*> const& params )
 {
 	m_damage = params[0]->toDouble(0.0);
 	m_damageVariation = params[1]->toDouble(0.0);
+	m_maxDistance = params[2]->toDouble(-1.0);
 }
 
 void Damage::run( ActionParams const& params )
 {
-	if ( params.object2 )
-		params.object2->damage( m_damage + rnd() * m_damageVariation, params.object->getOwner() );
+	float damageAmount = m_damage + rnd() * m_damageVariation;
+	if ( m_maxDistance > 0 )
+	{
+		float distance = ( params.object->pos - params.object2->pos ).length();
+		if ( distance < m_maxDistance )
+			damageAmount *= distance / m_maxDistance;
+	}
+	params.object2->damage( damageAmount, params.object->getOwner() );
 }
 
 Damage::~Damage()

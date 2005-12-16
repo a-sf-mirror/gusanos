@@ -97,6 +97,7 @@ GAME_ACTION(Damp,
 GAME_ACTION(Damage,
 	float m_damage;
 	float m_damageVariation;
+	float m_maxDistance;
 )
 
 GAME_ACTION(Remove,

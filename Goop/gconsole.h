@@ -110,6 +110,8 @@ private:
 	array<int, 256> m_lockRefCount;
 #endif
 
+	std::list< std::string >::reverse_iterator logRenderPos; //For scrolling
+	bool scrolling;
 	
 	std::list< std::string > commandsLog;
 	std::list< std::string >::iterator currentCommand;

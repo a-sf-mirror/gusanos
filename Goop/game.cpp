@@ -564,8 +564,6 @@ void Game::loadMod()
 	chatSound = sound1DList.load("chat.wav");
 	infoFont = fontLocator.load("minifont");
 #endif
-	levelEffectList.indexate();
-	partTypeList.indexate();
 	if (weaponList.size() > 0 )
 	{
 		loaded = true;
@@ -576,6 +574,8 @@ void Game::loadMod()
 		console.addLogMsg("ERROR: NO WEAPONS FOUND IN MOD FOLDER");
 	}
 	console.executeConfig("mod.cfg");
+	levelEffectList.indexate();
+	partTypeList.indexate();
 }
 
 void Game::unload()
