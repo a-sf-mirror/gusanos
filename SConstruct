@@ -108,7 +108,7 @@ class MyConf(Configure):
 				return
 		
 		for lib in libs:
-			for prefix in ['/usr/lib', '/usr/local/lib', '/home/glip/liboob']:
+			for prefix in ['/usr/lib', '/usr/local/lib']:
 				for suffix in ['.so', '.a']:
 					path = os.path.join(prefix, 'lib' + lib + suffix)
 					if os.path.exists(path):

@@ -9,6 +9,13 @@
 	if(x2 >= where->cr) x2 = where->cr - 1; \
 	if(y2 >= where->cb) y2 = where->cb - 1; \
 	if(x1 > x2 || y1 > y2) return
+		
+#define APPLY_ON_BITMAP(bitmap_, body_) \
+	do { \
+		BITMAP* where = bitmap_; \
+		int x1 = 0, y1 = 0, x2 = where->w - 1, y2 = where->h - 1; \
+		body_ \
+	} while(false) \
 	
 #define RECT_Y_LOOP(ops_) \
 	for(; y1 <= y2; ++y1) { \

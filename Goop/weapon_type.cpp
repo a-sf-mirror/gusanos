@@ -83,7 +83,7 @@ enum type
 
 bool WeaponType::load(fs::path const& filename)
 {
-	fs::ifstream fileStream(filename);
+	fs::ifstream fileStream(filename, std::ios::binary | std::ios::in);
 
 	if (!fileStream )
 		return false;
@@ -120,6 +120,8 @@ bool WeaponType::load(fs::path const& filename)
 			parser.error("Trailing garbage");
 		return false;
 	}
+	
+	crc = parser.getCRC();
 
 	ammo = parser.getInt("ammo", 1);
 	name = parser.getString("name");

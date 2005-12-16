@@ -52,6 +52,15 @@ struct LuaReference
 		type_* b = *static_cast<type_ **>(b_); \
 		body_ }
 		
+#define LBINOP(type_, name_, body_) \
+	int l_##name_(lua_State* L_) { \
+		LuaContext context(L_); \
+		type_* a = static_cast<type_ *>(lua_touserdata (context, 1)); \
+		if(!a) return 0; \
+		type_* b = static_cast<type_ *>(lua_touserdata (context, 2)); \
+		if(!b) return 0; \
+		body_ }
+
 #define CLASS(name_, body_) { \
 	lua_newtable(context); \
 	lua_pushstring(context, "__index"); \
@@ -98,6 +107,16 @@ struct LuaReference
 	context.tableItems() \
 		body_ ; \
 	lua_rawset(context, LUA_GLOBALSINDEX); }
+	
+#define REQUEST_TABLE(name_, func_) { \
+	lua_pushstring(context, name_); \
+	lua_newtable(context); \
+	lua_newtable(context); \
+	lua_pushstring(context, "__index"); \
+	lua_pushcfunction(context, func_); \
+	lua_rawset(context, -3); \
+	lua_setmetatable(context, -2); \
+	lua_rawset(context, LUA_GLOBALSINDEX); }
 
 #define LUA_NEW_(t_, param_, lua_) \
 ({ \
@@ -126,6 +145,27 @@ struct LuaReference
 	lua_once_.push(t_::metaTable); \
 	void* space_ = lua_once_.pushObject(sizeof(t_)); \
 	t_* p_ = new (space_) t_ param_; \
+	p_->luaReference = lua_once_.createReference(); \
+	p_; \
+})
+
+#define lua_new_m(t_, param_, lua_, metatable_) \
+({ \
+	LuaContext& lua_once_ = lua_; \
+	lua_once_.push(metatable_); \
+	void* space_ = lua_once_.pushObject(sizeof(t_)); \
+	t_* p_ = new (space_) t_ param_; \
+	p_->luaReference = lua_once_.createReference(); \
+	p_; \
+})
+
+#define lua_new_m_keep(t_, param_, lua_, metatable_) \
+({ \
+	LuaContext& lua_once_ = lua_; \
+	lua_once_.push(metatable_); \
+	void* space_ = lua_once_.pushObject(sizeof(t_)); \
+	t_* p_ = new (space_) t_ param_; \
+	lua_pushvalue(lua_once_, -1); \
 	p_->luaReference = lua_once_.createReference(); \
 	p_; \
 })

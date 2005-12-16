@@ -129,6 +129,7 @@ public:
 		List*       list;
 		list_t      children;
 		LuaReference luaReference;
+		LuaReference luaData;
 	};
 	
 	friend struct Node;
@@ -137,6 +138,7 @@ public:
 	  std::string const& id, std::map<std::string, std::string> const& attributes)
 	: Wnd(parent, tagLabel, className, id, attributes, ""), m_RootNode("root")
 	, m_Base(0), m_basePos(0), m_MainSel(0), m_visibleChildren(0)
+	, m_totalWidthFactor(0.0)
 	{
 		assert(!m_RootNode.parent);
 		m_RootNode.list = this;
@@ -253,8 +255,25 @@ public:
 		NumericLT criteria(byColumn);
 		m_RootNode.children.sort(criteria);
 		
+		m_basePos = 0;
 		m_Base = m_RootNode.children.begin();
 	}
+	
+	struct LuaLT
+	{
+		LuaLT(LuaContext& context_, LuaReference comparer)
+		: context(context_), comp(comparer)
+		{
+			
+		}
+		
+		bool operator()(Node* a, Node* b);
+		
+		LuaContext& context;
+		LuaReference comp;
+	};
+	
+	void sortLua(LuaReference comparer);
 	
 	bool isValid()
 	{
@@ -342,6 +361,7 @@ private:
 		: headerColor(RGB(170, 170, 255))
 		, selectionColor(RGB(170, 170, 255))
 		, selectionFrameColor(RGB(0, 0, 0))
+		, indent(3.0)
 		{
 			
 		}
@@ -350,6 +370,7 @@ private:
 		RGB headerColor;
 		RGB selectionColor;
 		RGB selectionFrameColor;
+		double indent;
 
 	} m_listFormatting;
 	
@@ -359,6 +380,7 @@ private:
 	int              m_basePos;
 	node_iter_t      m_MainSel;
 	std::vector<ColumnHeader> m_columnHeaders;
+	double           m_totalWidthFactor;
 	int m_visibleChildren;
 };
 

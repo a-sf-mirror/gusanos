@@ -20,6 +20,7 @@
 #include "util/macros.h"
 #include "util/vec.h"
 #include "util/angle.h"
+#include "util/log.h"
 #include "network.h"
 #include <zoidcom.h>
 #include "posspd_replicator.h"
@@ -98,10 +99,11 @@ Particle::~Particle()
 void Particle::assignNetworkRole( bool authority )
 {
 	m_node = new ZCom_Node();
+	/* operator new never returns 0
 	if (!m_node)
 	{
 		allegro_message("ERROR: Unable to create particle node.");
-	}
+	}*/
 
 	m_node->beginReplicationSetup(0);
 	
@@ -111,23 +113,33 @@ void Particle::assignNetworkRole( bool authority )
 		
 	m_node->endReplicationSetup();
 
-	ZCom_BitStream *type = new ZCom_BitStream;
-	Encoding::encode(*type, m_type->getIndex(), partTypeList.size());
-	m_node->setAnnounceData( type );
-
+	//DLOG("Registering node, type " << m_type->getIndex() << " of " << partTypeList.size());
 	if( authority )
 	{
+		ZCom_BitStream *type = new ZCom_BitStream;
+		Encoding::encode(*type, m_type->getIndex(), partTypeList.size());
+		if(m_owner)
+			type->addInt(m_owner->getNodeID(), 32);
+		else
+			type->addInt(0, 32);
+		m_node->setAnnounceData( type );
+		//DLOG("Announce data set");
 		m_node->setEventNotification(false, false); // Enables the eEvent_Init.
 		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
 			allegro_message("ERROR: Unable to register particle authority node.");
 	}else
 	{
 		m_node->setEventNotification(false, true); // Same but for the remove event.
+		//DLOG("Event notification set");
 		if( !m_node->registerRequestedNode( classID, network.getZControl() ) )
-		allegro_message("ERROR: Unable to register particle requested node.");
+			allegro_message("ERROR: Unable to register particle requested node.");
 	}
+	
+	//DLOG("Node registered");
 
 	m_node->applyForZoidLevel(1);
+	
+	//DLOG("Applied for zoidlevel");
 }
 
 inline Vec getCorrection( const Vec& objPos, const Vec& pointPos, float radius )
@@ -431,5 +443,28 @@ void Particle::draw(Viewport* viewport)
 
 void Particle::pushLuaReference()
 {
-	lua.pushFullReference(*this, LuaBindings::particleMetaTable);
+	//lua.pushFullReference(*this, LuaBindings::particleMetaTable);
+	
+	if(luaReference)
+		lua.push(luaReference);
+	else
+	{
+		lua.pushFullReference(*this, LuaBindings::particleMetaTable);
+		lua.pushvalue(-1);
+		luaReference = lua.createReference();
+		//DLOG("Creating reference to " << this << ", #" << luaReference.idx);
+	}
+}
+
+void Particle::deleteThis()
+{
+	if(luaReference)
+	{
+		//DLOG("Destroying reference " << luaReference.idx);
+		lua.destroyReference(luaReference);
+		luaReference.reset();
+	}
+	else
+		delete this;
+	delete m_node; m_node = 0;
 }

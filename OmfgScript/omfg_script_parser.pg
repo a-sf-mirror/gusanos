@@ -73,6 +73,11 @@ STRING : [A-Za-z_][A-Za-z0-9.\-/_]* {
 	
 	virtual std::ostream& output(std::ostream& s) { s << str; return s; }
 	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc.process_bytes(str.data(), str.size());
+	}
+	
 	std::string str;
 } ;
 
@@ -90,6 +95,14 @@ INTEGER : ("-")?[0-9]+ {
 	virtual TokenBase::Type::type type() { return TokenBase::Type::Int; }
 	
 	virtual std::ostream& output(std::ostream& s) { s << v; return s; }
+	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc(v & 0xFF);
+		crc((v >> 8) & 0xFF);
+		crc((v >> 16) & 0xFF);
+		crc((v >> 24) & 0xFF);
+	}
 	
 	int v;
 } ;
@@ -110,11 +123,21 @@ NUMBER : ("-")?[0-9]+"."[0-9]* {
 	
 	virtual std::ostream& output(std::ostream& s) { s << v; return s; }
 	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		//TODO: Less tolerance
+		int vi = (int)v;
+		crc(vi & 0xFF);
+		crc((vi >> 8) & 0xFF);
+		crc((vi >> 16) & 0xFF);
+		crc((vi >> 24) & 0xFF);
+	}
+	
 	double v;
 } ;
 
 SKIP : [\ \r\t] = @skip ;
-COMMENT : "#"[^\n]* = @skip ;
+COMMENT : "#"[^\r\n\000]* = @skip ;
 LINE : "\n" = @linecounter @skip ;
 QUOTESTRING : [\"][^\"]*[\"] = STRING<b + 1, e - 1> ;
 

@@ -11,6 +11,7 @@
 #include "events.h"
 #include "util/angle.h"
 #include "resource_base.h"
+#include <boost/cstdint.hpp>
 
 #include <string>
 #include <vector>
@@ -27,9 +28,9 @@ class BasePlayer;
 class PartType;
 class TimerEvent;
 
-typedef void (*NewParticleFunc)(PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle);
+typedef BaseObject* (*NewParticleFunc)(PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle);
 
-void newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle );
+BaseObject* newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle );
 
 class PartType : public ResourceBase
 {
@@ -57,6 +58,7 @@ class PartType : public ResourceBase
 	AngleDiff angularFriction;
 	int colLayer;
 	float health;
+	boost::uint32_t crc;
 	
 #ifndef DEDSERV
 	Distortion* distortion;

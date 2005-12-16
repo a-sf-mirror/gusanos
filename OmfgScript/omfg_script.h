@@ -9,6 +9,7 @@
 #include <vector>
 #include <stdexcept>
 #include "util/log.h"
+#include <boost/crc.hpp>
 
 struct BaseAction;
 
@@ -176,6 +177,11 @@ struct TokenBase
 	virtual Type::type type()
 	{ return Type::Default; }
 	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc.process_byte(0xFF);
+	}
+	
 	Location loc;
 };
 
@@ -185,6 +191,8 @@ struct Function : public TokenBase
 	std::vector<TokenBase *> params;
 	
 	TokenBase* operator[](size_t i) const;
+	
+	virtual void calcCRC(boost::crc_32_type& crc);
 	
 protected:
 	Function(Location loc_, std::string const& name_);
@@ -274,6 +282,8 @@ struct Parser : public Pimpl<ParserImpl>
 	TokenBase* getProperty(std::string const& name);
 	
 	TokenBase* getProperty(std::string const& a, std::string const& b);
+	
+	boost::crc_32_type::value_type getCRC();
 	
 	bool incomplete();
 	

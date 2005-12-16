@@ -1,6 +1,9 @@
 #include "list.h"
 #include <cassert>
 #include "util/macros.h"
+#include "luaapi/context.h"
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
 
 namespace OmfgGUI
 {
@@ -8,6 +11,17 @@ namespace OmfgGUI
 char const List::metaTable[] = "gui_list";
 
 char const List::Node::metaTable[] = "gui_list_node";
+
+bool List::LuaLT::operator()(Node* a, Node* b)
+{
+	if((context.call(comp, 1), a->luaReference, b->luaReference)() == 1)
+	{
+		bool v = lua_toboolean(context, -1);
+		context.pop(1);
+		return v;
+	}
+	return false;
+}
 
 void List::Node::resizeColumns(size_t s)
 {
@@ -45,8 +59,8 @@ void List::Node::render(Renderer* renderer, long& y)
 
 	//renderer->drawText(*list.m_font, text, BaseFont::CenterV, list.m_rect.x1 + 3 + level * 5, y + halfRowHeight, RGB(0, 0, 0));
 	
-	double x = list->getRect().x1 + 3.0 + level * 5.0;
-	double w = list->getRect().getWidth();
+	double x = list->getRect().x1 + list->m_listFormatting.indent + level * 5.0;
+	double w = list->getRect().getWidth() / list->m_totalWidthFactor;
 	
 	assert(columns.size() == list->m_columnHeaders.size());
 	
@@ -244,13 +258,15 @@ bool List::render()
 			m_listFormatting.headerColor);
 			
 		// Render column headers
-		double x = 3.0 + getRect().x1;
+		double x = m_listFormatting.indent + getRect().x1;
+		
+		double w = getRect().getWidth() / m_totalWidthFactor;
 		for(std::vector<ColumnHeader>::const_iterator i = m_columnHeaders.begin();
 			i != m_columnHeaders.end();
 			++i)
 		{
 			renderer->drawText(*m_font, i->name, BaseFont::CenterV, long(x), y + halfRowHeight, RGB(0, 0, 0));
-			x += i->widthFactor * getRect().getWidth();
+			x += i->widthFactor * w;
 		}
 		
 		y += rowHeight;
@@ -286,6 +302,7 @@ void List::addColumn(ColumnHeader const& column)
 	m_columnHeaders.push_back(column);
 	
 	m_RootNode.resizeColumns(m_columnHeaders.size());
+	m_totalWidthFactor += column.widthFactor;
 }
 
 void List::setMainSel(node_iter_t iter)
@@ -525,8 +542,26 @@ void List::applyFormatting(Context::GSSpropertyMap const& f)
 				readColor(m_listFormatting.selectionFrameColor, *v);
 			}
 		}
+		else if(i->first == "indent")
+		{
+			const_foreach(v, i->second)
+			{
+				m_listFormatting.indent = lexical_cast<double>(*v);
+			}
+		}
+		
 	}
 }
+
+void List::sortLua(LuaReference comparer)
+{
+	LuaLT criteria(m_context->luaContext(), comparer);
+	m_RootNode.children.sort(criteria);
+	
+	m_basePos = 0;
+	m_Base = m_RootNode.children.begin();
+}
+
 int List::classID()
 {
 	return Context::List;

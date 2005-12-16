@@ -619,7 +619,8 @@ struct Handler
 		//"std::cout << \"to read: \" << toRead;\n"
 		"size_t amountRead = self->read(&buffer[l], toRead);\n"
 		//"std::cout << \", amount read: \" << amountRead << '\\n';\n"
-		"if(amountRead < toRead) { memset(&buffer[l+amountRead], 0, toRead-amountRead); }\n" // Add null chars at the end
+		"if(amountRead == 0) { memset(&buffer[l], 0, toRead); }\n" // Add null chars at the end
+		"else newSize = l+amountRead;\n"
 		//"std::cout << \"fill size: \" << newSize << '\\n';\n"
 		"ptrdiff_t offs = buffer - begin;\n"
 		"curp += offs;\n"

@@ -4,6 +4,7 @@
 #include "resource_list.h"
 #include "resource_base.h"
 #include "gfx.h"
+#include <boost/cstdint.hpp>
 
 #include <allegro.h>
 #include <string>
@@ -14,15 +15,15 @@ class SpriteSet;
 
 class LevelEffect : public ResourceBase
 {
-	public:
-		
-		LevelEffect();
-		~LevelEffect();
+public:
 	
-		bool load(fs::path const& filename);
-		
-		SpriteSet* mask;
+	LevelEffect();
+	~LevelEffect();
 
+	bool load(fs::path const& filename);
+	
+	SpriteSet* mask;
+	boost::uint32_t crc;
 };
 
 extern ResourceList<LevelEffect> levelEffectList;

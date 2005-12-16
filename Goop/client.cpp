@@ -7,6 +7,8 @@
 #include "game.h"
 #include "network.h"
 #include "player_options.h"
+#include "encoding.h"
+#include <memory>
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -14,12 +16,17 @@
 
 Client::Client( int _udpport )
 {
+	if(network.simLag > 0)
+		ZCom_simulateLag(0, network.simLag);
+	if(network.simLoss > 0.f)
+		ZCom_simulateLoss(0, network.simLoss);
 	if ( !ZCom_initSockets( true,_udpport, 1, 0 ) )
 	{
 		console.addLogMsg("* ERROR: FAILED TO INITIALIZE SOCKETS");
 	}
 	ZCom_setControlID(0);
 	ZCom_setDebugName("ZCOM_CLI");
+	ZCom_setUpstreamLimit(network.upLimit, network.upLimit); 
 }
 
 Client::~Client()
@@ -34,7 +41,6 @@ void Client::requestPlayer(PlayerOptions const& playerOptions)
 	req->addInt(playerOptions.colour, 24);
 	req->addSignedInt(playerOptions.team, 8);
 	req->addInt(playerOptions.uniqueID, 32);
-	std::cerr << "Sent ID: " << playerOptions.uniqueID << std::endl;
 	ZCom_sendData( network.getServerID(), req, eZCom_ReliableOrdered );
 }
 
@@ -45,6 +51,15 @@ void Client::requestPlayers()
 		requestPlayer(*game.playerOptions[1]);
 }
 
+void Client::sendConsistencyInfo()
+{
+	std::auto_ptr<ZCom_BitStream> req(new ZCom_BitStream);
+	req->addInt(Network::ConsistencyInfo, 8);
+	req->addInt(Network::protocolVersion, 32);
+	game.addCRCs(req.get());
+	ZCom_sendData( network.getServerID(), req.release(), eZCom_ReliableOrdered );
+}
+
 void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply )
 {
 	if ( _result != eZCom_ConnAccepted )
@@ -53,19 +68,19 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 	}
 	else
 	{
+		ZCom_requestDownstreamLimit(_id, network.downPPS, network.downBPP);
 		console.addLogMsg("* CONNECTION ACCEPTED");
 		network.setServerID(_id);
 		ZCom_requestZoidMode(_id, 1);
 		game.setMod( _reply.getStringStatic() );
 		game.changeLevel( _reply.getStringStatic() );
-		//++network.connCount;
+		sendConsistencyInfo();
 		network.incConnCount();
 	}
 } 
 
 void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata)
 {
-	//--network.connCount;
 	network.decConnCount();
 	switch( _reason )
 	{
@@ -96,14 +111,36 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 				}
 				break;
 			}
-			break;
 		}
+		break;
 		
 		case eZCom_ClosedTimeout:
 			console.addLogMsg("* CONNECTION TIMEDOUT");
 		break;
 		
 		default:
+		break;
+	}
+}
+
+void Client::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream& data) 
+{
+	int event = Encoding::decode(data, Network::ClientEvents::Max);
+	switch(event)
+	{
+		case Network::ClientEvents::LuaEvents:
+		{
+			for(int t = Network::LuaEventGroup::Game;
+				t < Network::LuaEventGroup::Max; ++t)
+			{
+				int c = data.getInt(8);
+				for(int i = 0; i < c; ++i)
+				{
+					char const* name = data.getStringStatic();
+					network.indexLuaEvent((Network::LuaEventGroup::type)t, name);
+				}
+			}
+		}
 		break;
 	}
 }
@@ -141,7 +178,9 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requeste
 	}else if( _requested_class == Particle::classID )
 	{
 		int typeIndex = Encoding::decode(*_announcedata, partTypeList.size());
-		newParticle_requested(partTypeList[typeIndex],Vec(),Vec(),1,0,Angle());
+		BasePlayer* owner = game.findPlayerWithID(_announcedata->getInt(32));
+		std::cout << "Particle request: type " << typeIndex << " of " << partTypeList.size() << std::endl;
+		newParticle_requested(partTypeList[typeIndex], Vec(), Vec(), 1, owner, Angle());
 	}else
 	{
 		console.addLogMsg("* ERROR: INVALID DYNAMIC NODE REQUEST");

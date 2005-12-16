@@ -14,9 +14,6 @@ using std::endl;
 namespace Encoding
 {
 	
-extern unsigned int eliasCodedBits;
-extern unsigned int eliasInvokations;
-	
 inline unsigned int bitsOf(unsigned long n)
 {
 	unsigned int bits = 0;
@@ -74,9 +71,6 @@ inline void encodeEliasGamma(ZCom_BitStream& stream, unsigned int n)
 
 	for(int i = 0; i < prefix - 1; ++i)
 		encodeBit(stream, 0);
-		
-	eliasCodedBits += prefix*2 - 1;
-	++eliasInvokations;
 
 	encodeBit(stream, 1);
 	stream.addInt(n, prefix - 1);
@@ -98,7 +92,6 @@ inline void encodeEliasDelta(ZCom_BitStream& stream, unsigned int n)
 	assert(n >= 1);
 	int prefix = bitsOf(n);
 	encodeEliasGamma(stream, prefix);
-	eliasCodedBits += prefix - 1;
 	stream.addInt(n, prefix - 1);
 }
 
@@ -113,7 +106,7 @@ struct VectorEncoding
 {
 	VectorEncoding();
 	
-	VectorEncoding(Rect area_, unsigned int subPixelAcc_ = 1);
+	VectorEncoding(Rect area_, int subPixelAcc_ = 1);
 		
 	template<class T>
 	std::pair<long, long> quantize(T const& v)
@@ -163,25 +156,25 @@ struct VectorEncoding
 		return T(manip_t(x) / subPixelAcc + area.x1, manip_t(y) / subPixelAcc + area.y1);
 	}
 	
-	unsigned long totalBits()
+	long totalBits()
 	{
 		return bitsX + bitsY;
 	}
 	
 	Rect area;
-	unsigned long total;
-	unsigned long width;
-	unsigned long height;
-	unsigned long bitsX;
-	unsigned long bitsY;
+	long total;
+	long width;
+	long height;
+	long bitsX;
+	long bitsY;
 	
-	unsigned int subPixelAcc;
+	int subPixelAcc;
 	double isubPixelAcc;
 };
 
 struct DiffVectorEncoding
 {
-	DiffVectorEncoding(unsigned int subPixelAcc_ = 1);
+	DiffVectorEncoding(int subPixelAcc_ = 1);
 	
 	template<class T>
 	std::pair<long, long> quantize(T const& v)
@@ -213,7 +206,7 @@ struct DiffVectorEncoding
 		return T(manip_t(x) / subPixelAcc, manip_t(y) / subPixelAcc);
 	}
 
-	unsigned int subPixelAcc;
+	int subPixelAcc;
 };
 
 }

@@ -14,6 +14,7 @@
 #include "util/angle.h"
 #include "util/vec.h"
 #include "util/macros.h"
+#include "util/log.h"
 #include "base_object.h"
 #include "weapon.h"
 #include "worm.h"
@@ -23,10 +24,6 @@
 #include "script.h"
 
 #include "omfg_script.h"
-
-//#include <allegro.h>
-
-//#include <boost/random.hpp>
 
 using namespace std;
 
@@ -694,22 +691,33 @@ RunCustomEvent::~RunCustomEvent()
 /////////////////////////////////////////////////////////////////////////////////////
 
 RunScript::RunScript( vector<OmfgScript::TokenBase*> const& params )
-: function(0)
+: function(0), scriptName(params[0]->toString())
 {
-	std::string const& scriptName = params[0]->toString();
-	std::string::size_type p = scriptName.find('.');
-	if(p != std::string::npos)
-	{
-		Script* s = scriptLocator.load(scriptName.substr(0, p));
-		if(s)
-		{
-			function = s->createFunctionRef(scriptName.substr(p + 1, scriptName.size() - p - 1));
-		}
-	}
+	
 }
 
 void RunScript::run( ActionParams const& params )
 {
+	if(!function)
+	{
+		if(scriptName.empty())
+			return;
+		
+		std::string::size_type p = scriptName.find('.');
+		if(p != std::string::npos)
+		{
+			Script* s = scriptLocator.load(scriptName.substr(0, p));
+			if(s)
+			{
+				function = s->createFunctionRef(scriptName.substr(p + 1, scriptName.size() - p - 1));
+			}
+		}
+		scriptName.clear();
+		
+		if(!function)
+			return;
+	}
+	lua.push(LuaContext::errorReport);
 	lua.pushReference(function);
 	
 	if(params.object)
@@ -722,7 +730,12 @@ void RunScript::run( ActionParams const& params )
 	else
 		lua_pushnil(lua);
 		
-	lua.call(2, 0);
+	if(lua.call(2, 0, -4) < 0)
+	{
+		lua.destroyReference(function);
+		function.reset();
+	}
+	lua.pop();
 }
 
 RunScript::~RunScript()

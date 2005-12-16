@@ -369,14 +369,30 @@ LMETHOD(OmfgGUI::List, gui_list_clear,
 	return 0;
 )
 
-/*! List:sort(column)
+/*! List:sort(criteria)
 
-	Sorts the list by the column passed. //column// is a zero-based index.
+	Sorts the list by the column passed or by a comparer function.
+	
+	If //criteria// is an integer, the list is sorted numerically by the column with that zero-based index.
+	
+	If //criteria// is a function, it's used as a comparer function that gets passed
+	two parameters. It should return true if parameter 1 is supposed to appear before
+	parameter 2.
 */
 LMETHOD(OmfgGUI::List, gui_list_sort,
-	unsigned int column = static_cast<unsigned int>(lua_tointeger(context, 2));
-	
-	p->sortNumerically(column);
+	if(lua_isnumber(context, 2))
+	{
+		unsigned int column = static_cast<unsigned int>(lua_tointeger(context, 2));
+		
+		p->sortNumerically(column);
+	}
+	else if(lua_isfunction(context, 2))
+	{
+		context.pushvalue(2);
+		LuaReference ref = context.createReference();
+		p->sortLua(ref);
+		context.destroyReference(ref);
+	}
 
 	return 0;
 )
@@ -391,6 +407,15 @@ LMETHOD(OmfgGUI::List, gui_list_selection,
 		context.push(*i); ++c;
 	}
 	return c;
+)
+
+LMETHOD(OmfgGUI::List, gui_list_main_selection,
+	if(OmfgGUI::List::Node* n = p->getMainSel())
+	{
+		context.push(n->luaReference);
+		return 1;
+	}
+	return 0;
 )
 
 LMETHOD(OmfgGUI::List, gui_list_scroll_bottom,
@@ -411,12 +436,32 @@ LMETHOD(OmfgGUI::List, gui_list_add_column,
 
 	return 0;
 )
+
 /*! ListNode:is_selected()
 
 	Returns true if the node is selected, otherwise false.
 */
 LMETHOD(OmfgGUI::List::Node, gui_list_node_is_selected,
 	context.push(p->selected);
+	return 1;
+)
+
+/*! ListNode:data()
+
+	Returns a table associated with this node.
+*/
+LMETHOD(OmfgGUI::List::Node, gui_list_node_data,
+	if(p->luaData)
+	{
+		context.pushReference(p->luaData);
+	}
+	else
+	{
+		lua_newtable(context);
+		lua_pushvalue(context, -1);
+		p->luaData = context.createReference();
+	}
+	
 	return 1;
 )
 
@@ -452,6 +497,7 @@ void addGUIListFunctions(LuaContext& context)
 		("add_column", l_gui_list_add_column)
 		("sort", l_gui_list_sort)
 		("selection", l_gui_list_selection)
+		("main_selection", l_gui_list_main_selection)
 		("each", l_gui_list_each)
 		("scroll_bottom", l_gui_list_scroll_bottom)
 	;
@@ -535,6 +581,7 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 	
 	context.tableFunctions()
 		("is_selected", l_gui_list_node_is_selected)
+		("data", l_gui_list_node_data)
 	;
 	
 	lua_rawset(context, -3);

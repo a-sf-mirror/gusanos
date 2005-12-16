@@ -13,6 +13,7 @@ class NetWormInterceptor;
 class NetWorm : public BaseWorm
 {	
 public:
+	friend class NetWormInterceptor;
 		
 	enum NetEvents
 	{
@@ -25,6 +26,7 @@ public:
 		SetWeapon,
 		ClearWeapons,
 		SYNC,
+		LuaEvent,
 		EVENT_COUNT,
 	};
 		
@@ -48,6 +50,8 @@ public:
 	void setOwnerId( ZCom_ConnID _id );
 	void sendSyncMessage( ZCom_ConnID id );
 	void sendWeaponMessage( int index, ZCom_BitStream* data );
+	
+	virtual void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID);
 	
 	ZCom_NodeID getNodeID();
 	
@@ -83,7 +87,7 @@ public:
 	void outPreReplicateNode(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role) {}
 	void outPreDereplicateNode(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role) {}
 	bool outPreUpdate(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role) { return true; }
-	bool outPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role, ZCom_Replicator *_replicator) { return true; }
+	bool outPreUpdateItem (ZCom_Node* node, ZCom_ConnID from, eZCom_NodeRole remote_role, ZCom_Replicator* replicator);
 	void outPostUpdate(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role, zU32 _rep_bits, zU32 _event_bits, zU32 _meta_bits) {}
 	bool inPreUpdate(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role) { return true; }
 	void inPostUpdate(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, zU32 _rep_bits, zU32 _event_bits, zU32 _meta_bits) {};

@@ -20,6 +20,7 @@
 #include "gfx.h"
 #include "sprite_set.h"
 #include "util/macros.h"
+#include "util/log.h"
 #ifndef DEDSERV
 #include "sfx.h"
 #include "sound.h"
@@ -73,6 +74,7 @@ namespace
 		eHole = 0,
 		// Add here
 		LuaEvent,
+		//RegisterLuaEvents, //oobsol33t
 		NetEventsCount,
 	};
 	
@@ -92,6 +94,18 @@ namespace
 	bool m_isAuthority;
 	HashTable<std::string, unsigned long> stringToIndexMap;
 	std::vector<std::string> indexToStringMap;
+	
+	boost::uint32_t getWeaponCRC()
+	{
+		boost::uint32_t v = 0;
+		foreach(i, game.weaponList)
+		{
+			v ^= (*i)->crc;
+			++v;
+		}
+		
+		return v;
+	}
 }
 
 ZCom_ClassID Game::classID = ZCom_Invalid_ID;
@@ -421,7 +435,20 @@ void Game::init(int argc, char** argv)
 #endif
 }
 
-
+void Game::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+{
+	ZCom_BitStream* data = new ZCom_BitStream;
+	addEvent(data, LuaEvent);
+	data->addInt(event->idx, 8);
+	if(userdata)
+	{
+		data->addBitStream(*userdata);
+	}
+	if(!connID)
+		m_node->sendEvent(mode, rules, data);
+	else
+		m_node->sendEventDirect(mode, data, connID);
+}
 
 void Game::think()
 {
@@ -463,9 +490,27 @@ void Game::think()
 					}
 					break;
 					
+/*
+					case RegisterLuaEvents:
+					{
+						for(int t = Network::LuaEventGroup::Game;
+							t < Network::LuaEventGroup::Max; ++t)
+						{
+							int c = data->getInt(8);
+							for(int i = 0; i < c; ++i)
+							{
+								char const* name = data->getStringStatic();
+								DLOG("Got lua event: " << name);
+								network.indexLuaEvent((Network::LuaEventGroup::type)t, name);
+							}
+						}
+					}
+					break;
+*/
 					case LuaEvent:
 					{
 						int index = data->getInt(8);
+						DLOG("Got lua event index " << index);
 						if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Game, index))
 						{
 							event->call(data);
@@ -480,6 +525,12 @@ void Game::think()
 			
 			case eZCom_EventInit:
 			{
+				/*
+				std::auto_ptr<ZCom_BitStream> data(new ZCom_BitStream);
+				addEvent(data.get(), RegisterLuaEvents);
+				network.encodeLuaEvents(data.get());
+				m_node->sendEventDirect(eZCom_ReliableOrdered, data.release(), conn_id);
+				*/
 				list<LevelEffectEvent>::iterator iter = appliedLevelEffects.begin();
 				for( ; iter != appliedLevelEffects.end() ; ++iter )
 				{
@@ -574,8 +625,24 @@ void Game::loadMod()
 		console.addLogMsg("ERROR: NO WEAPONS FOUND IN MOD FOLDER");
 	}
 	console.executeConfig("mod.cfg");
+
+	Script* modScript = scriptLocator.load(m_modName);
+	if(!modScript) modScript = scriptLocator.load("common");
+	if(modScript)
+	{
+		LuaReference ref = modScript->createFunctionRef("init");
+		(lua.call(ref))();
+	}
+
+	Script* levelScript = scriptLocator.load("map_" + level.getName());
+	if(levelScript)
+	{
+		LuaReference ref = levelScript->createFunctionRef("init");
+		(lua.call(ref))();
+	}
 	levelEffectList.indexate();
 	partTypeList.indexate();
+
 }
 
 void Game::unload()
@@ -633,6 +700,7 @@ void Game::unload()
 #endif
 	scriptLocator.clear();
 
+	network.clear();
 	lua.reset();
 	luaCallbacks = LuaCallbacks(); // Reset callbacks
 #ifndef DEDSERV
@@ -648,6 +716,7 @@ bool Game::isLoaded()
 void Game::refreshResources(fs::path const& levelPath)
 {
 #ifndef DEDSERV
+	fontLocator.addPath(levelPath / "fonts");
 	fontLocator.addPath(fs::path("default/fonts"));
 	fontLocator.addPath(fs::path(nextMod) / "fonts");
 	fontLocator.refresh();
@@ -661,6 +730,7 @@ void Game::refreshResources(fs::path const& levelPath)
 	gssLocator.refresh();
 #endif
 	
+	scriptLocator.addPath(levelPath / "scripts");
 	scriptLocator.addPath(fs::path("default/scripts"));
 	scriptLocator.addPath(fs::path(nextMod) / "scripts");
 	scriptLocator.refresh();
@@ -708,7 +778,10 @@ bool Game::changeLevelCmd(const std::string& levelName )
 	if(!levelLocator.exists(levelName))
 		return false;
 	
-	network.disconnect( Network::ServerMapChange );
+	if( network.isHost() )
+		network.disconnect( Network::ServerMapChange );
+	else
+		network.disconnect();
 	
 	if(!changeLevel( levelName, false ))
 		return false;
@@ -783,9 +856,11 @@ bool Game::changeLevel(const std::string& levelName, bool refresh )
 	
 	
 	levelLocator.load(&level, levelName);
+
 #ifdef USE_GRID
 	objects.resize(0, 0, level.width(), level.height());
 #endif
+	
 	//cerr << "Loading mod" << endl;
 	loadMod();
 	
@@ -927,6 +1002,7 @@ void Game::insertExplosion( Explosion* explosion )
 
 BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 {
+	BasePlayer* p = 0;
 	switch(type)
 	{
 		
@@ -949,10 +1025,9 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 			localPlayers.push_back( player );
 			EACH_CALLBACK(i, localplayerInit)
 			{
-				//lua.callReference(0, *i, player->luaReference);
 				(lua.call(*i), player->luaReference)();
 			}
-			return player;
+			p = player;
 		}
 		break;
 				
@@ -960,7 +1035,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 		{
 			ProxyPlayer* player = LUA_NEW(ProxyPlayer, ());
 			players.push_back( player );
-			return player;
+			p = player;
 		}
 		break;
 		
@@ -968,11 +1043,19 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 		{
 			PlayerAI* player = LUA_NEW(PlayerAI, (team));
 			players.push_back( player );
-			return player;
+			p = player;
 		}
 	}
 	
-	return 0;
+	if(p)
+	{
+		EACH_CALLBACK(i, playerInit)
+		{
+			(lua.call(*i), p->luaReference)();
+		}
+	}
+	
+	return p;
 }
 
 BaseWorm* Game::addWorm(bool isAuthority)
@@ -1031,3 +1114,34 @@ std::string const& Game::getModName()
 {
 	return m_modName;
 }
+
+void Game::addCRCs(ZCom_BitStream* req)
+{
+	req->addInt(partTypeList.crc(), 32);
+	req->addInt(expTypeList.crc(), 32);
+	req->addInt(getWeaponCRC(), 32);
+	req->addInt(levelEffectList.crc(), 32);
+}
+
+bool Game::checkCRCs(ZCom_BitStream& data)
+{
+	boost::uint32_t particleCRC = data.getInt(32);
+	boost::uint32_t expCRC = data.getInt(32);
+	boost::uint32_t weaponCRC = data.getInt(32);
+	boost::uint32_t levelEffectCRC = data.getInt(32);
+	
+	if(particleCRC != partTypeList.crc()
+	|| expCRC != expTypeList.crc()
+	|| weaponCRC != getWeaponCRC()
+	|| levelEffectCRC != levelEffectList.crc())
+	{
+		return false;
+	}
+	
+	return true;
+}
+/*
+ZCom_Node* Game::getNode()
+{
+	return m_node;
+}*/

@@ -7,6 +7,7 @@ LuaCallbacks luaCallbacks;
 
 void LuaCallbacks::bind(std::string callback, LuaReference ref)
 {
+	#define CB(x_) else if(callback == #x_) x_.push_back(ref)
 	if(callback == "afterRender")
 		afterRender.push_back(ref);
 	else if(callback == "afterUpdate")
@@ -31,5 +32,13 @@ void LuaCallbacks::bind(std::string callback, LuaReference ref)
 		localplayerEvent[Player::CHANGE].push_back(ref);
 	else if(callback == "localplayerInit")
 		localplayerInit.push_back(ref);
-		
+	else if(callback == "wormDeath")
+		wormDeath.push_back(ref);
+	else if(callback == "playerUpdate")
+		playerUpdate.push_back(ref);
+	else if(callback == "playerInit")
+		playerInit.push_back(ref);
+	CB(wormRemoved);
+	CB(playerNetworkInit);
+	
 }

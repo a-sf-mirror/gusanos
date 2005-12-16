@@ -18,6 +18,7 @@
 #include "../glua.h"
 #include "../keys.h"
 #include "../menu.h"
+#include "util/log.h"
 #include "http.h"
 
 #ifndef DEDSERV
@@ -49,9 +50,17 @@ namespace LuaBindings
 
 int print(lua_State* L)
 {
-	const char* s = lua_tostring(L, 1);
-	//console.addLogMsg(s);
-	cerr << "LUA: " << s << endl;
+	cerr << "LUA: ";
+	
+	int c = lua_gettop(L);
+	for(int i = 1; i <= c; ++i)
+	{
+		if(const char* s = lua_tostring(L, i))
+		{
+			cerr << s;
+		}
+	}
+	cerr << '\n';
 	
 	return 0;
 }

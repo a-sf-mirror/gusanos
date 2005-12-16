@@ -10,6 +10,7 @@
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <boost/cstdint.hpp>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
 
@@ -21,34 +22,34 @@ class Sprite;
 
 class ExpType
 {
-	public:
-		
-		ExpType();
-		~ExpType();
+public:
 	
-		bool load(fs::path const& filename);
+	ExpType();
+	~ExpType();
 
-		int timeout;
-		int timeoutVariation;
+	bool load(fs::path const& filename);
+
+	int timeout;
+	int timeoutVariation;
 
 #ifndef DEDSERV
-		Distortion* distortion;
-		float distortMagnitude;
-		SpriteSet* sprite;
-		BlitterContext::Type blender;
-		Sprite* lightHax;
+	Distortion* distortion;
+	float distortMagnitude;
+	SpriteSet* sprite;
+	BlitterContext::Type blender;
+	Sprite* lightHax;
 #endif //DEDSERV
-		int renderLayer;
-		int colour;
-		int alpha;
-		int destAlpha;
+	int renderLayer;
+	int colour;
+	int alpha;
+	int destAlpha;
+	boost::uint32_t crc;
 
-		bool wupixels;
-		bool invisible;
-	
-		std::vector< DetectEvent* > detectRanges;
-		Event *creation;
+	bool wupixels;
+	bool invisible;
 
+	std::vector< DetectEvent* > detectRanges;
+	Event *creation;
 };
 
 extern ResourceList<ExpType> expTypeList;

@@ -28,6 +28,8 @@ class WeaponType;
 class Particle;
 class PartType;
 class Explosion;
+class ZCom_BitStream;
+struct LuaEventDef;
 #ifndef DEDSERV
 class Sound1D;
 class Font;
@@ -157,6 +159,8 @@ public:
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
 	BasePlayer* addPlayer( PLAYER_TYPE player, int team = -1 );
 	BaseWorm* addWorm(bool isAuthority); // Creates a worm class depending on the network condition.
+	//static ZCom_Node* getNode();
+	static void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** data, ZCom_ConnID connID);
 	
 	void assignNetworkRole( bool authority );
 	void removeNode();
@@ -206,6 +210,9 @@ public:
 	std::string const& indexToString(unsigned long idx);
 	
 	std::string const& getModName();
+	
+	static void addCRCs(ZCom_BitStream* req);
+	static bool checkCRCs(ZCom_BitStream& data);
 };
 
 extern Game game;

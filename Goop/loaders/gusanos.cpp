@@ -41,7 +41,7 @@ namespace{
 
 	LevelConfig* loadConfig( fs::path const& filename )
 	{
-		fs::ifstream fileStream(filename);
+		fs::ifstream fileStream(filename, std::ios::binary | std::ios::in);
 
 		if (!fileStream )
 			return false;
@@ -135,13 +135,16 @@ bool GusanosLevelLoader::load(Level* level, fs::path const& path)
 		
 		level->image = gfx.loadBitmap(imagePath.c_str(), 0);
 		if (level->image)
-		{
+		{			
 			std::string backgroundPath = (path / "background").native_file_string();
 			
 			level->background = gfx.loadBitmap(backgroundPath.c_str(),0);
 			
 			std::string paralaxPath = (path / "paralax").native_file_string();
 			level->paralax = gfx.loadBitmap(paralaxPath.c_str(),0);
+			
+			if(!level->paralax)
+				std::cerr << "Paralax not loaded" << std::endl;
 			
 			std::string lightmapPath = (path / "lightmap").native_file_string();
 		
@@ -328,7 +331,7 @@ bool LuaLoader::canLoad(fs::path const& path, std::string& name)
 	
 bool LuaLoader::load(Script* script, fs::path const& path)
 {
-	fs::ifstream f(path, std::ios::binary);
+	fs::ifstream f(path, std::ios::binary | std::ios::in);
 	if(!f)
 		return false;
 		
@@ -358,3 +361,16 @@ const char* LuaLoader::getName()
 {
 	return "Lua loader";
 }
+
+/*
+GusanosParticleLoader GusanosParticleLoader::instance;
+
+bool GusanosParticleLoader::canLoad(fs::path const& path, std::string& name)
+{
+	if(fs::extension(path) == ".obj")
+	{
+		name = path.leaf();
+		return true;
+	}
+	return false;
+}*/

@@ -17,6 +17,11 @@ struct LuaCallbacks
 	std::vector<LuaReference> afterUpdate;
 	std::vector<LuaReference> wormRender;
 	std::vector<LuaReference> viewportRender;
+	std::vector<LuaReference> wormDeath;
+	std::vector<LuaReference> wormRemoved;
+	std::vector<LuaReference> playerUpdate;
+	std::vector<LuaReference> playerInit;
+	std::vector<LuaReference> playerNetworkInit;
 	
 	std::vector<LuaReference> localplayerEvent[7];
 	std::vector<LuaReference> localplayerInit;

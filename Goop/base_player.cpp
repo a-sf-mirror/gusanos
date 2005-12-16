@@ -7,6 +7,7 @@
 #include "gconsole.h"
 #include "encoding.h"
 #include "weapon_type.h"
+#include "util/log.h"
 
 #include "glua.h"
 #include "lua/bindings-game.h"
@@ -20,6 +21,12 @@
 using namespace std;
 
 ZCom_ClassID BasePlayer::classID = ZCom_Invalid_ID;
+
+BasePlayer::Stats::~Stats()
+{
+	if(luaData)
+		lua.destroyReference(luaData);
+}
 
 LuaReference BasePlayer::metaTable()
 {
@@ -177,6 +184,17 @@ void BasePlayer::think()
 						}
 						break;
 						
+						case LuaEvent:
+						{
+							int index = data->getInt(8);
+							ILOG("Got event #" << index);
+							if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Player, index))
+							{
+								event->call(luaReference, data);
+							}
+						}
+						break;
+						
 						case EVENT_COUNT: break; // Do nothing
 					}
 				}
@@ -184,6 +202,11 @@ void BasePlayer::think()
 				case eZCom_EventInit:
 				{
 					sendSyncMessage( conn_id );
+					
+					EACH_CALLBACK(i, playerNetworkInit)
+					{
+						(lua.call(*i), luaReference, conn_id)();
+					}
 				}
 				break;
 				case eZCom_EventRemoved:
@@ -241,6 +264,27 @@ void BasePlayer::think()
 		else
 			changeTeam_(m_options->team);
 	}
+	
+	EACH_CALLBACK(i, playerUpdate)
+	{
+		(lua.call(*i), luaReference)();
+	}
+}
+
+void BasePlayer::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+{
+	if(!m_node) return;
+	ZCom_BitStream* data = new ZCom_BitStream;
+	addEvent(data, LuaEvent);
+	data->addInt(event->idx, 8);
+	if(userdata)
+	{
+		data->addBitStream(*userdata);
+	}
+	if(!connID)
+		m_node->sendEvent(mode, rules, data);
+	else
+		m_node->sendEventDirect(mode, data, connID);
 }
 
 void BasePlayer::addActionStart(ZCom_BitStream* data, BasePlayer::BaseActions action)
@@ -757,7 +801,9 @@ void BasePlayer::baseActionStop ( BaseActions action )
 			}
 		}
 		
-		case DIG: break; // Digging doesn't stop
+		case DIG: break; // Doesn't stop
+			
+		case RESPAWN: break; // Doesn't stop
 		
 		case ACTION_COUNT: break; // Do nothing
 	}

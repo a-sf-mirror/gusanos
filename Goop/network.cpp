@@ -11,12 +11,14 @@
 #include "particle.h"
 #include "http.h"
 #include "util/macros.h"
+#include "util/log.h"
 #include "lua/bindings-network.h"
 
 #ifndef DISABLE_ZOIDCOM
 
 #include <string>
 #include <iostream>
+#include <memory>
 #include <list>
 #include <utility>
 #include <zoidcom.h>
@@ -24,6 +26,8 @@
 using namespace boost::assign;
 
 using namespace std;
+
+int const Network::protocolVersion = 1;
 
 LuaReference LuaEventDef::metaTable;
 
@@ -46,14 +50,14 @@ namespace
 		MapT stringToEvent;
 		std::vector<LuaEventDef*> events;
 		
-		LuaEventDef* add(std::string const& name, LuaReference ref)
+		LuaEventDef* add(std::string const& name, LuaEventDef* event)
 		{
-			int idx = events.size() + 1;
-			LuaEventDef* event = lua_new(LuaEventDef, (idx, ref), lua);
+			size_t idx = events.size() + 1;
+			
+			event->idx = idx;
 			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, event));
 			if(!r.second)
 			{
-				r.first->second->idx = idx;
 				delete event;
 				event = r.first->second;
 			}
@@ -61,30 +65,59 @@ namespace
 			return event;
 		}
 		
-		LuaEventDef* assign(std::string const& name, LuaReference ref)
+		LuaEventDef* assign(std::string const& name, LuaEventDef* event)
 		{
-			LuaEventDef* event = lua_new(LuaEventDef, (-1, ref), lua);
 			std::pair<MapT::iterator, bool> r = stringToEvent.insert(std::make_pair(name, event));
 			if(!r.second)
 			{
-				r.first->second->callb = ref;
+				r.first->second->callb = event->callb;
 				delete event;
 				event = r.first->second; 
 			}
 			return event;
 		}
 		
-		LuaEventDef* fromIndex(int idx)
+		void index(std::string const& name)
 		{
-			if(idx >= 0 && idx < events.size())
-				return events[idx];
+			int idx = events.size() + 1;
+			MapT::iterator i = stringToEvent.find(name);
+			if(i != stringToEvent.end())
+			{
+				i->second->idx = idx;
+				events.push_back(i->second);
+			}
+			else
+				events.push_back(0);
+		}
+		
+		LuaEventDef* fromIndex(size_t idx)
+		{
+			if(idx > 0 && idx <= events.size())
+				return events[idx - 1];
 			return 0;
+		}
+		
+		void clear()
+		{
+			stringToEvent.clear();
+			events.clear();
+		}
+		
+		void encode(ZCom_BitStream* data)
+		{
+			data->addInt(events.size(), 8);
+			foreach(i, events)
+			{
+				DLOG("Encoding lua event: " << (*i)->name);
+				data->addString((*i)->name.c_str());
+			}
 		}
 	};
 	
 	std::list<HttpRequest> requests;
 	std::string serverName;
 	std::string serverDesc;
+	int registerGlobally = 1;
 	HTTP::Host masterServer("comser.liero.org.pl");
 	int updateTimer = 0;
 	bool serverAdded = false;
@@ -171,6 +204,8 @@ namespace
 	
 	void registerToMasterServer()
 	{
+		if(!registerGlobally) return;
+		
 		std::list<std::pair<std::string, std::string> > data;
 
 		push_back(data)
@@ -211,7 +246,14 @@ Network network;
 
 void LuaEventDef::call(ZCom_BitStream* s)
 {
-	(lua.call(callb), luaReference, lua.fullReference(*s, LuaBindings::bitStreamMetaTable))();
+	ZCom_BitStream* n = s->Duplicate();
+	(lua.call(callb), luaReference, lua.fullReference(*n, LuaBindings::bitStreamMetaTable))();
+}
+
+void LuaEventDef::call(LuaReference obj, ZCom_BitStream* s)
+{
+	ZCom_BitStream* n = s->Duplicate();
+	(lua.call(callb), luaReference, obj, lua.fullReference(*n, LuaBindings::bitStreamMetaTable))();
 }
 
 LuaEventDef::~LuaEventDef()
@@ -271,6 +313,13 @@ void Network::registerInConsole()
 		("NET_SERVER_PORT", &m_serverPort, 9898)
 		("NET_SERVER_NAME", &serverName, "Unnamed server")
 		("NET_SERVER_DESC", &serverDesc, "")
+		("NET_REGISTER", &registerGlobally, 1)
+		("NET_SIM_LAG", &network.simLag, 0)
+		("NET_SIM_LOSS", &network.simLoss, -1.f)
+		("NET_UP_LIMIT", &network.upLimit, 10000)
+		("NET_DOWN_BPP", &network.downBPP, 200)
+		("NET_DOWN_PPS", &network.downPPS, 20)
+		("NET_CHECK_CRC", &network.checkCRC, 1)
 	;
 	
 	console.registerCommands()
@@ -298,7 +347,7 @@ void Network::update()
 	}
 	if(m_host)
 	{
-		if(++updateTimer > 6000*3)
+		if(registerGlobally && ++updateTimer > 6000*3)
 		{
 			updateTimer = 0;
 			if(!serverAdded)
@@ -382,15 +431,28 @@ void Network::disconnect( DConnEvents event )
 		ZCom_BitStream *eventData = new ZCom_BitStream;
 		eventData->addInt( static_cast<int>( event ), 8 );
 		
+		LOG("Disconnecting...");
 		m_control->ZCom_disconnectAll(eventData);
 		
-		int count = 0;
-		while ( count < 10 )
+		// Wait for a number of seconds before giving up on the remaining connections
+		const int timeOut = 3000;
+		int oldConnCount = connCount;
+		for ( int count = 0; connCount > 0 && count < timeOut/5; ++count )
 		{
-			rest(50);
+			rest(5);
+			m_control->ZCom_processInput();
 			m_control->ZCom_processOutput();
-			++count;
+			
+			if(oldConnCount != connCount && connCount > 0)
+			{
+				ILOG(connCount << " connections left");
+				oldConnCount = connCount;
+			}
 		}
+		if(connCount > 0)
+			WLOG(connCount << " connections might not have disconnected properly"); 
+		else
+			ILOG("All connections disconnected successfully");
 		m_control->Shutdown();
 	}
 	
@@ -402,6 +464,24 @@ void Network::disconnect( DConnEvents event )
 	m_serverID = ZCom_Invalid_ID;
 	
 	game.removeNode();
+}
+
+void Network::disconnect( ZCom_ConnID id, DConnEvents event )
+{
+	if(!m_control) return;
+	
+	std::auto_ptr<ZCom_BitStream> eventData(new ZCom_BitStream);
+	eventData->addInt( static_cast<int>( event ), 8 );
+	m_control->ZCom_Disconnect( id, eventData.release());
+}
+
+void Network::clear()
+{
+	// The lua event tables contain pointers to objects allocated by lua
+	for(int t = LuaEventGroup::Game; t < LuaEventGroup::Max; ++t)
+	{
+		luaEvents[t].clear();
+	}
 }
 
 void Network::reconnect()
@@ -454,14 +534,28 @@ void Network::addHttpRequest(HTTP::Request* req, HttpRequestCallback handler)
 	requests.push_back(HttpRequest(req, handler));
 }
 
-LuaEventDef* Network::addLuaEvent(LuaEventGroup::type type, char const* name, LuaReference ref)
+LuaEventDef* Network::addLuaEvent(LuaEventGroup::type type, char const* name, LuaEventDef* event)
 {
-	if(m_host)
-		return luaEvents[type].add(name, ref);
+	if(game.options.host)
+		return luaEvents[type].add(name, event);
 	else if(m_client)
-		return luaEvents[type].assign(name, ref);
+		return luaEvents[type].assign(name, event);
 	
-	return 0;
+	return event;
+}
+
+void Network::indexLuaEvent(LuaEventGroup::type type, char const* name)
+{
+	if(m_client)
+		luaEvents[type].index(name);
+}
+
+void Network::encodeLuaEvents(ZCom_BitStream* data)
+{
+	for(int t = LuaEventGroup::Game; t < LuaEventGroup::Max; ++t)
+	{
+		luaEvents[t].encode(data);
+	}
 }
 
 LuaEventDef* Network::indexToLuaEvent(LuaEventGroup::type type, int idx)

@@ -5,16 +5,13 @@ using std::endl;
 
 namespace Encoding
 {
-	
-unsigned int eliasCodedBits = 0;
-unsigned int eliasInvokations = 0;
-	
+
 VectorEncoding::VectorEncoding()
 : area(0, 0, 0, 0), total(0), width(0), height(0), bitsX(0), bitsY(0), subPixelAcc(1), isubPixelAcc(0.0)
 {
 }
 
-VectorEncoding::VectorEncoding(Rect area_, unsigned int subPixelAcc_)
+VectorEncoding::VectorEncoding(Rect area_, int subPixelAcc_)
 : area(area_), subPixelAcc(subPixelAcc_), isubPixelAcc(1.0 / subPixelAcc_)
 {
 	width = area.getWidth() * subPixelAcc;
@@ -25,7 +22,7 @@ VectorEncoding::VectorEncoding(Rect area_, unsigned int subPixelAcc_)
 
 }
 
-DiffVectorEncoding::DiffVectorEncoding(unsigned int subPixelAcc_)
+DiffVectorEncoding::DiffVectorEncoding(int subPixelAcc_)
 : subPixelAcc(subPixelAcc_)
 {
 

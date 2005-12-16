@@ -15,6 +15,7 @@ struct PlayerOptions;
 class BaseWorm;
 class BasePlayerInterceptor;
 class WeaponType;
+struct LuaEventDef;
 
 // Note: None of the BaseActions should assume a combination of keys.
 // For example: Activating JUMP and CHANGE does nothing here ( instead 
@@ -60,6 +61,7 @@ public:
 		COLOR_CHANGE,
 		SELECT_WEAPONS,
 		TEAM_CHANGE,
+		LuaEvent,
 		//
 		EVENT_COUNT,
 	};
@@ -77,8 +79,11 @@ public:
 		{
 		}
 		
+		~Stats();
+		
 		int deaths;
 		int kills;
+		LuaReference luaData;
 	};
 	
 	static LuaReference metaTable();
@@ -117,6 +122,7 @@ public:
 
 	ZCom_NodeID getNodeID();
 	ZCom_ConnID getConnectionID();
+	void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID);
 	shared_ptr<PlayerOptions> getOptions();
 	BaseWorm* getWorm() { return m_worm; }
 	

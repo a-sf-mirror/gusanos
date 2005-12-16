@@ -19,14 +19,16 @@ struct LuaEventDef
 {
 	static LuaReference metaTable;
 	
-	LuaEventDef(size_t idx_, LuaReference callb_)
-	: idx(idx_), callb(callb_)
+	LuaEventDef(std::string name_, LuaReference callb_)
+	: name(name_), idx(0), callb(callb_)
 	{
 	}
 	
 	~LuaEventDef();
 	
 	void call(ZCom_BitStream*);
+	
+	void call(LuaReference, ZCom_BitStream*);
 	
 	void* operator new(size_t count);
 	
@@ -40,7 +42,8 @@ struct LuaEventDef
 		return space;
 	}
 	
-	int       idx;
+	std::string  name;
+	size_t       idx;
 	LuaReference callb;
 	LuaReference luaReference;
 };
@@ -48,18 +51,31 @@ struct LuaEventDef
 class Network
 {
 public:
+
+	static int const protocolVersion;
 		
 	enum NetEvents
 	{
 		PLAYER_REQUEST,
 		RConMsg,
+		ConsistencyInfo,
 	};
 	
 	enum DConnEvents
 	{
 		Kick,
 		ServerMapChange,
-		Quit
+		Quit,
+		Incompatible,
+	};
+	
+	struct ClientEvents
+	{
+		enum type
+		{
+			LuaEvents,
+			Max
+		};
 	};
 	
 	struct LuaEventGroup
@@ -86,7 +102,9 @@ public:
 	static void host();
 	static void connect( const std::string &address);
 	static void disconnect( DConnEvents event = Quit );
+	static void disconnect( ZCom_ConnID id, DConnEvents event );
 	static void reconnect();
+	static void clear();
 	
 	static void kick( ZCom_ConnID connId );
 	
@@ -99,14 +117,23 @@ public:
 	static HTTP::Request* fetchServerList();
 	static void addHttpRequest(HTTP::Request*, HttpRequestCallback);
 	
-	static LuaEventDef* addLuaEvent(LuaEventGroup::type, char const* name, LuaReference);
+	static LuaEventDef* addLuaEvent(LuaEventGroup::type, char const* name, LuaEventDef* event);
+	static void indexLuaEvent(LuaEventGroup::type, char const* name);
 	static LuaEventDef* indexToLuaEvent(LuaEventGroup::type type, int idx);
+	static void encodeLuaEvents(ZCom_BitStream* data);
 	
 	static ZCom_Control* getZControl();
 	static int getServerPing();
 
 	static void incConnCount();
 	static void decConnCount();
+	
+	int simLag;
+	float simLoss;
+	int upLimit;
+	int downBPP;
+	int downPPS;
+	int checkCRC;
 };
 
 extern Network network;

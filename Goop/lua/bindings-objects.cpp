@@ -10,6 +10,7 @@
 #include "../weapon.h"
 #include "../game.h" //Do we need this?
 #include "../glua.h"
+#include "util/log.h"
 
 #include <cmath>
 #include <iostream>
@@ -35,7 +36,7 @@ int shootFromObject(lua_State* L, BaseObject* object)
 		return 0;
 	PartType* p = *static_cast<PartType **>(typeP);
 	
-	int amount = 0;
+	int amount = 1;
 	int amountVariation = 0;
 	lua_Number speed = 0;
 	lua_Number speedVariation = 0;
@@ -61,6 +62,8 @@ int shootFromObject(lua_State* L, BaseObject* object)
 	char dir = object->getDir();
 	Angle baseAngle(object->getAngle() + angleOffset * dir);
 	
+	BaseObject* last = 0;
+	
 	int realAmount = amount + rndInt(amountVariation); // int(rnd()*amountVariation);
 	for(int i = 0; i < realAmount; ++i)
 	{
@@ -73,7 +76,13 @@ int shootFromObject(lua_State* L, BaseObject* object)
 			angle = spd.getAngle(); // Need to recompute angle
 		}
 		//game.insertParticle( new Particle( p, object->getPos() + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle ));
-		p->newParticle(p, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle);
+		last = p->newParticle(p, object->pos + direction * distanceOffset, spd, object->getDir(), object->getOwner(), angle);
+	}
+	
+	if(last)
+	{
+		last->pushLuaReference();
+		return 1;
 	}
 	
 	return 0;
@@ -185,6 +194,11 @@ LMETHOD(BaseWorm, worm_current_weapon,
 	return 0;
 )
 
+LBINOP(BaseWorm, worm_eq,
+	context.push(a == b);
+	return 1;
+)
+
 /*! Object:remove()
 
 	Removes the object in the next frame.
@@ -213,6 +227,12 @@ int l_baseObject_pos(lua_State* L)
 	return 2;
 }
 
+int l_baseObject_setPos(lua_State* L)
+{
+	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+	p->setPos(Vec(lua_tonumber(L, 2), lua_tonumber(L, 3))); 
+	return 0;
+}
 
 /*! Object:spd()
 
@@ -355,6 +375,11 @@ int l_particle_setAngle(lua_State* L)
 	return 0;
 }
 
+METHOD(Particle, particle_destroy,
+	delete p;
+	return 0;
+)
+
 /*! Weapon:is_reloading()
 
 	Returns true if this weapon is reloading.
@@ -393,6 +418,7 @@ METHOD(Weapon, weaponinstr_type,
 	return 1;
 )
 
+
 void addBaseObjectFunctions(LuaContext& context)
 {
 	context.tableFunctions()
@@ -405,6 +431,7 @@ void addBaseObjectFunctions(LuaContext& context)
 		("data", l_baseObject_data)
 		("shoot", l_baseObject_shoot)
 		("get_angle", l_baseObject_getAngle)
+		("set_pos", l_baseObject_setPos) // TEMP
 	;
 }
 
@@ -425,7 +452,10 @@ void initObjects()
 	
 	// Particle method and metatable
 	
-	lua_newtable(context); 
+	lua_newtable(context);
+	context.tableFunctions()
+		("__gc", l_particle_destroy)
+	;
 	lua_pushstring(context, "__index");
 	
 	lua_newtable(context);
@@ -441,7 +471,10 @@ void initObjects()
 	
 	// Worm method and metatable
 	
-	lua_newtable(context); 
+	lua_newtable(context);
+	context.tableFunctions()
+		("__eq", l_worm_eq)
+	;
 	lua_pushstring(context, "__index");
 	
 	lua_newtable(context);

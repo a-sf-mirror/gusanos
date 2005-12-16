@@ -293,7 +293,8 @@ struct List
 	{
 		T* p = iter.ptr;
 		unlink(iter);
-		delete p;
+		//delete p;
+		p->deleteThis();
 	}
 	
 	light_iterator beginD()

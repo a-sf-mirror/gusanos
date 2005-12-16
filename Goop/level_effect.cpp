@@ -35,7 +35,7 @@ LevelEffect::~LevelEffect()
 
 bool LevelEffect::load(fs::path const& filename)
 {
-	fs::ifstream fileStream(filename);
+	fs::ifstream fileStream(filename, std::ios::binary | std::ios::in);
 
 	if (!fileStream )
 		return false;
@@ -48,6 +48,8 @@ bool LevelEffect::load(fs::path const& filename)
 			parser.error("Trailing garbage");
 		return false;
 	}
+	
+	crc = parser.getCRC();
 	
 	{
 		OmfgScript::TokenBase* v = parser.getProperty("mask");

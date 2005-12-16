@@ -35,6 +35,11 @@ namespace Blitters
 		variant = C
 */
 
+inline Pixel getpixel_32(BITMAP* where, int x, int y)
+{
+	return ((Pixel32 *)where->line[y])[x];
+}
+
 inline void putpixel_solid_32(BITMAP* where, int x, int y, Pixel color1)
 {
 	((Pixel32 *)where->line[y])[x] = color1;

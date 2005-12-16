@@ -690,7 +690,7 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette, bool keepAlpha )
 			COLORCONV_24_EQUALS_32;
 #endif
 
-	int flags = COLORCONV_DITHER;
+	int flags = COLORCONV_DITHER | COLORCONV_KEEP_TRANS;
 	
 	if(keepAlpha)
 		flags |= COLORCONV_KEEP_ALPHA;
@@ -720,6 +720,18 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette, bool keepAlpha )
 				returnValue = load_bmp( tmp.c_str() , palette );
 			}
 		}
+	}
+	
+	if(returnValue && !keepAlpha && bitmap_color_depth(returnValue) == 32 && get_color_depth() == 32)
+	{
+		typedef Pixel32 pixel_t_1;
+		APPLY_ON_BITMAP(returnValue,
+			RECT_Y_LOOP(
+				RECT_X_LOOP(
+					*p &= 0xFFFFFF;
+				)
+			)
+		);
 	}
 	
 	return returnValue;

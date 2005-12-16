@@ -21,10 +21,12 @@ public:
 #ifndef DEDSERV
 	// Draw the object in the where bitmap with an offset ( used for camera )
 	//virtual void draw(BITMAP* where, int xOff, int yOff) {}
-	virtual void draw(Viewport* viewport) {}
+	virtual void draw(Viewport* viewport)
+	{}
 #endif
 	// All the object logic here
-	virtual void think() {}
+	virtual void think()
+	{}
 	
 	// Gets the position on the level where the object wants to be rendered
 	virtual Vec getRenderPos();
@@ -45,25 +47,37 @@ public:
 	virtual void removeRefsToPlayer( BasePlayer* player );
 	
 	// Adds the speed value to the current angle speed of the object
-	virtual void addAngleSpeed( AngleDiff speed ) {}
+	virtual void addAngleSpeed( AngleDiff speed )
+	{}
 	
 	// Tells the object to remove itself ( The object may not agree and nothing will happen )
 	virtual void remove();
 	
+	// Deletes the object
+	virtual void deleteThis()
+	{ delete this; }
+	
 #ifndef DEDSERV
 	// Sets a destination alpha value and the time in logic frames it will take to reach that value
-	virtual void setAlphaFade( int frames, int dest ) {}
+	virtual void setAlphaFade( int frames, int dest )
+	{}
 #endif
 	
 	// Runs the custom event number "index" of the object
-	virtual void customEvent ( size_t index ) {}
+	virtual void customEvent ( size_t index )
+	{}
 	
 	// Effects amount damage to the object and sets the last damager to the passed BasePlayer pointer
-	virtual void damage(float amount, BasePlayer* damager ) {}
+	virtual void damage(float amount, BasePlayer* damager )
+	{}
 	
 	// Adds the speed vector to the current speed
 	virtual void addSpeed( Vec spd_ )
 	{ spd += spd_; }
+	
+	// Moves the object somewhere else
+	virtual void setPos( Vec pos_ )
+	{ pos = pos_; }
 	
 	// Dunno what this does.. gliptiiiic!! ;>
 	virtual void pushLuaReference();

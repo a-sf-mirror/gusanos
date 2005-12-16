@@ -5,6 +5,7 @@
 #include "../glua.h"
 #include "../game.h"
 #include "../base_player.h"
+#include "../player_options.h"
 #include "../player.h"
 #include "../base_worm.h"
 #include "../level.h"
@@ -66,6 +67,18 @@ int l_game_localPlayer(lua_State* L)
 		return 0;
 }
 
+int l_game_localPlayerName(lua_State* L)
+{
+	int i = (int)lua_tointeger(L, 1);
+	if(i >= 0 && i < game.playerOptions.size())
+	{
+		lua.push(game.playerOptions[i]->name);
+		return 1;
+	}
+	else
+		return 0;
+}
+
 
 /*! Player:kills()
 
@@ -104,6 +117,19 @@ LMETHOD(BasePlayer, player_team,
 	return 1;
 )
 
+/*! Player:worm()
+
+	Returns the worm of the player.
+*/
+LMETHOD(BasePlayer, player_worm,
+	if(BaseWorm* worm = p->getWorm())
+	{
+		worm->pushLuaReference();
+		return 1;
+	}
+	return 0;
+)
+
 /*! Player:data()
 
 	Returns a lua table associated with this player.
@@ -117,6 +143,24 @@ LMETHOD(BasePlayer, player_data,
 			.newtable()
 			.pushvalue(-1);
 		p->luaData = context.createReference();
+	}
+	
+	return 1;
+)
+
+/*! Player:stats()
+
+	Returns a lua table associated with the stats of this player.
+*/
+LMETHOD(BasePlayer, player_stats,
+	if(p->stats->luaData)
+		context.pushReference(p->stats->luaData);
+	else
+	{
+		context
+			.newtable()
+			.pushvalue(-1);
+		p->stats->luaData = context.createReference();
 	}
 	
 	return 1;
@@ -245,7 +289,10 @@ void initGame()
 	lua_pushcfunction(context, l_game_playerIterator);
 	playerIterator = context.createReference();
 	
-	context.function("game_local_player", l_game_localPlayer);
+	context.functions()
+		("game_local_player", l_game_localPlayer)
+		("game_local_player_name", l_game_localPlayerName)
+	;
 	context.function("game_get_closest_worm", l_game_getClosestWorm);
 
 	context.function("map_is_blocked", l_map_isBlocked);
@@ -260,6 +307,8 @@ void initGame()
 		("team", l_player_team)
 		("say", l_player_say)
 		("data", l_player_data)
+		("stats", l_player_stats)
+		("worm", l_player_worm)
 		("select_weapons", l_player_selectWeapons)
 	)
 	

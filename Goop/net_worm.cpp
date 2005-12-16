@@ -35,9 +35,11 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		allegro_message("ERROR: Unable to create worm node.");
 	}
 	
-	m_node->beginReplicationSetup(0);
+	m_node->beginReplicationSetup(6);
 	
-		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH , (int)Position, -1, 1000);
+		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH , Position, -1, 1000);
+		
+		//m_node->setInterceptID( static_cast<ZCom_InterceptID>(Position) );
 		
 		m_node->addReplicator(new PosSpdReplicator( &posSetup, &pos, &spd, game.level.vectorEncoding, game.level.diffVectorEncoding ), true);
 		
@@ -56,7 +58,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 		m_node->addReplicator(new AngleReplicator( &angleSetup, &aimAngle), true );
 		
 		// Intercepted stuff
-		m_node->setInterceptID( static_cast<ZCom_InterceptID>(PlayerID) );
+		m_node->setInterceptID( PlayerID );
 		
 		m_node->addReplicationInt( (zS32*)&m_playerID, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL , INVALID_NODE_ID);
 		
@@ -100,7 +102,9 @@ void NetWorm::think()
 {
 	BaseWorm::think();
 #ifndef DEDSERV
-	renderPos += (pos - renderPos)*0.2;
+	//renderPos += (pos - renderPos)*0.2;
+	double fact = 1.0 / (1.0 + Vec(renderPos, pos).length() / 4.0);
+	renderPos = renderPos * (1.0 - fact) + pos * fact;
 #endif
 
 	++timeSinceLastUpdate;
@@ -204,10 +208,26 @@ void NetWorm::think()
 						{
 							int index = Encoding::decode(*data, m_weapons.size());
 							int weapTypeIndex = Encoding::decode(*data, game.weaponList.size());
-							m_weapons[index] = new Weapon(game.weaponList[weapTypeIndex], this);
+							if(weapTypeIndex < game.weaponList.size() && index < m_weapons.size())
+							{
+								delete m_weapons[index]; m_weapons[index] = 0; 
+								m_weapons[index] = new Weapon(game.weaponList[weapTypeIndex], this);
+							}
 						}
 					}
 					break;
+					
+					case LuaEvent:
+					{
+						int index = data->getInt(8);
+						if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Worm, index))
+						{
+							event->call(luaReference, data);
+						}
+					}
+					break;
+					
+					case EVENT_COUNT: break;
 				}
 			}
 			break;
@@ -221,6 +241,22 @@ void NetWorm::think()
 			default: break; // Annoying warnings >:O
 		}
 	}
+}
+
+void NetWorm::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+{
+	if(!m_node) return;
+	ZCom_BitStream* data = new ZCom_BitStream;
+	addEvent(data, LuaEvent);
+	data->addInt(event->idx, 8);
+	if(userdata)
+	{
+		data->addBitStream(*userdata);
+	}
+	if(!connID)
+		m_node->sendEvent(mode, rules, data);
+	else
+		m_node->sendEventDirect(mode, data, connID);
 }
 
 void NetWorm::correctOwnerPosition()
@@ -258,7 +294,7 @@ void NetWorm::sendSyncMessage( ZCom_ConnID id )
 	//data->addInt(currentWeapon, Encoding::bitsOf(game.weaponList.size() - 1));
 	Encoding::encode(*data, currentWeapon, m_weapons.size());
 	
-	for( int i = 0; i < m_weapons.size(); ++i )
+	for( size_t i = 0; i < m_weapons.size(); ++i )
 	{
 		if ( m_weapons[i] )
 		{
@@ -406,7 +442,7 @@ NetWormInterceptor::NetWormInterceptor( NetWorm* parent )
 bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, ZCom_Replicator *_replicator, zU32 _estimated_time_sent)
 {
 	bool returnValue = false;
-	switch ( (NetWorm::ReplicationItems) _replicator->getSetup()->getInterceptID() )
+	switch ( _replicator->getSetup()->getInterceptID() )
 	{
 		case NetWorm::PlayerID:
 		{
@@ -434,3 +470,15 @@ bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, e
 	return returnValue;
 }
 
+bool NetWormInterceptor::outPreUpdateItem (ZCom_Node* node, ZCom_ConnID from, eZCom_NodeRole remote_role, ZCom_Replicator* replicator)
+{
+	switch ( replicator->getSetup()->getInterceptID() )
+	{
+		case NetWorm::Position:
+			if(!m_parent->m_isActive) // Prevent non-active worms from replicating position
+				return false;
+		break;
+	}
+	
+	return true;
+}

@@ -4,10 +4,13 @@
 #include "net_worm.h"
 #include "base_worm.h"
 #include "base_player.h"
+#include "part_type.h"
 #include "player_options.h"
 #include "network.h"
 #include "util/math_func.h"
 #include "util/macros.h"
+#include "util/log.h"
+#include "encoding.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -18,6 +21,10 @@
 
 Server::Server( int _udpport ) : m_preShutdown(false)
 {
+	if(network.simLag > 0)
+		ZCom_simulateLag(0, network.simLag);
+	if(network.simLoss > 0.f)
+		ZCom_simulateLoss(0, network.simLoss);
 	int tries = 10;
 	bool result = false;
 	while ( !result && tries-- > 0 )
@@ -29,6 +36,7 @@ Server::Server( int _udpport ) : m_preShutdown(false)
 		console.addLogMsg("* ERROR: FAILED TO INITIALIZE SOCKETS");
 	ZCom_setControlID(0);
 	ZCom_setDebugName("ZCOM_CLI");
+	ZCom_setUpstreamLimit(network.upLimit, network.upLimit);
 	console.addLogMsg("SERVER UP");
 }
 
@@ -90,6 +98,20 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 			}
 		}
 		break;
+		
+		case Network::ConsistencyInfo:
+		{
+			int clientProtocol = _data.getInt(32);
+			if(clientProtocol != Network::protocolVersion)
+			{
+				network.disconnect(_id, Network::Incompatible);
+			}
+			
+			if(!game.checkCRCs(_data) && network.checkCRC) // We call checkCRC anyway so that the stream is advanced
+				network.disconnect(_id, Network::Incompatible);
+			
+		}
+		break;
 	}
 }
 
@@ -111,8 +133,13 @@ bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request
 void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 {
 	console.addLogMsg("* CONNECTION SPAWNED");
-	ZCom_requestDownstreamLimit(_id, 20, 200);
+	ZCom_requestDownstreamLimit(_id, network.downPPS, network.downBPP);
 	network.incConnCount();
+	
+	std::auto_ptr<ZCom_BitStream> data(new ZCom_BitStream);
+	Encoding::encode(*data, Network::ClientEvents::LuaEvents, Network::ClientEvents::Max); 
+	network.encodeLuaEvents(data.get());
+	ZCom_sendData ( _id, data.release(), eZCom_ReliableOrdered);
 }
 
 void Server::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata)
@@ -125,7 +152,7 @@ void Server::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 			(*iter)->deleteMe = true;
 		}
 	}
-	network.incConnCount();
+	network.decConnCount();
 }
 
 bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)

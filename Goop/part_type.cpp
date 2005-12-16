@@ -14,6 +14,7 @@
 #include "util/vec.h"
 #include "util/angle.h"
 #include "util/macros.h"
+#include "util/log.h"
 #include "parser.h"
 #include "detect_event.h"
 #include "timer_event.h"
@@ -38,7 +39,7 @@ using namespace std;
 
 ResourceList<PartType> partTypeList;
 
-void newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle )
+BaseObject* newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle )
 {
 	assert(type->needsNode);
 	
@@ -53,11 +54,12 @@ void newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePla
 #else
 	game.objects.insert( type->colLayer, type->renderLayer, particle );	
 #endif
+	return particle;
 }
 
-void newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
+BaseObject* newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
-	if( type->needsNode && network.isClient() ) return;
+	if( type->needsNode && network.isClient() ) return 0;
 	
 	Particle* particle = new Particle(type, pos_, spd_, dir, owner, angle);
 	
@@ -72,10 +74,11 @@ void newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = V
 #else
 	game.objects.insert( type->colLayer, type->renderLayer, particle );	
 #endif
+	return particle;
 }
 
 template<class T>
-void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
+BaseObject* newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
 	int timeout = type->simpleParticle_timeout + rndInt(type->simpleParticle_timeoutVariation);
 	
@@ -86,6 +89,7 @@ void newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec sp
 	
 	USE_GRID // If this errors out, USE_GRID isn't defined, so define it ffs! >:o
 	game.objects.insert( particle, type->colLayer, type->renderLayer);
+	return particle;
 }
 
 #ifdef DEDSERV
@@ -231,7 +235,7 @@ enum type
 
 bool PartType::load(fs::path const& filename)
 {
-	fs::ifstream fileStream(filename);
+	fs::ifstream fileStream(filename, std::ios::binary | std::ios::in);
 
 	if (!fileStream )
 		return false;
@@ -268,6 +272,9 @@ bool PartType::load(fs::path const& filename)
 			parser.error("Trailing garbage");
 		return false;
 	}
+	
+	FLOG(parttypecrc, filename.string() << ": " << std::hex << parser.getCRC());
+	crc = parser.getCRC();
 
 #ifndef DEDSERV
 	{

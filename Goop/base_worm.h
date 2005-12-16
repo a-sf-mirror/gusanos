@@ -12,6 +12,7 @@ class BasePlayer;
 class NinjaRope;
 class Weapon;
 class WeaponType;
+struct LuaEventDef;
 #ifndef DEDSERV
 class SpriteSet;
 class BaseAnimator;
@@ -117,6 +118,10 @@ public:
 	
 	virtual void sendWeaponMessage( int index, ZCom_BitStream* data ) {}
 	virtual void pushLuaReference();
+	
+	virtual void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+	{
+	}
 	
 	void* operator new(size_t count);
 	

@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/cstdint.hpp>
 
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
@@ -33,6 +34,7 @@ class WeaponType : public ResourceBase
 	float laserSightIntensity;
 	int laserSightAlpha;
 	Blenders laserSightBlender; // Change to BlitterContext::Type
+	boost::uint32_t crc;
 	
 #ifndef DEDSERV
 	SpriteSet *firecone;

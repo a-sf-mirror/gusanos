@@ -158,7 +158,7 @@ void ResourceLocator<T, Cache, ReturnResource>::refresh(fs::path const& path)
 					break;
 				}
 			}
-			
+						
 			if(loader)
 			{
 				// We found a loader

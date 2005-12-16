@@ -206,6 +206,18 @@ public:
 		lua_pushinteger(m_State, static_cast<lua_Integer>(v));
 		return *this;
 	}
+	
+	LuaContext& push(long v)
+	{
+		lua_pushinteger(m_State, static_cast<lua_Integer>(v));
+		return *this;
+	}
+	
+	LuaContext& push(unsigned long v)
+	{
+		lua_pushinteger(m_State, static_cast<lua_Integer>(v));
+		return *this;
+	}
 			
 	template<class T>
 	LuaContext& push(T* v)

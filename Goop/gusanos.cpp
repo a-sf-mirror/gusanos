@@ -12,7 +12,7 @@
 #include "player.h"
 #include "mouse.h"
 #include "util/macros.h"
-//#include "text.h"
+//#include "util/log.h"
 #ifndef DEDSERV
 #include "viewport.h"
 #include "font.h"
@@ -59,28 +59,10 @@ string Exit(const list<string> &args)
 	return "";
 }
 
-void startGame(const std::string&)
-{
-    //menu = false;
-}
-
-/*
-std::ostream& operator<<(std::ostream& s, ZCom_BitStream::BitPos const& v)
-{
-	s << (v.pos * 8 + v.bit);
-	return s;
-}
-
-#include <bitset>
-*/
-
 int main(int argc, char **argv)
+try
 {
 	game.init(argc, argv);
-	
-#ifdef POSIX
-	
-#endif
 
 	console.registerVariables()
 		("CL_SHOWFPS", &showFps, 1) 
@@ -379,6 +361,14 @@ int main(int argc, char **argv)
 	allegro_exit();
 
 	return(0);
+}
+catch(std::exception& e)
+{
+	std::cerr << "Unhandled exception: " << e.what() << '\n';
+}
+catch(...)
+{
+	std::cerr << "Unknown unhandled exception\n";
 }
 END_OF_MAIN();
 

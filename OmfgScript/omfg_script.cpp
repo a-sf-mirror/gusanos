@@ -9,6 +9,7 @@
 #include "util/stringbuild.h"
 #include "util/text.h"
 #include <allegro.h>
+#include <boost/crc.hpp>
 using std::auto_ptr;
 using std::cout;
 using std::endl;
@@ -140,6 +141,14 @@ struct Parameters
 		}
 	}
 	
+	void calcCRC(boost::crc_32_type& crc)
+	{
+		foreach(i, params)
+		{
+			(*i)->calcCRC(crc);
+		}
+	}
+	
 	void error(std::string const& msg)
 	{
 		error(msg, loc);
@@ -246,6 +255,15 @@ struct List : public TokenBase
 	virtual Type::type type()
 	{ return Type::List; }
 	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc(0xE);
+		foreach(i, elements)
+		{
+			(*i)->calcCRC(crc);
+		}
+	}
+	
 	~List()
 	{
 		foreach(i, elements)
@@ -274,6 +292,15 @@ TokenBase* Function::operator[](size_t i) const
 		return &Parser::globalDefault;
 	}
 	return params[i];
+}
+
+void Function::calcCRC(boost::crc_32_type& crc)
+{
+	crc.process_bytes(name.data(), name.size());
+	foreach(i, params)
+	{
+		(*i)->calcCRC(crc);
+	}
 }
 
 struct Func : public Function
@@ -316,7 +343,7 @@ struct BinOp : public TokenBase
 			return Type::Double;
 		return Type::Unknown;
 	}
-	
+
 	~BinOp()
 	{
 		delete a;
@@ -345,6 +372,13 @@ struct Add : public BinOp
 			return a->toInt() + b->toInt();
 		return static_cast<int>(a->toDouble() + b->toDouble());
 	}
+	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc.process_byte(0xA);
+		a->calcCRC(crc);
+		b->calcCRC(crc);
+	}
 };
 
 struct Sub : public BinOp
@@ -364,6 +398,13 @@ struct Sub : public BinOp
 		if(a->type() == Type::Int && b->type() == Type::Int)
 			return a->toInt() - b->toInt();
 		return static_cast<int>(a->toDouble() - b->toDouble());
+	}
+	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc.process_byte(0xB);
+		a->calcCRC(crc);
+		b->calcCRC(crc);
 	}
 };
 
@@ -385,6 +426,13 @@ struct Mul : public BinOp
 			return a->toInt() * b->toInt();
 		return static_cast<int>(a->toDouble() * b->toDouble());
 	}
+	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc.process_byte(0xC);
+		a->calcCRC(crc);
+		b->calcCRC(crc);
+	}
 };
 
 struct Div : public BinOp
@@ -404,6 +452,13 @@ struct Div : public BinOp
 		if(a->type() == Type::Int && b->type() == Type::Int)
 			return static_cast<int>(a->toInt() / b->toDouble());
 		return static_cast<int>(a->toDouble() / b->toDouble());
+	}
+	
+	virtual void calcCRC(boost::crc_32_type& crc)
+	{
+		crc.process_byte(0xD);
+		a->calcCRC(crc);
+		b->calcCRC(crc);
 	}
 };
 
@@ -542,6 +597,8 @@ struct ParserImpl : public TGrammar<ParserImpl>
 	
 	void property(std::string const& name, TokenBase* t, Location loc)
 	{
+		crc.process_bytes(name.data(), name.size());
+		t->calcCRC(crc);
 		properties[name] = new Property(loc, t);
 	}
 	
@@ -558,6 +615,7 @@ struct ParserImpl : public TGrammar<ParserImpl>
 	
 	EventDef* getEventDef(std::string const& name)
 	{
+		crc.process_bytes(name.data(), name.size());
 		let_(i, eventDef.find(name));
 		if(i != eventDef.end())
 		{
@@ -585,6 +643,7 @@ struct ParserImpl : public TGrammar<ParserImpl>
 	
 	ActionDef* getAction(std::string const& name)
 	{
+		crc.process_bytes(name.data(), name.size());
 		let_(i, actionFactory[name]);
 		if(i)
 		{
@@ -614,11 +673,13 @@ struct ParserImpl : public TGrammar<ParserImpl>
 	
 	BaseAction* createAction(ActionDef* action, std::auto_ptr<Parameters> params)
 	{
+		params->calcCRC(crc);
 		return action->create(params->params);
 	}
 	
 	void addEvent(EventDef* event, std::auto_ptr<Parameters> params, std::vector<BaseAction*>& actions)
 	{
+		params->calcCRC(crc);
 		events.push_back(new Event(event, params.release(), actions));
 	}
 	
@@ -626,6 +687,7 @@ struct ParserImpl : public TGrammar<ParserImpl>
 	std::string fileName;
 	std::map<std::string, Property*> properties;
 	std::list<Event*> events;
+	boost::crc_32_type crc;
 	
 	//
 	std::map<std::string, EventDef*> eventDef;
@@ -763,6 +825,11 @@ bool Parser::incomplete()
 void Parser::error(std::string const& msg)
 {
 	pimpl->semanticError(msg);
+}
+
+boost::crc_32_type::value_type Parser::getCRC()
+{
+	return pimpl->crc.checksum();
 }
 
 }

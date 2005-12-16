@@ -3,6 +3,9 @@
 #include "luaapi/types.h"
 
 #include "../network.h"
+#include "../game.h"
+#include "../base_player.h"
+#include "../base_worm.h"
 #include "sockets.h"
 #include "util/log.h"
 #include "tcp.h"
@@ -23,6 +26,8 @@ namespace LuaBindings
 	
 LuaReference socketMetaTable;
 LuaReference bitStreamMetaTable;
+LuaReference luaGameEventMetaTable, luaPlayerEventMetaTable, luaWormEventMetaTable;
+
 
 class LuaSocket : public TCP::Socket
 {
@@ -196,10 +201,93 @@ METHOD(ZCom_BitStream, bitStream_getInt,
 	return 1;
 )
 
-LMETHOD(LuaEventDef, luaEvent_send,
-	
+METHOD(ZCom_BitStream, bitStream_addString,
+	p->addString(lua_tostring(context, 2));
+	context.pushvalue(1);
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_getString,
+	context.push(p->getStringStatic());
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_destroy,
+	delete p;
 	return 0;
 )
+
+int l_new_bitstream(lua_State* L)
+{
+	LuaContext context(L);
+	ZCom_BitStream* p = new ZCom_BitStream;
+	context.pushFullReference(*p, bitStreamMetaTable);
+	return 1;
+}
+
+#define LUA_EVENT_SEND_METHOD(type_, params_, decl_, cases_, body_) \
+LMETHOD(LuaEventDef, luaEvent_##type_##_send, \
+	if(p->idx >= 0)	{ \
+		ZCom_BitStream** userdata = 0; \
+		eZCom_SendMode mode = eZCom_ReliableOrdered; \
+		ZCom_ConnID connID = 0; \
+		zU8 rules = ZCOM_REPRULE_AUTH_2_ALL | ZCOM_REPRULE_OWNER_2_AUTH; \
+		decl_ \
+		switch(lua_gettop(context)) \
+		{ \
+			default: if(lua_gettop(context) < params_+3) break; \
+			case params_+5: rules = lua_tointeger(context, params_+5); \
+			case params_+4: mode = (eZCom_SendMode)lua_tointeger(context, params_+4); \
+			case params_+3: connID = (ZCom_ConnID)lua_tointeger(context, params_+3); \
+			case params_+2: userdata = static_cast<ZCom_BitStream**>(lua_touserdata(context, params_+2)); \
+			cases_ \
+		} \
+		body_ \
+	} \
+	return 0; \
+)
+
+LUA_EVENT_SEND_METHOD(game, 0, /* no declarations */, /* no cases */,
+	game.sendLuaEvent(p, mode, rules, userdata, connID);
+)
+
+LUA_EVENT_SEND_METHOD(player, 1,
+	BasePlayer* player = 0;
+,
+	case 2: player = static_cast<BasePlayer*>(lua_touserdata(context, 2));
+,
+	if(player)
+		player->sendLuaEvent(p, mode, rules, userdata, connID);
+)
+
+LUA_EVENT_SEND_METHOD(worm, 1,
+	BaseWorm* worm = 0;
+,
+	case 2: worm = static_cast<BaseWorm*>(lua_touserdata(context, 2));
+,
+	if(worm)
+		worm->sendLuaEvent(p, mode, rules, userdata, connID);
+)
+
+/*
+LMETHOD(LuaEventDef, luaEvent_game_send,
+	if(p->idx >= 0)
+	{
+		ZCom_BitStream** userdata = static_cast<ZCom_BitStream**>(lua_touserdata(context, 2));
+		
+		eZCom_SendMode mode = eZCom_ReliableOrdered;
+		zU8 rules = ZCOM_REPRULE_AUTH_2_ALL | ZCOM_REPRULE_OWNER_2_AUTH;
+		switch(lua_gettop(context))
+		{
+			case 4: rules = lua_tointeger(context, 4);	
+			case 3: mode = (eZCom_SendMode)lua_tointeger(context, 3);
+		}
+		game.sendLuaEvent(p, mode, rules, userdata);
+	}
+	else
+		DLOG("Message is not indexed for some reason");
+	return 0;
+)*/
 
 int l_network_game_event(lua_State* L)
 {
@@ -207,8 +295,39 @@ int l_network_game_event(lua_State* L)
 	char const* name = lua_tostring(context, 1);
 	if(!name) return 0;
 	lua_pushvalue(context, 2);
-	LuaEventDef* event = network.addLuaEvent(Network::LuaEventGroup::Game, name, context.createReference());
-	context.push(event->luaReference);
+	LuaReference ref = context.createReference();
+	LuaEventDef* event = lua_new_m_keep(LuaEventDef, (name, ref), context, luaGameEventMetaTable);
+	event = network.addLuaEvent(Network::LuaEventGroup::Game, name, event);
+
+	DLOG("Registered game event: " << name);
+	return 1;
+}
+
+int l_network_player_event(lua_State* L)
+{
+	LuaContext context(L);
+	char const* name = lua_tostring(context, 1);
+	if(!name) return 0;
+	lua_pushvalue(context, 2);
+	LuaReference ref = context.createReference();
+	LuaEventDef* event = lua_new_m_keep(LuaEventDef, (name, ref), context, luaPlayerEventMetaTable);
+	event = network.addLuaEvent(Network::LuaEventGroup::Player, name, event);
+
+	DLOG("Registered player event: " << name);
+	return 1;
+}
+
+int l_network_worm_event(lua_State* L)
+{
+	LuaContext context(L);
+	char const* name = lua_tostring(context, 1);
+	if(!name) return 0;
+	lua_pushvalue(context, 2);
+	LuaReference ref = context.createReference();
+	LuaEventDef* event = lua_new_m_keep(LuaEventDef, (name, ref), context, luaWormEventMetaTable);
+	event = network.addLuaEvent(Network::LuaEventGroup::Worm, name, event);
+
+	DLOG("Registered game event: " << name);
 	return 1;
 }
 
@@ -217,6 +336,9 @@ void initNetwork(LuaContext& context)
 	context.functions()
 		("tcp_connect", l_tcp_connect)
 		("network_game_event", l_network_game_event)
+		("network_player_event", l_network_player_event)
+		("network_worm_event", l_network_worm_event)
+		("new_bitstream", l_new_bitstream)
 	;
 	
 	CLASSM(socket,
@@ -226,14 +348,43 @@ void initNetwork(LuaContext& context)
 		("think", l_tcp_think)
 	)
 	
-	CLASS_(LuaEventDef,
-		//("send", )
+	CLASS(luaGameEvent,
+		("send", l_luaEvent_game_send)
 	)
 	
-	CLASS(bitStream,
+	CLASS(luaPlayerEvent,
+		("send", l_luaEvent_player_send)
+	)
+	
+	CLASS(luaWormEvent,
+		("send", l_luaEvent_worm_send)
+	)
+	
+	CLASSM(bitStream,
+		("__gc", l_bitStream_destroy)
+	,
 		("add_int", l_bitStream_addInt)
 		("get_int", l_bitStream_getInt)
+		("add_string", l_bitStream_addString)
+		("get_string", l_bitStream_getString)
 	)
+	
+	ENUM(SendMode,
+		("ReliableUnordered", eZCom_ReliableUnordered)
+		("ReliableOrdered", eZCom_ReliableOrdered)
+		("Unreliable", eZCom_Unreliable)
+	)
+	
+	ENUM(RepRule,
+		("Auth2All", ZCOM_REPRULE_AUTH_2_ALL)
+		("Auth2Owner", ZCOM_REPRULE_AUTH_2_OWNER)
+		("Auth2Proxy", ZCOM_REPRULE_AUTH_2_PROXY)
+		("None", ZCOM_REPRULE_NONE)
+		("Owner2Auth", ZCOM_REPRULE_OWNER_2_AUTH)
+	)
+	
+	lua_pushboolean(context, !network.isClient());
+	lua_setfield(context, LUA_GLOBALSINDEX, "AUTH");
 }
 
 }

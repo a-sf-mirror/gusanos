@@ -51,8 +51,8 @@ BaseWorm::BaseWorm()
 , m_animator(0)
 #endif
 , animate(false), movable(false), changing(false), m_dir(1)
+, m_lastHurt(0)
 {
-	m_lastHurt = NULL;
 #ifndef DEDSERV
 	skin = spriteList.load("skin");
 	skinMask = spriteList.load("skin-mask");
@@ -82,23 +82,19 @@ BaseWorm::BaseWorm()
 		m_weaponCount++;
 	}
 	
-	/*for(std::vector<WeaponType*>::iterator i = game.weaponList.begin();
-	    i != game.weaponList.end();
-	    ++i)
-	{
-		m_weapons.push_back(new Weapon(*i, this));
-	}*/
-
 	m_ninjaRope = new NinjaRope(game.NRPartType, this);
 	movingLeft = false;
 	movingRight = false;
 	jumping = false;
-	
-	
 }
 
 BaseWorm::~BaseWorm()
 {
+	EACH_CALLBACK(i, wormRemoved)
+	{
+		(lua.call(*i), luaReference)();
+	}
+	
 #ifndef DEDSERV
 	delete m_animator; m_animator = 0;
 	delete m_fireconeAnimator; m_fireconeAnimator = 0;
@@ -953,6 +949,10 @@ void BaseWorm::dig( const Vec& digPos, Angle angle )
 
 void BaseWorm::die()
 {
+	EACH_CALLBACK(i, wormDeath)
+	{
+		(lua.call(*i), luaReference)();
+	}
 	m_isActive = false;
 	if (m_owner)
 	{

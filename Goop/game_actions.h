@@ -159,6 +159,7 @@ GAME_ACTION(RunCustomEvent,
 
 GAME_ACTION(RunScript,
 	LuaReference function;
+	std::string scriptName;
 )
 
 GAME_ACTION(ApplyMapEffect,

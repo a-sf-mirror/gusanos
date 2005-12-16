@@ -41,6 +41,7 @@ public:
 	virtual void pushLuaReference();
 	void damage(float amount, BasePlayer* damager );
 	void remove();
+	virtual void deleteThis();
 	
 	int getDir() { return m_dir; }
 	
@@ -74,6 +75,7 @@ private:
 #endif
 	Vec m_origin;
 	
+	LuaReference luaReference;
 	ZCom_Node *m_node;
 };
 

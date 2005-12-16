@@ -47,6 +47,8 @@ enum FontFlags
 	CenterH     = (1<<1),
 	Shadow      = (1<<2),
 	Formatting  = (1<<3),
+	Right       = (1<<4),
+	Bottom      = (1<<5),
 };
 
 #ifndef DEDSERV
@@ -138,6 +140,25 @@ int l_font_load(lua_State* L)
 	return 1;
 }
 
+int l_font_load2(lua_State* L)
+{
+	LuaContext context(L);
+	
+	char const* n = lua_tostring(L, 2);
+	
+	if(!n) return 0;
+
+	Font *f = fontLocator.load(n);
+	if(!f) return 0;
+	
+	context.pushFullReference(*f, LuaBindings::fontMetaTable);
+	lua_pushvalue(L, -1);
+	lua_setfield(L, 1, n);
+	return 1;
+}
+
+
+
 /*! Font:render(bitmap, string, x, y[, r, g, b[, flags]])
 
 	Draws the text 'string' on 'bitmap' at the position (x, y).
@@ -146,7 +167,7 @@ int l_font_load(lua_State* L)
 	otherwise it draws the text white.
 
 	//flags// can be a sum of these values:
-	Font.None : No flags.
+	Font.None : No flags (default).
 	Font.CenterV : Center the text vertically with y at the middle.
 	Font.CenterH : Center the text horizontally with x at the middle.
 	Font.Shadow : Draw a shadow under the text.
@@ -191,13 +212,17 @@ int l_font_render(lua_State* L)
 	if(flags & Formatting)
 		realFlags |= Font::Formatting;
 	
-	if(flags & (CenterV | CenterH))
+	if(flags & (CenterV | CenterH | Right | Bottom))
 	{
 		std::pair<int, int> dim = f->getDimensions(s, 0, realFlags);
 
-		if(flags & CenterH)
+		if(flags & Right)
+			x -= dim.first;
+		else if(flags & CenterH)
 			x -= (dim.first - 1) / 2;
-		if(flags & CenterV)
+		if(flags & Bottom)
+			y -= dim.second;
+		else if(flags & CenterV)
 			y -= (dim.second - 1) / 2;
 	}
 
@@ -374,9 +399,41 @@ int l_mapIterator(lua_State* L)
 	return 1;
 }
 
+
+METHOD(PartType, parttype_put,
+	float x = 0.f;
+	float y = 0.f;
+	float xspd = 0.f;
+	float yspd = 0.f;
+	Angle angle(0.0);
+	
+	int params = lua_gettop(context);
+	switch(params)
+	{
+		default: if(params < 3) return 0;
+		case 6:  angle = Angle(lua_tonumber(context, 6));
+		case 5:  yspd = lua_tonumber(context, 5);
+		case 4:  xspd = lua_tonumber(context, 4);
+		case 3:  y = lua_tonumber(context, 3);
+		case 2:  x = lua_tonumber(context, 2);
+	}
+	
+	BaseObject* last = p->newParticle(p, Vec(x, y), Vec(xspd, yspd), 1, 0, angle);
+
+	if(last)
+	{
+		last->pushLuaReference();
+		return 1;
+	}
+	
+	return 0;
+)
+
 void initResources()
 {
 	LuaContext& context = lua;
+	
+	AssertStack as(context);
 	
 	lua_pushcfunction(context, l_mapIterator);
 	mapIterator = context.createReference();
@@ -395,7 +452,7 @@ void initResources()
 	;
 	
 	CLASS(partType,
-		/* Insert stuff here */
+		("put", l_parttype_put)
 	)
 	
 	CLASSM(weaponType,
@@ -419,6 +476,8 @@ void initResources()
 		("None", None)
 		("CenterV", CenterV)
 		("CenterH", CenterH)
+		("Right", Right)
+		("Bottom", Bottom)
 		("Shadow", Shadow)
 		("Formatting", Formatting)
 	)
@@ -438,6 +497,12 @@ void initResources()
 	context.tableFunction("__index", l_load_script);
 	
 	lua_setmetatable(context, -2);
+	context.pop(1); // Pop global table
+	
+	REQUEST_TABLE("fonts", l_font_load2);
+	
+	//std::cerr << "Old: " << as.stack << std::endl;
+	//std::cerr << "New: " << lua_gettop(context) << std::endl;
 }
 
 }

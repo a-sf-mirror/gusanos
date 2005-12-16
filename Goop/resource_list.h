@@ -6,6 +6,8 @@
 #include <string>
 #include <list>
 #include <iostream>
+#include "util/macros.h"
+#include <boost/cstdint.hpp>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
 
@@ -58,7 +60,10 @@ public:
 	T1* load( fs::path const& filename, bool suppressError = false )
 	{
 		if ( m_locked )
+		{
+			std::cout << "Attempt to load resource after indexation" << std::endl;
 			return NULL;
+		}
 
 		typename MapT::iterator item = m_resItems.find(filename);
 		if (item != m_resItems.end())
@@ -103,6 +108,30 @@ public:
 		{
 			m_resItemsIndex.push_back( item->second );
 			item->second->setIndex(i);
+		}
+	}
+	
+	boost::uint32_t crc(bool posIndependent = true)
+	{
+		if(posIndependent) // crc does not depend on the filename ordering
+		{
+			boost::uint32_t v = 0;
+			const_foreach(i, m_resItems)
+			{
+				v ^= i->second->crc;
+			}
+			return v;
+		}
+		else // crc depends on the filename ordering
+		{
+			boost::uint32_t v = 0;
+			
+			const_foreach(i, m_resItems)
+			{
+				v ^= i->second->crc;
+				++v;
+			}
+			return v;
 		}
 	}
 	

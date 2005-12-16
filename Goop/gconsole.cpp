@@ -222,6 +222,7 @@ string aliasCmd(const list<string> &args)
 	return "BIND <KEY> [COMMAND] : ATTACH A COMMAND TO A KEY";
 }
 
+/*
 string execScript(list<string> const& args)
 {
 	if (args.size() >= 2)
@@ -252,6 +253,7 @@ string execScript(list<string> const& args)
 	}
 	return "EXECSCRIPT <FILE> <FUNCTION> : EXECUTE A SCRIPT FILE";
 }
+*/
 
 string rndSeedCmd(list<string> const& args)
 {
@@ -345,7 +347,7 @@ void GConsole::init()
 		(string("SETCONSOLEKEY"), boost::bind(&GConsole::setConsoleKey, this, _1))
 #endif
 		(string("EXEC"), execCmd)
-		(string("EXECSCRIPT"), execScript)
+		//(string("EXECSCRIPT"), execScript)
 		(string("ALIAS"), aliasCmd)
 		(string("ECHO"), echoCmd)
 		(string("RND_SEED"), rndSeedCmd)

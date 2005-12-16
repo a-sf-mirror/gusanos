@@ -86,6 +86,30 @@ int l_randomfloat(lua_State* L)
 	return 1;
 }
 
+/*! to_time_string(v)
+
+	Converts a frame count //v// to a string showing hours, minutes and seconds as HH:MM:SS.
+*/
+int l_toTimeString(lua_State* L)
+{
+	lua_Integer v = lua_tointeger(L, 1);
+	
+	lua_Integer sec = v / 100;
+	
+	char c[8];
+	c[0] = ((sec / 36000) % 10) + '0';
+	c[1] = ((sec / 3600) % 10) + '0';
+	c[2] = ':';
+	c[3] = ((sec / 600) % 6) + '0';
+	c[4] = ((sec / 60) % 10) + '0';
+	c[5] = ':';
+	c[6] = ((sec / 10) % 6) + '0';
+	c[7] = (sec % 10) + '0';
+	lua_pushlstring(L, c, 8);
+	
+	return 1;
+}
+
 /*! vector_diff(x1, y1, x2, y2)
 
 	Returns a tuple equal to (x2 - x1, y2 - y1)
@@ -100,7 +124,7 @@ int l_vector_diff(lua_State* L)
 
 /*! vector_distance(x1, y1, x2, y2)
 
-	Returns the distance from (x1, y1) to (x2, y1)
+	Returns the distance from (x1, y1) to (x2, y2)
 */
 int l_vector_distance(lua_State* L)
 {
@@ -115,7 +139,7 @@ int l_vector_distance(lua_State* L)
 
 /*! vector_direction(x1, y1, x2, y2)
 
-	Returns the angle between (x1, y1) and (x2, y1)
+	Returns the angle between (x1, y1) and (x2, y2)
 	in degrees.
 */
 int l_vector_direction(lua_State* L)
@@ -195,21 +219,25 @@ void initMath()
 {
 	LuaContext& context = lua;
 	
-	context.function("sqrt", l_sqrt);
-	context.function("abs", l_abs);
-	context.function("floor", l_floor);
+	context.functions()
+		("sqrt", l_sqrt)
+		("abs", l_abs)
+		("floor", l_floor)
 	
-	context.function("randomint", l_randomint);
-	context.function("randomfloat", l_randomfloat);
+		("randomint", l_randomint)
+		("randomfloat", l_randomfloat)
+		
+		("to_time_string", l_toTimeString)
 	
-	context.function("vector_diff", l_vector_diff);
-	context.function("vector_distance", l_vector_distance);
-	context.function("vector_direction", l_vector_direction);
-	context.function("vector_add", l_vector_add);
+		("vector_diff", l_vector_diff)
+		("vector_distance", l_vector_distance)
+		("vector_direction", l_vector_direction)
+		("vector_add", l_vector_add)
 	
-	context.function("angle_clamp", l_angle_clamp);
-	context.function("angle_diff", l_angle_diff);
-	context.function("angle_vector", l_angle_vector);
+		("angle_clamp", l_angle_clamp)
+		("angle_diff", l_angle_diff)
+		("angle_vector", l_angle_vector)
+	;
 }
 
 }
