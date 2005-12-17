@@ -521,6 +521,7 @@ void Particle::pushLuaReference()
 
 void Particle::deleteThis()
 {
+	delete m_node; m_node = 0;
 	if(luaReference)
 	{
 		//DLOG("Destroying reference " << luaReference.idx);
@@ -529,5 +530,4 @@ void Particle::deleteThis()
 	}
 	else
 		delete this;
-	delete m_node; m_node = 0;
 }
