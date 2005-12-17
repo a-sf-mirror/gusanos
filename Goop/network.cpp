@@ -127,7 +127,7 @@ namespace
 	int m_serverPort; // Neither was this
 	
 	std::string m_lastServerAddr;
-	bool m_reconnect = false;
+	int reconnectTimer = 0;
 	int connCount = 0;
 	
 	ZoidCom* m_zcom = 0;
@@ -265,6 +265,7 @@ LuaEventDef::~LuaEventDef()
 }
 
 Network::Network()
+: clientRetry(false)
 {
 /*
 	m_host = false;
@@ -289,8 +290,8 @@ void Network::log(char const* msg)
 
 void Network::init()
 {
-	m_zcom = new ZoidCom(log);
-	m_zcom->setLogLevel(2);
+	m_zcom = new ZoidCom(/*log*/);
+	//m_zcom->setLogLevel(2);
 	if ( !m_zcom->Init() )
 	{
 		console.addLogMsg("* ERROR: UNABLE TO INITIALIZE ZOIDCOM NETWORK LIB");
@@ -339,12 +340,22 @@ void Network::update()
 		m_control->ZCom_processOutput();
 		m_control->ZCom_processInput(eZCom_NoBlock);
 	}
-	if( m_reconnect )
+	
+	static bool lastState = true;
+	if(!!m_control != lastState)
+	{
+		ILOG("m_control = " << m_control);
+		lastState = !!m_control; 
+	}
+	if( reconnectTimer > 0 )
 	{
 		disconnect();
-		connect( m_lastServerAddr );
-		m_reconnect = false;
+		if(--reconnectTimer == 0)
+		{
+			connect( m_lastServerAddr );
+		}
 	}
+	
 	if(m_host)
 	{
 		if(registerGlobally && ++updateTimer > 6000*3)
@@ -432,10 +443,11 @@ void Network::disconnect( DConnEvents event )
 		eventData->addInt( static_cast<int>( event ), 8 );
 		
 		LOG("Disconnecting...");
+		network.clientRetry = true;
 		m_control->ZCom_disconnectAll(eventData);
 		
 		// Wait for a number of seconds before giving up on the remaining connections
-		const int timeOut = 3000;
+		const int timeOut = 10000; //3000;
 		int oldConnCount = connCount;
 		for ( int count = 0; connCount > 0 && count < timeOut/5; ++count )
 		{
@@ -454,6 +466,7 @@ void Network::disconnect( DConnEvents event )
 		else
 			ILOG("All connections disconnected successfully");
 		m_control->Shutdown();
+		network.clientRetry = false;
 	}
 	
 	delete m_control;
@@ -484,9 +497,9 @@ void Network::clear()
 	}
 }
 
-void Network::reconnect()
+void Network::reconnect(int delay)
 {
-	m_reconnect = true;
+	reconnectTimer = delay;
 }
 
 void Network::kick( ZCom_ConnID connId )

@@ -64,7 +64,15 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 {
 	if ( _result != eZCom_ConnAccepted )
 	{
-		console.addLogMsg("* COULDNT ESTABLISH CONNECTION");
+		Network::ConnectionReply::type r = static_cast<Network::ConnectionReply::type>(_reply.getInt(8));
+		if(r == Network::ConnectionReply::Retry)
+		{
+			network.reconnect(50);
+		}
+		else
+		{
+			console.addLogMsg("* COULDNT ESTABLISH CONNECTION");
+		}
 	}
 	else
 	{
@@ -92,7 +100,7 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 				case Network::ServerMapChange:
 				{
 					console.addLogMsg("* SERVER CHANGED MAP");
-					network.reconnect();
+					network.reconnect(50);
 				}
 				break;
 				case Network::Quit:
@@ -128,6 +136,10 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 		
 		case eZCom_ClosedTimeout:
 			console.addLogMsg("* CONNECTION TIMEDOUT");
+		break;
+		
+		case eZCom_ClosedReconnect:
+			console.addLogMsg("* CONNECTION RECONNECTED");
 		break;
 		
 		default:

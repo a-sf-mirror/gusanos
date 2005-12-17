@@ -17,7 +17,6 @@ private:
 	std::map<unsigned int, boost::shared_ptr<BasePlayer::Stats> > savedScores;
 	
 public:
-	
 	Server( int _udpport );
 	~Server();
 	

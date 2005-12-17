@@ -79,6 +79,15 @@ public:
 		};
 	};
 	
+	struct ConnectionReply
+	{
+		enum type
+		{
+			Refused = 0,
+			Retry,
+		};
+	};
+	
 	struct LuaEventGroup
 	{
 		enum type
@@ -104,7 +113,7 @@ public:
 	static void connect( const std::string &address);
 	static void disconnect( DConnEvents event = Quit );
 	static void disconnect( ZCom_ConnID id, DConnEvents event );
-	static void reconnect();
+	static void reconnect(int delay = 1);
 	static void clear();
 	
 	static void kick( ZCom_ConnID connId );
@@ -135,6 +144,7 @@ public:
 	int downBPP;
 	int downPPS;
 	int checkCRC;
+	bool clientRetry;
 };
 
 extern Network network;

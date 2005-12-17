@@ -117,15 +117,23 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 
 bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
 {
-	if ( !m_preShutdown )
+	if(network.clientRetry)
+	{
+		_reply.addInt(Network::ConnectionReply::Retry, 8);
+		return false;
+	}
+	else if ( !m_preShutdown )
 	{
 		console.addLogMsg("* CONNECTION REQUESTED");
+		//_reply.addInt(Network::ConnectionReply::Ok, 8);
 		_reply.addString( game.getMod().c_str() );
 		_reply.addString( game.level.getName().c_str() );
+
 		return true;
 	}
 	else
 	{
+		_reply.addInt(Network::ConnectionReply::Refused, 8);
 		return false;
 	}
 }
@@ -135,7 +143,7 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 	console.addLogMsg("* CONNECTION SPAWNED");
 	ZCom_requestDownstreamLimit(_id, network.downPPS, network.downBPP);
 	network.incConnCount();
-	
+
 	std::auto_ptr<ZCom_BitStream> data(new ZCom_BitStream);
 	Encoding::encode(*data, Network::ClientEvents::LuaEvents, Network::ClientEvents::Max); 
 	network.encodeLuaEvents(data.get());
