@@ -34,7 +34,63 @@
 
 using namespace std;
 
-static boost::pool<> particlePool(sizeof(Particle));
+namespace
+{
+
+	boost::pool<> particlePool(sizeof(Particle));
+}
+
+class ParticleInterceptor : public ZCom_NodeReplicationInterceptor
+{
+public:
+	enum type
+	{
+		Position
+	};
+	
+	ParticleInterceptor( Particle* parent_ )
+	: parent(parent_)
+	{
+	}
+
+	bool inPreUpdateItem(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, ZCom_Replicator *_replicator, zU32 _estimated_time_sent)
+	{ return true; }
+
+	// Not used virtual stuff
+	void outPreReplicateNode(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role)
+	{}
+	
+	void outPreDereplicateNode(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role)
+	{}
+	
+	bool outPreUpdate(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role)
+	{ return true; }
+	
+	bool outPreUpdateItem(ZCom_Node* node, ZCom_ConnID from, eZCom_NodeRole remote_role, ZCom_Replicator* replicator)
+	{
+		switch ( replicator->getSetup()->getInterceptID() )
+		{
+			case Position:
+				if(!(parent->flags & Particle::RepPos)) // Prevent non-active worms from replicating position
+					return false;
+			break;
+		}
+		
+		return true;
+	}
+	
+	void outPostUpdate(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role, zU32 _rep_bits, zU32 _event_bits, zU32 _meta_bits)
+	{}
+	
+	bool inPreUpdate(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role)
+	{ return true; }
+	
+	void inPostUpdate(ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, zU32 _rep_bits, zU32 _event_bits, zU32 _meta_bits)
+	{}
+
+private:
+	Particle* parent;
+};
 
 ZCom_ClassID Particle::classID = ZCom_Invalid_ID;
 
@@ -52,16 +108,19 @@ void Particle::operator delete(void* block)
 }
 
 Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle)
-: BaseObject(owner, pos_, spd_), m_dir(dir), m_type(type)
+: BaseObject(owner, pos_, spd_), /*m_dir(dir), */m_type(type)
 , m_health(type->health), m_angle(angle), m_angleSpeed(0)
 #ifndef DEDSERV
 , m_alpha(m_type->alpha), m_fadeSpeed(0), m_animator(0)
 , m_alphaDest(255), m_sprite(m_type->sprite)
 #endif
 , m_origin(pos_)
-, m_node(0)
+, m_node(0), interceptor(0)
 {
 	m_angle.clamp();
+	
+	flags = (dir > 0 ? FaceRight : 0)
+	        | RepPos;
 	
 #ifndef DEDSERV
 	if ( m_sprite )
@@ -94,6 +153,7 @@ Particle::~Particle()
 	delete m_animator;
 #endif
 	delete m_node;
+	delete interceptor;
 }
 
 void Particle::assignNetworkRole( bool authority )
@@ -107,11 +167,14 @@ void Particle::assignNetworkRole( bool authority )
 
 	m_node->beginReplicationSetup(0);
 	
-		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, 0, -1, 1000);
+		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, ParticleInterceptor::Position, -1, 1000);
 		
 		m_node->addReplicator(new PosSpdReplicator( &posSetup, &pos, &spd, game.level.vectorEncoding, game.level.diffVectorEncoding ), true);
 		
 	m_node->endReplicationSetup();
+	
+	interceptor = new ParticleInterceptor( this );
+	m_node->setReplicationInterceptor(interceptor);
 
 	//DLOG("Registering node, type " << m_type->getIndex() << " of " << partTypeList.size());
 	if( authority )

@@ -91,8 +91,8 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 		break;
 		case Network::RConMsg:
 		{
-			//console.addLogMsg( "RCON MESSAGE RECIEVED");
-			if ( !game.options.rConPassword.empty() && game.options.rConPassword == _data.getStringStatic() )
+			char const* passwordSent = _data.getStringStatic();
+			if ( !game.options.rConPassword.empty() && game.options.rConPassword == passwordSent )
 			{
 				console.addQueueCommand(_data.getStringStatic());
 			}
@@ -104,11 +104,11 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 			int clientProtocol = _data.getInt(32);
 			if(clientProtocol != Network::protocolVersion)
 			{
-				network.disconnect(_id, Network::Incompatible);
+				network.disconnect(_id, Network::IncompatibleProtocol);
 			}
 			
 			if(!game.checkCRCs(_data) && network.checkCRC) // We call checkCRC anyway so that the stream is advanced
-				network.disconnect(_id, Network::Incompatible);
+				network.disconnect(_id, Network::IncompatibleData);
 			
 		}
 		break;

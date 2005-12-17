@@ -43,7 +43,7 @@ class MyEnv(Environment):
 		
 	def getBinName(self, bin):
 		if self.conf == 'mingw-cross':
-			bin += '.exe'
+			bin += '-new.exe'
 		return os.path.join('#bin', self.conf, bin) # Put executable here so not to confuse
 	
 	#Builds all cpp and c files in this directory and returns a list of nodes

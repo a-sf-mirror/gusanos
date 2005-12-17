@@ -273,7 +273,7 @@ bool PartType::load(fs::path const& filename)
 		return false;
 	}
 	
-	FLOG(parttypecrc, filename.string() << ": " << std::hex << parser.getCRC());
+	//FLOG(parttypecrc, filename.string() << ": " << std::hex << parser.getCRC());
 	crc = parser.getCRC();
 
 #ifndef DEDSERV

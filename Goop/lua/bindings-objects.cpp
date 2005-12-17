@@ -29,6 +29,14 @@ LuaReference baseObjectMetaTable(0);
 LuaReference particleMetaTable(0);
 LuaReference weaponMetaTable(0);
 
+namespace ParticleRep
+{
+	enum type
+	{
+		Position
+	};
+}
+
 int shootFromObject(lua_State* L, BaseObject* object)
 {
 	void* typeP = lua_touserdata (L, 2);
@@ -375,6 +383,26 @@ int l_particle_setAngle(lua_State* L)
 	return 0;
 }
 
+METHOD(Particle, particle_set_replication,
+	
+	int mask = 0;
+	switch(lua_tointeger(context, 2))
+	{
+		case ParticleRep::Position:
+			mask = Particle::RepPos;
+		break;
+		default:
+			return 0;
+	}
+	
+	if(lua_toboolean(context, 3))
+		p->setFlag(mask);
+	else
+		p->resetFlag(mask);
+	
+	return 0;
+)
+
 METHOD(Particle, particle_destroy,
 	delete p;
 	return 0;
@@ -464,6 +492,7 @@ void initObjects()
 
 	context.tableFunctions()
 		("set_angle", l_particle_setAngle)
+		("set_replication", l_particle_set_replication)
 	;
 
 	lua_rawset(context, -3);
@@ -503,6 +532,10 @@ void initObjects()
 		("reload_time", l_weaponinstr_reload_time)
 		("ammo", l_weaponinstr_ammo)
 		("type", l_weaponinstr_type)
+	)
+	
+	ENUM(Particle,
+		("Position", ParticleRep::Position)
 	)
 }
 

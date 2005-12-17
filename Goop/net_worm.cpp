@@ -37,7 +37,7 @@ NetWorm::NetWorm(bool isAuthority) : BaseWorm()
 	
 	m_node->beginReplicationSetup(6);
 	
-		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH , Position, -1, 1000);
+		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_PROXY | ZCOM_REPRULE_OWNER_2_AUTH , Position, -1, 1000);
 		
 		//m_node->setInterceptID( static_cast<ZCom_InterceptID>(Position) );
 		
@@ -441,7 +441,6 @@ NetWormInterceptor::NetWormInterceptor( NetWorm* parent )
 
 bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, eZCom_NodeRole _remote_role, ZCom_Replicator *_replicator, zU32 _estimated_time_sent)
 {
-	bool returnValue = false;
 	switch ( _replicator->getSetup()->getInterceptID() )
 	{
 		case NetWorm::PlayerID:
@@ -455,8 +454,8 @@ bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, e
 					(*playerIter)->assignWorm(m_parent);
 				}
 			}
-			returnValue = true;
-		} break;
+		}
+		break;
 		/*case NetWorm::Position:
 		{
 			Vec recievedPos = *static_cast<Vec*>(_replicator->peekData());
@@ -464,14 +463,15 @@ bool NetWormInterceptor::inPreUpdateItem (ZCom_Node *_node, ZCom_ConnID _from, e
 			m_parent->lastPosUpdate = recievedPos;
 			m_parent->timeSinceLastUpdate = 0;
 			m_parent->spd = m_parent->spd*0.2 + speedPrediction*0.8;
-			returnValue = true;
+			return true;
 		} break;*/
 	}
-	return returnValue;
+	return true;
 }
 
 bool NetWormInterceptor::outPreUpdateItem (ZCom_Node* node, ZCom_ConnID from, eZCom_NodeRole remote_role, ZCom_Replicator* replicator)
 {
+
 	switch ( replicator->getSetup()->getInterceptID() )
 	{
 		case NetWorm::Position:
@@ -479,6 +479,6 @@ bool NetWormInterceptor::outPreUpdateItem (ZCom_Node* node, ZCom_ConnID from, eZ
 				return false;
 		break;
 	}
-	
+
 	return true;
 }

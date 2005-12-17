@@ -66,7 +66,8 @@ public:
 		Kick,
 		ServerMapChange,
 		Quit,
-		Incompatible,
+		IncompatibleData,
+		IncompatibleProtocol
 	};
 	
 	struct ClientEvents

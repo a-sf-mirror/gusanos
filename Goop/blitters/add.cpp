@@ -88,8 +88,8 @@ void putpixelwu_add_16(BITMAP* where, float x, float y, Pixel color1, int fact)
 		int fx = xf & 31;
 		int fy = yf & 31;
 		
-		Pixel16_2* urow = ((Pixel16_2 *)where->line[yi]) + xi;
-		Pixel16_2* lrow = ((Pixel16_2 *)where->line[yi + 1]) + xi;
+		Pixel16_2* urow = (Pixel16_2 *)((Pixel16 *)where->line[yi] + xi);
+		Pixel16_2* lrow = (Pixel16_2 *)((Pixel16 *)where->line[yi + 1] + xi);
 		
 		int fyf = fy * fact;
 		int fxf = fx * fact;

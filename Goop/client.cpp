@@ -105,6 +105,18 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 					console.addLogMsg("* YOU WERE KICKED");
 				}
 				break;
+				case Network::IncompatibleData:
+				{
+					console.addLogMsg("* YOU HAVE INCOMPATIBLE DATA");
+				}
+				break;
+				
+				case Network::IncompatibleProtocol:
+				{
+					console.addLogMsg("* THE HOST RUNS AN INCOMPATIBLE VERSION OF GUSANOS");
+				}
+				break;
+				
 				default:
 				{
 					console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");

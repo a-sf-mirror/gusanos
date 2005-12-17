@@ -2,6 +2,7 @@
 #define OMFG_HTTP_SOCKETS_H
 
 #if defined(WINDOWS)
+#define NOGDI
 #include <winsock2.h>
 #include <cstdlib>
 typedef int socklen_t;

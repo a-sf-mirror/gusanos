@@ -3,6 +3,8 @@
 
 // Rectangles
 
+//#include "util/log.h"
+
 #define CLIP_RECT() \
 	if(x1 < where->cl)  x1 = where->cl; \
 	if(y1 < where->ct)  y1 = where->ct; \
