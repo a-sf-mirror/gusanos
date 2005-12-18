@@ -452,7 +452,7 @@ void Network::disconnect( DConnEvents event )
 		for ( int count = 0; connCount > 0 && count < timeOut/5; ++count )
 		{
 			rest(5);
-			//m_control->ZCom_processInput();
+			m_control->ZCom_processInput();
 			m_control->ZCom_processOutput();
 			
 			if(oldConnCount != connCount && connCount > 0)

@@ -179,10 +179,15 @@ void Viewport::render(BasePlayer* player)
 				IVec renderPos( worm->getRenderPos() );
 				int x = renderPos.x - offX;
 				int y = renderPos.y - offY;
-				bool ownViewport = (*playerIter == player);
+				//bool ownViewport = (*playerIter == player);
+				LuaReference ownerRef;
 				
+				if ( player )
+				{
+					ownerRef = player->luaReference;
+				}
 				//lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
-				(lua.call(*i), (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport)();
+				(lua.call(*i), (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownerRef)();
 			}
 		}
 	}
