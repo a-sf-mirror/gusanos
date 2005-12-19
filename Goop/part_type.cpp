@@ -93,13 +93,14 @@ BaseObject* newParticle_SimpleParticle(PartType* type, Vec pos_ = Vec(0.f, 0.f),
 }
 
 #ifdef DEDSERV
-void newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
+BaseObject* newParticle_Dummy(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec spd_ = Vec(0.f, 0.f), int dir = 1, BasePlayer* owner = NULL, Angle angle = Angle(0))
 {
 	if(type->creation)
 	{
 		BaseObject particle(owner, pos_, spd_);
 		type->creation->run(&particle);
 	}
+	return 0;
 }
 #endif
 
@@ -287,6 +288,30 @@ bool PartType::load(fs::path const& filename)
 		if(!v->isDefault())
 			lightHax = genLight(v->toInt(0));
 	}
+	
+	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
+	{
+		if ( f->name == "lens" )
+			distortion = new Distortion( lensMap( (*f)[0]->toInt() ));
+		else if ( f->name == "swirl" )
+			distortion = new Distortion( swirlMap( (*f)[0]->toInt() ));
+		else if ( f->name == "ripple" )
+			distortion = new Distortion( rippleMap( (*f)[0]->toInt() ));
+		else if ( f->name == "random" )
+			distortion = new Distortion( randomMap( (*f)[0]->toInt() ) );
+		else if ( f->name == "spin" )
+			distortion = new Distortion( spinMap( (*f)[0]->toInt() ) );
+		else if ( f->name == "bitmap" )
+			distortion = new Distortion( bitmapMap( (*f)[0]->toString() ) );
+	}
+	
+	distortMagnitude = parser.getDouble("distort_magnitude", 1);
+	
+	std::string const& blenderstr = parser.getString("blender", "none");
+	if(blenderstr == "add") blender = BlitterContext::Add;
+	else if(blenderstr == "alpha") blender = BlitterContext::Alpha;
+	else if(blenderstr == "alphach") blender = BlitterContext::AlphaChannel;
+	else blender = BlitterContext::None;
 #endif
 	invisible = parser.getBool("invisible", false);
 	culled = parser.getBool("occluded", false);
@@ -324,33 +349,10 @@ bool PartType::load(fs::path const& filename)
 	else if ( var == "light_radius" ) ;
 #endif
 */
-	
-
-	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
-	{
-		if ( f->name == "lens" )
-			distortion = new Distortion( lensMap( (*f)[0]->toInt() ));
-		else if ( f->name == "swirl" )
-			distortion = new Distortion( swirlMap( (*f)[0]->toInt() ));
-		else if ( f->name == "ripple" )
-			distortion = new Distortion( rippleMap( (*f)[0]->toInt() ));
-		else if ( f->name == "random" )
-			distortion = new Distortion( randomMap( (*f)[0]->toInt() ) );
-		else if ( f->name == "spin" )
-			distortion = new Distortion( spinMap( (*f)[0]->toInt() ) );
-		else if ( f->name == "bitmap" )
-			distortion = new Distortion( bitmapMap( (*f)[0]->toString() ) );
-	}
 		
 	alpha = parser.getInt("alpha", 255);
 	wupixels = parser.getBool("wu_pixels", false);
-	distortMagnitude = parser.getDouble("distort_magnitude", 1);
 	
-	std::string const& blenderstr = parser.getString("blender", "none");
-	if(blenderstr == "add") blender = BlitterContext::Add;
-	else if(blenderstr == "alpha") blender = BlitterContext::Alpha;
-	else if(blenderstr == "alphach") blender = BlitterContext::AlphaChannel;
-	else blender = BlitterContext::None;
 	
 	colour = parser.getProperty("color", "colour")->toColor(255, 255, 255);
 		

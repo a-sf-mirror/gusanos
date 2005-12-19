@@ -193,14 +193,13 @@ public:
 	PartType* NRPartType;
 	PartType* deathObject;
 	PartType* digObject;
-	
-	Sound1D* chatSound;
-	
+		
 	const std::string& getMod();
 	const std::string& getModPath();
 	const std::string& getDefaultPath();
 
 #ifndef DEDSERV
+	Sound1D* chatSound;
 	Font *infoFont;
 #endif
 	std::list<ScreenMessage> messages;

@@ -187,7 +187,6 @@ void BasePlayer::think()
 						case LuaEvent:
 						{
 							int index = data->getInt(8);
-							ILOG("Got event #" << index);
 							if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Player, index))
 							{
 								event->call(luaReference, data);

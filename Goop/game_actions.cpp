@@ -391,7 +391,7 @@ void Damage::run( ActionParams const& params )
 	{
 		float distance = ( params.object->pos - params.object2->pos ).length();
 		if ( distance < m_maxDistance )
-			damageAmount *= 1 - distance / m_maxDistance;
+			damageAmount *= 1.0 - (distance / m_maxDistance);
 		else
 			damageAmount = 0;
 	}

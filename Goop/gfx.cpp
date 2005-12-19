@@ -721,7 +721,8 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette, bool keepAlpha )
 			}
 		}
 	}
-	
+
+#ifndef DEDSERV
 	if(returnValue && !keepAlpha && bitmap_color_depth(returnValue) == 32 && get_color_depth() == 32)
 	{
 		typedef Pixel32 pixel_t_1;
@@ -733,7 +734,7 @@ BITMAP* Gfx::loadBitmap( const string& filename, RGB* palette, bool keepAlpha )
 			)
 		);
 	}
-	
+#endif
 	return returnValue;
 }
 

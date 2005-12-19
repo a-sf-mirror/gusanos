@@ -935,7 +935,9 @@ void Game::displayChatMsg( std::string const& owner, std::string const& message)
 	console.addLogMsg('<' + owner + "> " + message);
 	displayMessage(ScreenMessage(ScreenMessage::Chat, '{' + owner + "}: " + message, 800));
 	
+#ifndef DEDSERV
 	if ( chatSound ) chatSound->play();
+#endif
 }
 
 void Game::displayKillMsg( BasePlayer* killed, BasePlayer* killer )

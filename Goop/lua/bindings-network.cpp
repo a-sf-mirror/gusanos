@@ -6,6 +6,7 @@
 #include "../game.h"
 #include "../base_player.h"
 #include "../base_worm.h"
+#include "../encoding.h"
 #include "sockets.h"
 #include "util/log.h"
 #include "tcp.h"
@@ -47,24 +48,16 @@ public:
 	
 	void think()
 	{
-		static bool d = true;
-		bool r = d; d = false;
-		
-		if(r) DLOG("Start");
-		
 		if(error)
 		{
 			cerr << "Error!" << endl;
 			error = ErrorNone;
 		}
 		
-		if(r) DLOG("Before think()");
 		TCP::Socket::think();
-		if(r) DLOG("After think()");
 		
 		if(connected)
 		{
-			if(r) DLOG("Connected, sending data...");
 			if(dataSender) // We're still sending data
 			{
 				if(dataSender->resume())
@@ -86,9 +79,17 @@ public:
 				}
 			}
 			
-			if(r) DLOG("Reading chunk");
 			if(readChunk())
 				return;
+		}
+	}
+	
+	~LuaSocket()
+	{
+		delete dataSender;
+		foreach(i, sendQueue)
+		{
+			delete[] i->first;
 		}
 	}
 	
@@ -182,6 +183,45 @@ LMETHOD(LuaSocket, tcp_think,
 LMETHOD(LuaSocket, tcp_destroy,
 	p->~LuaSocket();
 	return 0;
+)
+
+METHOD(ZCom_BitStream, bitStream_dump,
+	context.serialize(*p, 2);
+	context.pushvalue(1);
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_undump,
+	context.deserialize(*p);
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_encodeEliasGamma,
+	int v = lua_tointeger(context, 2);
+	if(v < 1)
+	{
+		WLOG("Number " << v << " can't be encoded with elias gamma. Encoded as 1.");
+		v = 1;
+	}
+	Encoding::encodeEliasGamma(*p, static_cast<unsigned int>(v));
+	context.pushvalue(1);
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_decodeEliasGamma,
+	context.push(Encoding::decodeEliasGamma(*p));
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_addBool,
+	p->addBool(lua_toboolean(context, 2));
+	context.pushvalue(1);
+	return 1;
+)
+
+METHOD(ZCom_BitStream, bitStream_getBool,
+	context.push(p->getBool());
+	return 1;
 )
 
 METHOD(ZCom_BitStream, bitStream_addInt,
@@ -367,6 +407,12 @@ void initNetwork(LuaContext& context)
 		("get_int", l_bitStream_getInt)
 		("add_string", l_bitStream_addString)
 		("get_string", l_bitStream_getString)
+		("encode_elias_gamma", l_bitStream_encodeEliasGamma)
+		("decode_elias_gamma", l_bitStream_decodeEliasGamma)
+		("add_bool", l_bitStream_addBool)
+		("get_bool", l_bitStream_getBool)
+		("dump", l_bitStream_dump)
+		("undump", l_bitStream_undump)
 	)
 	
 	ENUM(SendMode,

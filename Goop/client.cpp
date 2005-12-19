@@ -203,7 +203,6 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requeste
 	{
 		int typeIndex = Encoding::decode(*_announcedata, partTypeList.size());
 		BasePlayer* owner = game.findPlayerWithID(_announcedata->getInt(32));
-		std::cout << "Particle request: type " << typeIndex << " of " << partTypeList.size() << std::endl;
 		newParticle_requested(partTypeList[typeIndex], Vec(), Vec(), 1, owner, Angle());
 	}else
 	{

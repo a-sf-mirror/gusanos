@@ -1,6 +1,8 @@
 #include "bindings.h"
 
+#ifndef DEDSERV
 #include "lua/bindings-gui.h"
+#endif
 #include "bindings-math.h"
 #include "bindings-network.h"
 #include "bindings-objects.h"
@@ -10,18 +12,18 @@
 
 #include "luaapi/types.h"
 
-#include "../gconsole.h"
 //#include "../game.h"
 //#include "../vec.h"
 //#include "../gfx.h"
 #include "../network.h"
 #include "../glua.h"
-#include "../keys.h"
-#include "../menu.h"
 #include "util/log.h"
 #include "http.h"
 
+#include "../gconsole.h"
 #ifndef DEDSERV
+#include "../keys.h"
+#include "../menu.h"
 #include "../blitters/context.h"
 #include "../viewport.h"
 #endif
@@ -337,7 +339,9 @@ void init()
 	LuaContext& context = lua;
 	
 	initMath();
+#ifndef DEDSERV
 	initGUI(OmfgGUI::menu, context);
+#endif
 	initNetwork(context);
 	initObjects();
 	initResources();
@@ -382,6 +386,7 @@ void init()
 #endif
 	lua_rawset(context, LUA_GLOBALSINDEX);
 	
+#ifndef DEDSERV
 	lua_newtable(context); // Key table
 	for(size_t i = 0; i < keyNames.size(); ++i)
 	{
@@ -389,6 +394,7 @@ void init()
 		lua_setfield(context, -2, keyNames[i].c_str());
 	}
 	lua_setfield(context, LUA_GLOBALSINDEX, "Keys");
+#endif
 	
 	cerr << "LuaBindings::init() done." << endl;
 }

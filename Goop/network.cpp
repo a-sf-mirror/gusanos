@@ -341,12 +341,6 @@ void Network::update()
 		m_control->ZCom_processInput(eZCom_NoBlock);
 	}
 	
-	static bool lastState = true;
-	if(!!m_control != lastState)
-	{
-		ILOG("m_control = " << m_control);
-		lastState = !!m_control; 
-	}
 	if( reconnectTimer > 0 )
 	{
 		disconnect();

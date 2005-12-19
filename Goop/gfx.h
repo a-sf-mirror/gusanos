@@ -36,11 +36,6 @@ public:
 	
 	static int getScalingFactor();
 
-	inline bool compareRGB( int c1, int c2 )
-	{
-		return ( getr(c1) == getr(c2) && getg(c1) == getg(c2) && getb(c1) == getb(c2) );
-	}
-	
 	inline void setBlender( Blenders blender, int alpha )
 	{
 		drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
@@ -67,6 +62,11 @@ public:
 	
 	int m_haxWormLight; //TEMP HAX
 #endif
+
+	inline bool compareRGB( int c1, int c2 )
+	{
+		return ( getr(c1) == getr(c2) && getg(c1) == getg(c2) && getb(c1) == getb(c2) );
+	}
 	
 	BITMAP* loadBitmap(const std::string &filename, RGB* palette = NULL, bool keepAlpha = false);
 	bool saveBitmap(const std::string &filename, BITMAP* image, RGB* palette = NULL);

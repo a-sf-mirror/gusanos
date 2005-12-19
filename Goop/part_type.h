@@ -9,6 +9,7 @@
 #include <allegro.h>
 #endif
 #include "events.h"
+#include "util/vec.h"
 #include "util/angle.h"
 #include "resource_base.h"
 #include <boost/cstdint.hpp>

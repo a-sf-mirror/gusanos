@@ -19,6 +19,8 @@ using std::cerr;
 using std::endl;
 using std::string;
 
+class ZCom_BitStream;
+
 class LuaContext
 {
 public:
@@ -213,6 +215,12 @@ public:
 		return *this;
 	}
 	
+	LuaContext& push(unsigned int v)
+	{
+		lua_pushinteger(m_State, static_cast<lua_Integer>(v));
+		return *this;
+	}
+	
 	LuaContext& push(unsigned long v)
 	{
 		lua_pushinteger(m_State, static_cast<lua_Integer>(v));
@@ -400,6 +408,9 @@ public:
 	void serialize(std::ostream& s, int i);
 	void deserialize(std::istream& s);
 	void serializeT(std::ostream& s, int i, int indent = 0);
+	
+	void serialize(ZCom_BitStream& s, int i);
+	bool deserialize(ZCom_BitStream& s);
 	
 	void regObject(char const* name)
 	{

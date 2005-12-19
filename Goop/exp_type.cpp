@@ -116,6 +116,7 @@ bool ExpType::load(fs::path const& filename)
 	timeoutVariation = parser.getInt("timeout_variation", 0);
 	renderLayer = parser.getInt("render_layer", Grid::WormRenderLayer);
 
+#ifndef DEDSERV
 	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
 	{
 		if ( f->name == "lens" )
@@ -131,10 +132,6 @@ bool ExpType::load(fs::path const& filename)
 		else if ( f->name == "bitmap" )
 			distortion = new Distortion( bitmapMap( (*f)[0]->toString() ) );
 	}
-		
-	alpha = parser.getInt("alpha", 255);
-	destAlpha = parser.getInt("dest_alpha", -1);
-	wupixels = parser.getBool("wu_pixels", false);
 	distortMagnitude = parser.getDouble("distort_magnitude", 0.8);
 	
 	std::string const& blenderstr = parser.getString("blender", "none");
@@ -142,7 +139,12 @@ bool ExpType::load(fs::path const& filename)
 	else if(blenderstr == "alpha") blender = BlitterContext::Alpha;
 	else if(blenderstr == "alphach") blender = BlitterContext::AlphaChannel;
 	else blender = BlitterContext::None;
-	
+#endif
+
+	alpha = parser.getInt("alpha", 255);
+	destAlpha = parser.getInt("dest_alpha", -1);
+	wupixels = parser.getBool("wu_pixels", false);
+
 	colour = parser.getProperty("color", "colour")->toColor(255, 255, 255);
 	
 	OmfgScript::Parser::EventIter i(parser);

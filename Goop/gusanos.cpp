@@ -10,10 +10,10 @@
 #include "particle.h"
 #include "worm.h"
 #include "player.h"
-#include "mouse.h"
 #include "util/macros.h"
 //#include "util/log.h"
 #ifndef DEDSERV
+#include "mouse.h"
 #include "viewport.h"
 #include "font.h"
 #include "gfx.h"
@@ -198,9 +198,9 @@ try
 
 #ifndef DEDSERV
 			console.checkInput();
+			mouseHandler.poll();
 #endif
 			console.think();
-			mouseHandler.poll();
 			
 			spriteList.think();
 			
@@ -351,7 +351,9 @@ try
 	network.disconnect();
 	network.shutDown();
 	game.unload();
+#ifndef DEDSERV
 	OmfgGUI::menu.destroy();
+#endif
 	console.shutDown();
 #ifndef DEDSERV
 	sfx.shutDown();

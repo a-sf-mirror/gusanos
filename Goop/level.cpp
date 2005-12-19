@@ -502,7 +502,6 @@ void Level::loaderSucceeded()
 				putpixel( lightmap, x, y, 200 );
 		}
 	}
-#endif
 	
 	if(!background)
 	{
@@ -521,7 +520,7 @@ void Level::loaderSucceeded()
 		rectfill( watermap, 0,0,watermap->w, watermap->h, makecol( 0, 0, 200 ) );
 		solid_mode();
 	}
-	
+#endif
 	// Make the domain one pixel larger than the level so that things like ninjarope hook
 	// can get slightly outside the level and attach.
 	vectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 2048);

@@ -487,6 +487,8 @@ void initResources()
 		("render_skinned_box", l_sprites_render_skinned_box)
 		("frames", l_sprites_frames)
 	)
+	
+	REQUEST_TABLE("fonts", l_font_load2);
 
 #endif
 	// Global metatable
@@ -498,9 +500,7 @@ void initResources()
 	
 	lua_setmetatable(context, -2);
 	context.pop(1); // Pop global table
-	
-	REQUEST_TABLE("fonts", l_font_load2);
-	
+
 	//std::cerr << "Old: " << as.stack << std::endl;
 	//std::cerr << "New: " << lua_gettop(context) << std::endl;
 }

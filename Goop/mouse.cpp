@@ -1,3 +1,4 @@
+#ifndef DEDSERV
 #include "mouse.h"
 #include "gfx.h"
 
@@ -116,3 +117,5 @@ int MouseHandler::getY()
 {
 	return posY;
 }
+
+#endif
