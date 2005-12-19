@@ -38,6 +38,7 @@ class WeaponType : public ResourceBase
 	
 #ifndef DEDSERV
 	SpriteSet *firecone;
+	SpriteSet *skin;
 #endif
 	std::string name;
 	fs::path fileName;

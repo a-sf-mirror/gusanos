@@ -850,19 +850,21 @@ void BaseWorm::draw(Viewport* viewport)
 			if (m_ninjaRope->active)
 			{
 				IVec nrPos = viewport->convertCoords( IVec(m_ninjaRope->pos) );
-				//line(where, x, y, nrPos.x, nrPos.y, m_ninjaRope->getColour());
-				linewu_solid(where
+				line(where, x, y, nrPos.x, nrPos.y, m_ninjaRope->getColour());
+				/*linewu_solid(where
 					, x
 					, y
 					, nrPos.x
 					, nrPos.y
-				, m_ninjaRope->getColour());
+				, m_ninjaRope->getColour());*/
 			}
 			
 			if ( m_weapons[currentWeapon] ) m_weapons[currentWeapon]->drawBottom(where, renderX, renderY);
 			
 			int colour = universalToLocalColor(m_owner->colour);
 			skin->getColoredSprite(m_animator->getFrame(), skinMask, colour, getAngle())->draw(where, renderX, renderY);
+			
+			if ( m_weapons[currentWeapon] ) m_weapons[currentWeapon]->drawTop(where, renderX, renderY);
 			
 			if ( m_currentFirecone )
 			{

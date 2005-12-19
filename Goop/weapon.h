@@ -38,8 +38,7 @@ public:
 	
 #ifndef DEDSERV
 	void drawBottom(BITMAP* where,int x, int y);
-	void drawTop(BITMAP* where,int x, int y)
-	{ }
+	void drawTop(BITMAP* where,int x, int y);
 #endif
 	
 	void actionStart( Actions action );

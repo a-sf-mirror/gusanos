@@ -27,6 +27,7 @@ WeaponType::WeaponType() : ResourceBase()
 	reloadTime = 0;
 #ifndef DEDSERV
 	firecone = NULL;
+	skin = 0;
 #endif
 	
 	laserSightColour = makecol(255,0,0);
@@ -142,6 +143,10 @@ bool WeaponType::load(fs::path const& filename)
 		OmfgScript::TokenBase* v = parser.getProperty("firecone");
 		if(!v->isDefault())
 			firecone = spriteList.load(v->toString());
+		
+		v = parser.getProperty("skin");
+		if(!v->isDefault())
+			skin = spriteList.load(v->toString());
 	}
 #endif
 	

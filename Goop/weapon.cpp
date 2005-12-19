@@ -7,6 +7,8 @@
 #include "util/angle.h"
 #include "util/macros.h"
 #include "timer_event.h"
+#include "sprite_set.h"
+#include "sprite.h"
 
 #include "network.h"
 
@@ -164,6 +166,14 @@ void Weapon::drawBottom(BITMAP* where, int x, int y )
 			posDiff+= inc;
 			intensity+= intensityInc;
 		}
+	}
+}
+
+void Weapon::drawTop(BITMAP* where,int x, int y)
+{
+	if ( m_type->skin )
+	{
+		m_type->skin->getSprite( 0, m_owner->getAngle() )->draw(where, x, y);
 	}
 }
 #endif
