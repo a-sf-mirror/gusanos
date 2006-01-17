@@ -37,6 +37,11 @@ inline Pixel scaleColor_32(Pixel color, int fact)
 	return temp1 | temp2;
 }
 
+inline Pixel scaleColorHalf_32(Pixel color)
+{
+	return (color & 0xFEFEFE) >> 1;
+}
+
 inline Pixel scaleColor_8_4(Pixel color, int fact)
 {
 	Pixel temp1 = (color & 0x00FF00FF);

@@ -232,6 +232,18 @@ void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int 
 			)
 		)
 	}
+	/*
+	else if(fact >= 127 && fact <= 128)
+	{
+		SPRITE_Y_LOOP(
+			SPRITE_X_LOOP(
+				Pixel s = *src;
+				if(s != maskcolor_32)
+					*dest = addColorsCrudeHalf_32(*dest, s);
+			)
+		)
+	}
+	*/
 	else if(fact > 0)
 	{
 		SPRITE_Y_LOOP(
@@ -256,8 +268,7 @@ void drawSprite_add_16(BITMAP* where, BITMAP* from, int x, int y, int cutl, int 
 	CLIP_SPRITE_REGION();
 	
 	fact = (fact + 4) / 8;
-	
-	
+
 	if(fact >= 31)
 	{
 		SPRITE_Y_LOOP(

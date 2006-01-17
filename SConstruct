@@ -19,6 +19,7 @@ sconscript = ['GUI',
             'http',
             #'IoVM',
 			#'SmallLang',
+			#'netlib',
 			]
 			
 def is_List(e):

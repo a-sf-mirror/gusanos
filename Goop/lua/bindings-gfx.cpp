@@ -3,6 +3,7 @@
 #include "luaapi/types.h"
 
 #include "../glua.h"
+#include "util/log.h"
 
 #ifndef DEDSERV
 #include "../viewport.h"
@@ -104,6 +105,16 @@ METHOD(Viewport, viewport_getBitmap,
 	return 1;
 )
 
+METHOD(Viewport, viewport_fromMap,
+	lua_Integer x = lua_tointeger(context, 2);
+	lua_Integer y = lua_tointeger(context, 3);
+	
+	IVec v(p->convertCoords(IVec(x, y)));
+	context.push(v.x);
+	context.push(v.y);
+	return 2;
+)
+
 /*! Bitmap:w()
 
 	Returns the width of this bitmap.
@@ -142,6 +153,7 @@ void initGfx()
 	
 	CLASS(viewport,
 		("get_bitmap", l_viewport_getBitmap)
+		("from_map", l_viewport_fromMap)
 	)
 
 	// Bitmap method and metatable

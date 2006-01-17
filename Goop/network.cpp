@@ -12,6 +12,7 @@
 #include "http.h"
 #include "util/macros.h"
 #include "util/log.h"
+#include "util/text.h"
 #include "lua/bindings-network.h"
 
 #ifndef DISABLE_ZOIDCOM
@@ -139,7 +140,7 @@ namespace
 	{
 		foreach_delete(i, requests)
 		{
-			if(i->req->think())
+			if(!i->req || i->req->think())
 			{
 				if(i->handler)
 					i->handler(i->req);
@@ -212,6 +213,7 @@ namespace
 			("action", "add")
 			("title", serverName)
 			("desc", serverDesc)
+			("port", convert<std::string>::value(m_serverPort))
 			("mod", game.getModName())
 			("map", game.level.getName())
 		;
