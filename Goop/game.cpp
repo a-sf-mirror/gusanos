@@ -163,15 +163,21 @@ string gameCmd(const list<string> &args)
 
 string addbotCmd(const list<string> &args)
 {
-	int team = -1;
-	list<string>::const_iterator i = args.begin();
-	if(i != args.end())
+	if ( !network.isClient() )
 	{
-		team = cast<int>(*i);
-		++i;
+		int team = -1;
+		list<string>::const_iterator i = args.begin();
+		if(i != args.end())
+		{
+			team = cast<int>(*i);
+			++i;
+		}
+		game.addBot(team);
+		return "";
+	}else
+	{
+		return "You cant add bots as client";
 	}
-	game.addBot(team);
-	return "";
 }
 
 string connectCmd(const list<string> &args)

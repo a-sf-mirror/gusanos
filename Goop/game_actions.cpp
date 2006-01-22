@@ -104,6 +104,11 @@ void registerGameActions()
 		("time")
 		("time_var")
 	;
+	
+	gameActions.add("use_ammo", newAction<UseAmmo>, af::Weapon)
+		("amount")
+	;
+	
 	gameActions.add("add_angle_speed", newAction<AddAngleSpeed>, af::Object)
 		("amount")
 		("amount_var")
@@ -192,7 +197,8 @@ void ShootParticles::run( ActionParams const& params )
 			if(motionInheritance)
 			{
 				spd += params.object->spd * motionInheritance;
-				angle = spd.getAngle(); // Need to recompute angle
+				//angle = spd.getAngle(); // Need to recompute angle // <basara> No you dont
+				//Perhaps as an option later.
 			}
 
 			type->newParticle(type, params.object->pos + direction * distanceOffset, spd, params.object->getDir(), params.object->getOwner(), angle);
@@ -240,7 +246,7 @@ void UniformShootParticles::run( ActionParams const& params )
 			if(motionInheritance)
 			{
 				spd += params.object->spd * motionInheritance;
-				angle = spd.getAngle(); // Need to recompute angle
+				//angle = spd.getAngle(); // Need to recompute angle
 			}
 
 			type->newParticle(type, params.object->pos + direction * distanceOffset, spd, params.object->getDir(), params.object->getOwner(), angle);
@@ -566,6 +572,27 @@ void DelayFire::run( ActionParams const& params )
 }
 
 DelayFire::~DelayFire()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+UseAmmo::UseAmmo( vector<OmfgScript::TokenBase*> const& params )
+{
+	amount = params[0]->toInt(1);
+}
+
+void UseAmmo::run( ActionParams const& params )
+{
+	if(params.weapon)
+	{
+		params.weapon->useAmmo(amount);
+	}
+}
+
+UseAmmo::~UseAmmo()
 {
 }
 

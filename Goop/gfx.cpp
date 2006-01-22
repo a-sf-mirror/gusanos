@@ -2,6 +2,7 @@
 #include "gconsole.h"
 
 #ifndef DEDSERV
+#include "2xsai.h"
 #include "blitters/blitters.h"
 #include "blitters/colors.h"
 #include "blitters/macros.h"
@@ -38,7 +39,9 @@ namespace
 		NO_FILTER2,
 		SCANLINES,
 		SCANLINES2,
-		BILINEAR
+		BILINEAR,
+		SUPER2XSAI,
+		SUPEREAGLE
 	};
 	
 	int m_fullscreen = 1;
@@ -166,7 +169,9 @@ void Gfx::init()
 	doubleResChange(); // This calls fullscreenChange() that sets the gfx mode
 
 	loadpng_init();
-
+	
+	Init_2xSaI(m_bitdepth); // needed for SUPER2XSAI and SUPEREAGLE filters
+	
 	buffer = create_bitmap(320,240);
 #else
 	set_color_depth(32);
@@ -214,7 +219,8 @@ void Gfx::registerInConsole()
 			("SCANLINES", SCANLINES)
 			("SCANLINES2", SCANLINES2)
 			("BILINEAR", BILINEAR)
-			//("2XSAI", AA2XSAI) // To be included later.
+			("SUPER2XSAI",SUPER2XSAI)
+			("SUPEREAGLE", SUPEREAGLE)
 		;
 
 		console.registerVariable(new EnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters));
@@ -564,6 +570,17 @@ void Gfx::updateScreen()
 				blitFromBuffer = false;
 			}
 			break;
+			
+			case SUPER2XSAI:
+				Super2xSaI(buffer, m_doubleResBuffer, 0, 0, 0, 0, 320, 240);
+				blitFromBuffer = true;
+			break;
+
+			case SUPEREAGLE:
+				SuperEagle(buffer, m_doubleResBuffer, 0, 0, 0, 0, 320, 240);
+				blitFromBuffer = true;
+			break;
+			
 		}
 		if(blitFromBuffer)
 			blit(m_doubleResBuffer, screen, 0, 0, 0, 0, m_vwidth, m_vheight);

@@ -308,14 +308,14 @@ void NetWorm::sendSyncMessage( ZCom_ConnID id )
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }
 
-void NetWorm::sendWeaponMessage( int index, ZCom_BitStream* weaponData )
+void NetWorm::sendWeaponMessage( int index, ZCom_BitStream* weaponData, zU8 repRules )
 {
 	ZCom_BitStream *data = new ZCom_BitStream;
 	addEvent(data, WeaponMessage);
 	//data->addInt(index, Encoding::bitsOf(game.weaponList.size() - 1));
 	Encoding::encode(*data, index, m_weapons.size());
 	data->addBitStream( weaponData );
-	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_ALL, data);
+	m_node->sendEvent(eZCom_ReliableOrdered, repRules, data);
 }
 
 ZCom_NodeID NetWorm::getNodeID()

@@ -138,6 +138,26 @@ int l_host(lua_State* L)
 	return 0;
 }
 
+/*! map(map)
+
+	Loads the map //map// with the current mod.
+*/
+int l_map(lua_State* L)
+{
+	char const* map = lua_tostring(L, 1);
+	if(!map)
+		return 0;
+
+	/*
+	game.options.host = 1;
+	if(!game.changeLevelCmd( map ))
+		return 0;
+	lua_pushboolean(L, true);*/
+	
+	console.addQueueCommand(std::string("map \"") + map + '"');
+	return 0;
+}
+
 
 
 /*! console_register_command(name, function)
@@ -363,6 +383,7 @@ void init()
 		("bind", l_bind)
 		("connect", l_connect)
 		("host", l_host)
+		("map", l_map)
 	;
 
 	// Bindings table and metatable

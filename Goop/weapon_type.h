@@ -29,6 +29,9 @@ class WeaponType : public ResourceBase
 	int ammo;
 	int reloadTime;
 	
+	bool syncHax;
+	bool syncReload;
+	
 	int laserSightColour;
 	int laserSightRange;
 	float laserSightIntensity;

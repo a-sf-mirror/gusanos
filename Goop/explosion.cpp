@@ -65,6 +65,13 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 #endif
 }
 
+Explosion::~Explosion()
+{
+#ifndef DEDSERV
+	delete m_animator;
+#endif
+}
+
 #ifndef DEDSERV
 
 void Explosion::think()

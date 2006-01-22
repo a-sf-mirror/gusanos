@@ -315,7 +315,7 @@ bool PartType::load(fs::path const& filename)
 #endif
 	invisible = parser.getBool("invisible", false);
 	culled = parser.getBool("occluded", false);
-	animOnGround = parser.getBool("anim_on_ground");
+	animOnGround = parser.getBool("anim_on_ground", false);
 	renderLayer = parser.getInt("render_layer", Grid::WormRenderLayer);
 	colLayer = parser.getInt("col_layer", 0);
 	

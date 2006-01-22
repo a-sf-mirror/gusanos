@@ -49,7 +49,16 @@ public:
 	void assignOwner( BasePlayer* owner);
 	void setOwnerId( ZCom_ConnID _id );
 	void sendSyncMessage( ZCom_ConnID id );
-	void sendWeaponMessage( int index, ZCom_BitStream* data );
+	void sendWeaponMessage( int index, ZCom_BitStream* data, zU8 repRules = ZCOM_REPRULE_AUTH_2_ALL );
+	
+	eZCom_NodeRole getRole()
+	{
+		if ( m_node )
+		{
+			return m_node->getRole();
+		}else
+			return eZCom_RoleUndefined;
+	}
 	
 	virtual void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID);
 	

@@ -28,7 +28,7 @@ using namespace boost::assign;
 
 using namespace std;
 
-int const Network::protocolVersion = 1;
+int const Network::protocolVersion = 2;
 
 LuaReference LuaEventDef::metaTable;
 

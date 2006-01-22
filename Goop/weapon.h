@@ -24,9 +24,11 @@ public:
 	enum Events
 	{
 		RELOADED = 0,
-		//SHOOT, //unused?
 		OUTOFAMMO,
-		EventsCount,
+		SHOOT,
+		OutOfAmmoCheck,
+		AmmoCorrection,
+		EventsCount
 	};
 		
 	Weapon(WeaponType* type, BaseWorm* owner);
@@ -46,6 +48,7 @@ public:
 	void recieveMessage( ZCom_BitStream* data );
 	
 	void delay( int time );
+	void useAmmo( int amount );
 	BaseWorm* getOwner();
 	
 	WeaponType* getType() { return m_type; }
@@ -59,7 +62,11 @@ private:
 	
 	void reload();
 	void outOfAmmo();
-		
+	
+	bool m_outOfAmmo;
+	bool outOfAmmoCheck;
+	bool sentOutOfAmmo;
+	
 	bool primaryShooting;
 	int ammo;
 	int inactiveTime;

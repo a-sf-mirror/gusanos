@@ -130,6 +130,10 @@ GAME_ACTION(DelayFire,
 	int delayTimeVariation;
 )
 
+GAME_ACTION(UseAmmo,
+	int amount;
+)
+
 GAME_ACTION(ShowFirecone,
 	int frames;
 	float drawDistance;

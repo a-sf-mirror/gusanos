@@ -29,6 +29,9 @@ WeaponType::WeaponType() : ResourceBase()
 	firecone = NULL;
 	skin = 0;
 #endif
+
+	syncHax = false;
+	syncReload = true;
 	
 	laserSightColour = makecol(255,0,0);
 	laserSightRange = -1;
@@ -127,6 +130,8 @@ bool WeaponType::load(fs::path const& filename)
 	ammo = parser.getInt("ammo", 1);
 	name = parser.getString("name");
 	reloadTime = parser.getInt("reload_time", 0);
+	syncHax = parser.getBool("sync_shot", false);
+	syncReload = parser.getBool("sync_reload", true);
 	laserSightIntensity = parser.getDouble("laser_sight_intensity", 0.0);
 	laserSightRange = parser.getInt("laser_sight_range", -1);
 	laserSightAlpha = parser.getInt("laser_sight_alpha", 255);

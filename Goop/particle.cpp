@@ -308,17 +308,30 @@ void Particle::think()
 		
 		if ( m_type->radius > 0 ) // HAX
 		{
+			Vec averageCorrection;
 			float radius = m_type->radius;
 			float speedCorrection = m_type->bounceFactor;
+			float friction = m_type->groundFriction;
 			IVec iPos = IVec( pos );
+			int n = 0;
 			for ( int y = -radius; y <= radius; ++y )
 			for ( int x = -radius; x <= radius; ++x )
 			{
 				if ( !game.level.getMaterial( iPos.x + x, iPos.y + y ).particle_pass )
 				{
-					Vec correction = getCorrectionBox( pos , iPos + IVec( x, y ), radius );
-					pos += correction;
-					spd += correction* speedCorrection * 2;
+					averageCorrection += getCorrectionBox( pos , iPos + IVec( x, y ), radius );
+					++n;
+				}
+			}
+			if ( n > 0 )
+			{
+				if ( averageCorrection.length() > 0 )
+				{
+					averageCorrection /= n;
+					Vec tmpNorm = averageCorrection.normal();
+					spd -= ( tmpNorm.perp() * tmpNorm.perpDotProduct(spd) ) * ( 1 - friction );
+					pos += averageCorrection;
+					spd += averageCorrection* speedCorrection * 2;
 				}
 			}
 		}

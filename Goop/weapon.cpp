@@ -12,6 +12,8 @@
 
 #include "network.h"
 
+#include <iostream>
+
 class BaseObject;
 
 Weapon::Weapon(WeaponType* type, BaseWorm* owner)
@@ -23,6 +25,10 @@ Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 	inactiveTime = 0;
 	reloading = false;
 	reloadTime = 0;
+	m_outOfAmmo = false;
+	
+	sentOutOfAmmo = false;
+	outOfAmmoCheck = false;
 	
 	foreach(i, m_type->timer)
 	{
@@ -46,6 +52,7 @@ void Weapon::reset()
 	inactiveTime = 0;
 	reloading = false;
 	reloadTime = 0;
+	m_outOfAmmo = false;
 	
 	foreach(t, timer)
 	{
@@ -93,33 +100,58 @@ void Weapon::think( bool isFocused, size_t index )
 	{
 		if ( primaryShooting && ammo > 0)
 		{
-			if (m_type->primaryShoot) m_type->primaryShoot->run(m_owner, NULL, NULL, this );
-			ammo--;
+			if (m_type->primaryShoot)
+			{
+				if ( m_owner->getRole() != eZCom_RoleProxy || !m_type->syncHax )
+				{
+					m_type->primaryShoot->run(m_owner, NULL, NULL, this );
+					if ( m_owner->getRole() == eZCom_RoleAuthority && m_type->syncHax )
+					{
+						ZCom_BitStream* data = new ZCom_BitStream;
+						Encoding::encode(*data, SHOOT, EventsCount);
+						m_owner->sendWeaponMessage( index, data, ZCOM_REPRULE_AUTH_2_PROXY );
+						delete data;
+					}
+				}
+			}
 		}
 	}
 	if ( isFocused )
 	{
-		if ( ammo <= 0 && !reloading && !network.isClient())
+		if ( ammo <= 0 && !reloading && !m_outOfAmmo)
 		{
-			outOfAmmo();
-			
-			if ( network.isHost() )
+			m_outOfAmmo = true;
+			std::cout << "out of ammo" << endl;
+			if ( !network.isClient() || !m_type->syncReload )
+			{
+				outOfAmmo();
+				
+				if ( network.isHost() && m_type->syncReload )
+				{
+					ZCom_BitStream* data = new ZCom_BitStream;
+					//data->addInt( OUTOFAMMO , 8);
+					Encoding::encode(*data, OUTOFAMMO, EventsCount);
+					m_owner->sendWeaponMessage( index, data );
+					delete data;
+					sentOutOfAmmo = true;
+				}
+			}else
 			{
 				ZCom_BitStream* data = new ZCom_BitStream;
-				//data->addInt( OUTOFAMMO , 8);
-				Encoding::encode(*data, OUTOFAMMO, EventsCount);
-				m_owner->sendWeaponMessage( index, data );
+				Encoding::encode(*data, OutOfAmmoCheck, EventsCount);
+				m_owner->sendWeaponMessage( index, data, ZCOM_REPRULE_OWNER_2_AUTH );
 				delete data;
+				std::cout << "sent check plz message" << endl;
 			}
 		}
 		if ( reloading )
 		{
 			if ( reloadTime > 0 ) --reloadTime;
-			else if ( !network.isClient() )
+			else if ( !network.isClient() || !m_type->syncReload )
 			{
 				reload();
 				
-				if ( network.isHost() )
+				if ( network.isHost() && m_type->syncReload )
 				{
 					ZCom_BitStream* data = new ZCom_BitStream;
 					//data->addInt( RELOADED , 8);
@@ -128,6 +160,24 @@ void Weapon::think( bool isFocused, size_t index )
 					delete data;
 				}
 			}
+		}
+	}
+	
+	if ( outOfAmmoCheck )
+	{
+		std::cout << "checking out of ammo" << endl;
+		outOfAmmoCheck = false;
+		if ( ammo > 0 )
+		{
+			std::cout << "Sending correction" << endl;
+			ZCom_BitStream* data = new ZCom_BitStream;
+			Encoding::encode(*data, AmmoCorrection, EventsCount);
+			Encoding::encode(*data, ammo, m_type->ammo+1);
+			m_owner->sendWeaponMessage(index, data, ZCOM_REPRULE_AUTH_2_OWNER );
+		}else
+		{
+			std::cout << "Everything was in order" << endl;
+			sentOutOfAmmo = false;
 		}
 	}
 }
@@ -193,6 +243,22 @@ void Weapon::recieveMessage( ZCom_BitStream* data )
 			reload();
 		}
 		break;
+		case SHOOT:
+		{
+			m_type->primaryShoot->run(m_owner, NULL, NULL, this );
+			ammo--;
+		}
+		break;
+		case OutOfAmmoCheck:
+		{
+			outOfAmmoCheck = true;
+		}
+		break;
+		case AmmoCorrection:
+		{
+			ammo = Encoding::decode(*data, m_type->ammo+1);
+			m_outOfAmmo = false;
+		}
 	}
 }
 
@@ -200,8 +266,11 @@ void Weapon::outOfAmmo()
 {
 	if (m_type->outOfAmmo) m_type->outOfAmmo->run(m_owner, NULL, NULL, this );
 	ammo = 0;
-	reloading = true;
-	reloadTime = m_type->reloadTime;
+	if ( !reloading )
+	{
+		reloading = true;
+		reloadTime = m_type->reloadTime;
+	}
 }
 
 void Weapon::reload()
@@ -209,6 +278,7 @@ void Weapon::reload()
 	if (m_type->reloadEnd) m_type->reloadEnd->run(m_owner, NULL, NULL, this );
 	reloading = false;
 	ammo = m_type->ammo;
+	m_outOfAmmo = false;
 }
 
 void Weapon::actionStart( Actions action )
@@ -219,7 +289,6 @@ void Weapon::actionStart( Actions action )
 			if ( !inactiveTime && m_type->primaryPressed && ammo > 0 )
 			{
 				m_type->primaryPressed->run( m_owner, NULL, NULL, this );
-				--ammo;
 			}
 			primaryShooting = true;
 		break;
@@ -256,5 +325,11 @@ BaseWorm* Weapon::getOwner()
 void Weapon::delay( int time )
 {
 	inactiveTime = time;
+}
+
+void Weapon::useAmmo( int amount )
+{
+	ammo -= amount;
+	if ( ammo < 0 ) ammo = 0;
 }
 

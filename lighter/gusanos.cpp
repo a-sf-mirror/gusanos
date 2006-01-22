@@ -105,7 +105,7 @@ double expose(double light, double exposure)
 int main(int argc, char **argv)
 {
 
-	float fadeDistance= 200;
+	float fadeDistance= 10000;
 	float prob = 1;
 
 	/* Broken
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 	if ( level.isLoaded() )
 	{
 		BITMAP* lightmap = create_bitmap_ex(24, level.material->w, level.material->h);
-#if 1
+#if 0
 		std::vector<int> lightsource(level.width() * level.height(), 0);
 		std::vector<int> lightsourcedir(level.width() * level.height(), 0);
 		std::vector<int> lightsourcedest(level.width() * level.height(), 0);
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 				int appliedCount = 0;
 				for ( int n = 0; n < lightSources.size() ; ++n )
 				{
-					if ( rnd() < prob )
+					if ( true ) //rnd() < prob )
 					{
 						++appliedCount;
 						if ( !level.preciseTrace( lightSources[n].x+0.5f, lightSources[n].y + 0.5f, x, y, pred ) )
@@ -247,7 +247,7 @@ int main(int argc, char **argv)
 					float fade = 1 - minDistanceSqr/(fadeDistance*fadeDistance);
 					//float fade = sqrt( 1 / (sqrt(minDistanceSqr)*0.1f) );
 					if ( fade < 0 ) fade = 0;
-					color *= fade;
+					//color *= fade;
 					color /= appliedCount;
 					if ( color > 255 ) color = 255;
 				}

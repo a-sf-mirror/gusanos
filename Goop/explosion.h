@@ -19,6 +19,7 @@ class Explosion : public BaseObject
 public:
 	
 	Explosion(ExpType* type, const Vec& _pos = Vec(0,0), BasePlayer* owner = NULL);
+	~Explosion(); //ZOMG WE HAD FORGOTTEN ABOUT THIS :O LEAKOFDEATH
 
 #ifndef DEDSERV
 	void draw(Viewport* viewport);
