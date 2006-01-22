@@ -22,7 +22,7 @@ class Wnd
 public:
 	friend class Context;
 	
-	static char const metaTable[];
+	static LuaReference metaTable;
 	
 	enum Dir
 	{

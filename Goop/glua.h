@@ -21,13 +21,15 @@ struct LuaCallbacks
 	std::vector<LuaReference> wormRemoved;
 	std::vector<LuaReference> playerUpdate;
 	std::vector<LuaReference> playerInit;
+	std::vector<LuaReference> playerRemoved;
 	std::vector<LuaReference> playerNetworkInit;
+	std::vector<LuaReference> gameNetworkInit;
 	
 	std::vector<LuaReference> localplayerEvent[7];
 	std::vector<LuaReference> localplayerInit;
 };
 
-extern LuaContext lua;
+//extern LuaContext lua;
 
 extern LuaCallbacks luaCallbacks;
 

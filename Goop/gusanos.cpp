@@ -6,6 +6,7 @@
 
 #include "level.h"
 #include "game.h"
+#include "updater.h"
 #include "part_type.h"
 #include "particle.h"
 #include "worm.h"
@@ -56,19 +57,20 @@ void timerUpdate(void) { timer++; } END_OF_FUNCTION(timerUpdate);
 string Exit(const list<string> &args)
 {
 	quit = true;
+	network.disconnect();
 	return "";
 }
 
 int main(int argc, char **argv)
 try
 {
-	game.init(argc, argv);
-
 	console.registerVariables()
 		("CL_SHOWFPS", &showFps, 1) 
 		("CL_SHOWDEBUG", &showDebug, 0)
 	;
 	
+	game.init(argc, argv);
+
 	console.registerCommands()
 		("QUIT", Exit)
 	;
@@ -79,6 +81,7 @@ try
 	OmfgGUI::menu.clear();
 #endif
 	game.loadMod();
+	game.runInitScripts();
 	
 	//install millisecond timer
 	LOCK_VARIABLE(timer);
@@ -97,7 +100,7 @@ try
 #endif
 
 	//main game loop
-	while (!quit)
+	while (!quit || !network.isDisconnected())
 	{
 
 		while ( logicLast + 1 <= timer )
@@ -120,7 +123,9 @@ try
 					++iter;
 					delete *tmp;
 					game.objects.erase(tmp);
-				}else	++iter;
+				}
+				else
+					++iter;
 			}
 #endif
 			
@@ -147,9 +152,10 @@ try
 				{
 					(*iter)->think();
 				}
-				
-				game.think();
 			}
+			
+			game.think();
+			updater.think(); // TODO: Move?
 			
 #ifndef DEDSERV
 			sfx.think(); // WARNING: THIS ¡MUST! BE PLACED BEFORE THE OBJECT DELETE LOOP
@@ -184,17 +190,12 @@ try
 						}
 					}
 					(*iter)->removeWorm();
-					delete *iter;
+					(*iter)->deleteThis();
 					game.players.erase(iter);
 				}
 			}
 
-
-
-			
-#ifndef DISABLE_ZOIDCOM
 			network.update();
-#endif
 
 #ifndef DEDSERV
 			console.checkInput();
@@ -326,14 +327,15 @@ try
 			clear_bitmap(gfx.buffer);
 		}
 
-		
 		//show fps
 		if (showFps)
 		{
 			game.infoFont->draw(gfx.buffer, "FPS: \01303" + cast<string>(fps), 5, 5, 0, 255, 255, 255, 255, Font::Formatting);
 		}
 		fpsCount++;
-
+		
+		if(quit)
+			game.infoFont->draw(gfx.buffer, "Quitting...", 15, 110, 0, 255, 255, 255, 255);
 
 		OmfgGUI::menu.render();
 		console.render(gfx.buffer);
@@ -348,7 +350,7 @@ try
 #endif
 	}
 	
-	network.disconnect();
+	//network.disconnect(); // If we haven't already, it's too late
 	network.shutDown();
 	game.unload();
 #ifndef DEDSERV
@@ -359,6 +361,7 @@ try
 	sfx.shutDown();
 #endif
 	gfx.shutDown();
+	lua.close();
 
 	allegro_exit();
 

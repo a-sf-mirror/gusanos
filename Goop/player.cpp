@@ -10,8 +10,8 @@
 
 using namespace std;
 
-Player::Player(shared_ptr<PlayerOptions> options)
-: BasePlayer(options)
+Player::Player(shared_ptr<PlayerOptions> options, BaseWorm* worm)
+: BasePlayer(options, worm)
 , aimingUp(false)
 , aimingDown(false)
 , changing(false)

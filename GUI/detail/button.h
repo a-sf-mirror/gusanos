@@ -9,7 +9,7 @@ namespace OmfgGUI
 class Button : public Wnd
 {
 public:
-	static char const metaTable[];
+	static LuaReference metaTable;
 	
 	Button(Wnd* parent_, std::string const& tagLabel, std::string const& className, 
 	  std::string const& id, std::map<std::string, std::string> const& properties,

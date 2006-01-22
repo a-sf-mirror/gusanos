@@ -15,6 +15,7 @@ class BaseAnimator;
 class BlitterContext;
 class Viewport;
 #endif
+struct LuaEventDef;
 class BasePlayer;
 class ParticleInterceptor;
 
@@ -22,6 +23,9 @@ class Particle : public BaseObject
 {
 public:
 	friend class ParticleInterceptor;
+	
+	static LuaReference metaTable;
+	//static int const luaID = 3;
 	
 	enum Flags
 	{
@@ -46,10 +50,13 @@ public:
 	void setAlphaFade(int frames, int dest);
 #endif
 	void customEvent( size_t index );
-	virtual void pushLuaReference();
+	void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID);
+	virtual LuaReference getLuaReference();
+	//virtual void pushLuaReference();
 	void damage(float amount, BasePlayer* damager );
 	void remove();
-	virtual void deleteThis();
+	//virtual void deleteThis();
+	virtual void finalize();
 	
 	//int getDir() { return m_dir; }
 	int getDir() { return (flags & FaceRight) ? 1 : -1; }
@@ -87,7 +94,7 @@ private:
 #endif
 	Vec m_origin;
 	
-	LuaReference luaReference;
+	//LuaReference luaReference;
 	ZCom_Node *m_node;
 	ParticleInterceptor* interceptor;
 	

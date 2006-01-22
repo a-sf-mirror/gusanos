@@ -11,6 +11,7 @@
 #include "bindings-game.h"
 
 #include "luaapi/types.h"
+#include "luaapi/macros.h"
 
 //#include "../game.h"
 //#include "../vec.h"
@@ -67,6 +68,11 @@ int print(lua_State* L)
 	return 0;
 }
 
+/*! bindings.afterUpdate()
+
+	This is called after every logic cycle is complete.
+*/
+
 int l_bind(lua_State* L)
 {
 	char const* s = lua_tostring(L, 2);
@@ -80,6 +86,34 @@ int l_bind(lua_State* L)
 	return 0;
 }
 
+int l_console_set(lua_State* L)
+{
+	char const* s = lua_tostring(L, 2);
+	if(!s)
+		return 0;
+	
+	char const* v = lua_tostring(L, 3);
+	if(!v)
+		return 0;
+	
+	std::list<std::string> args;
+	args.push_back(v);
+	
+	console.invoke(s, args, false);
+	return 0;
+}
+
+int l_console_get(lua_State* L)
+{
+	char const* s = lua_tostring(L, 2);
+	if(!s)
+		return 0;
+	
+	std::list<std::string> args;
+
+	lua_pushstring(L, console.invoke(s, args, false).c_str());
+	return 1;
+}
 
 int l_quit(lua_State* L)
 {
@@ -255,6 +289,11 @@ std::string runLua(LuaReference ref, std::list<std::string> const& args)
 	
 	lua.push(LuaContext::errorReport);
 	lua.pushReference(ref);
+	if(lua_isnil(lua, -1))
+	{
+		lua.pop(2);
+		return "";
+	}
 	int params = 0;
 	
 	for(std::list<std::string>::const_iterator i = args.begin();
@@ -268,8 +307,9 @@ std::string runLua(LuaReference ref, std::list<std::string> const& args)
 	int r = lua.call(params, 1, -params-2);
 	if(r < 0)
 	{
-		//char const* err = lua_tostring(lua, -1);
-		lua.pop(2);
+		lua_pushnil(lua);
+		lua.assignReference(ref);
+		lua.pop(1);
 		return "";
 	}
 	lua_remove(lua, -1-1);
@@ -399,6 +439,24 @@ void init()
 
 	lua_rawset(context, LUA_GLOBALSINDEX);
 	
+	// Console table and metatable
+	lua_pushstring(context, "console");
+	lua_newtable(context); // Console table
+	
+	lua_newtable(context); // Console metatable
+	
+	lua_pushstring(context, "__newindex");
+	lua_pushcfunction(context, l_console_set);
+	lua_rawset(context, -3);
+	
+	lua_pushstring(context, "__index");
+	lua_pushcfunction(context, l_console_get);
+	lua_rawset(context, -3);
+	
+	lua_setmetatable(context, -2);
+
+	lua_rawset(context, LUA_GLOBALSINDEX);
+
 	lua_pushstring(context, "DEDSERV");
 #ifdef DEDSERV
 	lua_pushboolean(context, 1);
@@ -416,8 +474,6 @@ void init()
 	}
 	lua_setfield(context, LUA_GLOBALSINDEX, "Keys");
 #endif
-	
-	cerr << "LuaBindings::init() done." << endl;
 }
 
 }

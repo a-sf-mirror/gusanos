@@ -3,6 +3,7 @@
 
 #include <zoidcom.h>
 #include "timer_event.h"
+#include "luaapi/types.h"
 //#include <cstddef>
 
 class BITMAP;
@@ -14,6 +15,9 @@ class Weapon
 public:
 	
 	friend class BaseWorm;
+	
+	//static LuaReference metaTable;
+	//static int const luaID = 4;
 
 	enum Actions
 	{

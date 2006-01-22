@@ -1,7 +1,7 @@
 #include "glua.h"
 #include "player.h"
 
-LuaContext lua;
+//LuaContext lua;
 
 LuaCallbacks luaCallbacks;
 
@@ -40,5 +40,7 @@ void LuaCallbacks::bind(std::string callback, LuaReference ref)
 		playerInit.push_back(ref);
 	CB(wormRemoved);
 	CB(playerNetworkInit);
+	CB(playerRemoved);
+	CB(gameNetworkInit);
 	
 }

@@ -193,6 +193,9 @@ void Level::checkWBorders( int x, int y )
 
 void Level::think()
 {
+	if(!isLoaded())
+		return;
+	
 	if( m_firstFrame )
 	{
 		m_firstFrame = false;

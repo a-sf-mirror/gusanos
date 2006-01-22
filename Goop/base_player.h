@@ -86,13 +86,13 @@ public:
 		LuaReference luaData;
 	};
 	
-	static LuaReference metaTable();
+	//static LuaReference metaTable();
 
 	// ClassID is Used by zoidcom to identify the class over the network,
 	// do not confuse with the node ID which identifies instances of the class.
 	static ZCom_ClassID  classID;
 	
-	BasePlayer(shared_ptr<PlayerOptions> options);
+	BasePlayer(shared_ptr<PlayerOptions> options, BaseWorm* worm);
 	virtual ~BasePlayer();
 	
 	void think();
@@ -122,16 +122,17 @@ public:
 
 	ZCom_NodeID getNodeID();
 	ZCom_ConnID getConnectionID();
-	void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID);
+	void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID);
 	shared_ptr<PlayerOptions> getOptions();
 	BaseWorm* getWorm() { return m_worm; }
 	
-	void* operator new(size_t count);
-	/*
-	{
-		throw std::runtime_error("Don't use BasePlayer::operator new >:O");
-	}*/
+	LuaReference getLuaReference();
+	void pushLuaReference();
+	virtual void deleteThis();
 	
+/*
+	void* operator new(size_t count);
+
 	void operator delete(void* block)
 	{
 
@@ -141,7 +142,7 @@ public:
 	{
 		return space;
 	}
-	
+*/
 	shared_ptr<Stats> stats;
 	
 	bool deleteMe;
@@ -149,8 +150,8 @@ public:
 	std::string m_name;
 	int colour;
 	int team;
+	bool local;
 
-	LuaReference luaReference;
 	LuaReference luaData;
 	
 	void selectWeapons( std::vector< WeaponType* > const& weaps );
@@ -161,6 +162,8 @@ public:
 	void localChangeName(std::string const& name, bool forceChange = false);
 	
 protected:
+	LuaReference luaReference;
+	
 	void addEvent(ZCom_BitStream* data, NetEvents event);
 	void addActionStart(ZCom_BitStream* data, BaseActions action);
 	void addActionStop(ZCom_BitStream* data, BaseActions action);

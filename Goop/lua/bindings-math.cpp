@@ -1,6 +1,8 @@
 #include "bindings-math.h"
 
 #include "luaapi/types.h"
+#include "luaapi/macros.h"
+
 #include "../glua.h"
 #include "util/vec.h"
 #include "util/angle.h"

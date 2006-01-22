@@ -46,7 +46,7 @@ void AnimPingPong::tick()
 			m_animPos += m_step;
 			if(m_animPos >= m_max)
 			{
-				m_animPos = 2*m_max - m_animPos;
+				m_animPos = 2*m_max - m_animPos - 1;
 				m_currentDir = -1;
 			}
 		}
@@ -59,7 +59,7 @@ void AnimPingPong::tick()
 				m_currentDir = 1;
 				m_animPos = 0;
 			}*/
-			
+					
 			m_animPos -= m_step;
 			if(m_animPos < 0)
 			{

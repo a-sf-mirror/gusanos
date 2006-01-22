@@ -7,7 +7,7 @@ using std::endl;
 namespace OmfgGUI
 {
 	
-char const Button::metaTable[] = "gui_button";
+LuaReference Button::metaTable;
 
 bool Button::render()
 {

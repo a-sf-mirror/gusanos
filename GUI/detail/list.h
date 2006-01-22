@@ -15,7 +15,7 @@ namespace OmfgGUI
 class List : public Wnd
 {
 public:
-	static char const metaTable[];
+	static LuaReference metaTable;
 	
 	struct Node;
 	
@@ -38,7 +38,7 @@ public:
 	
 	struct Node : public LNodeImp<Node>
 	{
-		static char const metaTable[];
+		static LuaReference metaTable;
 		
 		friend class List;
 		

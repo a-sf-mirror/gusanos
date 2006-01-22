@@ -5,10 +5,12 @@
 #include "part_type.h"
 #include "base_player.h"
 #include "game.h"
+#include "updater.h"
 #include "network.h"
 #include "player_options.h"
 #include "encoding.h"
 #include <memory>
+#include "util/log.h"
 
 #ifndef DISABLE_ZOIDCOM
 
@@ -67,6 +69,7 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 		Network::ConnectionReply::type r = static_cast<Network::ConnectionReply::type>(_reply.getInt(8));
 		if(r == Network::ConnectionReply::Retry)
 		{
+			DLOG("Got retry from server");
 			network.reconnect(50);
 		}
 		else
@@ -79,11 +82,25 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 		ZCom_requestDownstreamLimit(_id, network.downPPS, network.downBPP);
 		console.addLogMsg("* CONNECTION ACCEPTED");
 		network.setServerID(_id);
-		ZCom_requestZoidMode(_id, 1);
-		game.setMod( _reply.getStringStatic() );
-		game.changeLevel( _reply.getStringStatic() );
-		sendConsistencyInfo();
 		network.incConnCount();
+		
+#if 0
+		ZCom_requestZoidMode(_id, 2); // We need to update
+		// TODO: Unload game
+#else
+		game.setMod( _reply.getStringStatic() );
+		if(game.changeLevel( _reply.getStringStatic() ) && game.isLoaded())
+		{
+			game.runInitScripts();
+			sendConsistencyInfo();
+			ZCom_requestZoidMode(_id, 1);
+		}
+		else
+		{
+			console.addLogMsg("* COULDN'T LOAD MOD OR LEVEL");
+			network.disconnect();
+		}
+#endif
 	}
 } 
 
@@ -106,6 +123,8 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 				case Network::Quit:
 				{
 					console.addLogMsg("* CONNECTION CLOSED BY SERVER");
+					//network.reconnect(500);
+					//network.disconnect();
 				}
 				break;
 				case Network::Kick:
@@ -145,6 +164,8 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 		default:
 		break;
 	}
+	
+	DLOG("A connection was closed");
 }
 
 void Client::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream& data) 
@@ -169,7 +190,7 @@ void Client::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream& data)
 	}
 }
 
-void Client::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
+void Client::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 new_level, ZCom_BitStream &_reason)
 {
 	if (_result != eZCom_ZoidEnabled)
 	{
@@ -177,7 +198,21 @@ void Client::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _n
 	}else
 	{
 		console.addLogMsg("* JOINED ZOIDMODE");
-		requestPlayers();
+		
+		updater.removeNode();
+		game.removeNode();
+		
+		switch(new_level)
+		{
+			case 1:
+				game.assignNetworkRole( false );
+				requestPlayers();
+			break;
+			
+			case 2:
+				updater.assignNetworkRole(false);
+			break;
+		}
 	}
 }
 

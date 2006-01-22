@@ -10,7 +10,7 @@ using std::endl;
 namespace OmfgGUI
 {
 
-char const Edit::metaTable[] = "gui_edit";
+LuaReference Edit::metaTable;
 
 bool Edit::render()
 {

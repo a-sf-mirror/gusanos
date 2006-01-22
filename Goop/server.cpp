@@ -94,7 +94,8 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 			char const* passwordSent = _data.getStringStatic();
 			if ( !game.options.rConPassword.empty() && game.options.rConPassword == passwordSent )
 			{
-				console.addQueueCommand(_data.getStringStatic());
+				//console.addQueueCommand(_data.getStringStatic());
+				console.parseLine(_data.getStringStatic());
 			}
 		}
 		break;
@@ -161,17 +162,23 @@ void Server::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 		}
 	}
 	network.decConnCount();
+	DLOG("A connection was closed");
 }
 
-bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)
+bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 requested_level, ZCom_BitStream &_reason)
 {
-	if (_requested_level == 1)
+	switch(requested_level)
 	{
-		console.addLogMsg("* ZOIDMODE REQUEST ACCEPTED");
-		return true;
+		case 1: case 2:
+		{
+			console.addLogMsg("* ZOIDMODE REQUEST ACCEPTED");
+			return true;
+		}
+		break;
+		
+		default:
+			return false;
 	}
-	else
-		return false;
 }
 
 void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)

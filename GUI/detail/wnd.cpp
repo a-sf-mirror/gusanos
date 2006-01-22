@@ -15,7 +15,7 @@ using std::endl;
 namespace OmfgGUI
 {
 	
-char const Wnd::metaTable[] = "gui_wnd";
+LuaReference Wnd::metaTable;
 
 Wnd::~Wnd()
 {
@@ -23,7 +23,7 @@ Wnd::~Wnd()
 	{
 		//Remove references in context
 		
-		m_context->luaContext().destroyReference(luaReference);
+		lua.destroyReference(luaReference);
 		m_context->deregisterWindow(this);
 	}
 	else
@@ -637,7 +637,6 @@ bool Wnd::doAction()
 {
 	if(m_callbacks[OnAction])
 	{
-		LuaContext& lua = m_context->luaContext();
 		int r = (lua.call(m_callbacks[OnAction], 1), luaReference)();
 		if(r == 1)
 		{
@@ -656,7 +655,7 @@ void Wnd::setText(std::string const& aStr)
 
 void Wnd::pushReference()
 {
-	m_context->luaContext().push(luaReference);
+	lua.push(luaReference);
 }
 
 void Wnd::notifyHide()
@@ -806,7 +805,6 @@ bool Wnd::doKeyDown(int key)
 {
 	if(m_callbacks[OnKeyDown])
 	{
-		LuaContext& lua = m_context->luaContext();
 		int r = (lua.call(m_callbacks[OnKeyDown], 1), luaReference, key)();
 		if(r == 1)
 		{

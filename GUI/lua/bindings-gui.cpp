@@ -1,6 +1,8 @@
 #include "bindings-gui.h"
 
 #include "luaapi/types.h"
+#include "luaapi/macros.h"
+#include "luaapi/classes.h"
 
 #ifndef DEDSERV
 #include "omfggui.h"
@@ -22,6 +24,8 @@ using boost::lexical_cast;
 
 namespace LuaBindings
 {
+	
+LuaReference listIterator;
 
 #ifndef DEDSERV
 
@@ -295,10 +299,10 @@ LMETHOD(OmfgGUI::Edit, gui_edit_set_lock,
 
 	Inserts an item into the list with the column values passed.
 */
-LMETHOD(OmfgGUI::List, gui_list_insert,
+LMETHODC(OmfgGUI::List, gui_list_insert,
 
 	int c = lua_gettop(context);
-	OmfgGUI::List::Node* n = LUA_NEW_KEEP(OmfgGUI::List::Node, (""), context);
+	OmfgGUI::List::Node* n = lua_new_keep(OmfgGUI::List::Node, (""), context);
 	p->push_back(n);
 	for(int i = 2; i <= c; ++i)
 		n->setText(i - 2, lua_tostring(context, i));
@@ -306,9 +310,9 @@ LMETHOD(OmfgGUI::List, gui_list_insert,
 	return 1;
 )
 
-LMETHOD(OmfgGUI::List, gui_list_each,
+LMETHODC(OmfgGUI::List, gui_list_each,
 
-	context.pushRegObject("gui_listIterator");
+	context.push(listIterator);
 	context.push(p->getFirstNode()->luaReference);
 	lua_pushnil(context);
 
@@ -340,7 +344,7 @@ int l_gui_listIterator(lua_State* L)
 
 	Inserts an item into the list, under another node, with the column values passed.
 */
-LMETHOD(OmfgGUI::List, gui_list_subinsert,
+LMETHODC(OmfgGUI::List, gui_list_subinsert,
 
 	//TODO: Check metatable of node
 	OmfgGUI::List::Node* parent = static_cast<OmfgGUI::List::Node *>(lua_touserdata(context, 2));
@@ -351,7 +355,7 @@ LMETHOD(OmfgGUI::List, gui_list_subinsert,
 	int c = lua_gettop(context);
 	//void* mem = lua_newuserdata(context, sizeof(LuaListNode));
 	//lua_pushvalue(context, -1);
-	OmfgGUI::List::Node* n = LUA_NEW_KEEP(OmfgGUI::List::Node, (""), context);
+	OmfgGUI::List::Node* n = lua_new_keep(OmfgGUI::List::Node, (""), context);
 	//LuaListNode* n = new (mem) LuaListNode(context.createReference(), "");
 	p->push_back(n, parent);
 	for(int i = 3; i <= c; ++i)
@@ -364,7 +368,7 @@ LMETHOD(OmfgGUI::List, gui_list_subinsert,
 
 	Removes all items in the list.
 */
-LMETHOD(OmfgGUI::List, gui_list_clear,
+LMETHODC(OmfgGUI::List, gui_list_clear,
 	p->clear();
 	return 0;
 )
@@ -379,7 +383,7 @@ LMETHOD(OmfgGUI::List, gui_list_clear,
 	two parameters. It should return true if parameter 1 is supposed to appear before
 	parameter 2.
 */
-LMETHOD(OmfgGUI::List, gui_list_sort,
+LMETHODC(OmfgGUI::List, gui_list_sort,
 	if(lua_isnumber(context, 2))
 	{
 		unsigned int column = static_cast<unsigned int>(lua_tointeger(context, 2));
@@ -397,7 +401,7 @@ LMETHOD(OmfgGUI::List, gui_list_sort,
 	return 0;
 )
 
-LMETHOD(OmfgGUI::List, gui_list_selection,
+LMETHODC(OmfgGUI::List, gui_list_selection,
 	if(!p->getMainSel())
 		return 0;
 		
@@ -409,7 +413,7 @@ LMETHOD(OmfgGUI::List, gui_list_selection,
 	return c;
 )
 
-LMETHOD(OmfgGUI::List, gui_list_main_selection,
+LMETHODC(OmfgGUI::List, gui_list_main_selection,
 	if(OmfgGUI::List::Node* n = p->getMainSel())
 	{
 		context.push(n->luaReference);
@@ -418,7 +422,7 @@ LMETHOD(OmfgGUI::List, gui_list_main_selection,
 	return 0;
 )
 
-LMETHOD(OmfgGUI::List, gui_list_scroll_bottom,
+LMETHODC(OmfgGUI::List, gui_list_scroll_bottom,
 	p->scrollBottom();
 	return 0;
 )
@@ -541,10 +545,11 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 
 	lua_rawset(context, -3);
 	//LuaReference ref = context.createReference();
-	context.regObjectKeep(OmfgGUI::Wnd::metaTable);
-	context.regObjectKeep(OmfgGUI::Button::metaTable);
-	
-	context.regObject(OmfgGUI::Group::metaTable);
+	context.pushvalue(-1);
+	context.pushvalue(-1);
+	OmfgGUI::Wnd::metaTable = context.createReference();
+	OmfgGUI::Button::metaTable = context.createReference();
+	OmfgGUI::Group::metaTable = context.createReference();
 	
 	// GUI Edit method and metatable
 	
@@ -557,7 +562,7 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 	addGUIEditFunctions(context);
 	
 	lua_rawset(context, -3);
-	context.regObject(OmfgGUI::Edit::metaTable);
+	OmfgGUI::Edit::metaTable = context.createReference();
 	
 	// GUI List method and metatable
 	
@@ -570,7 +575,9 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 	addGUIListFunctions(context);
 
 	lua_rawset(context, -3);
-	context.regObject(OmfgGUI::List::metaTable);
+	context.tableSetField(LuaID<OmfgGUI::Wnd>::value);
+	context.tableSetField(LuaID<OmfgGUI::List>::value);
+	OmfgGUI::List::metaTable = context.createReference();
 	
 	// GUI List node method and metatable
 	
@@ -585,10 +592,12 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 	;
 	
 	lua_rawset(context, -3);
-	context.regObject(OmfgGUI::List::Node::metaTable);
+	//context.tableSetField(LuaID<OmfgGUI::List::Node>::value);
+	OmfgGUI::List::Node::metaTable = context.createReference();
 	
 	context.push(l_gui_listIterator);
-	context.regObject("gui_listIterator");
+	//context.regObject("gui_listIterator");
+	listIterator = context.createReference();
 #endif
 }
 

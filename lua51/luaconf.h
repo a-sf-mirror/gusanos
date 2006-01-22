@@ -183,7 +183,9 @@
 @@ lua_assert describes the internal assertions in Lua.
 ** CHANGE that only if you need to debug Lua.
 */
-#define lua_assert(c)		((void)0)
+//#define lua_assert(c)		((void)0)
+#include <assert.h>
+#define lua_assert(c)		(assert(c))
 
 
 /*

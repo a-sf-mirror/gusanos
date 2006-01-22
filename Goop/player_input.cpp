@@ -6,6 +6,7 @@
 #include "gconsole.h"
 #include "glua.h"
 #include "util/text.h"
+#include "util/log.h"
 #include "util/stringbuild.h"
 #include <boost/bind.hpp>
 
@@ -25,7 +26,7 @@ string eventStart(size_t index, Player::Actions action, list<string> const& args
 		
 		EACH_CALLBACK(i, localplayerEvent[action])
 		{
-			int n = (lua.call(*i, 1), player.luaReference, true)();
+			int n = (lua.call(*i, 1), player.getLuaReference(), true)();
 			if(n > 0 && lua.get<bool>(-1))
 				ignore = true;
 			lua.pop(n);
@@ -47,7 +48,7 @@ string eventStop(size_t index, Player::Actions action, list<string> const& args)
 		
 		EACH_CALLBACK(i, localplayerEvent[action])
 		{
-			int n = (lua.call(*i, 1), player.luaReference, false)();
+			int n = (lua.call(*i, 1), player.getLuaReference(), false)();
 			if(n > 0 && lua.get<bool>(-1))
 				ignore = true;
 			lua.pop(n);

@@ -11,7 +11,7 @@ class ProxyPlayer : public BasePlayer
 {
 public:
 
-	ProxyPlayer();
+	ProxyPlayer(BaseWorm* worm);
 	~ProxyPlayer();
 	
 	void subThink();

@@ -295,8 +295,9 @@ public:
 	// is turned visible again.
 	virtual void shownFocus() {}
 	
+/*
 	virtual LuaContext& luaContext() = 0;
-	
+	*/
 	virtual bool keyState(int key) = 0;
 	
 	Wnd* getFocus()

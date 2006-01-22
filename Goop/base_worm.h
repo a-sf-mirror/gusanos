@@ -48,7 +48,8 @@ public:
 		DirMax
 	};
 	
-	static LuaReference metaTable();
+	static LuaReference metaTable;
+	//static int const luaID = 2;
 		
 	BaseWorm();
 	virtual ~BaseWorm();
@@ -114,7 +115,6 @@ public:
 	
 	AngleDiff aimSpeed; // Useless to add setters and getters for this
 	Angle aimAngle;
-	LuaReference luaReference;
 	
 	virtual void sendWeaponMessage( int index, ZCom_BitStream* data, zU8 repRules = ZCOM_REPRULE_AUTH_2_ALL ) {}
 	virtual eZCom_NodeRole getRole()
@@ -122,13 +122,14 @@ public:
 		return eZCom_RoleUndefined;
 	}
 	
+	virtual LuaReference getLuaReference();
+	virtual void finalize();
 	
-	virtual void pushLuaReference();
-	
-	virtual void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+	virtual void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID)
 	{
 	}
 	
+/*
 	void* operator new(size_t count);
 	
 	void operator delete(void* block)
@@ -140,8 +141,10 @@ public:
 	{
 		return space;
 	}
+*/
 	
 protected:
+	//LuaReference luaReference;
 
 #ifndef DEDSERV
 	Vec renderPos;

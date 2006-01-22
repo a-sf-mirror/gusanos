@@ -21,6 +21,8 @@ public:
 	bool pushFunction(std::string const& name);
 	
 	LuaReference createFunctionRef(std::string const& name);
+	
+	static LuaReference functionFromString(std::string const& name);
 
 	LuaContext* lua;
 	std::string table;

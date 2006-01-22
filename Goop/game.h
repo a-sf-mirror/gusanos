@@ -6,6 +6,7 @@
 //#include "base_action.h"
 //#include "objects_list.h"
 #include "object_grid.h"
+#include "message_queue.h"
 
 #ifndef DEDSERV
 #include <allegro.h>
@@ -153,14 +154,17 @@ public:
 	bool isLoaded();
 	void refreshResources(fs::path const& levelPath);
 	void refreshLevels();
+	bool reloadMod();
+	void createNetworkPlayers();
 	bool changeLevel(const std::string& level, bool refresh = true);
 	bool changeLevelCmd(const std::string& level);
+	void runInitScripts();
 	void addBot( int team = -1 );
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
-	BasePlayer* addPlayer( PLAYER_TYPE player, int team = -1 );
+	BasePlayer* addPlayer( PLAYER_TYPE type, int team = -1, BaseWorm* worm = 0 );
 	BaseWorm* addWorm(bool isAuthority); // Creates a worm class depending on the network condition.
 	//static ZCom_Node* getNode();
-	static void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** data, ZCom_ConnID connID);
+	static void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* data, ZCom_ConnID connID);
 	
 	void assignNetworkRole( bool authority );
 	void removeNode();
@@ -212,6 +216,28 @@ public:
 	
 	static void addCRCs(ZCom_BitStream* req);
 	static bool checkCRCs(ZCom_BitStream& data);
+	
+	MessageQueue msg;
+	
+	mq_define_message(ChangeLevel, 0, (std::string level_))
+		: level(level_)
+		{
+			
+		}
+		
+		std::string level;
+	mq_end_define_message()
+	
+	mq_define_message(ChangeLevelReal, 1, (std::string level_))
+		: level(level_)
+		{
+			
+		}
+		
+		std::string level;
+	mq_end_define_message()
+	
+	
 };
 
 extern Game game;

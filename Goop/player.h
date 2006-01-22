@@ -27,7 +27,7 @@ public:
 		ACTION_COUNT,
 	};
 			
-	Player(shared_ptr<PlayerOptions> options);
+	Player(shared_ptr<PlayerOptions> options, BaseWorm* worm);
 	~Player();
 	
 	void subThink();

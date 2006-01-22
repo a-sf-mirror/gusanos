@@ -1,6 +1,8 @@
 #include "bindings-game.h"
 
 #include "luaapi/types.h"
+#include "luaapi/macros.h"
+#include "luaapi/classes.h"
 
 #include "../glua.h"
 #include "../game.h"
@@ -9,6 +11,7 @@
 #include "../player.h"
 #include "../base_worm.h"
 #include "../level.h"
+#include "util/log.h"
 
 #include <cmath>
 #include <iostream>
@@ -24,14 +27,14 @@ namespace LuaBindings
 {
 	
 LuaReference playerIterator(0);
-LuaReference playerMetaTable(0);
+LuaReference BasePlayerMetaTable;
 
 /*! game_players()
 
-	Returns an iterator object that returns a Player class
+	Returns an iterator object that returns a Player object
 	for every player in the game.
 	
-	Intended to use together
+	Intended to be use together
 	with a for loop, like this:
 	<code>
 	for p in game_players() do
@@ -60,7 +63,7 @@ int l_game_localPlayer(lua_State* L)
 	int i = (int)lua_tointeger(L, 1);
 	if(i >= 0 && i < game.localPlayers.size())
 	{
-		lua.pushReference(game.localPlayers[i]->luaReference);
+		game.localPlayers[i]->pushLuaReference();
 		return 1;
 	}
 	else
@@ -84,7 +87,7 @@ int l_game_localPlayerName(lua_State* L)
 
 	Returns the number of kills a player has made.
 */
-LMETHOD(BasePlayer, player_kills,
+METHODC(BasePlayer, player_kills,
 	context.push(p->stats->kills);
 	return 1;
 )
@@ -94,7 +97,7 @@ LMETHOD(BasePlayer, player_kills,
 
 	Returns the number of deaths a player has suffered.
 */
-LMETHOD(BasePlayer, player_deaths,
+METHODC(BasePlayer, player_deaths,
 	context.push(p->stats->deaths);
 	return 1;
 )
@@ -103,7 +106,7 @@ LMETHOD(BasePlayer, player_deaths,
 
 	Returns the name of the player.
 */
-LMETHOD(BasePlayer, player_name,
+METHODC(BasePlayer, player_name,
 	context.push(p->m_name.c_str());
 	return 1;
 )
@@ -112,7 +115,7 @@ LMETHOD(BasePlayer, player_name,
 
 	Returns the team number of the player.
 */
-LMETHOD(BasePlayer, player_team,
+METHODC(BasePlayer, player_team,
 	context.push(p->team);
 	return 1;
 )
@@ -121,7 +124,7 @@ LMETHOD(BasePlayer, player_team,
 
 	Returns the worm of the player.
 */
-LMETHOD(BasePlayer, player_worm,
+METHODC(BasePlayer, player_worm,
 	if(BaseWorm* worm = p->getWorm())
 	{
 		worm->pushLuaReference();
@@ -130,11 +133,20 @@ LMETHOD(BasePlayer, player_worm,
 	return 0;
 )
 
+/*! Player:is_local()
+
+	Returns true if this player is a local player, otherwise false.
+*/
+METHODC(BasePlayer, player_isLocal,
+	context.push(p->local);
+	return 1;
+)
+
 /*! Player:data()
 
 	Returns a lua table associated with this player.
 */
-LMETHOD(BasePlayer, player_data,
+METHODC(BasePlayer, player_data,
 	if(p->luaData)
 		context.pushReference(p->luaData);
 	else
@@ -152,7 +164,7 @@ LMETHOD(BasePlayer, player_data,
 
 	Returns a lua table associated with the stats of this player.
 */
-LMETHOD(BasePlayer, player_stats,
+METHODC(BasePlayer, player_stats,
 	if(p->stats->luaData)
 		context.pushReference(p->stats->luaData);
 	else
@@ -170,7 +182,7 @@ LMETHOD(BasePlayer, player_stats,
 
 	Makes the player send 'text' as a chat message.
 */
-LMETHOD(BasePlayer, player_say,
+METHODC(BasePlayer, player_say,
 	char const* s = context.tostring(2);
 	if(s)
 		p->sendChatMsg(s);
@@ -182,7 +194,7 @@ LMETHOD(BasePlayer, player_say,
 	Tries to change the player's weapons to the WeaponType objects
 	in the array //weapons//.
 */
-LMETHOD(BasePlayer, player_selectWeapons,
+METHODC(BasePlayer, player_selectWeapons,
 	
 	std::vector<WeaponType *> weapons;
 	for(size_t i = 1;; ++i)
@@ -206,6 +218,10 @@ LMETHOD(BasePlayer, player_selectWeapons,
 	return 0;
 )
 
+METHOD(BasePlayer, player_destroy,
+	delete p;
+	return 0;
+)
 
 int l_game_getClosestWorm(lua_State* L)
 {
@@ -244,7 +260,7 @@ int l_game_playerIterator(lua_State* L)
 		lua_pushnil(L);
 	else
 	{
-		lua.pushReference((*i)->luaReference);
+		(*i)->pushLuaReference();
 		++i;
 	}
 	
@@ -300,7 +316,9 @@ void initGame()
 
 	// Player method and metatable
 	
-	CLASS(player,
+	CLASSM(BasePlayer,
+		("__gc", l_player_destroy)
+	,
 		("kills", l_player_kills)
 		("deaths", l_player_deaths)
 		("name", l_player_name)
@@ -310,6 +328,7 @@ void initGame()
 		("stats", l_player_stats)
 		("worm", l_player_worm)
 		("select_weapons", l_player_selectWeapons)
+		("is_local", l_player_isLocal)
 	)
 	
 /*

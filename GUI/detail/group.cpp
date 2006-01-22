@@ -7,7 +7,7 @@ using std::endl;
 namespace OmfgGUI
 {
 
-char const Group::metaTable[] = "gui_group";
+LuaReference Group::metaTable;
 
 bool Group::render()
 {

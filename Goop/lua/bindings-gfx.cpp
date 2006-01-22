@@ -1,6 +1,8 @@
 #include "bindings-gfx.h"
 
 #include "luaapi/types.h"
+#include "luaapi/macros.h"
+#include "luaapi/classes.h"
 
 #include "../glua.h"
 #include "util/log.h"
@@ -23,8 +25,8 @@ namespace LuaBindings
 {
 	
 #ifndef DEDSERV
-LuaReference viewportMetaTable(0);
-LuaReference bitmapMetaTable(0);
+LuaReference ViewportMetaTable;
+LuaReference BITMAPMetaTable;
 BlitterContext blitter;
 #endif
 
@@ -36,7 +38,9 @@ BlitterContext blitter;
 int l_gfx_draw_box(lua_State* L)
 {
 #ifndef DEDSERV
-	BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(L, 1));
+	LuaContext context(L);
+	//BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(L, 1));
+	BITMAP* b = getObject<BITMAP>(context, 1);
 	
 	int x1 = lua_tointeger(L, 2);
 	int y1 = lua_tointeger(L, 3);
@@ -101,7 +105,7 @@ int l_gfx_reset_blending(lua_State* L)
 	Returns the HUD bitmap of this viewport.
 */
 METHOD(Viewport, viewport_getBitmap,
-	context.pushFullReference(*p->getBitmap(), bitmapMetaTable);
+	context.pushFullReference(*p->getBitmap(), BITMAPMetaTable);
 	return 1;
 )
 
@@ -151,14 +155,14 @@ void initGfx()
 #ifndef DEDSERV
 	// Viewport method and metatable
 	
-	CLASS(viewport,
+	CLASS(Viewport,
 		("get_bitmap", l_viewport_getBitmap)
 		("from_map", l_viewport_fromMap)
 	)
 
 	// Bitmap method and metatable
 	
-	CLASS(bitmap,
+	CLASS(BITMAP,
 		("w", l_bitmap_w)
 		("h", l_bitmap_h)
 	)

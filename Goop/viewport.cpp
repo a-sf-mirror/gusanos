@@ -23,7 +23,7 @@ using namespace std;
 Viewport::Viewport()
 : dest(0)
 {
-	lua.pushFullReference(*this, LuaBindings::viewportMetaTable);
+	lua.pushFullReference(*this, LuaBindings::ViewportMetaTable);
 	//lua.pushLightReference(this, LuaBindings::viewportMetaTable);
 	luaReference = lua.createReference();
 }
@@ -183,11 +183,10 @@ void Viewport::render(BasePlayer* player)
 				LuaReference ownerRef;
 				
 				if ( player )
-				{
-					ownerRef = player->luaReference;
-				}
+					ownerRef = player->getLuaReference();
+
 				//lua.callReference(0, *i, (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownViewport);
-				(lua.call(*i), (lua_Number)x, (lua_Number)y, worm->luaReference, luaReference, ownerRef)();
+				(lua.call(*i), (lua_Number)x, (lua_Number)y, worm->getLuaReference(), luaReference, ownerRef)();
 			}
 		}
 	}
@@ -197,7 +196,7 @@ void Viewport::render(BasePlayer* player)
 		EACH_CALLBACK(i, viewportRender)
 		{
 			//lua.callReference(0, *i, luaReference, worm->luaReference);
-			(lua.call(*i), luaReference, worm->luaReference)();
+			(lua.call(*i), luaReference, worm->getLuaReference())();
 		}
 	}
 }

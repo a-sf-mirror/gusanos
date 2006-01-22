@@ -2,6 +2,7 @@
 
 #include "util/vec.h"
 #include "util/angle.h"
+#include "util/log.h"
 #include "game.h"
 #include "weapon.h"
 #include "weapon_type.h"
@@ -222,7 +223,7 @@ void NetWorm::think()
 						int index = data->getInt(8);
 						if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Worm, index))
 						{
-							event->call(luaReference, data);
+							event->call(getLuaReference(), data);
 						}
 					}
 					break;
@@ -243,7 +244,7 @@ void NetWorm::think()
 	}
 }
 
-void NetWorm::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+void NetWorm::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID)
 {
 	if(!m_node) return;
 	ZCom_BitStream* data = new ZCom_BitStream;
@@ -251,7 +252,7 @@ void NetWorm::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, Z
 	data->addInt(event->idx, 8);
 	if(userdata)
 	{
-		data->addBitStream(*userdata);
+		data->addBitStream(userdata);
 	}
 	if(!connID)
 		m_node->sendEvent(mode, rules, data);
@@ -432,6 +433,13 @@ void NetWorm::damage( float amount, BasePlayer* damager )
 	{
 		BaseWorm::damage( amount, damager );
 	}
+}
+
+void NetWorm::finalize()
+{
+	BaseWorm::finalize();
+	delete m_node; m_node = 0;
+	delete m_interceptor; m_interceptor = 0;
 }
 
 NetWormInterceptor::NetWormInterceptor( NetWorm* parent )

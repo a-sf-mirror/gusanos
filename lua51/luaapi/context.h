@@ -104,8 +104,10 @@ public:
 			
 			if(r < 0)
 			{
-				m_context.pop(2);
-				m_context.destroyReference(m_ref);
+				m_context.pop(1); // Pop error function
+				//m_context.destroyReference(m_ref);
+				lua_pushnil(m_context);
+				m_context.assignReference(m_ref);
 				return 0;
 			}
 			lua_remove(m_context, -m_returns-1);
@@ -159,6 +161,12 @@ public:
 	LuaContext& push(lua_Number v)
 	{
 		lua_pushnumber(m_State, v);
+		return *this;
+	}
+		
+	LuaContext& push(float v)
+	{
+		lua_pushnumber(m_State, static_cast<lua_Number>(v));
 		return *this;
 	}
 	
@@ -356,13 +364,30 @@ public:
 	{
 		return CallProxy(*this, ref, returns);
 	}
-
+	
 	template<class T>
 	inline T get(int idx)
 	{
 		return T();
 	}
-	
+
+	/*
+	template<class T>
+	inline T* getObject(int idx)
+	{
+		void* p = lua_touserdata(m_State, idx);
+		if(!p)
+			return 0;
+		lua_getmetatable(m_State, idx);
+		push(T::metaTable);
+		bool b = lua_rawequal(m_State, -1, -2);
+		pop(2);
+		if(b)
+			return *static_cast<T**>(p);
+		return 0;
+	}
+	*/
+
 	template<class T>
 	void tableToVector(std::vector<T> const& v)
 	{
@@ -384,6 +409,12 @@ public:
 	
 	void tableFunction(char const* name, lua_CFunction func);
 	
+	void tableSetField(int id)
+	{
+		lua_pushboolean(m_State, true);
+		lua_rawseti(m_State, -2, id);
+	}
+	
 	FunctionProxy functions()
 	{
 		return FunctionProxy(*this);
@@ -400,6 +431,8 @@ public:
 	}
 	
 	LuaReference createReference();
+	
+	void assignReference(LuaReference ref);
 	
 	void destroyReference(LuaReference ref);
 	
@@ -433,11 +466,12 @@ public:
 		return m_State;
 	}
 	
+	void close();
+	
 	~LuaContext();
 	
 private:
 	lua_State *m_State;
-	bool m_borrowed;
 	//std::map<std::string, LuaReference> metaTables;
 };
 
@@ -446,6 +480,8 @@ inline bool LuaContext::get<bool>(int idx)
 {
 	return lua_toboolean(m_State, idx);
 }
+
+extern LuaContext lua;
 
 #ifndef NDEBUG
 

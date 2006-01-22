@@ -48,8 +48,8 @@ namespace{
 		
 		OmfgScript::Parser parser(fileStream, gameActions, filename.native_file_string());
 		
-		parser.addEvent("game_start", GameStart,0);
-		parser.addEvent("game_end", GameStart,0);
+		parser.addEvent("game_start", GameStart, 0);
+		parser.addEvent("game_end", GameEnd, 0);
 		
 		if(!parser.run())
 		{

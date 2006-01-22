@@ -9,6 +9,8 @@
 #include <boost/function.hpp>
 #include "luaapi/types.h"
 
+#include "message_queue.h"
+
 const unsigned int INVALID_NODE_ID = 0;
 
 namespace HTTP { struct Request; }
@@ -95,6 +97,7 @@ public:
 			Game,
 			Player,
 			Worm,
+			Particle,
 			Max
 		};
 	};
@@ -138,6 +141,8 @@ public:
 	static void incConnCount();
 	static void decConnCount();
 	
+	static bool isDisconnected();
+	
 	int simLag;
 	float simLoss;
 	int upLimit;
@@ -145,6 +150,25 @@ public:
 	int downPPS;
 	int checkCRC;
 	bool clientRetry;
+	
+	mq_define_message(Connect, 0, (std::string addr_))
+		: addr(addr_)
+		{
+			
+		}
+		
+		std::string addr;
+	mq_end_define_message()
+	
+/*
+	mq_define_message(Host, 1, (std::string levelName_))
+		: levelName(levelName_)
+		{
+			
+		}
+		
+		std::string levelName;
+	mq_end_define_message()*/
 };
 
 extern Network network;

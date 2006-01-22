@@ -2,6 +2,7 @@
 
 #include "util/vec.h"
 #include "util/angle.h"
+#include "util/log.h"
 #include "game.h"
 #include "base_object.h"
 #include "base_player.h"
@@ -40,10 +41,7 @@ void* BaseWorm::operator new(size_t count)
 	return (void *)p;
 }*/
 
-LuaReference BaseWorm::metaTable()
-{
-	return LuaBindings::wormMetaTable;
-}
+LuaReference BaseWorm::metaTable;
 
 BaseWorm::BaseWorm()
 : BaseObject(), aimSpeed(0.0), aimAngle(90.0)
@@ -90,17 +88,10 @@ BaseWorm::BaseWorm()
 
 BaseWorm::~BaseWorm()
 {
-	EACH_CALLBACK(i, wormRemoved)
-	{
-		(lua.call(*i), luaReference)();
-	}
-	
 #ifndef DEDSERV
 	delete m_animator; m_animator = 0;
 	delete m_fireconeAnimator; m_fireconeAnimator = 0;
 #endif
-
-	lua.destroyReference(luaReference);
 
 	//m_ninjaRope->deleteMe = true;
 	for ( size_t i = 0; i < m_weapons.size(); i++)
@@ -953,7 +944,7 @@ void BaseWorm::die()
 {
 	EACH_CALLBACK(i, wormDeath)
 	{
-		(lua.call(*i), luaReference)();
+		(lua.call(*i), getLuaReference())();
 	}
 	m_isActive = false;
 	if (m_owner)
@@ -1084,7 +1075,28 @@ void BaseWorm::actionStop( Actions action )
 	}
 }
 
+/*
 void BaseWorm::pushLuaReference()
 {
 	lua.pushReference(luaReference);
+}*/
+
+LuaReference BaseWorm::getLuaReference()
+{
+	if(luaReference)
+		return luaReference;
+	else
+	{
+		lua.pushFullReference(*this, metaTable);
+		luaReference = lua.createReference();
+		return luaReference;
+	}
+}
+
+void BaseWorm::finalize()
+{
+	EACH_CALLBACK(i, wormRemoved)
+	{
+		(lua.call(*i), getLuaReference())();
+	}
 }

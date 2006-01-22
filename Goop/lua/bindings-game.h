@@ -9,7 +9,7 @@ namespace LuaBindings
 	void initGame();
 	
 	extern LuaReference playerIterator;
-	extern LuaReference playerMetaTable;
+	extern LuaReference BasePlayerMetaTable;
 }
 
 #endif //LUA_BINDINGS_GAME_H

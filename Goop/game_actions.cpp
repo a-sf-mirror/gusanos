@@ -727,20 +727,15 @@ RunScript::RunScript( vector<OmfgScript::TokenBase*> const& params )
 
 void RunScript::run( ActionParams const& params )
 {
+	AssertStack as(lua);
+	
 	if(!function)
 	{
 		if(scriptName.empty())
 			return;
 		
-		std::string::size_type p = scriptName.find('.');
-		if(p != std::string::npos)
-		{
-			Script* s = scriptLocator.load(scriptName.substr(0, p));
-			if(s)
-			{
-				function = s->createFunctionRef(scriptName.substr(p + 1, scriptName.size() - p - 1));
-			}
-		}
+		function = Script::functionFromString(scriptName);
+		
 		scriptName.clear();
 		
 		if(!function)
@@ -748,6 +743,11 @@ void RunScript::run( ActionParams const& params )
 	}
 	lua.push(LuaContext::errorReport);
 	lua.pushReference(function);
+	if(lua_isnil(lua, -1))
+	{
+		lua.pop(2);
+		return;
+	}
 	
 	if(params.object)
 		params.object->pushLuaReference();
@@ -761,10 +761,12 @@ void RunScript::run( ActionParams const& params )
 		
 	if(lua.call(2, 0, -4) < 0)
 	{
-		lua.destroyReference(function);
+		//lua.destroyReference(function);
+		lua_pushnil(lua);
+		lua.assignReference(function);
 		function.reset();
 	}
-	lua.pop();
+	lua.pop(); // Pop error function
 }
 
 RunScript::~RunScript()

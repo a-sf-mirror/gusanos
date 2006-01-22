@@ -8,9 +8,8 @@ using boost::lexical_cast;
 namespace OmfgGUI
 {
 
-char const List::metaTable[] = "gui_list";
-
-char const List::Node::metaTable[] = "gui_list_node";
+LuaReference List::metaTable;
+LuaReference List::Node::metaTable;
 
 bool List::LuaLT::operator()(Node* a, Node* b)
 {
@@ -555,7 +554,7 @@ void List::applyFormatting(Context::GSSpropertyMap const& f)
 
 void List::sortLua(LuaReference comparer)
 {
-	LuaLT criteria(m_context->luaContext(), comparer);
+	LuaLT criteria(lua, comparer);
 	m_RootNode.children.sort(criteria);
 	
 	m_basePos = 0;

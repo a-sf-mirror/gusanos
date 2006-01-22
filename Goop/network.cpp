@@ -3,6 +3,7 @@
 #include "server.h"
 #include "client.h"
 #include "game.h"
+#include "updater.h"
 #include "glua.h"
 #include "gconsole.h"
 //#include "text.h"
@@ -34,6 +35,20 @@ LuaReference LuaEventDef::metaTable;
 
 namespace
 {
+	enum State
+	{
+		StateIdle,	// Not doing anything
+		StateDisconnecting, // Starting disconnection sequence
+		StateDisconnected, // Disconnected
+	};
+	
+	State state = StateDisconnected;
+	int stateTimeOut = 0;
+	
+	#define SET_STATE(s_) DLOG("Network state: " #s_); state = State##s_;
+	
+	MessageQueue msg;
+	
 	struct HttpRequest
 	{
 		HttpRequest(HTTP::Request* req_, HttpRequestCallback handler_)
@@ -225,6 +240,7 @@ namespace
 		NetWorm::classID = m_control->ZCom_registerClass("worm",0);
 		BasePlayer::classID = m_control->ZCom_registerClass("player",0);
 		Game::classID = m_control->ZCom_registerClass("game",0);
+		Updater::classID = m_control->ZCom_registerClass("updater",0);
 		Particle::classID = m_control->ZCom_registerClass("particle",ZCOM_CLASSFLAG_ANNOUNCEDATA);
 	}
 	
@@ -249,13 +265,13 @@ Network network;
 void LuaEventDef::call(ZCom_BitStream* s)
 {
 	ZCom_BitStream* n = s->Duplicate();
-	(lua.call(callb), luaReference, lua.fullReference(*n, LuaBindings::bitStreamMetaTable))();
+	(lua.call(callb), luaReference, lua.fullReference(*n, LuaBindings::ZCom_BitStreamMetaTable))();
 }
 
 void LuaEventDef::call(LuaReference obj, ZCom_BitStream* s)
 {
 	ZCom_BitStream* n = s->Duplicate();
-	(lua.call(callb), luaReference, obj, lua.fullReference(*n, LuaBindings::bitStreamMetaTable))();
+	(lua.call(callb), luaReference, obj, lua.fullReference(*n, LuaBindings::ZCom_BitStreamMetaTable))();
 }
 
 LuaEventDef::~LuaEventDef()
@@ -343,39 +359,93 @@ void Network::update()
 		m_control->ZCom_processInput(eZCom_NoBlock);
 	}
 	
+	processHttpRequests();
+	
+	switch(state)
+	{
+		case StateDisconnected:
+		{
+			mq_process_messages(msg)
+				mq_case(Connect)
+					m_control = new Client( 0 );
+					registerClasses();
+					ZCom_Address address;
+					address.setAddress( eZCom_AddressUDP, 0, ( data.addr + ":" + cast<string>(m_serverPort) ).c_str() );
+					m_control->ZCom_Connect( address, NULL );
+					m_client = true;
+					m_lastServerAddr = data.addr;
+					SET_STATE(Idle);
+				mq_end_case()
+			mq_end_process_messages()
+		}
+		break;
+		
+		case StateIdle:
+		{
+			if(m_host)
+			{
+				if(registerGlobally && ++updateTimer > 6000*3)
+				{
+					updateTimer = 0;
+					if(!serverAdded)
+					{
+						registerToMasterServer();
+					}
+					else
+					{
+						std::list<std::pair<std::string, std::string> > data;
+						push_back(data)
+							("action", "update")
+							("port", convert<std::string>::value(m_serverPort))
+						;
+						network.addHttpRequest(masterServer.post("gusserv.php", data), onServerUpdate);
+					}
+				}
+			}
+		}
+		break;
+		
+		case StateDisconnecting:
+		{
+			if(requests.size() == 0 && (connCount == 0 || stateTimeOut <= 0))
+			{
+				if(connCount != 0)
+					WLOG(connCount << " connection(s) might not have disconnected properly.");
+				SET_STATE(Disconnected);
+				
+				if(m_control)
+				{
+					m_control->Shutdown();
+					network.clientRetry = false;
+					
+					delete m_control;
+					m_control = 0;
+				}
+				
+				connCount = 0;
+				m_client = false;
+				m_host = false;
+				m_serverID = ZCom_Invalid_ID;
+				
+				game.removeNode();
+				updater.removeNode();
+			}
+			else
+				--stateTimeOut;
+		}
+		break;
+	}
+	
 	if( reconnectTimer > 0 )
 	{
 		disconnect();
 		if(--reconnectTimer == 0)
 		{
+			DLOG("Reconnecting to " << m_lastServerAddr);  
 			connect( m_lastServerAddr );
 		}
 	}
-	
-	if(m_host)
-	{
-		if(registerGlobally && ++updateTimer > 6000*3)
-		{
-			updateTimer = 0;
-			if(!serverAdded)
-			{
-				registerToMasterServer();
-			}
-			else
-			{
-				std::list<std::pair<std::string, std::string> > data;
-				push_back(data)
-					("action", "update")
-				;
-				network.addHttpRequest(masterServer.post("gusserv.php", data), onServerUpdate);
-			}
-		}
-	}
-	
-	processHttpRequests();
 }
-
-
 
 HTTP::Request* Network::fetchServerList()
 {
@@ -390,89 +460,49 @@ HTTP::Request* Network::fetchServerList()
 
 void Network::host()
 {
-	disconnect();
+	//disconnect();
+	assert(state == StateDisconnected); // We assume that we're disconnected
+	
 	m_control = new Server(m_serverPort);
 	registerClasses();
 	m_host = true;
 	game.assignNetworkRole( true ); // Gives the game class node authority role
-	
+	updater.assignNetworkRole(true);
 	registerToMasterServer();
+	SET_STATE(Idle);
 }
 
 void Network::connect( const std::string &_address )
 {
 	disconnect();
-	m_control = new Client( 0 );
-	registerClasses();
-	ZCom_Address address;
-	address.setAddress( eZCom_AddressUDP, 0, ( _address + ":" + cast<string>(m_serverPort) ).c_str() );
-	m_control->ZCom_Connect( address, NULL );
-	m_client = true;
-	m_lastServerAddr = _address;
-	game.assignNetworkRole( false ); // Gives the game class node proxy role
+	
+	mq_queue(msg, Connect, _address);
 }
 
 void Network::disconnect( DConnEvents event )
 {
-	if(serverAdded)
+	if(state == StateIdle && m_control)
 	{
-		std::list<std::pair<std::string, std::string> > data;
-		data.push_back(std::make_pair("action", "remove"));
-		network.addHttpRequest(masterServer.post("gusserv.php", data), onServerRemoved);
-	}
-	
-	if(requests.size())
-	{
-		cout << "Waiting for HTTP requests to finish... " << std::flush;
-		do
-		{
-			processHttpRequests();
-			rest(2);
-		}
-		while(requests.size() > 0);
-		cout << "done." << endl;
-	}
-	
-	if ( m_control )
-	{
+		SET_STATE(Disconnecting);
+		stateTimeOut = 1000;
+
 		ZCom_BitStream *eventData = new ZCom_BitStream;
 		eventData->addInt( static_cast<int>( event ), 8 );
 		
 		LOG("Disconnecting...");
 		network.clientRetry = true;
 		m_control->ZCom_disconnectAll(eventData);
-		
-		// Wait for a number of seconds before giving up on the remaining connections
-		const int timeOut = 10000; //3000;
-		int oldConnCount = connCount;
-		for ( int count = 0; connCount > 0 && count < timeOut/5; ++count )
-		{
-			rest(5);
-			m_control->ZCom_processInput();
-			m_control->ZCom_processOutput();
-			
-			if(oldConnCount != connCount && connCount > 0)
-			{
-				ILOG(connCount << " connections left");
-				oldConnCount = connCount;
-			}
-		}
-		if(connCount > 0)
-			WLOG(connCount << " connections might not have disconnected properly"); 
-		else
-			ILOG("All connections disconnected successfully");
-		m_control->Shutdown();
-		network.clientRetry = false;
 	}
 	
-	delete m_control;
-	m_control = NULL;
-	connCount = 0;
-	m_client = false;
-	m_host = false;
-	m_serverID = ZCom_Invalid_ID;
-	
-	game.removeNode();
+	if(serverAdded)
+	{
+		std::list<std::pair<std::string, std::string> > data;
+		push_back(data)
+			("action", "remove")
+			("port", convert<std::string>::value(m_serverPort))
+		;
+		network.addHttpRequest(masterServer.post("gusserv.php", data), onServerRemoved);
+	}
 }
 
 void Network::disconnect( ZCom_ConnID id, DConnEvents event )
@@ -580,6 +610,11 @@ void Network::incConnCount()
 void Network::decConnCount()
 {
 	--connCount;
+}
+
+bool Network::isDisconnected()
+{
+	return state == StateDisconnected;
 }
 
 #endif

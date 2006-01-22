@@ -116,23 +116,23 @@ struct XMLHandler
 					
 		if(tag.label == "window")
 		{
-			newWindow = LUA_NEW_(Wnd, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
+			newWindow = lua_new(Wnd, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
 		}
 		else if(tag.label == "list")
 		{
-			newWindow = LUA_NEW_(List, (windows.top().wnd, tag.label, className, id, tag.attributes), context.luaContext());
+			newWindow = lua_new(List, (windows.top().wnd, tag.label, className, id, tag.attributes), lua);
 		}
 		else if(tag.label == "button")
 		{
-			newWindow = LUA_NEW_(Button, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
+			newWindow = lua_new(Button, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
 		}
 		else if(tag.label == "group")
 		{
-			newWindow = LUA_NEW_(Group, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
+			newWindow = lua_new(Group, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
 		}
 		else if(tag.label == "edit")
 		{
-			newWindow = LUA_NEW_(Edit, (windows.top().wnd, tag.label, className, id, tag.attributes, label), context.luaContext());
+			newWindow = lua_new(Edit, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
 		}
 		newWindow->m_focusable = focusable;
 		

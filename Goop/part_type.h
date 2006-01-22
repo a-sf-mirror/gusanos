@@ -11,6 +11,7 @@
 #include "events.h"
 #include "util/vec.h"
 #include "util/angle.h"
+#include "luaapi/types.h"
 #include "resource_base.h"
 #include <boost/cstdint.hpp>
 
@@ -60,6 +61,9 @@ class PartType : public ResourceBase
 	int colLayer;
 	float health;
 	boost::uint32_t crc;
+	std::string networkInitName;
+	LuaReference networkInit;
+	LuaReference getNetworkInit();
 	
 #ifndef DEDSERV
 	Distortion* distortion;

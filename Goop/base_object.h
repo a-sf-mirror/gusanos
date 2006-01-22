@@ -14,6 +14,8 @@ class BasePlayer;
 class BaseObject 
 {
 public:
+	static LuaReference metaTable;
+	//static int const luaID = 1;
 		
 	BaseObject( BasePlayer* owner = 0, Vec pos_ = Vec(), Vec spd_ = Vec() );
 	virtual ~BaseObject();
@@ -54,8 +56,12 @@ public:
 	virtual void remove();
 	
 	// Deletes the object
-	virtual void deleteThis()
-	{ delete this; }
+	void deleteThis();
+	
+	// Called before the object is deleted from gusanos (but perhaps not from lua)
+	virtual void finalize()
+	{
+	}
 	
 #ifndef DEDSERV
 	// Sets a destination alpha value and the time in logic frames it will take to reach that value
@@ -80,7 +86,10 @@ public:
 	{ pos = pos_; }
 	
 	// Dunno what this does.. gliptiiiic!! ;>
-	virtual void pushLuaReference();
+	void pushLuaReference();
+	
+	// Returns a lua reference to this object
+	virtual LuaReference getLuaReference();
 	
 	// If this is true the object will be removed from the objects list in the next frame
 	bool deleteMe;
@@ -98,7 +107,7 @@ public:
 	int cellIndex_;
 	
 protected:
-	
+	LuaReference luaReference;
 	BasePlayer* m_owner;
 };
 

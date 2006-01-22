@@ -5,6 +5,8 @@
 #include "glua.h"
 #include "lua/bindings-objects.h"
 
+LuaReference BaseObject::metaTable;
+
 BaseObject::BaseObject( BasePlayer* owner, Vec pos_, Vec spd_ )
 : deleteMe(false), luaData(0), m_owner(owner)
 , pos(pos_), spd(spd_)
@@ -54,7 +56,32 @@ void BaseObject::removeRefsToPlayer(BasePlayer* player)
 		m_owner = NULL;
 }
 
+LuaReference BaseObject::getLuaReference()
+{
+	if(luaReference)
+		return luaReference;
+	else
+	{
+		lua.pushFullReference(*this, metaTable);
+		luaReference = lua.createReference();
+		return luaReference;
+	}
+}
+
 void BaseObject::pushLuaReference()
 {
-	lua.pushFullReference(*this, LuaBindings::baseObjectMetaTable);
+	lua.push(getLuaReference());
+}
+
+void BaseObject::deleteThis()
+{
+	finalize();
+	
+	if(luaReference)
+	{
+		lua.destroyReference(luaReference);
+		luaReference.reset();
+	}
+	else
+		delete this;
 }

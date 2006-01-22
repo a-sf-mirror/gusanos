@@ -12,7 +12,7 @@ namespace OmfgGUI
 class Edit : public Wnd
 {
 public:
-	static char const metaTable[];
+	static LuaReference metaTable;
 	
 	Edit(Wnd* parent, std::string const& tagLabel, std::string const& className,
 	  std::string const& id, std::map<std::string, std::string> const& attributes,

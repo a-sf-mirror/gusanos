@@ -58,7 +58,15 @@ public:
 
 	// Not used virtual stuff
 	void outPreReplicateNode(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role)
-	{}
+	{
+		ZCom_BitStream *type = new ZCom_BitStream;
+		Encoding::encode(*type, parent->m_type->getIndex(), partTypeList.size());
+		if(parent->m_owner)
+			type->addInt(parent->m_owner->getNodeID(), 32);
+		else
+			type->addInt(0, 32);
+		parent->m_node->setAnnounceData( type );
+	}
 	
 	void outPreDereplicateNode(ZCom_Node *_node, ZCom_ConnID _to, eZCom_NodeRole _remote_role)
 	{}
@@ -71,8 +79,10 @@ public:
 		switch ( replicator->getSetup()->getInterceptID() )
 		{
 			case Position:
-				if(!(parent->flags & Particle::RepPos)) // Prevent non-active worms from replicating position
+				if(!(parent->flags & Particle::RepPos))
+				{
 					return false;
+				}
 			break;
 		}
 		
@@ -91,6 +101,8 @@ public:
 private:
 	Particle* parent;
 };
+
+LuaReference Particle::metaTable;
 
 ZCom_ClassID Particle::classID = ZCom_Invalid_ID;
 
@@ -167,7 +179,7 @@ void Particle::assignNetworkRole( bool authority )
 
 	m_node->beginReplicationSetup(0);
 	
-		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL, ParticleInterceptor::Position, -1, 1000);
+		static ZCom_ReplicatorSetup posSetup( ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_INTERCEPT, ZCOM_REPRULE_AUTH_2_ALL, ParticleInterceptor::Position, -1, 1000);
 		
 		m_node->addReplicator(new PosSpdReplicator( &posSetup, &pos, &spd, game.level.vectorEncoding, game.level.diffVectorEncoding ), true);
 		
@@ -179,15 +191,9 @@ void Particle::assignNetworkRole( bool authority )
 	//DLOG("Registering node, type " << m_type->getIndex() << " of " << partTypeList.size());
 	if( authority )
 	{
-		ZCom_BitStream *type = new ZCom_BitStream;
-		Encoding::encode(*type, m_type->getIndex(), partTypeList.size());
-		if(m_owner)
-			type->addInt(m_owner->getNodeID(), 32);
-		else
-			type->addInt(0, 32);
-		m_node->setAnnounceData( type );
+		
 		//DLOG("Announce data set");
-		m_node->setEventNotification(false, false); // Enables the eEvent_Init.
+		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 		if( !m_node->registerNodeDynamic(classID, network.getZControl() ) )
 			allegro_message("ERROR: Unable to register particle authority node.");
 	}else
@@ -274,9 +280,31 @@ void Particle::think()
 			ZCom_BitStream *data = m_node->getNextEvent(&type, &remote_role, &conn_id);
 			switch ( type )
 			{
+				case eZCom_EventUser:
+				if ( data )
+				{
+					//TODO: NetEvents event = (NetEvents)Encoding::decode(*data, EVENT_COUNT);
+					
+					// Only one event now, lua event
+					int index = data->getInt(8);
+					if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Particle, index))
+					{
+						event->call(getLuaReference(), data);
+					}
+				}
+				break;
+				
 				case eZCom_EventRemoved:
 				{
 					deleteMe = true;
+				}
+				break;
+				
+				case eZCom_EventInit:
+				{
+					LuaReference r = m_type->getNetworkInit();
+					if(r)
+						(lua.call(r), getLuaReference(), conn_id)();
 				}
 				break;
 				
@@ -517,30 +545,35 @@ void Particle::draw(Viewport* viewport)
 }
 #endif
 
-void Particle::pushLuaReference()
+void Particle::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID)
 {
-	//lua.pushFullReference(*this, LuaBindings::particleMetaTable);
-	
+	if(!m_node) return;
+	ZCom_BitStream* data = new ZCom_BitStream;
+	//addEvent(data, LuaEvent);
+	data->addInt(event->idx, 8);
+	if(userdata)
+	{
+		data->addBitStream(userdata);
+	}
+	if(!connID)
+		m_node->sendEvent(mode, rules, data);
+	else
+		m_node->sendEventDirect(mode, data, connID);
+}
+
+LuaReference Particle::getLuaReference()
+{
 	if(luaReference)
-		lua.push(luaReference);
+		return luaReference;
 	else
 	{
-		lua.pushFullReference(*this, LuaBindings::particleMetaTable);
-		lua.pushvalue(-1);
+		lua.pushFullReference(*this, metaTable);
 		luaReference = lua.createReference();
-		//DLOG("Creating reference to " << this << ", #" << luaReference.idx);
+		return luaReference;
 	}
 }
 
-void Particle::deleteThis()
+void Particle::finalize()
 {
 	delete m_node; m_node = 0;
-	if(luaReference)
-	{
-		//DLOG("Destroying reference " << luaReference.idx);
-		lua.destroyReference(luaReference);
-		luaReference.reset();
-	}
-	else
-		delete this;
 }

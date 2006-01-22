@@ -13,8 +13,8 @@ namespace LuaBindings
 	void initGfx();
 
 #ifndef DEDSERV
-	extern LuaReference viewportMetaTable;
-	extern LuaReference bitmapMetaTable;
+	extern LuaReference ViewportMetaTable;
+	extern LuaReference BITMAPMetaTable;
 	extern BlitterContext blitter;
 #endif
 }

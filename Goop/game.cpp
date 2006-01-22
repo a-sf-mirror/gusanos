@@ -118,8 +118,11 @@ string mapCmd(const list<string> &args)
 	{
 		string tmp = *args.begin();
 		std::transform(tmp.begin(), tmp.end(), tmp.begin(), (int(*)(int)) tolower);
+		/*
 		if(!game.changeLevelCmd( tmp ))
 			return "ERROR LOADING MAP";
+		*/
+		mq_queue(game.msg, Game::ChangeLevel, tmp);
 		return "";
 	}
 	return "MAP <MAPNAME> : LOAD A MAP";
@@ -441,14 +444,16 @@ void Game::init(int argc, char** argv)
 #endif
 }
 
-void Game::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+void Game::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID)
 {
+	if(!m_node) return;
+	
 	ZCom_BitStream* data = new ZCom_BitStream;
 	addEvent(data, LuaEvent);
 	data->addInt(event->idx, 8);
 	if(userdata)
 	{
-		data->addBitStream(*userdata);
+		data->addBitStream(userdata);
 	}
 	if(!connID)
 		m_node->sendEvent(mode, rules, data);
@@ -458,6 +463,58 @@ void Game::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom
 
 void Game::think()
 {
+	mq_process_messages(msg)
+		mq_case(ChangeLevel)
+			if(!changeLevelCmd(data.level))
+				console.addLogMsg("ERROR LOADING MAP");
+		mq_end_case()
+		
+		mq_case(ChangeLevelReal)
+			
+			if(!network.isDisconnected())
+				mq_delay(); // Wait until network is disconnected
+			
+			// Network is disconnected
+
+			refreshLevels();
+			if(!levelLocator.exists(data.level))
+				break;
+			if(!changeLevel( data.level, false ))
+				break;
+			
+			if ( options.host && !network.isClient() )
+			{
+				network.host();
+			}
+			
+			runInitScripts();
+				
+			// All this is temporal, dont be scared ;D
+			if ( loaded && level.isLoaded() ) 
+			{
+				if ( network.isHost() )
+				{
+					createNetworkPlayers();
+				}
+				else if ( !network.isClient() )
+				{
+					if(true)
+					{
+						BaseWorm* worm = addWorm(true);
+						BasePlayer* player = addPlayer ( OWNER, -1, worm );
+						//player->assignWorm(worm);
+					}
+					if(options.splitScreen)
+					{
+						BaseWorm* worm = addWorm(true);
+						BasePlayer* player = addPlayer ( OWNER, -1, worm );
+						//player->assignWorm(worm);
+					}
+				}
+			}
+		mq_end_case()
+	mq_end_process_messages()
+
 #ifndef DEDSERV
 	if(!messages.empty())
 	{
@@ -531,12 +588,12 @@ void Game::think()
 			
 			case eZCom_EventInit:
 			{
-				/*
-				std::auto_ptr<ZCom_BitStream> data(new ZCom_BitStream);
-				addEvent(data.get(), RegisterLuaEvents);
-				network.encodeLuaEvents(data.get());
-				m_node->sendEventDirect(eZCom_ReliableOrdered, data.release(), conn_id);
-				*/
+				// Call this first since level effects will hog the message queue
+				EACH_CALLBACK(i, gameNetworkInit)
+				{
+					(lua.call(*i), conn_id)();
+				}
+				
 				list<LevelEffectEvent>::iterator iter = appliedLevelEffects.begin();
 				for( ; iter != appliedLevelEffects.end() ; ++iter )
 				{
@@ -547,6 +604,8 @@ void Game::think()
 					
 					m_node->sendEventDirect(eZCom_ReliableOrdered, data, conn_id );
 				}
+				
+				
 			}
 			break;
 			
@@ -631,7 +690,10 @@ void Game::loadMod()
 		console.addLogMsg("ERROR: NO WEAPONS FOUND IN MOD FOLDER");
 	}
 	console.executeConfig("mod.cfg");
+}
 
+void Game::runInitScripts()
+{
 	Script* modScript = scriptLocator.load(m_modName);
 	if(!modScript) modScript = scriptLocator.load("common");
 	if(modScript)
@@ -648,7 +710,6 @@ void Game::loadMod()
 	}
 	levelEffectList.indexate();
 	partTypeList.indexate();
-
 }
 
 void Game::unload()
@@ -662,26 +723,27 @@ void Game::unload()
 	
 	console.clearTemporaries();
 	
+	// Delete all players
+	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
+	{
+		(*iter)->deleteThis();
+	}
+	players.clear();
+	localPlayers.clear();
+	
 	// Delete all objects
 #ifdef USE_GRID
 	objects.clear();
 #else
 	for ( ObjectsList::Iterator iter = objects.begin(); (bool)iter; ++iter)
 	{
-		delete (*iter);
+		(*iter)->deleteThis();
 	}
 	objects.clear();
 #endif
 
 	appliedLevelEffects.clear();
 	
-	// Delete all players
-	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
-	{
-		delete *iter;
-	}
-	players.clear();
-	localPlayers.clear();
 	level.unload();
 	
 	for ( vector<WeaponType*>::iterator iter = weaponList.begin(); iter != weaponList.end(); ++iter)
@@ -778,64 +840,41 @@ void Game::refreshLevels()
 	levelLocator.refresh();
 }
 
+void Game::createNetworkPlayers()
+{
+	BaseWorm* worm = addWorm(true);
+	BasePlayer* player = addPlayer ( OWNER, -1, worm );
+	player->assignNetworkRole(true);
+	//player->assignWorm(worm);
+
+	if(options.splitScreen)
+	{
+		// TODO: Factorize all this out, its being duplicated on client.cpp also :O
+		BaseWorm* worm = addWorm(true); 
+		BasePlayer* player = addPlayer ( OWNER, -1, worm );
+		player->assignNetworkRole(true);
+		//player->assignWorm(worm);
+	}
+}
+
 bool Game::changeLevelCmd(const std::string& levelName )
 {
-	refreshLevels();
-	if(!levelLocator.exists(levelName))
-		return false;
-	
-	if( network.isHost() )
+	if( network.isHost() && options.host )
 		network.disconnect( Network::ServerMapChange );
 	else
 		network.disconnect();
 	
-	if(!changeLevel( levelName, false ))
-		return false;
+	mq_queue(msg, ChangeLevelReal, levelName);
 
-	if ( options.host && !network.isClient() )
-	{
-#ifndef DISABLE_ZOIDCOM
-		network.host();
-#endif
-	}
-	
-	// All this is temporal, dont be scared ;D
-	if ( loaded && level.isLoaded() ) 
-	{
-		if ( network.isHost() )
-		{
-			if(true)
-			{
-				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
-				BaseWorm* worm = addWorm(true); 
-				BasePlayer* player = addPlayer ( OWNER );
-				player->assignNetworkRole(true);
-				player->assignWorm(worm);
-			}
-			if(options.splitScreen)
-			{
-				// TODO: Factorize all this out, its being duplicated on client.cpp also :O
-				BaseWorm* worm = addWorm(true); 
-				BasePlayer* player = addPlayer ( OWNER );
-				player->assignNetworkRole(true);
-				player->assignWorm(worm);
-			}
-		}else if ( !network.isClient() )
-		{
-			if(true)
-			{
-				BaseWorm* worm = addWorm(true);
-				BasePlayer* player = addPlayer ( OWNER );
-				player->assignWorm(worm);
-			}
-			if(options.splitScreen)
-			{
-				BaseWorm* worm = addWorm(true);
-				BasePlayer* player = addPlayer ( OWNER );
-				player->assignWorm(worm);
-			}
-		}
-	}
+	return true;
+}
+
+bool Game::reloadMod()
+{
+	unload();
+	LuaBindings::init();
+		
+	loadMod();
 	
 	return true;
 }
@@ -893,11 +932,11 @@ void Game::assignNetworkRole( bool authority )
 	{
 		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 		if( !m_node->registerNodeUnique(classID, eZCom_RoleAuthority, network.getZControl() ) )
-			allegro_message("ERROR: Unable to register player authority node.");
+			allegro_message("ERROR: Unable to register game authority node.");
 	}else
 	{
 		if( !m_node->registerNodeUnique( classID, eZCom_RoleProxy, network.getZControl() ) )
-			allegro_message("ERROR: Unable to register player requested node.");
+			allegro_message("ERROR: Unable to register game requested node.");
 	}
 
 	m_node->applyForZoidLevel(1);
@@ -1008,7 +1047,7 @@ void Game::insertExplosion( Explosion* explosion )
 #endif
 }
 
-BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
+BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team, BaseWorm* worm )
 {
 	BasePlayer* p = 0;
 	switch(type)
@@ -1017,7 +1056,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 		case OWNER:
 		{
 			if ( localPlayers.size() >= MAX_LOCAL_PLAYERS ) allegro_message("OMFG Too much local players");
-			Player* player = LUA_NEW(Player, ( playerOptions[localPlayers.size()] ));
+			Player* player = new Player( playerOptions[localPlayers.size()], worm );
 #ifndef DEDSERV
 			Viewport* viewport = new Viewport;
 			if ( options.splitScreen )
@@ -1031,9 +1070,10 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 #endif
 			players.push_back( player );
 			localPlayers.push_back( player );
+			player->local = true;
 			EACH_CALLBACK(i, localplayerInit)
 			{
-				(lua.call(*i), player->luaReference)();
+				(lua.call(*i), player->getLuaReference())();
 			}
 			p = player;
 		}
@@ -1041,7 +1081,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 				
 		case PROXY:
 		{
-			ProxyPlayer* player = LUA_NEW(ProxyPlayer, ());
+			ProxyPlayer* player = new ProxyPlayer(worm);
 			players.push_back( player );
 			p = player;
 		}
@@ -1049,7 +1089,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 		
 		case AI:
 		{
-			PlayerAI* player = LUA_NEW(PlayerAI, (team));
+			PlayerAI* player = new PlayerAI(team, worm);
 			players.push_back( player );
 			p = player;
 		}
@@ -1059,7 +1099,7 @@ BasePlayer* Game::addPlayer( PLAYER_TYPE type, int team )
 	{
 		EACH_CALLBACK(i, playerInit)
 		{
-			(lua.call(*i), p->luaReference)();
+			(lua.call(*i), p->getLuaReference())();
 		}
 	}
 	
@@ -1071,11 +1111,11 @@ BaseWorm* Game::addWorm(bool isAuthority)
 	BaseWorm* returnWorm = NULL;
 	if ( network.isHost() || network.isClient() )
 	{
-		NetWorm* netWorm = LUA_NEW(NetWorm, (isAuthority));
+		NetWorm* netWorm = new NetWorm(isAuthority);
 		returnWorm = netWorm;
 	}else
 	{
-		Worm* worm = LUA_NEW(Worm, ());
+		Worm* worm = new Worm();
 		returnWorm = worm;
 	}
 	if ( !returnWorm ) allegro_message("moo");
@@ -1095,9 +1135,9 @@ void Game::addBot(int team)
 	if ( loaded && level.isLoaded() )
 	{
 		BaseWorm* worm = addWorm(true); 
-		BasePlayer* player = addPlayer(AI, team);
+		BasePlayer* player = addPlayer(AI, team, worm);
 		if ( network.isHost() ) player->assignNetworkRole(true);
-		player->assignWorm(worm);
+		//player->assignWorm(worm);
 	}
 }
 

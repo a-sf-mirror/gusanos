@@ -28,12 +28,14 @@ BasePlayer::Stats::~Stats()
 		lua.destroyReference(luaData);
 }
 
+/*
 LuaReference BasePlayer::metaTable()
 {
 	return LuaBindings::playerMetaTable;
 }
+*/
 
-BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options)
+BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options, BaseWorm* worm)
 : m_options(options), stats(new Stats), deleteMe(false)
 , m_worm(0), m_id(0) // TODO: make a invalid_connection_id define thingy
 , m_wormID(INVALID_NODE_ID)
@@ -41,18 +43,60 @@ BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options)
 , m_isAuthority(false)
 , colour(options->colour)
 , team(options->team)
-, luaData(0)
+, luaData(0), local(false)
 {
 	localChangeName(m_options->name);
 	m_options->clearChangeFlags();
+	if(worm)
+		assignWorm(worm);
 }
+
+LuaReference BasePlayer::getLuaReference()
+{
+	if(luaReference)
+		return luaReference;
+	else
+	{
+		lua.pushFullReference(*this, LuaBindings::BasePlayerMetaTable);
+		luaReference = lua.createReference();
+		return luaReference;
+	}
+}
+
+void BasePlayer::pushLuaReference()
+{
+	lua.push(getLuaReference());
+}
+
+void BasePlayer::deleteThis()
+{
+	EACH_CALLBACK(i, playerRemoved)
+	{
+		(lua.call(*i), getLuaReference())();
+	}
+	
+	delete m_node; m_node = 0;
+	delete m_interceptor; m_interceptor = 0;
+	m_worm = 0;
+	
+	if(luaReference)
+	{
+		lua.destroyReference(luaReference);
+		luaReference.reset();
+	}
+	else
+	{
+		delete this;
+	}
+}
+
+
 
 BasePlayer::~BasePlayer()
 {
 	delete m_node; m_node = 0;
 	delete m_interceptor; m_interceptor = 0;
-	
-	lua.destroyReference(luaReference);
+	m_worm = 0;
 }
 
 void BasePlayer::removeWorm()
@@ -189,7 +233,7 @@ void BasePlayer::think()
 							int index = data->getInt(8);
 							if(LuaEventDef* event = network.indexToLuaEvent(Network::LuaEventGroup::Player, index))
 							{
-								event->call(luaReference, data);
+								event->call(getLuaReference(), data);
 							}
 						}
 						break;
@@ -204,7 +248,7 @@ void BasePlayer::think()
 					
 					EACH_CALLBACK(i, playerNetworkInit)
 					{
-						(lua.call(*i), luaReference, conn_id)();
+						(lua.call(*i), getLuaReference(), conn_id)();
 					}
 				}
 				break;
@@ -266,11 +310,11 @@ void BasePlayer::think()
 	
 	EACH_CALLBACK(i, playerUpdate)
 	{
-		(lua.call(*i), luaReference)();
+		(lua.call(*i), getLuaReference())();
 	}
 }
 
-void BasePlayer::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream** userdata, ZCom_ConnID connID)
+void BasePlayer::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID)
 {
 	if(!m_node) return;
 	ZCom_BitStream* data = new ZCom_BitStream;
@@ -278,7 +322,7 @@ void BasePlayer::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules
 	data->addInt(event->idx, 8);
 	if(userdata)
 	{
-		data->addBitStream(*userdata);
+		data->addBitStream(userdata);
 	}
 	if(!connID)
 		m_node->sendEvent(mode, rules, data);
@@ -539,7 +583,7 @@ void BasePlayer::sendSyncMessage( ZCom_ConnID id )
 	data->addInt(stats->deaths, 32);
 	data->addString( m_name.c_str() );
 	data->addInt(colour, 24);
-	data->addSignedInt(static_cast<int>(m_options->team), 8);
+	data->addSignedInt(static_cast<int>(team), 8);
 	data->addInt(static_cast<int>(m_options->uniqueID), 32);
 	m_node->sendEventDirect(eZCom_ReliableOrdered, data, id);
 }

@@ -16,6 +16,8 @@
 
 class BaseObject;
 
+//LuaReference Weapon::metaTable;
+
 Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 {
 	m_type = type;

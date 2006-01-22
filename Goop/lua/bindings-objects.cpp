@@ -2,6 +2,8 @@
 
 #include "bindings-resources.h"
 #include "luaapi/types.h"
+#include "luaapi/macros.h"
+#include "luaapi/classes.h"
 
 #include "../base_player.h"
 #include "../player.h"
@@ -24,10 +26,10 @@ using boost::lexical_cast;
 namespace LuaBindings
 {
 
-LuaReference wormMetaTable(0);
-LuaReference baseObjectMetaTable(0);
-LuaReference particleMetaTable(0);
-LuaReference weaponMetaTable(0);
+//LuaReference wormMetaTable;
+//LuaReference baseObjectMetaTable;
+//LuaReference particleMetaTable;
+LuaReference WeaponMetaTable;
 
 namespace ParticleRep
 {
@@ -39,10 +41,14 @@ namespace ParticleRep
 
 int shootFromObject(lua_State* L, BaseObject* object)
 {
+	/*
 	void* typeP = lua_touserdata (L, 2);
 	if(!typeP)
 		return 0;
 	PartType* p = *static_cast<PartType **>(typeP);
+	*/
+	LuaContext context(L);
+	PartType* p = ASSERT_OBJECT(PartType, 2);
 	
 	int amount = 1;
 	int amountVariation = 0;
@@ -98,6 +104,7 @@ int shootFromObject(lua_State* L, BaseObject* object)
 
 //! Worm inherits Object
 
+/*
 int l_worm_getPlayer(lua_State* L)
 {
 	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
@@ -106,18 +113,16 @@ int l_worm_getPlayer(lua_State* L)
 	lua.pushReference(p->getOwner()->luaReference);
 	return 1;
 }
-
+*/
 
 /*! Worm:get_health()
 
 	Returns the health of this worm.
 */
-int l_worm_getHealth(lua_State* L)
-{
-	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
-	lua_pushnumber(L, p->getHealth());
+METHODC(BaseWorm, worm_getHealth,
+	context.push(p->getHealth());
 	return 1;
-}
+)
 
 /*! Worm:set_weapon(slot, weapon)
 
@@ -127,7 +132,7 @@ int l_worm_getHealth(lua_State* L)
 LMETHOD(BaseWorm, worm_setWeapon,
 	p->m_weapons*/
 	
-
+/*
 int l_worm_remove(lua_State* L)
 {
 	BaseWorm* p = static_cast<BaseWorm *>(lua_touserdata (L, 1));
@@ -181,29 +186,35 @@ int l_worm_shoot(lua_State* L)
 	BaseWorm* object = static_cast<BaseWorm *>(lua_touserdata (L, 1));
 	
 	return shootFromObject(L, object);
-}
+}*/
 
-/*! Worm:getAngle()
-
-	Returns the current angle of the worm.
-*/
-
-LMETHOD(BaseWorm, worm_getAngle,
-	lua_pushnumber(context, p->getAngle().toDeg());
-	return 1;
-)
-
-LMETHOD(BaseWorm, worm_current_weapon,
+METHODC(BaseWorm, worm_current_weapon,
 	if(Weapon* w = p->getCurrentWeapon())
 	{
-		context.pushFullReference(*w, weaponMetaTable);
+		context.pushFullReference(*w, WeaponMetaTable);
 		return 1;
 	}
 	return 0;
 )
 
+/*
 LBINOP(BaseWorm, worm_eq,
 	context.push(a == b);
+	return 1;
+)*/
+
+METHOD(BaseWorm, worm_destroy,
+	delete p;
+	return 0;
+)
+
+/*! Object:getAngle()
+
+	Returns the current angle of the object.
+*/
+
+METHODC(BaseObject, baseObject_getAngle,
+	lua_pushnumber(context, p->getAngle().toDeg());
 	return 1;
 )
 
@@ -211,12 +222,10 @@ LBINOP(BaseWorm, worm_eq,
 
 	Removes the object in the next frame.
 */
-int l_baseObject_remove(lua_State* L)
-{
-	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+METHODC(BaseObject, baseObject_remove,
 	p->deleteMe = true;
 	return 0;
-}
+)
 
 /*! Object:pos()
 
@@ -227,20 +236,24 @@ int l_baseObject_remove(lua_State* L)
 	</code>
 */
 
-int l_baseObject_pos(lua_State* L)
-{
-	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
-	lua_pushnumber(L, p->pos.x);
-	lua_pushnumber(L, p->pos.y);
+METHODC(BaseObject, baseObject_pos,
+	context.push(p->pos.x);
+	context.push(p->pos.y);
 	return 2;
-}
+)
 
-int l_baseObject_setPos(lua_State* L)
-{
-	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
-	p->setPos(Vec(lua_tonumber(L, 2), lua_tonumber(L, 3))); 
+/*! Object:set_pos(x, y)
+
+	Moves the object to the location (x, y)
+	e.g.:
+	<code>
+	object:set_spd(0, 0) -- Moves the object to the upper-left corner
+	</code>
+*/
+METHODC(BaseObject, baseObject_setPos,
+	p->setPos(Vec(lua_tonumber(context, 2), lua_tonumber(context, 3))); 
 	return 0;
-}
+)
 
 /*! Object:spd()
 
@@ -250,21 +263,39 @@ int l_baseObject_setPos(lua_State* L)
 	local vx, vy = object:spd()
 	</code>
 */
-int l_baseObject_spd(lua_State* L) //
-{
-	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
-	lua_pushnumber(L, p->spd.x);
-	lua_pushnumber(L, p->spd.y);
+METHODC(BaseObject, baseObject_spd,
+	context.push(p->spd.x);
+	context.push(p->spd.y);
 	return 2;
-}
+)
 
-int l_baseObject_push(lua_State* L) //
-{
-	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
-	p->spd.x += lua_tonumber(L, 2);
-	p->spd.y += lua_tonumber(L, 3);
+/*! Object:set_spd(x, y)
+
+	Changes the speed of this object to (x, y)
+	e.g.:
+	<code>
+	object:set_spd(10, 0) -- Makes the object move to the right
+	</code>
+*/
+METHODC(BaseObject, baseObject_setSpd,
+	p->spd.x = lua_tonumber(context, 2);
+	p->spd.y = lua_tonumber(context, 3); 
 	return 0;
-}
+)
+
+/*! Object:push(x, y)
+	
+	Accelerates the object in the direction (x, y)
+	e.g.:
+	<code>
+	object:push(0, 10) -- Accelerates the object downwards
+	</code>
+*/
+METHODC(BaseObject, baseObject_push,
+	p->spd.x += lua_tonumber(context, 2);
+	p->spd.y += lua_tonumber(context, 3);
+	return 0;
+)
 
 /*! Object:data()
 
@@ -272,31 +303,42 @@ int l_baseObject_push(lua_State* L) //
 	be used by Lua scripts to store values.
 */
 
-int l_baseObject_data(lua_State* L)
-{
-	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
+METHODC(BaseObject, baseObject_data,
 	if(p->luaData)
 	{
 		lua.pushReference(p->luaData);
 	}
 	else
 	{
-		lua_newtable(L);
-		lua_pushvalue(L, -1);
+		lua_newtable(context);
+		context.pushvalue(-1);
 		p->luaData = lua.createReference();
 	}
 	
 	return 1;
-}
+)
 
 /*! Object:get_player()
 
 	Returns a Player object of the player that owns this object.
 */
-METHOD(BaseObject, baseObject_getPlayer,
+METHODC(BaseObject, baseObject_getPlayer,
 	if(!p->getOwner())
 		return 0;
-	lua.pushReference(p->getOwner()->luaReference);
+	lua.pushReference(p->getOwner()->getLuaReference());
+	return 1;
+)
+
+/*! Object:damage(amount[, player])
+
+	Causes damage to the object. //player// is the player inflicting the damage.
+	If //player// isn't specified or nil, the damage is anonymous.
+*/
+METHODC(BaseObject, baseObject_damage,
+	lua_Number amount = lua_tonumber(context, 2);
+	//BasePlayer* player = *static_cast<BasePlayer **>(lua_touserdata(context, 3));
+	BasePlayer* player = getObject<BasePlayer>(context, 3);
+	p->damage(amount, player);
 	return 1;
 )
 
@@ -308,10 +350,8 @@ METHOD(BaseObject, baseObject_getPlayer,
 	  * It is visible and active.
 	  * The straight path to it from the object is not, for particles, blocked.
 */
-int l_baseObject_getClosestWorm(lua_State* L)
-{
-	BaseObject* p = *static_cast<BaseObject **>(lua_touserdata (L, 1));
-	
+METHODC(BaseObject, baseObject_getClosestWorm,
+
 	Vec from = p->pos;
 	
 	int fromx = int(from.x);
@@ -345,29 +385,24 @@ int l_baseObject_getClosestWorm(lua_State* L)
 	minWorm->pushLuaReference();
 
 	return 1;
-}
+)
 
 /*! Object:shoot(type, amount, speed, speedVariation, motionInheritance, amountVariation, distribution, angleOffset, distanceOffset)
 
 	Shoots an object of ParticleType 'type'. All parameters except 'type' are optional.
 */
 
-int l_baseObject_shoot(lua_State* L)
-{
-	BaseObject* object = *static_cast<BaseObject **>(lua_touserdata (L, 1));
-	
-	return shootFromObject(L, object);
-}
+METHODC(BaseObject, baseObject_shoot, 
+	return shootFromObject(context, p);
+)
 
-/*! Object:get_angle()
-
-	Returns the current angle of the particle.
-*/
+/*
 
 METHOD(BaseObject, baseObject_getAngle,
 	lua_pushnumber(context, p->getAngle().toDeg());
 	return 1;
 )
+*/
 
 //! Particle inherits Object
 
@@ -376,14 +411,12 @@ METHOD(BaseObject, baseObject_getAngle,
 	Changes the angle of the particle to //angle//.
 */
 
-int l_particle_setAngle(lua_State* L)
-{
-	Particle* p = *static_cast<Particle **>(lua_touserdata (L, 1));
-	p->setAngle(Angle((double)lua_tonumber(L, 2)));
+METHODC(Particle, particle_setAngle,
+	p->setAngle(Angle((double)lua_tonumber(context, 2)));
 	return 0;
-}
+)
 
-METHOD(Particle, particle_set_replication,
+METHODC(Particle, particle_set_replication,
 	
 	int mask = 0;
 	switch(lua_tointeger(context, 2))
@@ -399,7 +432,7 @@ METHOD(Particle, particle_set_replication,
 		p->setFlag(mask);
 	else
 		p->resetFlag(mask);
-	
+
 	return 0;
 )
 
@@ -413,7 +446,7 @@ METHOD(Particle, particle_destroy,
 	Returns true if this weapon is reloading.
 */
 
-METHOD(Weapon, weaponinstr_reloading,
+METHODC(Weapon, weaponinstr_reloading,
 	context.push(p->reloading);
 	return 1;
 )
@@ -423,7 +456,7 @@ METHOD(Weapon, weaponinstr_reloading,
 	Returns the reload time left on this weapon.
 	Does only make sense if is_reloading() is true.
 */
-METHOD(Weapon, weaponinstr_reload_time,
+METHODC(Weapon, weaponinstr_reload_time,
 	context.push(p->getReloadTime());
 	return 1;
 )
@@ -432,7 +465,7 @@ METHOD(Weapon, weaponinstr_reload_time,
 
 	Returns the amount of ammo left in this weapon.
 */
-METHOD(Weapon, weaponinstr_ammo,
+METHODC(Weapon, weaponinstr_ammo,
 	context.push(p->getAmmo());
 	return 1;
 )
@@ -441,11 +474,10 @@ METHOD(Weapon, weaponinstr_ammo,
 
 	Returns the weapon type in the form of a WeaponType object.
 */
-METHOD(Weapon, weaponinstr_type,
-	context.pushFullReference(*p->getType(), weaponTypeMetaTable);
+METHODC(Weapon, weaponinstr_type,
+	context.pushFullReference(*p->getType(), WeaponTypeMetaTable);
 	return 1;
 )
-
 
 void addBaseObjectFunctions(LuaContext& context)
 {
@@ -459,7 +491,9 @@ void addBaseObjectFunctions(LuaContext& context)
 		("data", l_baseObject_data)
 		("shoot", l_baseObject_shoot)
 		("get_angle", l_baseObject_getAngle)
-		("set_pos", l_baseObject_setPos) // TEMP
+		("set_pos", l_baseObject_setPos)
+		("set_spd", l_baseObject_setSpd)
+		("damage", l_baseObject_damage)
 	;
 }
 
@@ -476,7 +510,8 @@ void initObjects()
 	addBaseObjectFunctions(context);
 	
 	lua_rawset(context, -3);
-	baseObjectMetaTable = context.createReference();
+	context.tableSetField(LuaID<BaseObject>::value);
+	BaseObject::metaTable = context.createReference();
 	
 	// Particle method and metatable
 	
@@ -494,40 +529,35 @@ void initObjects()
 		("set_angle", l_particle_setAngle)
 		("set_replication", l_particle_set_replication)
 	;
-
+	
 	lua_rawset(context, -3);
-	particleMetaTable = context.createReference();
+	context.tableSetField(LuaID<Particle>::value);
+	context.tableSetField(LuaID<BaseObject>::value);
+	Particle::metaTable = context.createReference();
 	
 	// Worm method and metatable
 	
 	lua_newtable(context);
 	context.tableFunctions()
-		("__eq", l_worm_eq)
+		("__gc", l_worm_destroy)
 	;
 	lua_pushstring(context, "__index");
 	
 	lua_newtable(context);
 	
-	//NOT COMPATIBLE: addBaseObjectFunctions(context); // BaseWorm inherits from BaseObject
+	addBaseObjectFunctions(context); // BaseWorm inherits from BaseObject
 
 	context.tableFunctions()
-		("remove", l_worm_remove)
-		("pos", l_worm_pos)
-		("spd", l_worm_spd)
-		("push", l_worm_push)
-		("data", l_worm_data)
-		("get_player", l_worm_getPlayer)
 		("get_health", l_worm_getHealth)
-		("shoot", l_worm_shoot)
-		("get_angle", l_worm_getAngle)
 		("current_weapon", l_worm_current_weapon)
 	;
 	
-		
 	lua_rawset(context, -3);
-	wormMetaTable = context.createReference();
+	context.tableSetField(LuaID<BaseWorm>::value);
+	context.tableSetField(LuaID<BaseObject>::value);
+	BaseWorm::metaTable = context.createReference();
 	
-	CLASS(weapon,
+	CLASS(Weapon,
 		("is_reloading", l_weaponinstr_reloading)
 		("reload_time", l_weaponinstr_reload_time)
 		("ammo", l_weaponinstr_ammo)

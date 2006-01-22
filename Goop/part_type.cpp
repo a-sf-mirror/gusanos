@@ -24,6 +24,7 @@
 #include "simple_particle.h"
 #include "game_actions.h"
 #include "omfg_script.h"
+#include "script.h"
 
 
 #include <allegro.h>
@@ -64,7 +65,9 @@ BaseObject* newParticle_Particle(PartType* type, Vec pos_ = Vec(0.f, 0.f), Vec s
 	Particle* particle = new Particle(type, pos_, spd_, dir, owner, angle);
 	
 	if ( type->needsNode && network.isHost() )
+	{
 		particle->assignNetworkRole( true );
+	}
 	
 #ifdef USE_GRID
 	if(type->colLayer != Grid::NoColLayer)
@@ -335,6 +338,7 @@ bool PartType::load(fs::path const& filename)
 	health = parser.getDouble("health", 100.0);
 	radius = parser.getDouble("radius", 0.0);
 	line2Origin = parser.getBool("line_to_origin", false);
+	networkInitName = parser.getString("network_init", "");
 	
 	std::string const& animtypestr = parser.getString("anim_type", "loop_right");
 	if(animtypestr == "ping_pong") animType = ANIM_PINGPONG;
@@ -414,7 +418,7 @@ bool PartType::load(fs::path const& filename)
 		}
 	}
 	
-	needsNode = syncPos || syncSpd || syncAngle;
+	needsNode = syncPos || syncSpd || syncAngle || !networkInitName.empty();
 	
 	if(isSimpleParticleType())
 	{
@@ -451,6 +455,18 @@ bool PartType::load(fs::path const& filename)
 		colLayer = Grid::NoColLayer;
 			
 	return true;
+}
+
+LuaReference PartType::getNetworkInit()
+{
+	if(!networkInit && !networkInitName.empty())
+	{
+		networkInit = Script::functionFromString(networkInitName);
+		
+		networkInitName.clear();
+	}
+	
+	return networkInit;
 }
 
 #ifndef DEDSERV

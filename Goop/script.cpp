@@ -44,3 +44,18 @@ LuaReference Script::createFunctionRef(std::string const& name)
 	cachedReferences[name] = ref; // Cache reference
 	return ref;
 }
+
+LuaReference Script::functionFromString(std::string const& name)
+{
+	std::string::size_type p = name.find('.');
+	if(p != std::string::npos)
+	{
+		Script* s = scriptLocator.load(name.substr(0, p));
+		if(s)
+		{
+			return s->createFunctionRef(name.substr(p + 1, name.size() - p - 1));
+		}
+	}
+	
+	return LuaReference();
+}

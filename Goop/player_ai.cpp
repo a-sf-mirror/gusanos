@@ -92,8 +92,8 @@ bool check_materials( int x1, int y1, int x2, int y2 )
    }
 }
 
-PlayerAI::PlayerAI(int team_)
-: BasePlayer(shared_ptr<PlayerOptions>(new PlayerOptions("bot")))
+PlayerAI::PlayerAI(int team_, BaseWorm* worm)
+: BasePlayer(shared_ptr<PlayerOptions>(new PlayerOptions("bot")), worm)
 , m_pathSteps(100), m_thinkTime(0)
 , m_target(0)
 , m_movingRight(false)

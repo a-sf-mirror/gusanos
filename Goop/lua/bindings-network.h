@@ -6,7 +6,7 @@
 
 namespace LuaBindings
 {
-	extern LuaReference bitStreamMetaTable;
+	extern LuaReference ZCom_BitStreamMetaTable;
 
 	void initNetwork(LuaContext& context);
 }

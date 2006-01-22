@@ -15,6 +15,8 @@ using std::endl;
 #define FREELIST_REF 1
 #define ARRAY_SIZE   2
 
+LuaContext lua;
+
 int LuaContext::errorReport(lua_State* L)
 {
 	LuaContext context(L);
@@ -38,18 +40,17 @@ int LuaContext::errorReport(lua_State* L)
 }
 
 LuaContext::LuaContext()
-: m_borrowed(false)
 {
 	init();
 }
 
 LuaContext::LuaContext(LuaContext const& b)
-: m_borrowed(true), m_State(b.m_State)
+: m_State(b.m_State)
 {
 }
 
 LuaContext::LuaContext(lua_State* state_)
-: m_borrowed(true), m_State(state_)
+: m_State(state_)
 {
 
 }
@@ -83,9 +84,6 @@ void LuaContext::init()
 
 void LuaContext::reset()
 {
-	if(m_borrowed)
-		return;
-		
 	if(m_State)
 		lua_close(m_State);
 	init();
@@ -241,6 +239,16 @@ LuaReference LuaContext::createReference()
 	
 	lua_rawseti(m_State, t, ref);
 	return LuaReference(ref);
+}
+
+void LuaContext::assignReference(LuaReference ref)
+{
+	if (ref.idx > 2)
+	{
+		lua_rawseti(m_State, LUA_REGISTRYINDEX, ref.idx);
+	}
+	else
+		pop(1); // Ignore it
 }
 
 void LuaContext::destroyReference(LuaReference ref)
@@ -632,8 +640,13 @@ void LuaContext::serializeT(std::ostream& s, int i, int indent)
 	}
 }
 
+void LuaContext::close()
+{
+	if(m_State)
+		lua_close(m_State);
+}
+
 LuaContext::~LuaContext()
 {
-	if(m_State && !m_borrowed)
-		lua_close(m_State);
+
 }
