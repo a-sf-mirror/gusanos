@@ -9,7 +9,7 @@
 			* Deprecated colors specified as three parameters in favour of passing the result of the //color// function.
 			* Deprecated //gfx_draw_box// in favour of the draw_box method in Bitmap.
 	* OmfgScript:
-		* Added sync_reload to weapon scripts.
+		* Added //sync_shot// and //sync_reload// flag properties to weapons to improve and fix some netplay issues.
 		* Added network_init property to particle scripts.
 	* Fixed problem with map loading sequence on servers.
 	* Made network disconnection asynchronous.
@@ -24,6 +24,9 @@
 	* Added mod listing and mod tab-completion.
 	* Fixed weapon switching when number of selected weapons is less than the max.
 	* Made animators favour accuracy over performance.
+	* Fixed the bug that let you add bots with the //addbot// command on the network game client.
+	* Optimized the occluded sprites and lights so that they dont render if they cant be seen.
+	* Made the console image and the bitmap fonts not hardcoded to bmp format
 	
 	* Improved lua bindings:
 		* Callbacks:
