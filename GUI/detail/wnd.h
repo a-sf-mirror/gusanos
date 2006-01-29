@@ -21,6 +21,7 @@ class Wnd
 {
 public:
 	friend class Context;
+	friend class Context::GSSselector;
 	
 	static LuaReference metaTable;
 	
@@ -40,22 +41,21 @@ public:
 		LuaCallbacksMax,
 	};
 	
-	Wnd(Wnd* parent, std::string const& tagLabel, std::string const& className,
-	  std::string const& id, std::map<std::string, std::string> const& attributes,
-	  std::string const& text = std::string(""))
-	: m_focusable(true), m_text(text), m_parent(parent), m_lastChildFocus(0)
-	, m_font(0), m_tagLabel(tagLabel), m_className(className), m_id(id)
+	Wnd(Wnd* parent, std::map<std::string, std::string> const& attributes, std::string const& tagLabel = "window")
+	: m_focusable(true)/*, m_text(text)*/, m_parent(0), m_lastChildFocus(0)
+	, m_font(0), m_tagLabel(tagLabel)/*, m_className(className), m_id(id)*/
 	, m_attributes(attributes), m_visible(true), m_active(false)
+	, m_context(0)
 	{
-		if(m_parent)
-		{
-			setContext_(m_parent->m_context);
-			//m_parent->m_children.push_back(this);
-			m_parent->addChild(this);
-		}
-		else
-			m_context = 0;
-
+		getAttrib("label", m_text);
+		getAttrib("class", m_id);
+		getAttrib("id", m_id);
+		std::string v;
+		if(getAttrib("selectable", v))
+			m_focusable = (v != "0");
+			
+		if(parent)
+			parent->addChild(this);
 	}
 	
 	virtual ~Wnd();
@@ -71,17 +71,13 @@ public:
 	{
 		return space;
 	}
-
-/*
-	signal<void (Wnd&, std::string const&,
-		std::string const&)> sigTextChange;*/
 		
 	bool doRender(Rect const& clip);
 	
 	void doProcess();
 	
 	/*
-		returns: True if anything was rendered, False otherwise
+		returns: true if anything was rendered, false otherwise
 	*/
 	virtual bool render();
 	
@@ -122,9 +118,13 @@ public:
 	
 	static bool readColor(RGB& dest, std::string const& str);
 	
-	void applyGSSnoState(Context::GSSselectorMap const& style);
-	void applyGSSstate(Context::GSSselectorMap const& style, std::string const& state);
-	virtual void applyGSS(Context::GSSselectorMap const&);
+	void applyGSSreally(Context::GSSselectors const& style);
+	//void applyGSSstate(Context::GSSselectors const& style, std::string const& state);
+	virtual void applyGSS(Context::GSSselectors const&);
+	
+	void applyGSS()
+	{ applyGSS(m_context->m_gss); }
+	
 	virtual void applyFormatting(Context::GSSpropertyMap const&);
 	void updatePlacement();
 	
@@ -174,8 +174,17 @@ public:
 	
 	void addChild(Wnd* ch)
 	{
-		m_children.push_back(ch);
-		m_namedChildren[ch->m_id] = ch; 
+		if(!ch->m_parent)
+		{
+			ch->m_parent = this;
+			m_children.push_back(ch);
+			m_namedChildren[ch->m_id] = ch;
+			
+			if(!ch->m_context && m_context)
+			{
+				ch->setContext_(m_context);
+			}
+		}
 	}
 	
 	void removeChild(Wnd* ch)
@@ -214,6 +223,9 @@ public:
 	
 	bool isActive()
 	{ return m_active; }
+	
+	bool isFocused()
+	{ return m_context && m_context->getFocus() == this; }
 	
 	bool switchTo();
 	
@@ -271,6 +283,7 @@ protected:
 	std::string          m_tagLabel;
 	std::string          m_className;
 	std::string          m_id;
+	std::string          m_state;
 	
 	std::map<std::string, std::string> m_attributes;
 	

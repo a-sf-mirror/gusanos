@@ -40,7 +40,7 @@ Explosion::Explosion(ExpType *type, const Vec& _pos, BasePlayer* owner) : BaseOb
 	}else m_fadeSpeed = 0;
 	
 	
-	if ( m_sprite = m_type->sprite )
+	if ( (m_sprite = m_type->sprite) )
 	{
 		m_animator = new AnimRightOnce( m_sprite, m_timeout+2);
 	}

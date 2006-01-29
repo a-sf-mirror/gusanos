@@ -5,6 +5,7 @@
 #include "player.h"
 #include "gconsole.h"
 #include "glua.h"
+#include "luaapi/context.h"
 #include "util/text.h"
 #include "util/log.h"
 #include "util/stringbuild.h"
@@ -32,6 +33,14 @@ string eventStart(size_t index, Player::Actions action, list<string> const& args
 			lua.pop(n);
 		}
 		
+		EACH_CALLBACK(i, localplayerEventAny)
+		{
+			int n = (lua.call(*i, 1), player.getLuaReference(), static_cast<int>(action), true)();
+			if(n > 0 && lua.get<bool>(-1))
+				ignore = true;
+			lua.pop(n);
+		}
+		
 		if(!ignore)
 			player.actionStart(action);
 	}
@@ -49,6 +58,14 @@ string eventStop(size_t index, Player::Actions action, list<string> const& args)
 		EACH_CALLBACK(i, localplayerEvent[action])
 		{
 			int n = (lua.call(*i, 1), player.getLuaReference(), false)();
+			if(n > 0 && lua.get<bool>(-1))
+				ignore = true;
+			lua.pop(n);
+		}
+		
+		EACH_CALLBACK(i, localplayerEventAny)
+		{
+			int n = (lua.call(*i, 1), player.getLuaReference(), static_cast<int>(action), false)();
 			if(n > 0 && lua.get<bool>(-1))
 				ignore = true;
 			lua.pop(n);

@@ -5,6 +5,7 @@
 #include "util/log.h"
 
 #include <iostream>
+#include <map>
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
@@ -174,8 +175,8 @@ bool Wnd::readSkin(BaseSpriteSet*& dest, std::string const& str)
 		return false;
 	}
 	
-	int w = dest->getFrameWidth(0);
-	int h = dest->getFrameHeight(0);
+	size_t w = dest->getFrameWidth(0);
+	size_t h = dest->getFrameHeight(0);
 	for(int i = 1; i < 8; ++i)
 	{
 		if(dest->getFrameWidth(i) != w
@@ -191,51 +192,51 @@ bool Wnd::readSkin(BaseSpriteSet*& dest, std::string const& str)
 	return true;
 }
 
-void Wnd::applyGSSnoState(Context::GSSselectorMap const& style)
+void Wnd::applyGSSreally(Context::GSSselectors const& style)
 {
-	applyFormatting(style(m_tagLabel)(           )(    )());
-	if(!m_className.empty())
-		applyFormatting(style(          )(m_className)(    )());
-	if(!m_id.empty())
-		applyFormatting(style(          )(           )(m_id)());
-	if(!m_className.empty())
-		applyFormatting(style(m_tagLabel)(m_className)(    )());
-	if(!m_id.empty())
-		applyFormatting(style(m_tagLabel)(           )(m_id)());
+	std::multimap<int, Context::GSSpropertyMap const*> clauses;
+	
+	foreach(i, style)
+	{
+		if(int level = i->matchesWindow(this))
+		{
+			clauses.insert(std::make_pair(level, &i->props));
+		}
+	}
+	
+	// Activate from lowest specifity
+	foreach(i, clauses)
+	{
+		applyFormatting(*(i->second));
+	}
 }
 
-void Wnd::applyGSSstate(Context::GSSselectorMap const& style, std::string const& state)
+/*
+void Wnd::applyGSSstate(Context::GSSselectors const& style, std::string const& state)
 {
 	applyGSSnoState(style);
-	
-	applyFormatting(style(m_tagLabel)(           )(    )(state));
-	if(!m_className.empty())
-		applyFormatting(style(          )(m_className)(    )(state));
-	if(!m_id.empty())
-		applyFormatting(style(          )(           )(m_id)(state));
-	if(!m_className.empty())
-		applyFormatting(style(m_tagLabel)(m_className)(    )(state));
-	if(!m_id.empty())
-		applyFormatting(style(m_tagLabel)(           )(m_id)(state));
-	
 }
+*/
 
-void Wnd::applyGSS(Context::GSSselectorMap const& style)
+void Wnd::applyGSS(Context::GSSselectors const& style)
 {
 	//cout << "Context: " << m_context << endl;
 	if(m_active)
-		applyGSSstate(style, "active");
-	else if(m_context && m_context->getFocus() == this)
-		applyGSSstate(style, "focused");
+		m_state = "active";
+	else if(isFocused())
+		m_state = "focused";
 	else
-		applyGSSnoState(style);
+		m_state = "";
+	
+	applyGSSreally(style);
+	
 		
 	//updateFormatting();
 }
 
 void Wnd::applyFormatting(Context::GSSpropertyMap const& f)
 {
-	#define EACH_VALUE(i_) for(std::vector<std::string>::const_iterator i_ = i->second.begin(); i_ != i->second.end(); ++i_)
+	#define EACH_VALUE(i_) for(std::list<std::string>::const_iterator i_ = i->second.begin(); i_ != i->second.end(); ++i_)
 	
 	for(Context::GSSpropertyMap::const_iterator i = f.begin(); i != f.end(); ++i)
 	{
@@ -719,7 +720,7 @@ bool Wnd::doMouseMove(ulong newX, ulong newY)
 	if(!m_visible || !m_rect.isInside(newX, newY))
 		return true;
 		
-	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
+	std::list<Wnd *>::reverse_iterator i = m_children.rbegin(), e = m_children.rend();
 	
 	for(; i != e; ++i)
 		if(!(*i)->doMouseMove(newX, newY))
@@ -734,7 +735,7 @@ bool Wnd::doMouseDown(ulong newX, ulong newY, Context::MouseKey::type button)
 	if(!m_visible || !m_rect.isInside(newX, newY))
 		return true;
 		
-	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
+	std::list<Wnd *>::reverse_iterator i = m_children.rbegin(), e = m_children.rend();
 	
 	for(; i != e; ++i)
 	{
@@ -755,7 +756,7 @@ bool Wnd::doMouseUp(ulong newX, ulong newY, Context::MouseKey::type button)
 	if(!m_visible || !m_rect.isInside(newX, newY))
 		return true;
 		
-	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
+	std::list<Wnd *>::reverse_iterator i = m_children.rbegin(), e = m_children.rend();
 	
 	for(; i != e; ++i)
 		if(!(*i)->doMouseUp(newX, newY, button))
@@ -851,6 +852,9 @@ void Wnd::setContext_(Context* context)
 {
 	m_context = context;
 	m_context->registerWindow(this);
+	
+	applyGSS();
+	updatePlacement();
 	
 	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
 	

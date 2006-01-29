@@ -20,6 +20,12 @@
 		, (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6) \
 		, (p1, p2, p3, p4, p5, p6) \
 		, (p1, p2, p3, p4, p5, p6, m_fact))
+	
+#define FUNC_5(name_, P1, P2, P3, P4, P5) \
+	FUNC(name_ \
+		, (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) \
+		, (p1, p2, p3, p4, p5) \
+		, (p1, p2, p3, p4, p5, m_fact))
 		
 #define FUNC_4(name_, P1, P2, P3, P4) \
 	FUNC(name_ \
@@ -96,7 +102,7 @@ struct BlitterContext
 		m_type = Alpha;
 		m_fact = fact_;
 	}
-	
+		
 	Type type() const
 	{
 		return m_type;
@@ -113,6 +119,8 @@ struct BlitterContext
 	FUNC_4(putpixel, BITMAP*, int, int, Pixel)
 	FUNC_4(putpixelwu, BITMAP*, float, float, Pixel)
 	FUNC_6(linewu, BITMAP*, float, float, float, float, Pixel)
+	FUNC_6(line, BITMAP*, int, int, int, int, Pixel)
+	FUNC_5(hline, BITMAP*, int, int, int, Pixel)
 
 private:
 	Type m_type;

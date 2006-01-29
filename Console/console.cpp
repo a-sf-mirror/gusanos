@@ -271,7 +271,17 @@ void Console::analizeKeyEvent(bool state, char key)
 void Console::bind(char key, const string &action)
 {
 	bindTable.bind(key , action);
-};
+}
+
+char Console::getKeyForBinding(std::string const& action)
+{
+	return bindTable.getKeyForAction(action);
+}
+
+std::string Console::getActionForBinding(char key)
+{
+	return bindTable.getBindingAction(key);
+}
 
 int Console::executeConfig(const string &filename)
 {

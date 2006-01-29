@@ -788,6 +788,14 @@ Function const* Parser::getFunction(std::string const& name)
 	return 0;
 }
 
+Function const* Parser::getDeprFunction(std::string const& name)
+{
+	TokenBase* v = getDeprProperty(name);
+	if(v->isFunction())
+		return v->toFunction();
+	return 0;
+}
+
 int Parser::getInt(std::string const& name, int def)
 {
 	return getProperty(name)->toInt(def);
@@ -801,6 +809,16 @@ bool Parser::getBool(std::string const& name, bool def)
 TokenBase* Parser::getProperty(std::string const& a)
 {
 	if(TokenBase* p = pimpl->getRawProperty(a)) return p;
+	return &globalDefault;
+}
+
+TokenBase* Parser::getDeprProperty(std::string const& a)
+{
+	if(TokenBase* p = pimpl->getRawProperty(a))
+	{
+		p->loc.print("Property " + a + " is deprecated");
+		return p;
+	}
 	return &globalDefault;
 }
 

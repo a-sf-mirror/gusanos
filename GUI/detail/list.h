@@ -11,16 +11,107 @@ using boost::lexical_cast;
 
 namespace OmfgGUI
 {
+	
+class List;
+
+
+struct ListNode : public LNodeImp<ListNode>
+{
+	static LuaReference metaTable;
+	
+	typedef LList<ListNode> list_t;
+	typedef list_t::iterator node_iter_t;
+	typedef list_t::reference node_ref_t;
+	
+	friend class List;
+	
+	ListNode(std::string const& text)
+	: selected(false), expanded(true)
+	, parent(0), visibleChildren(0), level(0)
+	, list(0)
+	{
+		columns.push_back(text);
+	}
+	
+	virtual ~ListNode() {}
+	
+	node_iter_t push_back(ListNode* node)
+	{
+		children.insert(node);
+		
+		node->level = level + 1;
+		node->parent = this;
+		changeChildrenCount(1);
+
+		return node_iter_t(node);
+	}
+	
+	void resizeColumns(size_t s);
+	
+	void render(Renderer* renderer, long& y);
+
+	void renderFrom(Renderer* renderer, long& y);
+	
+	static node_iter_t getPrevVisible(node_iter_t i);
+	static node_iter_t getNextVisible(node_iter_t i);
+	static int findOffsetTo(node_iter_t i, node_iter_t to);
+	static node_iter_t findRelative(node_iter_t i, int aIdx);
+	
+	void* operator new(size_t count);
+	
+	void operator delete(void* block)
+	{
+		// Lua frees the memory
+	}
+	
+	void* operator new(size_t count, void* space)
+	{
+		return space;
+	}
+	
+	void setText(unsigned int column, std::string const& text)
+	{
+		if(column < columns.size())
+			columns[column] = text;
+	}
+	
+	std::string getText(unsigned int column)
+	{
+		if(column < columns.size())
+			return columns[column];
+		else
+			return "";
+	}
+	
+	std::vector<std::string> const& getFields()
+	{
+		return columns;
+	}
+	
+	void changeChildrenCount(long change);
+	
+	void clearSelections();
+	
+	//std::string text;
+	std::vector<std::string> columns;
+	bool        selected;
+	bool        expanded;
+	ListNode*   parent;
+	long        visibleChildren;
+	long        level;
+	List*       list;
+	list_t      children;
+	LuaReference luaReference;
+	LuaReference luaData;
+};
 
 class List : public Wnd
 {
 public:
 	static LuaReference metaTable;
-	
-	struct Node;
-	
+
 	// typedef std::list<Node> list_t;
-	typedef LList<Node> list_t;
+	typedef LList<ListNode> list_t;
 	typedef list_t::iterator node_iter_t;
 	typedef list_t::reference node_ref_t;
 	static const long rowHeight = 12;
@@ -35,108 +126,12 @@ public:
 		std::string name;
 		double      widthFactor;
 	};
-	
-	struct Node : public LNodeImp<Node>
-	{
-		static LuaReference metaTable;
-		
-		friend class List;
-		
-		Node(std::string const& text)
-		: selected(false), expanded(true)
-		, parent(0), visibleChildren(0), level(0)
-		, list(0)
-		{
-			columns.push_back(text);
-		}
-		
-		virtual ~Node() {}
-		
-		node_iter_t push_back(Node* node)
-		{
-			children.insert(node);
-			
-			node->level = level + 1;
-			node->parent = this;
-			changeChildrenCount(1);
 
-			return node_iter_t(node);
-		}
-		
-		void resizeColumns(size_t s);
-		
-		void render(Renderer* renderer, long& y);
-
-		void renderFrom(Renderer* renderer, long& y);
-		
-		static List::node_iter_t getPrevVisible(node_iter_t i);
-		static List::node_iter_t getNextVisible(node_iter_t i);
-		static int findOffsetTo(node_iter_t i, node_iter_t to);
-		static node_iter_t findRelative(node_iter_t i, int aIdx);
-		
-		void* operator new(size_t count);
-		
-		void operator delete(void* block)
-		{
-			// Lua frees the memory
-		}
-		
-		void* operator new(size_t count, void* space)
-		{
-			return space;
-		}
-		
-		void setText(unsigned int column, std::string const& text)
-		{
-			if(column < columns.size())
-				columns[column] = text;
-		}
-		
-		std::string getText(unsigned int column)
-		{
-			if(column < columns.size())
-				return columns[column];
-			else
-				return "";
-		}
-		
-		std::vector<std::string> const& getFields()
-		{
-			return columns;
-		}
-		
-		void changeChildrenCount(long change)
-		{
-			if(expanded)
-			{
-				if(parent)
-					parent->changeChildrenCount(change);
-				else
-					list->m_visibleChildren += change;
-			}
-			visibleChildren += change;
-		}
-		
-		void clearSelections();
-		
-		//std::string text;
-		std::vector<std::string> columns;
-		bool        selected;
-		bool        expanded;
-		Node*       parent;
-		long        visibleChildren;
-		long        level;
-		List*       list;
-		list_t      children;
-		LuaReference luaReference;
-		LuaReference luaData;
-	};
+	friend struct ListNode;
 	
-	friend struct Node;
-	
-	List(Wnd* parent, std::string const& tagLabel, std::string const& className,
-	  std::string const& id, std::map<std::string, std::string> const& attributes)
-	: Wnd(parent, tagLabel, className, id, attributes, ""), m_RootNode("root")
+	List(Wnd* parent, /*std::string const& tagLabel, std::string const& className,
+	  std::string const& id,*/ std::map<std::string, std::string> const& attributes)
+	: Wnd(parent, attributes, "list"), m_RootNode("root")
 	, m_Base(0), m_basePos(0), m_MainSel(0), m_visibleChildren(0)
 	, m_totalWidthFactor(0.0)
 	{
@@ -150,7 +145,7 @@ public:
 	
 	node_iter_t verify(node_iter_t i);
 	
-	node_iter_t push_back(Node* node)
+	node_iter_t push_back(ListNode* node)
 	{
 		/*
 		node->columns.resize(m_columnHeaders.size());
@@ -174,7 +169,7 @@ public:
 		return i;
 	}
 	
-	node_iter_t push_back(Node* node, Node* parent)
+	node_iter_t push_back(ListNode* node, ListNode* parent)
 	{
 		node->list = this;
 		node->columns.resize(m_columnHeaders.size());
@@ -207,7 +202,7 @@ public:
 				
 				setBase(m_Base);
 				
-				int offs = Node::findOffsetTo(m_RootNode.children.begin(), i);
+				int offs = ListNode::findOffsetTo(m_RootNode.children.begin(), i);
 				
 				if(offs < m_basePos)
 					setBase(i, offs);
@@ -221,7 +216,7 @@ public:
 	{
 		if(m_Base)
 		{
-			node_iter_t i = Node::findRelative(m_Base, amount);
+			node_iter_t i = ListNode::findRelative(m_Base, amount);
 			m_Base = i;
 		}
 	}
@@ -241,7 +236,7 @@ public:
 			
 		}
 		
-		bool operator()(Node* a, Node* b)
+		bool operator()(ListNode* a, ListNode* b)
 		{
 			return lexical_cast<int>(a->getText(column))
 				> lexical_cast<int>(b->getText(column));
@@ -267,7 +262,7 @@ public:
 			
 		}
 		
-		bool operator()(Node* a, Node* b);
+		bool operator()(ListNode* a, ListNode* b);
 		
 		LuaContext& context;
 		LuaReference comp;
@@ -291,7 +286,7 @@ public:
 	
 	void updateBase()
 	{
-		m_Base = Node::findRelative(m_RootNode.children.begin(), m_basePos);
+		m_Base = ListNode::findRelative(m_RootNode.children.begin(), m_basePos);
 	}
 	
 	void scrollBottom();
@@ -308,7 +303,7 @@ public:
 	
 	void setBase(node_iter_t i)
 	{
-		int pos = Node::findOffsetTo(m_RootNode.children.begin(), i);
+		int pos = ListNode::findOffsetTo(m_RootNode.children.begin(), i);
 		setBase(i, pos);
 	}
 	
@@ -375,7 +370,7 @@ private:
 	} m_listFormatting;
 	
 	//list_t           m_Nodes;
-	Node             m_RootNode;
+	ListNode         m_RootNode;
 	node_iter_t      m_Base;
 	int              m_basePos;
 	node_iter_t      m_MainSel;

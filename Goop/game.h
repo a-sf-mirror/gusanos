@@ -15,6 +15,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem/path.hpp>
 using boost::shared_ptr;
@@ -126,7 +127,7 @@ public:
 	static const int CUSTOM_COL_LAYER_START = 2;
 #endif
 
-	static const int MAX_LOCAL_PLAYERS = 2;
+	static const size_t MAX_LOCAL_PLAYERS = 2;
 	
 	
 		
@@ -137,6 +138,15 @@ public:
 		OWNER = 0,
 		PROXY,
 		AI,
+	};
+	
+	enum ResetReason
+	{
+		ServerQuit,
+		Kicked,
+		LoadingLevel,
+		IncompatibleProtocol,
+		IncompatibleData
 	};
 		
 	Game();
@@ -149,6 +159,7 @@ public:
 	
 	bool setMod(const std::string& mod);
 	void loadWeapons();
+	void reset(ResetReason reason);
 	void unload();
 	void loadMod();
 	bool isLoaded();
@@ -158,6 +169,7 @@ public:
 	void createNetworkPlayers();
 	bool changeLevel(const std::string& level, bool refresh = true);
 	bool changeLevelCmd(const std::string& level);
+	bool hasLevel(std::string const& level);
 	void runInitScripts();
 	void addBot( int team = -1 );
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
@@ -180,6 +192,7 @@ public:
 	std::vector<WeaponType*> weaponList;
 	Options options;
 	std::vector<shared_ptr<PlayerOptions> > playerOptions;
+	std::set<std::string> modList;
 	
 	std::vector<Player*> localPlayers;
 	std::list<BasePlayer*> players;

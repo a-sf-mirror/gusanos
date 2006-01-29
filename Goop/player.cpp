@@ -210,6 +210,8 @@ void Player::actionStart ( Actions action )
 			}
 		}
 		break;
+		
+		case ACTION_COUNT: break;
 	}
 }
 
@@ -284,6 +286,8 @@ void Player::actionStop ( Actions action )
 			}
 		}
 		break;
+		
+		case ACTION_COUNT: break;
 	}
 }
 

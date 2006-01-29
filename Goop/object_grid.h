@@ -477,14 +477,14 @@ public:
 			
 			ObjectList::light_iterator i = l->list.beginD();
 			
-			int c = 0;
+			size_t c = 0;
 			for(; i; ++i)
 			{
 				++c;
 			}
 			
 			assert(c == l->grid.size());
-			assert(l->grid.size() == squaresH * squaresV + 1);
+			//assert(l->grid.size() == squaresH * squaresV + 1);
 		}
 	}
 	

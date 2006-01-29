@@ -2,7 +2,9 @@
 #include "../gfx.h"
 #include "../blitters/types.h"
 #include "../glua.h"
+#include "luaapi/context.h"
 #include "../events.h"
+#include "../menu.h"
 #include "../game_actions.h"
 #include "../parser.h"
 #include "util/macros.h"
@@ -303,10 +305,13 @@ bool GSSLoader::canLoad(fs::path const& path, std::string& name)
 	
 bool GSSLoader::load(GSSFile* gss, fs::path const& path)
 {
-	gss->f.open(path, std::ios::binary);
+	//gss->f.open(path, std::ios::binary);
+	fs::ifstream f(path, std::ios::binary);
 	
-	if(!gss->f)
+	if(!f)
 		return false;
+	
+	OmfgGUI::menu.loadGSS(f, path.string());
 		
 	return true;
 }
@@ -349,7 +354,7 @@ bool LuaLoader::load(Script* script, fs::path const& path)
 	}
 	lua_settop(lua, -2); // Pop table or nil
 	
-	lua.load(name, f);
+	lua.load(path.native_file_string().c_str(), f);
 	
 	script->lua = &lua;
 	script->table = name;

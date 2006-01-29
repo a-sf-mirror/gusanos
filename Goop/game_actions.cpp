@@ -21,6 +21,7 @@
 #include "level_effect.h"
 
 #include "glua.h"
+#include "luaapi/context.h"
 #include "script.h"
 
 #include "omfg_script.h"
@@ -720,7 +721,8 @@ RunCustomEvent::~RunCustomEvent()
 /////////////////////////////////////////////////////////////////////////////////////
 
 RunScript::RunScript( vector<OmfgScript::TokenBase*> const& params )
-: function(0), scriptName(params[0]->toString())
+//: function(0), scriptName(params[0]->toString())
+: script(params[0]->toString())
 {
 	
 }
@@ -729,6 +731,7 @@ void RunScript::run( ActionParams const& params )
 {
 	AssertStack as(lua);
 	
+	/*
 	if(!function)
 	{
 		if(scriptName.empty())
@@ -740,9 +743,13 @@ void RunScript::run( ActionParams const& params )
 		
 		if(!function)
 			return;
-	}
+	}*/
+	LuaReference f = script.get();
+	if(!f)
+		return;
+	
 	lua.push(LuaContext::errorReport);
-	lua.pushReference(function);
+	lua.pushReference(f);
 	if(lua_isnil(lua, -1))
 	{
 		lua.pop(2);
@@ -762,16 +769,17 @@ void RunScript::run( ActionParams const& params )
 	if(lua.call(2, 0, -4) < 0)
 	{
 		//lua.destroyReference(function);
-		lua_pushnil(lua);
-		lua.assignReference(function);
-		function.reset();
+		//lua_pushnil(lua);
+		//lua.assignReference(function);
+		script.makeNil();
+		//function.reset();
 	}
 	lua.pop(); // Pop error function
 }
 
 RunScript::~RunScript()
 {
-	lua.destroyReference(function);
+	//lua.destroyReference(function);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

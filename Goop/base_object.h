@@ -4,6 +4,7 @@
 #include "util/angle.h"
 #include "util/vec.h"
 #include "luaapi/types.h"
+#include "glua.h"
 
 //#include <allegro.h>
 struct BITMAP;
@@ -11,7 +12,7 @@ class Viewport;
 
 class BasePlayer;
 
-class BaseObject 
+class BaseObject : public LuaObject
 {
 public:
 	static LuaReference metaTable;
@@ -35,7 +36,7 @@ public:
 	
 	// Gets a pointer to the Player that owns this object ( NULL if it has no owner )
 	virtual BasePlayer* getOwner();
-	
+		
 	// Gets the angle the object is pointing
 	virtual Angle getAngle();
 	
@@ -56,12 +57,9 @@ public:
 	virtual void remove();
 	
 	// Deletes the object
-	void deleteThis();
+	//void deleteThis();
 	
-	// Called before the object is deleted from gusanos (but perhaps not from lua)
-	virtual void finalize()
-	{
-	}
+	virtual void makeReference();
 	
 #ifndef DEDSERV
 	// Sets a destination alpha value and the time in logic frames it will take to reach that value
@@ -85,12 +83,6 @@ public:
 	virtual void setPos( Vec pos_ )
 	{ pos = pos_; }
 	
-	// Dunno what this does.. gliptiiiic!! ;>
-	void pushLuaReference();
-	
-	// Returns a lua reference to this object
-	virtual LuaReference getLuaReference();
-	
 	// If this is true the object will be removed from the objects list in the next frame
 	bool deleteMe;
 	
@@ -107,7 +99,7 @@ public:
 	int cellIndex_;
 	
 protected:
-	LuaReference luaReference;
+	//LuaReference luaReference; //Defined in LuaObject
 	BasePlayer* m_owner;
 };
 

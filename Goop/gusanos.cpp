@@ -30,6 +30,8 @@
 
 #include "script.h"
 #include "glua.h"
+#include "luaapi/context.h"
+#include "util/log.h"
 #include "http.h"
 #include <memory>
 
@@ -54,10 +56,15 @@ int showDebug;
 volatile unsigned int timer = 0;
 void timerUpdate(void) { timer++; } END_OF_FUNCTION(timerUpdate);
 
-string Exit(const list<string> &args)
+void exit()
 {
 	quit = true;
 	network.disconnect();
+}
+
+string exitCmd(list<string> const& args)
+{
+	exit();
 	return "";
 }
 
@@ -72,7 +79,7 @@ try
 	game.init(argc, argv);
 
 	console.registerCommands()
-		("QUIT", Exit)
+		("QUIT", exitCmd)
 	;
 	
 	console.parseLine("BIND F12 SCREENSHOT");
@@ -166,6 +173,7 @@ try
 			{
 				if ( (*iter)->deleteMe )
 				{
+/* Done in deleteThis()
 #ifdef USE_GRID
 					for (Grid::iterator objIter = game.objects.beginAll(); objIter; ++objIter)
 					{
@@ -177,7 +185,7 @@ try
 						(*objIter)->removeRefsToPlayer(*iter);
 					}
 #endif
-
+*/
 					if ( Player* player = dynamic_cast<Player*>(*iter) )
 					{
 						foreach ( p, game.localPlayers )
@@ -189,7 +197,9 @@ try
 							}
 						}
 					}
+/*
 					(*iter)->removeWorm();
+*/
 					(*iter)->deleteThis();
 					game.players.erase(iter);
 				}

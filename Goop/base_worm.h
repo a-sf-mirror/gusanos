@@ -77,6 +77,8 @@ public:
 #endif
 
 	float getHealth();
+	bool isChanging()
+	{ return changing; }
 	
 	virtual void damage( float amount, BasePlayer* damager );
 	
@@ -121,8 +123,12 @@ public:
 	{
 		return eZCom_RoleUndefined;
 	}
-	
+	/*
 	virtual LuaReference getLuaReference();
+	virtual void finalize();
+	*/
+	
+	virtual void makeReference();
 	virtual void finalize();
 	
 	virtual void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID)

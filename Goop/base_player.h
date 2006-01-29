@@ -183,6 +183,8 @@ protected:
 	BasePlayerInterceptor* m_interceptor;
 	ZCom_NodeID m_wormID;
 	ZCom_ConnID m_id;
+	
+	bool deleted; //TEMP
 };
 
 class BasePlayerInterceptor : public ZCom_NodeReplicationInterceptor

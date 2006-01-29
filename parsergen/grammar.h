@@ -17,6 +17,7 @@
 #include <string>
 #include <set>
 #include <exception>
+#include <boost/lexical_cast.hpp>
 
 #include <iostream> // TEMP
 
@@ -120,7 +121,7 @@ struct Rule
 struct Token
 {
 	Token(std::string name_)
-	: name(name_), linecounter(false), skip(false)
+	: name(name_) //, linecounter(false), skip(false)
 	{
 	}
 	
@@ -129,8 +130,9 @@ struct Token
 	std::string def;
 	std::string code;
 	std::string copy; // name of token to copy
-	bool linecounter;
-	bool skip;
+	std::string code2;
+	//bool linecounter;
+	//bool skip;
 };
 
 template<class BaseT>
@@ -422,6 +424,14 @@ struct Grammar : public BaseT
 			{
 				std::string id = ident();
 				doneLexeme();
+				int state = 0;
+				
+				if(firstIdent())
+				{
+					std::string statestr = ident();
+					doneLexeme();
+					state = boost::lexical_cast<int>(statestr);
+				}
 				
 				if(cur() == '<')
 				{
@@ -488,11 +498,27 @@ struct Grammar : public BaseT
 					{
 						next();
 						
-						
-						while(firstIdent())
+						while(true)
 						{
-							std::string t = ident();
-							doneLexeme();
+							if(firstIdent())
+							{
+								std::string t = ident();
+								doneLexeme();
+								token->copy = t;
+								code<'<', '>'>(token->code);
+								doneLexeme();
+							}
+							else if(cur() == '{')
+							{
+								std::string str;
+								code<'{', '}'>(str);
+								doneLexeme();
+								token->code2 += str;
+							}
+							else
+								break;
+							
+							/*
 							if(t == "@linecounter")
 								token->linecounter = true;
 							else if(t == "@skip")
@@ -502,15 +528,15 @@ struct Grammar : public BaseT
 								token->copy = t;
 								code<'<', '>'>(token->code);
 								doneLexeme();
-								break;
-							}
+								//break;
+							}*/
 						}
 					}
 					
 					if(cur() != ';') syntaxError("Expected ';' after token");
 					next();
 					
-					this->addToken(token.release());
+					this->addToken(token.release(), state);
 				}
 				else
 					syntaxError("Expected rule parameters or token definition");

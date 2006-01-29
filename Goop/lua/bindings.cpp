@@ -22,6 +22,7 @@
 #include "http.h"
 
 #include "../gconsole.h"
+#include "../gusanos.h"
 #ifndef DEDSERV
 #include "../keys.h"
 #include "../menu.h"
@@ -44,8 +45,6 @@ using std::endl;
 #include <boost/filesystem/fstream.hpp>
 using boost::lexical_cast;
 namespace fs = boost::filesystem;
-
-extern bool quit; // Extern this somewhere else (such as a gusanos.h)
 
 namespace LuaBindings
 {
@@ -72,6 +71,96 @@ int print(lua_State* L)
 
 	This is called after every logic cycle is complete.
 */
+
+/*@ bindings.atGameStart() // Not sure if this will be kept
+
+	This is called at the beginning of a game.
+*/
+
+/*! bindings.afterRender()
+
+	This is called after a rendering cycle is complete
+*/
+
+/*! bindings.wormRender(x, y, worm, viewport, ownerPlayer)
+
+	This is called for every worm and viewport combination when it's time to render
+	the worm HUD.
+	
+	(x, y) is the position of the worm in viewport coordinates.
+	
+	//worm// is the Worm object for which HUD should be rendered and //viewport// is
+	the Viewport object it should be rendered to. Use the bitmap() method of Viewport
+	to retrieve the relevant bitmap to draw on.
+	
+	//ownerPlayer// is the Player object that owns //viewport//.
+*/
+
+/*! bindings.viewportRender(viewport, worm)
+
+	This is called for every viewport when it's time to render the viewport HUD.
+	
+	//viewport// is the Viewport object it should be rendered to and //worm// is the
+	Worm object of the Player object that owns //viewport//.
+*/
+
+/*! bindings.wormDeath(worm)
+
+	This is called when a worm dies. //worm// is the Worm object that died.
+*/
+
+/*! bindings.wormRemoved(worm)
+
+	This is called when a worm is removed from the game. //worm// is the Worm object that will be removed.
+*/
+
+/*! bindings.playerUpdate(player)
+
+	This is called in every logic cycle for every player. //player// is the relevant Player object.
+*/
+
+/*! bindings.playerInit(player)
+
+	This is called when a new player is added to the game. //player// is the Player object that was added.
+*/
+
+/*! bindings.playerNetworkInit(player, connID)
+
+	This is called when a player is replicated to a new client. //player// is the player replicated.
+	//connID// is the connection ID of the new client.
+	
+	The connection ID can be passed to the send() method of a NetworkPlayerEvent to send events only
+	to the player on the new client.
+*/
+
+//! version 0.9c
+
+/*! bindings.playerRemoved(player)
+	
+	This is called when a player is removed from the game. //player// is the Player object that will be removed.
+*/
+
+/*! bindings.gameNetworkInit(connID)
+	
+	This is called when a new client joins the game. //connID// is the connection ID of the new client.
+	
+	The connection ID can be passed to the send() method of a NetworkGameEvent to send events only
+	to the new client.
+*/
+
+/*! bindings.gameEnded(reason)
+
+	This is called when the game ended and no new game is pending.
+	
+	//reason// can be one of the following:
+	* EndReason.ServerQuit : The server disconnected.
+	* EndReason.Kicked : You were kicked from the server.
+	* EndReason.IncompatibleProtocol : You are running a protocol incompatible with the server's.
+	* EndReason.IncompatibleData : Your data does not match the server's.
+	
+*/
+
+//! version any
 
 int l_bind(lua_State* L)
 {
@@ -115,9 +204,51 @@ int l_console_get(lua_State* L)
 	return 1;
 }
 
+int l_console_bind(lua_State* L)
+{
+	int k = lua_tointeger(L, 1);
+	char const* action = lua_tostring(L, 2);
+	if(!action)
+	{
+		if(lua_isnil(L, 2))
+			action = "";
+		else
+			return 0;
+	}
+	
+	console.bind(static_cast<char>(k), action);
+	return 0;
+}
+
+int l_console_key_for_action(lua_State* L)
+{
+	char const* s = lua_tostring(L, 1);
+	if(!s)
+		return 0;
+	
+	char k = console.getKeyForBinding(s);
+	if(k == -1)
+		return 0;
+	
+	lua_pushinteger(L, static_cast<unsigned char>(k));
+	return 1;
+}
+
+int l_console_action_for_key(lua_State* L)
+{
+	char k = static_cast<char>(lua_tointeger(L, 1));
+	
+	std::string action = console.getActionForBinding(k);
+	if(action.empty())
+		return 0;
+	
+	lua_pushlstring(L, action.data(), action.size());
+	return 1;
+}
+
 int l_quit(lua_State* L)
 {
-	quit = true;
+	exit();
 	return 0;
 }
 
@@ -193,6 +324,16 @@ int l_map(lua_State* L)
 }
 
 
+LUA_CALLBACK(luaConsoleCommand(LuaReference ref, std::list<std::string> const& args))
+	for(std::list<std::string>::const_iterator i = args.begin();
+		i != args.end();
+		++i)
+	{
+		lua_pushstring(lua, i->c_str());
+		++params;
+	}
+END_LUA_CALLBACK()
+
 
 /*! console_register_command(name, function)
 
@@ -203,11 +344,12 @@ int l_map(lua_State* L)
 int l_console_register_command(lua_State* L)
 {
 	char const* name = lua_tostring(L, 1);
+	if(!name) return 0;
 	lua_pushvalue(L, 2);
 	LuaReference ref = lua.createReference();
 	
 	console.registerCommands()
-			(name, boost::bind(LuaBindings::runLua, ref, _1), true);
+			(name, boost::bind(LuaBindings::luaConsoleCommand, ref, _1), true);
 
 	return 0;
 }
@@ -283,6 +425,7 @@ int l_undump(lua_State* L)
 }
 
 
+/*
 std::string runLua(LuaReference ref, std::list<std::string> const& args)
 {
 	AssertStack as(lua);
@@ -324,7 +467,7 @@ std::string runLua(LuaReference ref, std::list<std::string> const& args)
 	lua.pop(1);
 	
 	return "";
-}
+}*/
 
 void serverListCallb(lua_State* L, LuaReference ref, HTTP::Request* req)
 {
@@ -411,6 +554,9 @@ void init()
 	context.functions()
 		("print", print)
 		("console_register_command", l_console_register_command)
+		("console_key_for_action", l_console_key_for_action)
+		("console_bind", l_console_bind)
+		("console_action_for_key", l_console_action_for_key)
 		("dump", l_dump)
 		("undump", l_undump)
 		("fetch_server_list", l_fetch_server_list)
@@ -477,3 +623,4 @@ void init()
 }
 
 }
+

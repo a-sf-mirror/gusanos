@@ -9,9 +9,9 @@ namespace OmfgGUI
 {
 
 LuaReference List::metaTable;
-LuaReference List::Node::metaTable;
+LuaReference ListNode::metaTable;
 
-bool List::LuaLT::operator()(Node* a, Node* b)
+bool List::LuaLT::operator()(ListNode* a, ListNode* b)
 {
 	if((context.call(comp, 1), a->luaReference, b->luaReference)() == 1)
 	{
@@ -22,7 +22,7 @@ bool List::LuaLT::operator()(Node* a, Node* b)
 	return false;
 }
 
-void List::Node::resizeColumns(size_t s)
+void ListNode::resizeColumns(size_t s)
 {
 	columns.resize(s);
 	
@@ -32,13 +32,25 @@ void List::Node::resizeColumns(size_t s)
 	}
 }
 
-void List::Node::render(Renderer* renderer, long& y)
+void ListNode::changeChildrenCount(long change)
 {
-	long halfRowHeight = rowHeight/2;
+	if(expanded)
+	{
+		if(parent)
+			parent->changeChildrenCount(change);
+		else
+			list->m_visibleChildren += change;
+	}
+	visibleChildren += change;
+}
+
+void ListNode::render(Renderer* renderer, long& y)
+{
+	long halfRowHeight = List::rowHeight/2;
 	
 	if(selected || list->m_MainSel == node_iter_t(this))
 	{
-		Rect r(list->getRect().x1 + 1, y, list->getRect().x2 - 1, y + rowHeight - 1);
+		Rect r(list->getRect().x1 + 1, y, list->getRect().x2 - 1, y + List::rowHeight - 1);
 		if(selected)
 		{
 			renderer->drawBox(
@@ -64,7 +76,7 @@ void List::Node::render(Renderer* renderer, long& y)
 	assert(columns.size() == list->m_columnHeaders.size());
 	
 	std::vector<std::string>::const_iterator i = columns.begin();
-	std::vector<ColumnHeader>::const_iterator h = list->m_columnHeaders.begin();
+	std::vector<List::ColumnHeader>::const_iterator h = list->m_columnHeaders.begin();
 	
 	for(;
 		i != columns.end();
@@ -77,7 +89,7 @@ void List::Node::render(Renderer* renderer, long& y)
 	//renderChildren(aRenderer, y, list);
 }
 /*
-void List::Node::renderChildren(Renderer* aRenderer, long& y, List& list)
+void ListNode::renderChildren(Renderer* aRenderer, long& y, List& list)
 {
 	if(expanded)
 	{
@@ -89,7 +101,7 @@ void List::Node::renderChildren(Renderer* aRenderer, long& y, List& list)
 	}
 }*/
 
-void List::Node::renderFrom(Renderer* renderer, long& y)
+void ListNode::renderFrom(Renderer* renderer, long& y)
 {
 	node_iter_t i(this);
 	//bool        hasParent = i->hasParent;
@@ -103,7 +115,7 @@ void List::Node::renderFrom(Renderer* renderer, long& y)
 	{
 		i->render(renderer, y);
 			
-		y += rowHeight;
+		y += List::rowHeight;
 		
 		if(i->expanded)
 		{
@@ -131,7 +143,7 @@ void List::Node::renderFrom(Renderer* renderer, long& y)
 	}
 }
 
-List::node_iter_t List::Node::getPrevVisible(node_iter_t i)
+List::node_iter_t ListNode::getPrevVisible(node_iter_t i)
 {
 	node_iter_t parent = i->parent;
 	
@@ -153,7 +165,7 @@ List::node_iter_t List::Node::getPrevVisible(node_iter_t i)
 	return i;
 }
 
-List::node_iter_t List::Node::getNextVisible(node_iter_t i)
+List::node_iter_t ListNode::getNextVisible(node_iter_t i)
 {
 	node_iter_t parent = i->parent;
 	
@@ -178,7 +190,7 @@ List::node_iter_t List::Node::getNextVisible(node_iter_t i)
 	return i;
 }
 
-int List::Node::findOffsetTo(node_iter_t i, node_iter_t to)
+int ListNode::findOffsetTo(node_iter_t i, node_iter_t to)
 {
 	int offs = 0;
 	
@@ -191,7 +203,7 @@ int List::Node::findOffsetTo(node_iter_t i, node_iter_t to)
 	return offs;
 }
 
-List::node_iter_t List::Node::findRelative(node_iter_t i, int aIdx)
+ListNode::node_iter_t ListNode::findRelative(node_iter_t i, int aIdx)
 {
 	node_iter_t parent = i->parent;
 
@@ -219,7 +231,7 @@ List::node_iter_t List::Node::findRelative(node_iter_t i, int aIdx)
 	return i;
 }
 
-void List::Node::clearSelections()
+void ListNode::clearSelections()
 {
 	selected = false;
 	for(node_iter_t i = children.begin(); i; ++i)
@@ -276,7 +288,7 @@ bool List::render()
 	if(m_Base)
 	{
 		//m_Base->renderFrom(renderer, y, *this);
-		for(node_iter_t i = m_Base; i && y < getRect().y2; i = Node::getNextVisible(i))
+		for(node_iter_t i = m_Base; i && y < getRect().y2; i = ListNode::getNextVisible(i))
 		{
 			i->render(renderer, y);
 			y += rowHeight;
@@ -310,7 +322,7 @@ void List::setMainSel(node_iter_t iter)
 		return;
 	m_MainSel = iter;
 	
-	int offs = Node::findOffsetTo(m_RootNode.children.begin(), iter);
+	int offs = ListNode::findOffsetTo(m_RootNode.children.begin(), iter);
 
 	if(offs < m_basePos)
 		setBasePos(offs);
@@ -379,22 +391,22 @@ bool List::keyDown(int key)
 			
 			case KEY_DOWN:
 				if(checkSelection())
-					setMainSel(Node::getNextVisible(m_MainSel));
+					setMainSel(ListNode::getNextVisible(m_MainSel));
 			break;
 			
 			case KEY_UP:
 				if(checkSelection())
-					setMainSel(Node::getPrevVisible(m_MainSel));
+					setMainSel(ListNode::getPrevVisible(m_MainSel));
 			break;
 			
 			case KEY_PGDN:
 				if(checkSelection())
-					setMainSel(Node::findRelative(m_MainSel, visibleRows()));
+					setMainSel(ListNode::findRelative(m_MainSel, visibleRows()));
 			break;
 			
 			case KEY_PGUP:
 				if(checkSelection())
-					setMainSel(Node::findRelative(m_MainSel, -visibleRows()));
+					setMainSel(ListNode::findRelative(m_MainSel, -visibleRows()));
 			break;
 			
 			case KEY_RIGHT:
@@ -438,7 +450,7 @@ bool List::mouseDown(ulong x, ulong y, Context::MouseKey::type button)
 		
 		if(m_Base)
 		{
-			node_iter_t newSel = Node::findRelative(m_Base, y2 / rowHeight);
+			node_iter_t newSel = ListNode::findRelative(m_Base, y2 / rowHeight);
 			
 			if(!select)
 			{
@@ -449,7 +461,7 @@ bool List::mouseDown(ulong x, ulong y, Context::MouseKey::type button)
 			&& m_MainSel->parent == newSel->parent)
 			{
 				bool toggle = false;
-				Node* parent = m_MainSel->parent;
+				ListNode* parent = m_MainSel->parent;
 				if(!parent)
 					parent = &m_RootNode;
 				for(node_iter_t i = parent->children.begin(); i; ++i)

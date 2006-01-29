@@ -10,10 +10,12 @@ using std::endl;
 namespace OmfgGUI
 {
 
+/*
 Context::GSSpropertyMap Context::GSSpropertyMapStandard;
 Context::GSSstate Context::GSSstate::standard;
 Context::GSSid Context::GSSid::standard;
 Context::GSSclass Context::GSSclass::standard;
+*/
 
 void Context::destroy()
 {
@@ -129,6 +131,16 @@ void Context::setFocus(Wnd* aWnd)
 	
 	if(aWnd)
 	{
+		/* TODO: Fix
+		if(aWnd->m_parent)
+		{
+			Wnd* parent = aWnd->m_parent;
+			std::list<Wnd*>::iterator i = std::find(parent->m_children.begin(), parent->m_children.end(), aWnd);
+			assert(i != parent->m_children.end());
+			parent->m_children.splice(parent->m_children.end(), parent->m_children, i);
+		}
+		*/
+		
 		while(aWnd->m_lastChildFocus)
 		{
 			aWnd = aWnd->m_lastChildFocus;
@@ -202,6 +214,43 @@ void Context::deregisterWindow(Wnd* wnd)
 		if(i->second == wnd)
 			m_namedWindows.erase(i);
 	}
+}
+
+int Context::GSSselector::matchesWindow(Wnd* w) const
+{
+	int matchLevel = 1;
+	
+	foreach(c, cond)
+	{
+		switch(c->type)
+		{
+			case Condition::Tag:
+				if(w->m_tagLabel != c->v)
+					return 0;
+				matchLevel += 1;
+			break;
+			
+			case Condition::Class:
+				if(w->m_className != c->v)
+					return 0;
+				matchLevel += 2;
+			break;
+			
+			case Condition::ID:
+				if(w->m_id != c->v)
+					return 0;
+				matchLevel += 4;
+			break;
+			
+			case Condition::State:
+				if(w->m_state != c->v)
+					return 0;
+				matchLevel += 8;
+			break;
+		}
+	}
+		
+	return matchLevel;
 }
 
 

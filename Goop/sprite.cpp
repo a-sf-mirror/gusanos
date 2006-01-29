@@ -165,7 +165,7 @@ void Sprite::drawCut(BITMAP *where, int x, int y, BlitterContext const& blender,
 	else if ( alignment & ALIGN_BOTTOM ) realY += m_bitmap->h;
 	else realY += m_yPivot;
 	
-	int x1 = left, y1 = top, w = m_bitmap->w - (left + right), h = m_bitmap->h - (top + bottom);
+	//int x1 = left, y1 = top, w = m_bitmap->w - (left + right), h = m_bitmap->h - (top + bottom);
 	//cerr << m_xPivot << ", " << m_yPivot << endl;
 	//masked_blit(m_bitmap, where, x1, y1, realX, realY, w, h);
 	blender.drawSpriteCut(where, m_bitmap, realX, realY, left, top, right, bottom);

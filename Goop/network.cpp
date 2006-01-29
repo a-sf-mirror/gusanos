@@ -22,6 +22,7 @@
 #include <iostream>
 #include <memory>
 #include <list>
+#include <set>
 #include <utility>
 #include <zoidcom.h>
 #include <boost/assign/list_inserter.hpp>
@@ -35,6 +36,24 @@ LuaReference LuaEventDef::metaTable;
 
 namespace
 {
+	
+	mq_define_message(Connect, 0, (std::string addr_))
+		: addr(addr_)
+		{
+			
+		}
+		
+		std::string addr;
+	mq_end_define_message()
+	
+	/*
+	mq_define_message(Host, 0)
+		{
+			
+		}
+	mq_end_define_message()
+	*/
+	
 	enum State
 	{
 		StateIdle,	// Not doing anything
@@ -139,6 +158,8 @@ namespace
 	bool serverAdded = false;
 	bool m_host = false;
 	bool m_client = false; //? This wasn't initialized before
+	int logZoidcom = 0;
+	std::set<zU32> bannedIPs;
 	
 	int m_serverPort; // Neither was this
 	
@@ -308,8 +329,14 @@ void Network::log(char const* msg)
 
 void Network::init()
 {
-	m_zcom = new ZoidCom(/*log*/);
-	//m_zcom->setLogLevel(2);
+	if(logZoidcom)
+	{
+		m_zcom = new ZoidCom(log);
+		m_zcom->setLogLevel(2);
+	}
+	else
+		m_zcom = new ZoidCom();
+	
 	if ( !m_zcom->Init() )
 	{
 		console.addLogMsg("* ERROR: UNABLE TO INITIALIZE ZOIDCOM NETWORK LIB");
@@ -339,6 +366,7 @@ void Network::registerInConsole()
 		("NET_DOWN_BPP", &network.downBPP, 200)
 		("NET_DOWN_PPS", &network.downPPS, 20)
 		("NET_CHECK_CRC", &network.checkCRC, 1)
+		("NET_LOG", &logZoidcom, 0)
 	;
 	
 	console.registerCommands()
@@ -364,24 +392,49 @@ void Network::update()
 	switch(state)
 	{
 		case StateDisconnected:
+		case StateIdle:
 		{
 			mq_process_messages(msg)
 				mq_case(Connect)
+					if(!isDisconnected())
+					{
+						//if(!isDisconnecting())
+						disconnect();
+						
+						mq_delay(); // Wait until network is disconnected
+					}
+					
 					m_control = new Client( 0 );
 					registerClasses();
 					ZCom_Address address;
 					address.setAddress( eZCom_AddressUDP, 0, ( data.addr + ":" + cast<string>(m_serverPort) ).c_str() );
 					m_control->ZCom_Connect( address, NULL );
-					m_client = true;
+					//m_client = true; // We wait with setting this until we've connected
 					m_lastServerAddr = data.addr;
 					SET_STATE(Idle);
 				mq_end_case()
+				
+				/*
+				mq_case(Host)
+					if(!isDisconnected())
+					{
+						if(!isDisconnecting())
+							disconnect();
+						
+						mq_delay(); // Wait until network is disconnected
+					}
+					
+					m_control = new Server(m_serverPort);
+					registerClasses();
+					m_host = true;
+					game.assignNetworkRole( true ); // Gives the game class node authority role
+					updater.assignNetworkRole(true);
+					registerToMasterServer();
+					SET_STATE(Idle);
+				mq_end_case()
+				*/
 			mq_end_process_messages()
-		}
-		break;
-		
-		case StateIdle:
-		{
+
 			if(m_host)
 			{
 				if(registerGlobally && ++updateTimer > 6000*3)
@@ -438,7 +491,7 @@ void Network::update()
 	
 	if( reconnectTimer > 0 )
 	{
-		disconnect();
+		//disconnect();
 		if(--reconnectTimer == 0)
 		{
 			DLOG("Reconnecting to " << m_lastServerAddr);  
@@ -456,13 +509,12 @@ HTTP::Request* Network::fetchServerList()
 	return masterServer.post("gusserv.php", data);
 }
 
-
-
 void Network::host()
 {
 	//disconnect();
 	assert(state == StateDisconnected); // We assume that we're disconnected
-	
+
+	//mq_queue(msg, Host);
 	m_control = new Server(m_serverPort);
 	registerClasses();
 	m_host = true;
@@ -474,7 +526,7 @@ void Network::host()
 
 void Network::connect( const std::string &_address )
 {
-	disconnect();
+	//disconnect(); // Done is message handler
 	
 	mq_queue(msg, Connect, _address);
 }
@@ -528,14 +580,34 @@ void Network::reconnect(int delay)
 	reconnectTimer = delay;
 }
 
-void Network::kick( ZCom_ConnID connId )
+void Network::kick( ZCom_ConnID connID )
 {
 	if( m_control )
 	{
 		ZCom_BitStream *eventData = new ZCom_BitStream;
 		eventData->addInt( static_cast<int>( Kick ), 8 );
-		m_control->ZCom_Disconnect( connId, eventData );
+		m_control->ZCom_Disconnect( connID, eventData );
 	}
+}
+
+void Network::ban( ZCom_ConnID connID )
+{
+	if( m_control )
+	{
+		ZCom_Address const* addr = m_control->ZCom_getPeer(connID);
+		bannedIPs.insert(addr->getIP());
+	}
+}
+
+bool Network::isBanned(ZCom_ConnID connID)
+{
+	if( m_control )
+	{
+		ZCom_Address const* addr = m_control->ZCom_getPeer(connID);
+		if(bannedIPs.find(addr->getIP()) != bannedIPs.end())
+			return true;
+	}
+	return false;
 }
 
 void Network::setServerID(ZCom_ConnID serverID)
@@ -615,6 +687,16 @@ void Network::decConnCount()
 bool Network::isDisconnected()
 {
 	return state == StateDisconnected;
+}
+
+bool Network::isDisconnecting()
+{
+	return state == StateDisconnecting;
+}
+
+void Network::setClient(bool v)
+{
+	m_client = v;
 }
 
 #endif

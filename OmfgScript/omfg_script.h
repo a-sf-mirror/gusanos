@@ -279,9 +279,13 @@ struct Parser : public Pimpl<ParserImpl>
 	
 	Function const* getFunction(std::string const& name);
 	
-	TokenBase* getProperty(std::string const& name);
+	Function const* getDeprFunction(std::string const& name);
 	
+	TokenBase* getProperty(std::string const& name);
+		
 	TokenBase* getProperty(std::string const& a, std::string const& b);
+	
+	TokenBase* getDeprProperty(std::string const& name);
 	
 	boost::crc_32_type::value_type getCRC();
 	

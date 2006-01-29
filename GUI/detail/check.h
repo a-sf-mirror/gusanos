@@ -1,20 +1,20 @@
-#ifndef OMFG_GUI_BUTTON_H
-#define OMFG_GUI_BUTTON_H
+#ifndef OMFG_GUI_CHECK_H
+#define OMFG_GUI_CHECK_H
 
 #include "wnd.h"
 
 namespace OmfgGUI
 {
 
-class Button : public Wnd
+class Check : public Wnd
 {
 public:
 	static LuaReference metaTable;
 	
-	Button(Wnd* parent_, /*std::string const& tagLabel, std::string const& className, 
+	Check(Wnd* parent_, /*std::string const& tagLabel, std::string const& className, 
 	  std::string const& id,*/ std::map<std::string, std::string> const& properties/*,
 	  std::string const& text_ = std::string("")*/)
-	: Wnd(parent_, properties, "button"), m_state(false)
+	: Wnd(parent_, properties, "check"), m_state(false)
 	{
 
 	}
@@ -29,7 +29,11 @@ public:
 	
 	virtual bool keyDown(int key);
 	
-	//virtual int classID();
+	virtual void toggleState();
+	virtual void applyGSS(Context::GSSselectors const& style);
+	
+	bool getState()
+	{ return m_state; }
 	
 private:
 	bool m_state;

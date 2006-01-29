@@ -353,17 +353,17 @@ LMETHOD(LuaEventDef, luaEvent_##type_##_send, \
 	//connection// is a connection ID to send the event on. If it's 0, the //rules// parameter decides who to send to.
 	
 	//mode// is one of these values (default is SendMode.ReliableOrdered):
-	SendMode.ReliableUnordered : The events always arrive, but may come in a different order than sent.
-	SendMode.ReliableOrdered : The events always arrive and in the order sent.
-	SendMode.Unreliable : The events may or may not arrive and in any order.
+	* SendMode.ReliableUnordered : The events always arrive, but may come in a different order than sent.
+	* SendMode.ReliableOrdered : The events always arrive and in the order sent.
+	* SendMode.Unreliable : The events may or may not arrive and in any order.
 	
 	//rules// decides what computers to send the event to if //connection// is 0 or left out.
 	It can be any (or sometimes a sum) of:
-	RepRule.Auth2All : Event is sent from the server to clients.
-	RepRule.Auth2Owner : Event is sent from the server to clients owning the node.
-	RepRule.Auth2Proxy : Event is sent from the server to clients not owning the node.
-	RepRule.None : Event is not sent.
-	RepRule.Owner2Auth : Event is sent from clients owning the node to the server.
+	* RepRule.Auth2All : Event is sent from the server to clients.
+	* RepRule.Auth2Owner : Event is sent from the server to clients owning the node.
+	* RepRule.Auth2Proxy : Event is sent from the server to clients not owning the node.
+	* RepRule.None : Event is not sent.
+	* RepRule.Owner2Auth : Event is sent from clients owning the node to the server.
 	
 	A valid combination is (RepRule.Owner2Auth + RepRule.Auth2All) which sends the event
 	from owners to the server or from the server to all clients (depending on if we're the server or not).
@@ -406,6 +406,8 @@ LUA_EVENT_SEND_METHOD(worm, 1,
 		worm->sendLuaEvent(p, mode, rules, userdata, connID);
 )
 
+//! version 0.9c
+
 /*! NetworkParticleEvent:send(particle, [data[, connection[, mode[, rules]]]])
 
 	Sends a particle event to one or more computers.
@@ -422,6 +424,8 @@ LUA_EVENT_SEND_METHOD(particle, 1,
 	if(particle)
 		particle->sendLuaEvent(p, mode, rules, userdata, connID);
 )
+
+//! version any
 
 /*! network_game_event(name, handler)
 	
@@ -500,6 +504,8 @@ int l_network_worm_event(lua_State* L)
 	return 1;
 }
 
+//! version 0.9c
+
 /*! network_particle_event(name, handler)
 	
 	Creates and returns a NetworkParticleEvent object.
@@ -525,6 +531,8 @@ int l_network_particle_event(lua_State* L)
 
 	return 1;
 }
+
+//! version any
 
 void initNetwork(LuaContext& context)
 {

@@ -6,5 +6,6 @@
 #include "detail/edit.h"
 #include "detail/group.h"
 #include "detail/list.h"
+#include "detail/check.h"
 
 #endif //OMFGGUI_WINDOWS_H

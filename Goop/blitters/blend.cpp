@@ -176,6 +176,41 @@ void rectfill_blend_32(BITMAP* where, int x1, int y1, int x2, int y2, Pixel colo
 	}
 }
 
+void hline_blend_16(BITMAP* where, int x1, int y1, int x2, Pixel colour, int fact)
+{
+	typedef Pixel16 pixel_t_1;
+	typedef Pixel16_2 pixel_t_2;
+
+	fact = (fact + 7) / 8;
+	
+	Pixel col = duplicateColor_16(colour);
+	Pixel colA, colB;
+	prepareBlendColorsFact_16_2(col, colA, colB);
+	
+	RECT_X_LOOP_ALIGN(2, 4,
+		*p = blendColorsFact_16_2(*p, colA, colB, fact),
+		*p = blendColorsFact_16_2(*p, colA, colB, fact)
+	)
+}
+
+void hline_blend_32(BITMAP* where, int x1, int y1, int x2, Pixel colour, int fact)
+{
+	typedef Pixel32 pixel_t_1;
+	
+	if(fact >= 255)
+	{
+		RECT_X_LOOP(
+			*p = colour
+		)
+	}
+	else if(fact > 0)
+	{
+		RECT_X_LOOP(
+			*p = blendColorsFact_32(*p, colour, fact)
+		)
+	}
+}
+
 bool linewu_blend(BITMAP* where, float x, float y, float destx, float desty, Pixel colour, int fact)
 {
 	const long prec = 8;
@@ -214,6 +249,26 @@ bool linewu_blend(BITMAP* where, float x, float y, float destx, float desty, Pix
 	#undef BLEND32
 
 	return false;
+}
+
+void line_blend(BITMAP* where, int x, int y, int destx, int desty, Pixel colour, int fact)
+{
+	#define BLEND32(dest_, src_) blendColorsFact_32(dest_, src_, fact)
+	#define BLEND16(dest_, src_) blendColorsFact_16(dest_, src_, fact)
+		
+	switch(bitmap_color_depth(where))
+	{
+		case 32:
+			LINE(BLEND32, 32);
+		break;
+		
+		case 16:
+			LINE(BLEND16, 16);
+		break;
+	}
+
+	#undef BLEND16
+	#undef BLEND32
 }
 
 void drawSprite_blend_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)

@@ -213,6 +213,27 @@ bool linewu_add(BITMAP* where, float x, float y, float destx, float desty, Pixel
 	return false;
 }
 
+
+void line_add(BITMAP* where, int x, int y, int destx, int desty, Pixel colour, int fact)
+{
+	#define BLEND32(dest_, src_) addColorsCrude_32(dest_, scaleColor_32(src_, fact))
+	#define BLEND16(dest_, src_) addColors_16_2(dest_, scaleColor_16(src_, fact))
+		
+	switch(bitmap_color_depth(where))
+	{
+		case 32:
+			LINE(BLEND32, 32);
+		break;
+		
+		case 16:
+			LINE(BLEND16, 16);
+		break;
+	}
+
+	#undef BLEND16
+	#undef BLEND32
+}
+
 void drawSprite_add_32(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;

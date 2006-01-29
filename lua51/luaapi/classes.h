@@ -35,7 +35,9 @@ namespace OmfgGUI
 {
 class Wnd;
 class List;
-//class List::Node;
+struct ListNode;
+class Edit;
+class Check;
 }
 
 CLASSID(BaseObject, 1);
@@ -58,7 +60,9 @@ CLASSID(Sound, 17);
 CLASSID(SpriteSet, 18);
 CLASSID(OmfgGUI::Wnd, 19);
 CLASSID(OmfgGUI::List, 20);
-//CLASSID(OmfgGUI::List::Node, 21);
+CLASSID(OmfgGUI::ListNode, 21);
+CLASSID(OmfgGUI::Edit, 22);
+CLASSID(OmfgGUI::Check, 23);
 
 #undef CLASSID
 
@@ -103,6 +107,21 @@ inline T* assertObject(LuaContext& context, int idx, char const* errstr)
 	return 0;
 }
 
+template<class T>
+inline T* assertLObject(LuaContext& context, int idx, char const* errstr)
+{
+	if(T* p = getLObject<T>(context, idx))
+		return p;
+	
+	lua_pushstring(context, errstr);
+	lua_error(context);
+	return 0;
+}
+
 #define ASSERT_OBJECT(type_, idx_) assertObject<type_>(context, idx_, "Expected object of type " #type_ " as parameter " #idx_)
+
+#define ASSERT_OBJECT_P(type_, idx_, place_) assertObject<type_>(context, idx_, "Expected object of type " #type_ place_)
+
+#define ASSERT_LOBJECT(type_, idx_) assertLObject<type_>(context, idx_, "Expected object of type " #type_ " as parameter " #idx_)
 
 #endif //LUA_CLASSES_H

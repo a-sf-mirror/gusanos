@@ -1,5 +1,6 @@
 #include "glua.h"
 #include "player.h"
+#include "luaapi/context.h"
 
 //LuaContext lua;
 
@@ -38,9 +39,46 @@ void LuaCallbacks::bind(std::string callback, LuaReference ref)
 		playerUpdate.push_back(ref);
 	else if(callback == "playerInit")
 		playerInit.push_back(ref);
+	else if(callback == "localplayerEvent")
+		localplayerEventAny.push_back(ref);
 	CB(wormRemoved);
 	CB(playerNetworkInit);
 	CB(playerRemoved);
 	CB(gameNetworkInit);
+	CB(gameEnded);
+}
+
+void LuaObject::pushLuaReference()
+{
+	lua.push(getLuaReference());
+}
+
+void LuaObject::makeReference()
+{
+	lua_pushnil(lua);
+}
+
+LuaReference LuaObject::getLuaReference()
+{
+	if(luaReference)
+		return luaReference;
+	else
+	{
+		makeReference();
+		luaReference = lua.createReference();
+		return luaReference;
+	}
+}
+
+void LuaObject::deleteThis()
+{
+	finalize();
 	
+	if(luaReference)
+	{
+		lua.destroyReference(luaReference);
+		luaReference.reset();
+	}
+	else
+		delete this;
 }

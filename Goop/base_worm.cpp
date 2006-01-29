@@ -24,6 +24,7 @@
 #include "ninjarope.h"
 
 #include "glua.h"
+#include "luaapi/context.h"
 #include "lua/bindings-objects.h"
 
 #include <math.h>
@@ -74,7 +75,7 @@ BaseWorm::BaseWorm()
 	m_weapons.assign(game.options.maxWeapons, 0 );
 	m_weaponCount = 0;
 	
-	for ( int i = 0; i < m_weapons.size(); ++i )
+	for ( size_t i = 0; i < m_weapons.size(); ++i )
 	{
 		m_weapons[i] = new Weapon(game.weaponList[rndInt(game.weaponList.size())], this);
 		m_weaponCount++;
@@ -134,7 +135,7 @@ void BaseWorm::setWeapons( std::vector<WeaponType*> const& weaps )
 	
 	// Here is where the interception of the server can be done on the weapon selection
 	clearWeapons();
-	for ( int i = 0; i < weaps.size(); ++i )
+	for ( size_t i = 0; i < weaps.size(); ++i )
 	{
 		setWeapon( i, weaps[i] );
 	}
@@ -671,28 +672,21 @@ int BaseWorm::getWeaponIndexOffset( int offset )
 {
 	if ( m_weaponCount > 0 )
 	{
-		int index = ( static_cast<int>(currentWeapon) + offset ) % m_weaponCount;
-		// For some reason c/c++ % will return negative values of the modulo for negative numbers
-		// <Gliptic> Well, that's because modulo works like that
-		if ( index < 0 ) index += m_weaponCount; // so I make it positive again :P
+		if(offset < 0)
+			offset = -1;
+		else if(offset > 0)
+			offset = 1;
+		else
+			return currentWeapon;
 		
-		int returnValue = 0;
-		for( int i = 0, c = 0; i < m_weapons.size(); ++i )
-		{
-			if ( m_weapons[i] )
-			{
-				if ( c == index ) 
-				{
-					returnValue = i;
-					break;
-				}else
-					++c;
-			}
-		}
+		int i = currentWeapon;
+		do
+			i = (i + offset + m_weaponCount) % m_weaponCount;
+		while(!m_weapons[i] && i != currentWeapon);
 		
-		return returnValue;
+		return i;
 	}
-	else 
+	else
 	{
 		return currentWeapon;
 	}
@@ -864,6 +858,7 @@ void BaseWorm::draw(Viewport* viewport)
 						draw(where, renderX+static_cast<int>(distance.x)*m_dir, renderY+static_cast<int>(distance.y));
 			}
 				
+			/*
 			if(changing && m_weapons[currentWeapon])
 			{
 				std::string const& weaponName = m_weapons[currentWeapon]->m_type->name;
@@ -872,7 +867,7 @@ void BaseWorm::draw(Viewport* viewport)
 				int wy = y - dim.second / 2 - 10;
 							
 				game.infoFont->draw(where, weaponName, wx, wy);
-			}
+			}*/
 			
 			/*
 			if ( false && m_owner && !dynamic_cast<Player*>(m_owner) )
@@ -1041,6 +1036,8 @@ void BaseWorm::actionStart( Actions action )
 		case RESPAWN:
 			respawn();
 		break;
+		
+		default: break;
 	}
 }
 
@@ -1072,6 +1069,8 @@ void BaseWorm::actionStop( Actions action )
 		case CHANGEWEAPON:
 			changing = false;
 		break;
+		
+		default: break;
 	}
 }
 
@@ -1081,6 +1080,12 @@ void BaseWorm::pushLuaReference()
 	lua.pushReference(luaReference);
 }*/
 
+void BaseWorm::makeReference()
+{
+	lua.pushFullReference(*this, metaTable);
+}
+
+/*
 LuaReference BaseWorm::getLuaReference()
 {
 	if(luaReference)
@@ -1091,7 +1096,7 @@ LuaReference BaseWorm::getLuaReference()
 		luaReference = lua.createReference();
 		return luaReference;
 	}
-}
+}*/
 
 void BaseWorm::finalize()
 {

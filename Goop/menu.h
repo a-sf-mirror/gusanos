@@ -156,14 +156,22 @@ extern ResourceLocator<XMLFile, false, false> xmlLocator;
 class GSSFile
 {
 public:
-	operator bool()
+	GSSFile()
+	: loaded(false)
 	{
-		return f;
 	}
 	
-	fs::ifstream f;
+	operator bool()
+	{
+		//return f;
+		return loaded;
+	}
+	
+	//fs::ifstream f;
+	
+	bool loaded;
 };
 
-extern ResourceLocator<GSSFile, false, false> gssLocator;
+extern ResourceLocator<GSSFile> gssLocator;
 
 #endif //GUSANOS_MENU_H

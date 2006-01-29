@@ -61,8 +61,8 @@ void SimpleParticle32::draw(Viewport* viewport)
 	IVec rPos = viewport->convertCoords(IVec(pos));
 	BITMAP* where = viewport->dest;
 
-	if((unsigned int)rPos.x < where->w
-	&& (unsigned int)rPos.y < where->h )
+	if((unsigned int)rPos.x < (unsigned int)where->w
+	&& (unsigned int)rPos.y < (unsigned int)where->h )
 		Blitters::putpixel_solid_32(where, rPos.x, rPos.y, colour);
 }
 
@@ -71,8 +71,8 @@ void SimpleParticle16::draw(Viewport* viewport)
 	IVec rPos = viewport->convertCoords(IVec(pos));
 	BITMAP* where = viewport->dest;
 
-	if((unsigned int)rPos.x < where->w
-	&& (unsigned int)rPos.y < where->h )
+	if((unsigned int)rPos.x < (unsigned int)where->w
+	&& (unsigned int)rPos.y < (unsigned int)where->h )
 		Blitters::putpixel_solid_16(where, rPos.x, rPos.y, colour);
 }
 

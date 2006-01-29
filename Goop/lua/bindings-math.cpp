@@ -1,5 +1,6 @@
 #include "bindings-math.h"
 
+#include "luaapi/context.h"
 #include "luaapi/types.h"
 #include "luaapi/macros.h"
 

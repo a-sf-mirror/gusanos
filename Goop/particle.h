@@ -51,11 +51,12 @@ public:
 #endif
 	void customEvent( size_t index );
 	void sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, ZCom_BitStream* userdata, ZCom_ConnID connID);
-	virtual LuaReference getLuaReference();
+	//virtual LuaReference getLuaReference();
 	//virtual void pushLuaReference();
 	void damage(float amount, BasePlayer* damager );
 	void remove();
 	//virtual void deleteThis();
+	virtual void makeReference();
 	virtual void finalize();
 	
 	//int getDir() { return m_dir; }

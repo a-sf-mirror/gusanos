@@ -26,9 +26,10 @@ using namespace std;
 ResourceLocator<Level> levelLocator;
 
 #ifndef DEDSERV
-struct AddCuller
+struct AddCuller : Culler<AddCuller>
 {
-	AddCuller( Level& level, BITMAP* dest, BITMAP* source, int alpha,int dOffx, int dOffy, int sOffx, int sOffy ) :
+	AddCuller( Level& level, BITMAP* dest, BITMAP* source, int alpha,int dOffx, int dOffy, int sOffx, int sOffy, Rect const& rect )
+	:
 		m_level(level),
 		m_dest( dest ),
 		m_source( source),
@@ -36,9 +37,10 @@ struct AddCuller
 		m_destOffx(dOffx),
 		m_destOffy(dOffy),
 		m_sourceOffx(sOffx),
-		m_sourceOffy(sOffy)
+		m_sourceOffy(sOffy),
+		Culler<AddCuller>(rect)
 	{
-	};
+	}
 	
 	bool block(int x, int y)
 	{
@@ -124,7 +126,7 @@ Level::Level()
 	m_materialList[7].particle_pass = false;
 	m_materialList[7].draw_exps = false;
 	
-	for ( int i = 0; i < m_materialList.size() ; ++i )
+	for ( size_t i = 0; i < m_materialList.size() ; ++i )
 	{
 		m_materialList[i].index = i;
 		if ( m_materialList[i].flows && !m_materialList[i].is_stagnated_water && i < m_materialList.size()-1 )
@@ -269,7 +271,8 @@ void Level::draw(BITMAP* where, int x, int y)
 		if (!paralax)
 		{
 			blit(image,where,x,y,0,0,where->w,where->h);
-		}else
+		}
+		else
 		{
 			int px = x * (paralax->w - where->w) / (float)( material->w - where->w );
 			int py = y * (paralax->h - where->h) / (float)( material->h - where->h );
@@ -319,8 +322,7 @@ void Level::culledDrawSprite( Sprite* sprite, Viewport* viewport, const IVec& po
 	Rect r(0, 0, width() - 1, height() - 1);
 	r &= Rect(renderBitmap) + loff;
 	
-	Culler<AddCuller> addCuller(
-		AddCuller(
+	AddCuller addCuller(
 			*this,
 			viewport->dest,
 			renderBitmap,
@@ -328,9 +330,8 @@ void Level::culledDrawSprite( Sprite* sprite, Viewport* viewport, const IVec& po
 			off.x,
 			off.y,
 			loff.x,
-			loff.y
-			),
-		r );
+			loff.y,
+			r );
 
 	addCuller.cullOmni(pos.x, pos.y);
 }
@@ -344,8 +345,7 @@ void Level::culledDrawLight( Sprite* sprite, Viewport* viewport, const IVec& pos
 	Rect r(0, 0, width() - 1, height() - 1);
 	r &= Rect(renderBitmap) + loff;
 	
-	Culler<AddCuller> addCuller(
-		AddCuller(
+	AddCuller addCuller(
 			*this,
 			viewport->fadeBuffer,
 			renderBitmap,
@@ -353,9 +353,8 @@ void Level::culledDrawLight( Sprite* sprite, Viewport* viewport, const IVec& pos
 			off.x,
 			off.y,
 			loff.x,
-			loff.y
-			),
-		r );
+			loff.y,
+			r );
 
 	addCuller.cullOmni(pos.x, pos.y);
 }

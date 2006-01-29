@@ -19,6 +19,7 @@
 #include "detect_event.h"
 #include "timer_event.h"
 #include "network.h"
+#include "luaapi/context.h"
 
 #include "particle.h"
 #include "simple_particle.h"
@@ -175,6 +176,74 @@ PartType::~PartType()
 	}
 }
 
+void PartType::touch()
+{
+	if(!distortion && !distortionGen.empty())
+	{
+		LuaReference f = distortionGen.get();
+		if(f)
+		{
+			DistortionMap* d = new DistortionMap;
+			int width = distortionSize.x;
+			int height = distortionSize.y;
+			d->map.resize(width * height);
+			d->width = width;
+			
+			int hwidth = width / 2;
+			int hheight = height / 2;
+			
+			for(int y = 0; y < height; ++y)
+			for(int x = 0; x < width; ++x)
+			{
+				int n = (lua.call(f, 2), x - hwidth, y - hheight, width, height)();
+				if(n == 2)
+				{
+					d->map[y * width + x] = Vec(lua_tonumber(lua, -2), lua_tonumber(lua, -1));
+					lua.pop(2);
+				}
+				else
+					assert(false);
+			}
+			distortion = new Distortion(d);
+		}
+		// TODO: free distortionGen function
+	}
+	
+	if(!lightHax && !lightGen.empty())
+	{
+		LuaReference f = lightGen.get();
+		if(f)
+		{
+			int width = lightSize.x;
+			int height = lightSize.y;
+			
+			BITMAP* l = create_bitmap_ex(8, width, height );
+			
+			int hwidth = width / 2;
+			int hheight = height / 2;
+
+			for ( int y = 0; y < height; ++y )
+			for ( int x = 0; x < width; ++x )
+			{
+				int n = (lua.call(f, 1), x - hwidth, y - hheight, width, height)();
+				if(n == 1)
+				{
+					int v = lua_tointeger(lua, -1);
+					if(v < 0) v = 0;
+					else if(v > 255) v = 255;
+					putpixel_solid(l, x, y, v);
+					lua.pop(1);
+				}
+				else
+					assert(false);
+			}
+			
+			lightHax = new Sprite(l, hwidth, hheight);
+		}
+		// TODO: free lightGen function
+	}
+}
+
 bool PartType::isSimpleParticleType()
 {
 	if(repeat != 1 || alpha != 255
@@ -287,12 +356,12 @@ bool PartType::load(fs::path const& filename)
 			sprite = spriteList.load(v->toString());
 	}
 	{
-		OmfgScript::TokenBase* v = parser.getProperty("light_radius");
+		OmfgScript::TokenBase* v = parser.getDeprProperty("light_radius");
 		if(!v->isDefault())
 			lightHax = genLight(v->toInt(0));
 	}
 	
-	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
+	if(OmfgScript::Function const* f = parser.getDeprFunction("distortion"))
 	{
 		if ( f->name == "lens" )
 			distortion = new Distortion( lensMap( (*f)[0]->toInt() ));
@@ -306,6 +375,38 @@ bool PartType::load(fs::path const& filename)
 			distortion = new Distortion( spinMap( (*f)[0]->toInt() ) );
 		else if ( f->name == "bitmap" )
 			distortion = new Distortion( bitmapMap( (*f)[0]->toString() ) );
+	}
+	
+	distortionGen = parser.getString("distort_gen", "");
+
+	{
+		OmfgScript::TokenBase* v = parser.getProperty("distort_size");
+		if(v->isList())
+		{
+			std::list<OmfgScript::TokenBase*> const& c = v->toList();
+			if(c.size() >= 2)
+			{
+				std::list<OmfgScript::TokenBase*>::const_iterator i = c.begin();
+				distortionSize.x = (*i++)->toInt(0);
+				distortionSize.y = (*i++)->toInt(0);
+			}
+		}
+	}
+	
+	lightGen = parser.getString("light_gen", "");
+
+	{
+		OmfgScript::TokenBase* v = parser.getProperty("light_size");
+		if(v->isList())
+		{
+			std::list<OmfgScript::TokenBase*> const& c = v->toList();
+			if(c.size() >= 2)
+			{
+				std::list<OmfgScript::TokenBase*>::const_iterator i = c.begin();
+				lightSize.x = (*i++)->toInt(0);
+				lightSize.y = (*i++)->toInt(0);
+			}
+		}
 	}
 	
 	distortMagnitude = parser.getDouble("distort_magnitude", 1);
@@ -338,7 +439,8 @@ bool PartType::load(fs::path const& filename)
 	health = parser.getDouble("health", 100.0);
 	radius = parser.getDouble("radius", 0.0);
 	line2Origin = parser.getBool("line_to_origin", false);
-	networkInitName = parser.getString("network_init", "");
+	//networkInitName = parser.getString("network_init", "");
+	networkInit = parser.getString("network_init", "");
 	
 	std::string const& animtypestr = parser.getString("anim_type", "loop_right");
 	if(animtypestr == "ping_pong") animType = ANIM_PINGPONG;
@@ -418,7 +520,7 @@ bool PartType::load(fs::path const& filename)
 		}
 	}
 	
-	needsNode = syncPos || syncSpd || syncAngle || !networkInitName.empty();
+	needsNode = syncPos || syncSpd || syncAngle || !networkInit.empty();
 	
 	if(isSimpleParticleType())
 	{
@@ -457,6 +559,7 @@ bool PartType::load(fs::path const& filename)
 	return true;
 }
 
+/*
 LuaReference PartType::getNetworkInit()
 {
 	if(!networkInit && !networkInitName.empty())
@@ -468,6 +571,7 @@ LuaReference PartType::getNetworkInit()
 	
 	return networkInit;
 }
+*/
 
 #ifndef DEDSERV
 BaseAnimator* PartType::allocateAnimator()

@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "luaapi/context.h"
+//#include "luaapi/context.h"
 #include "luaapi/types.h"
 
 #define EACH_CALLBACK(i_, type_) for(std::vector<LuaReference>::iterator i_ = luaCallbacks.type_.begin(); \
@@ -24,15 +24,17 @@ struct LuaCallbacks
 	std::vector<LuaReference> playerRemoved;
 	std::vector<LuaReference> playerNetworkInit;
 	std::vector<LuaReference> gameNetworkInit;
+	std::vector<LuaReference> gameEnded;
 	
 	std::vector<LuaReference> localplayerEvent[7];
+	std::vector<LuaReference> localplayerEventAny;
 	std::vector<LuaReference> localplayerInit;
 };
 
 //extern LuaContext lua;
 
 extern LuaCallbacks luaCallbacks;
-
+/*
 // This is GCC specific, because I can't find a way to do it in standard C++ :/
 #define LUA_NEW(t_, param_) \
 ({ \
@@ -42,11 +44,32 @@ extern LuaCallbacks luaCallbacks;
 	p; \
 })
 
-/*
+
 #define LUA_DELETE(t_, p_) { \
 	t_* p = (p_); \
 	p->~t_(); \
 	lua.destroyReference(p->luaReference); \
 }*/
+
+struct LuaObject 
+{
+	void pushLuaReference();
+	
+	LuaReference getLuaReference();
+	
+	virtual void makeReference();
+	
+	virtual void finalize()
+	{
+	}
+	
+	void deleteThis();
+	
+	virtual ~LuaObject()
+	{
+	}
+	
+	LuaReference luaReference;
+};
 
 #endif //GUSANOS_GLUA_H

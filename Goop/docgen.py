@@ -25,11 +25,12 @@ def makeFuncLink(to, of = None):
 	return '[[' + to.owner.name.lower() + '#' + funcName + '|' + of + ']]'
 	
 class Func:
-	def __init__(self, name, owner):
+	def __init__(self, name, owner, version):
 		self.name = name
 		self.lines = []
 		self.owner = owner
 		self.literalMode = False
+		self.version = version
 		
 	def addLine(self, text):
 		t = text[1:-1]
@@ -47,7 +48,10 @@ class Func:
 		
 	def output(self, f):
 		funcName = self.abbrev()
-		f.write('===== ' + funcName + ' =====\n\n  ' + self.name + '\n\n')
+		f.write('===== ' + funcName + ' =====\n')
+		if self.version != None:
+			f.write('(available from version ' + self.version + ')\n')
+		f.write('\n  ' + self.name + '\n\n')
 		for l in self.lines:
 			f.write(self.owner.linkify(l) + '\n')
 		f.write('\n')
@@ -114,12 +118,14 @@ def getClass(name):
 	
 def processFile(f):
 
-	beginre = re.compile('^\/\*\!\s*(.+)?\s*')
-	beginSre = re.compile('^//\!\s*(.+)?\s*')
+	beginre = re.compile('^\/\*\!\s*(.+)\s*')
+	beginSre = re.compile('^//\!\s*(.+)\s*')
 	inheritse = re.compile('([^\s]*)\s*inherits\s*([^\s]*)')
+	versionre = re.compile('version\s*([^\s]*)')
 	endre = re.compile('^\*\/')
 	
 	curFunc = None
+	version = None
 	
 	for line in f.readlines():
 		if curFunc == None:
@@ -130,21 +136,28 @@ def processFile(f):
 				if len(parts) > 1:
 					#Class
 					c = getClass(parts[0])
-					curFunc = Func(parts[1], c)
+					curFunc = Func(parts[1], c, version)
 					c.addFunc(curFunc)
 					funcs.append(curFunc)
 				else:
 					c = getClass("global")
-					curFunc = Func(parts[0], c)
+					curFunc = Func(parts[0], c, version)
 					c.addFunc(curFunc)
 					funcs.append(curFunc)
-			else:
-				m = beginSre.match(line)
+				continue
+			
+			m = beginSre.match(line)
+			if m:
+				l = m.group(1)
+				m = inheritse.match(l)
 				if m:
-					l = m.group(1)
-					m = inheritse.match(l)
-					if m:
-						getClass(m.group(1)).inheritsFrom(m.group(2))
+					getClass(m.group(1)).inheritsFrom(m.group(2))
+				m = versionre.match(l)
+				if m:
+					version = m.group(1)
+					if version == "any":
+						version = None
+						
 		else:
 			if endre.match(line):
 				curFunc = None

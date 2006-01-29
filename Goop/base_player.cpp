@@ -43,7 +43,7 @@ BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options, BaseWorm* worm)
 , m_isAuthority(false)
 , colour(options->colour)
 , team(options->team)
-, luaData(0), local(false)
+, luaData(0), local(false), deleted(false)
 {
 	localChangeName(m_options->name);
 	m_options->clearChangeFlags();
@@ -53,6 +53,7 @@ BasePlayer::BasePlayer(shared_ptr<PlayerOptions> options, BaseWorm* worm)
 
 LuaReference BasePlayer::getLuaReference()
 {
+	assert(!deleted);
 	if(luaReference)
 		return luaReference;
 	else
@@ -75,10 +76,18 @@ void BasePlayer::deleteThis()
 		(lua.call(*i), getLuaReference())();
 	}
 	
+	deleted = true; // We set this after the callback loop otherwise getLuaReference() will think the player is already deleted
+	
+	for (Grid::iterator objIter = game.objects.beginAll(); objIter; ++objIter)
+	{
+		objIter->removeRefsToPlayer(this);
+	}
+
+	removeWorm();
+
 	delete m_node; m_node = 0;
 	delete m_interceptor; m_interceptor = 0;
-	m_worm = 0;
-	
+
 	if(luaReference)
 	{
 		lua.destroyReference(luaReference);
@@ -106,6 +115,7 @@ void BasePlayer::removeWorm()
 		m_worm->deleteMe = true;
 		if ( m_worm->getNinjaRopeObj() ) 
 			m_worm->getNinjaRopeObj()->deleteMe = true;
+		m_worm = 0;
 	}
 }
 

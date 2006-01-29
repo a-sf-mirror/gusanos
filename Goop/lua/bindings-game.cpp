@@ -1,10 +1,12 @@
 #include "bindings-game.h"
+#include "bindings.h"
 
 #include "luaapi/types.h"
 #include "luaapi/macros.h"
 #include "luaapi/classes.h"
 
 #include "../glua.h"
+#include "../gconsole.h"
 #include "../game.h"
 #include "../base_player.h"
 #include "../player_options.h"
@@ -12,6 +14,7 @@
 #include "../base_worm.h"
 #include "../level.h"
 #include "util/log.h"
+#include "util/stringbuild.h"
 
 #include <cmath>
 #include <iostream>
@@ -28,6 +31,55 @@ namespace LuaBindings
 	
 LuaReference playerIterator(0);
 LuaReference BasePlayerMetaTable;
+
+LUA_CALLBACK(luaControl(LuaReference ref, size_t playerIdx, bool state, std::list<std::string> const& args))
+	if(playerIdx >= game.localPlayers.size())
+		LUA_ABORT();
+	game.localPlayers[playerIdx]->pushLuaReference();
+	lua.push(state);
+	params += 2;
+END_LUA_CALLBACK()
+
+
+//! version 0.9c
+
+/*! console_register_control(name, function)
+
+	Registers a number of console commands that work like player controls.
+	
+	//function// is a function that is called when the control is activated or
+	deactivated. It is of the form:
+	<code>
+	function(player, state)
+	end
+	</code>
+	
+	Where //player// is the Player object the control applies to, and //state// is either true
+	or false depending on if the control is activated or deactivated.
+	
+	The control can be bound to keys like built-in controls such as FIRE and JUMP
+	by binding to the command +P//x//_//name// where //x// is the local player number
+	and //name// is the name passed to this function.
+*/
+
+int l_console_register_control(lua_State* L)
+{
+	char const* name = lua_tostring(L, 1);
+	if(!name) return 0;
+	lua_pushvalue(L, 2);
+	LuaReference ref = lua.createReference();
+	
+	for(size_t i = 0; i < Game::MAX_LOCAL_PLAYERS; ++i)
+	{
+		console.registerCommands()
+			((S_("+P") << i << '_' << name), boost::bind(LuaBindings::luaControl, ref, i, true, _1), true)
+			((S_("-P") << i << '_' << name), boost::bind(LuaBindings::luaControl, ref, i, false, _1), true);
+	}
+	
+	return 0;
+}
+
+//! version any
 
 /*! game_players()
 
@@ -60,8 +112,8 @@ int l_game_players(lua_State* L)
 */
 int l_game_localPlayer(lua_State* L)
 {
-	int i = (int)lua_tointeger(L, 1);
-	if(i >= 0 && i < game.localPlayers.size())
+	size_t i = (size_t)lua_tointeger(L, 1);
+	if(i < game.localPlayers.size())
 	{
 		game.localPlayers[i]->pushLuaReference();
 		return 1;
@@ -72,8 +124,8 @@ int l_game_localPlayer(lua_State* L)
 
 int l_game_localPlayerName(lua_State* L)
 {
-	int i = (int)lua_tointeger(L, 1);
-	if(i >= 0 && i < game.playerOptions.size())
+	size_t i = (int)lua_tointeger(L, 1);
+	if(i < game.playerOptions.size())
 	{
 		lua.push(game.playerOptions[i]->name);
 		return 1;
@@ -133,6 +185,8 @@ METHODC(BasePlayer, player_worm,
 	return 0;
 )
 
+//! version 0.9c
+
 /*! Player:is_local()
 
 	Returns true if this player is a local player, otherwise false.
@@ -141,6 +195,8 @@ METHODC(BasePlayer, player_isLocal,
 	context.push(p->local);
 	return 1;
 )
+
+//! version any
 
 /*! Player:data()
 
@@ -206,8 +262,8 @@ METHODC(BasePlayer, player_selectWeapons,
 		}
 		else
 		{
-			//TODO: Check if this is really a weapon type!
-			WeaponType* weapon = *static_cast<WeaponType **>(lua_touserdata(context, -1));
+			//WeaponType* weapon = *static_cast<WeaponType **>(lua_touserdata(context, -1));
+			WeaponType* weapon = ASSERT_OBJECT_P(WeaponType, -1, "in weapon array");
 			weapons.push_back(weapon);
 			context.pop(); // Pop value
 		}
@@ -308,12 +364,12 @@ void initGame()
 	context.functions()
 		("game_local_player", l_game_localPlayer)
 		("game_local_player_name", l_game_localPlayerName)
+		("console_register_control", l_console_register_control)
+		("game_get_closest_worm", l_game_getClosestWorm)
+		("map_is_blocked", l_map_isBlocked)
+		("map_is_particle_pass", l_map_isParticlePass)
 	;
-	context.function("game_get_closest_worm", l_game_getClosestWorm);
-
-	context.function("map_is_blocked", l_map_isBlocked);
-	context.function("map_is_particle_pass", l_map_isParticlePass);
-
+	
 	// Player method and metatable
 	
 	CLASSM(BasePlayer,
@@ -329,6 +385,24 @@ void initGame()
 		("worm", l_player_worm)
 		("select_weapons", l_player_selectWeapons)
 		("is_local", l_player_isLocal)
+	)
+	
+	ENUM(EndReason,
+		("ServerQuit", Game::ServerQuit)
+		("Kicked", Game::Kicked)
+		//("LoadingLevel", Game::LoadingLevel)
+		("IncompatibleProtocol", Game::IncompatibleProtocol)
+		("IncompatibleData", Game::IncompatibleData)
+	)
+	
+	ENUM(Player,
+		("Left", Player::LEFT)
+		("Right", Player::RIGHT)
+		("Up", Player::UP)
+		("Down", Player::DOWN)
+		("Fire", Player::FIRE)
+		("Jump", Player::JUMP)
+		("Change", Player::CHANGE)
 	)
 	
 /*

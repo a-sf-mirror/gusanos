@@ -8,7 +8,7 @@
 namespace Blitters
 {
 	
-void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
+void drawSprite_blendalpha_32_to_32_mmx_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
@@ -118,7 +118,7 @@ void drawSprite_blendalpha_32_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, 
 	emms();
 }
 
-void drawSprite_blend_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
+void drawSprite_blend_32_mmx_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
@@ -519,7 +519,7 @@ void drawSprite_blendtint_8_to_32_sse_amd(BITMAP* where, BITMAP* from, int x, in
 	por_rr(source1, scratch4)     /* Combine RGB */
 	
 
-void drawSprite_blend_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
+void drawSprite_blend_16_mmx_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel16 pixel_t_1;
 	typedef Pixel16 pixel_t_2; // Doesn't really matter what type this is

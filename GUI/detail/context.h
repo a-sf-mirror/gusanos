@@ -57,7 +57,9 @@ public:
 	};*/
 
 	//typedef std::map<std::string, std::vector<std::string> > GSSpropertyMap;
-	typedef std::list<std::pair<std::string, std::vector<std::string> > > GSSpropertyMap;
+	typedef std::list<std::pair<std::string, std::list<std::string> > > GSSpropertyMap;
+	
+/*
 	static GSSpropertyMap GSSpropertyMapStandard;
 
 	struct GSSstate
@@ -241,6 +243,67 @@ public:
 		GSSclass m_anyLabel;
 		std::map<std::string, GSSclass> m_label;
 	};
+*/
+	struct GSSselector
+	{
+		struct Condition
+		{
+			enum Type
+			{
+				Tag = 0,
+				Class,
+				ID,
+				State
+			};
+			
+			Condition(Type type, std::string v)
+			: type(type), v(v)
+			{
+			}
+			
+			Type type;
+			std::string v;
+		};
+		
+		void addTag(std::string const& name)
+		{
+			cond.push_back(Condition(Condition::Tag, name)); 
+		}
+		
+		void addClass(std::string const& name)
+		{
+			cond.push_back(Condition(Condition::Class, name)); 
+		}
+		
+		void addID(std::string const& name)
+		{
+			cond.push_back(Condition(Condition::ID, name)); 
+		}
+		
+		void addState(std::string const& name)
+		{
+			cond.push_back(Condition(Condition::State, name)); 
+		}
+		
+		int matchesWindow(Wnd*) const;
+		
+		std::list<std::string>& addProperty(std::string const& name)
+		{
+			props.push_back(std::pair<std::string, std::list<std::string> >(name, std::list<std::string>()));
+			return props.back().second;
+		}
+		
+		std::list<Condition> cond;
+		GSSpropertyMap props;
+	};
+	
+	GSSselector& addSelector()
+	{
+		m_gss.push_back(GSSselector());
+		return m_gss.back();
+	}
+	
+	typedef std::list<GSSselector> GSSselectors;
 	
 	//typedef std::map<std::string, GSSpropertyMap> GSSselectorMap;
 	
@@ -319,13 +382,13 @@ public:
 	virtual void loadGSSFile(std::string const&, bool passive) = 0;
 	virtual Wnd* loadXMLFile(std::string const&, Wnd* loadTo) = 0;
 	
-	// This is defined in xml.cpp
-	void loadGSS(std::istream& s);
+	// This is defined in gss.cpp
+	void loadGSS(std::istream& s, std::string const& fileName);
 	
 	// This is defined in xml.cpp
 	Wnd* buildFromXML(std::istream& s, Wnd* dest);
 	
-	void testParseXML();
+	//void testParseXML();
 	
 	template<class WndT>
 	WndT* setRoot(WndT* wnd)
@@ -383,8 +446,10 @@ protected:
 	Wnd* m_mouseFocusWnd;
 	Renderer* m_renderer;
 
-	GSSselectorMap m_gss;
+	//GSSselectorMap m_gss_;
 	std::map<std::string, Wnd*> m_namedWindows;
+	
+	GSSselectors m_gss;
 
 	long m_cursorX;
 	long m_cursorY;

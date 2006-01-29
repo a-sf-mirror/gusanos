@@ -123,7 +123,7 @@ void Weapon::think( bool isFocused, size_t index )
 		if ( ammo <= 0 && !reloading && !m_outOfAmmo)
 		{
 			m_outOfAmmo = true;
-			std::cout << "out of ammo" << endl;
+			//std::cout << "out of ammo" << endl;
 			if ( !network.isClient() || !m_type->syncReload )
 			{
 				outOfAmmo();
@@ -137,13 +137,14 @@ void Weapon::think( bool isFocused, size_t index )
 					delete data;
 					sentOutOfAmmo = true;
 				}
-			}else
+			}
+			else
 			{
 				ZCom_BitStream* data = new ZCom_BitStream;
 				Encoding::encode(*data, OutOfAmmoCheck, EventsCount);
 				m_owner->sendWeaponMessage( index, data, ZCOM_REPRULE_OWNER_2_AUTH );
 				delete data;
-				std::cout << "sent check plz message" << endl;
+				//std::cout << "sent check plz message" << endl;
 			}
 		}
 		if ( reloading )
@@ -167,18 +168,19 @@ void Weapon::think( bool isFocused, size_t index )
 	
 	if ( outOfAmmoCheck )
 	{
-		std::cout << "checking out of ammo" << endl;
+		//std::cout << "checking out of ammo" << endl;
 		outOfAmmoCheck = false;
 		if ( ammo > 0 )
 		{
-			std::cout << "Sending correction" << endl;
+			//std::cout << "Sending correction" << endl;
 			ZCom_BitStream* data = new ZCom_BitStream;
 			Encoding::encode(*data, AmmoCorrection, EventsCount);
 			Encoding::encode(*data, ammo, m_type->ammo+1);
 			m_owner->sendWeaponMessage(index, data, ZCOM_REPRULE_AUTH_2_OWNER );
-		}else
+		}
+		else
 		{
-			std::cout << "Everything was in order" << endl;
+			//std::cout << "Everything was in order" << endl;
 			sentOutOfAmmo = false;
 		}
 	}
@@ -240,27 +242,33 @@ void Weapon::recieveMessage( ZCom_BitStream* data )
 			outOfAmmo();
 		}
 		break;
+		
 		case RELOADED:
 		{
 			reload();
 		}
 		break;
+		
 		case SHOOT:
 		{
 			m_type->primaryShoot->run(m_owner, NULL, NULL, this );
 			ammo--;
 		}
 		break;
+		
 		case OutOfAmmoCheck:
 		{
 			outOfAmmoCheck = true;
 		}
 		break;
+		
 		case AmmoCorrection:
 		{
 			ammo = Encoding::decode(*data, m_type->ammo+1);
 			m_outOfAmmo = false;
 		}
+		
+		case EventsCount: break;
 	}
 }
 

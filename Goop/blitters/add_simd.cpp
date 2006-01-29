@@ -99,7 +99,7 @@ void hline_add_32_mmx(BITMAP* where, int x1, int y1, int x2, Pixel colour, int f
 	emms();
 }
 
-void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
+void drawSprite_add_32_mmx_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel32 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is
@@ -233,7 +233,7 @@ void drawSprite_add_32_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, 
 	emms();
 }
 
-void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
+void drawSprite_add_16_mmx_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, int cutt, int cutr, int cutb, int fact)
 {
 	typedef Pixel16 pixel_t_1;
 	typedef Pixel16 pixel_t_2; // Doesn't really matter what type this is
@@ -320,7 +320,7 @@ void drawSprite_add_16_sse(BITMAP* where, BITMAP* from, int x, int y, int cutl, 
 	emms();
 }
 
-void drawSpriteLine_add_8_sse(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact)
+void drawSpriteLine_add_8_mmx_sse(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact)
 {
 	typedef Pixel8 pixel_t_1;
 	typedef Pixel32 pixel_t_2; // Doesn't really matter what type this is

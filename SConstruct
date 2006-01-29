@@ -20,6 +20,7 @@ sconscript = ['GUI',
             #'IoVM',
 			#'SmallLang',
 			#'netlib',
+			#'filetransfer',
 			]
 			
 def is_List(e):

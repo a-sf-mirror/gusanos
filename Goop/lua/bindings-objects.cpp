@@ -115,8 +115,9 @@ int l_worm_getPlayer(lua_State* L)
 }
 */
 
-/*! Worm:get_health()
+/*! Worm:health()
 
+	(Known as get_health before 0.9c)
 	Returns the health of this worm.
 */
 METHODC(BaseWorm, worm_getHealth,
@@ -124,7 +125,22 @@ METHODC(BaseWorm, worm_getHealth,
 	return 1;
 )
 
-/*! Worm:set_weapon(slot, weapon)
+#ifndef NO_DEPRECATED
+int l_worm_getHealth_depr(lua_State* L)
+{
+	LuaContext context(L);
+	LUA_WLOG_ONCE("get_health is deprecated, use the health method instead");
+	return l_worm_getHealth(L);
+}
+#endif
+
+METHODC(BaseWorm, worm_isChanging,
+	context.push(p->isChanging());
+	return 1;
+)
+
+
+/*@ Worm:set_weapon(slot, weapon)
 
 	Sets the weapon of a slot in [1, max] to the WeaponType //weapon//.
 */
@@ -208,8 +224,9 @@ METHOD(BaseWorm, worm_destroy,
 	return 0;
 )
 
-/*! Object:getAngle()
+/*! Object:angle()
 
+	(Known as get_angle before 0.9c)
 	Returns the current angle of the object.
 */
 
@@ -217,6 +234,15 @@ METHODC(BaseObject, baseObject_getAngle,
 	lua_pushnumber(context, p->getAngle().toDeg());
 	return 1;
 )
+
+#ifndef NO_DEPRECATED
+int l_baseObject_getAngle_depr(lua_State* L)
+{
+	LuaContext context(L);
+	LUA_WLOG_ONCE("get_angle is deprecated, use the angle method instead");
+	return l_baseObject_getAngle(L);
+}
+#endif
 
 /*! Object:remove()
 
@@ -269,6 +295,8 @@ METHODC(BaseObject, baseObject_spd,
 	return 2;
 )
 
+//! version 0.9c
+
 /*! Object:set_spd(x, y)
 
 	Changes the speed of this object to (x, y)
@@ -282,6 +310,8 @@ METHODC(BaseObject, baseObject_setSpd,
 	p->spd.y = lua_tonumber(context, 3); 
 	return 0;
 )
+
+//! version any
 
 /*! Object:push(x, y)
 	
@@ -318,8 +348,10 @@ METHODC(BaseObject, baseObject_data,
 	return 1;
 )
 
-/*! Object:get_player()
+/*! Object:player()
 
+	(Known as get_player before 0.9c)
+	
 	Returns a Player object of the player that owns this object.
 */
 METHODC(BaseObject, baseObject_getPlayer,
@@ -328,6 +360,17 @@ METHODC(BaseObject, baseObject_getPlayer,
 	lua.pushReference(p->getOwner()->getLuaReference());
 	return 1;
 )
+
+#ifndef NO_DEPRECATED
+int l_baseObject_getPlayer_depr(lua_State* L)
+{
+	LuaContext context(L);
+	LUA_WLOG_ONCE("get_player is deprecated, use the player method instead");
+	return l_baseObject_getPlayer(L);
+}
+#endif
+
+//! version 0.9c
 
 /*! Object:damage(amount[, player])
 
@@ -342,7 +385,11 @@ METHODC(BaseObject, baseObject_damage,
 	return 1;
 )
 
-/*! Object:get_closest_worm()
+//! version any
+
+/*! Object:closest_worm()
+
+	(Known as get_closest_worm before 0.9c)
 
 	Returns the closest worm that fulfills these requirements:
 	
@@ -387,6 +434,15 @@ METHODC(BaseObject, baseObject_getClosestWorm,
 	return 1;
 )
 
+#ifndef NO_DEPRECATED
+int l_baseObject_getClosestWorm_depr(lua_State* L)
+{
+	LuaContext context(L);
+	LUA_WLOG_ONCE("get_closest_worm is deprecated, use the closest_worm method instead");
+	return l_baseObject_getClosestWorm(L);
+}
+#endif
+
 /*! Object:shoot(type, amount, speed, speedVariation, motionInheritance, amountVariation, distribution, angleOffset, distanceOffset)
 
 	Shoots an object of ParticleType 'type'. All parameters except 'type' are optional.
@@ -416,6 +472,25 @@ METHODC(Particle, particle_setAngle,
 	return 0;
 )
 
+//! version 0.9c
+
+/*! Particle:set_replication(type, state)
+
+	If the particle is network-aware, this function turns on or off replication
+	of different aspects of the particle's state.
+	
+	Note that this function can only affects things for
+	which replication is activated in the omfgScript of the particle type.
+	
+	Since the server has authority over particle replication, this function will
+	have no affect on clients.
+	
+	//type// can be one of the following:
+	Particle.Position : replication of position.
+	
+	//state// is either true or false, where true turns on replication and false turns it off.
+*/
+
 METHODC(Particle, particle_set_replication,
 	
 	int mask = 0;
@@ -435,6 +510,8 @@ METHODC(Particle, particle_set_replication,
 
 	return 0;
 )
+
+//! version any
 
 METHOD(Particle, particle_destroy,
 	delete p;
@@ -486,11 +563,16 @@ void addBaseObjectFunctions(LuaContext& context)
 		("pos", l_baseObject_pos)
 		("spd", l_baseObject_spd)
 		("push", l_baseObject_push)
-		("get_player", l_baseObject_getPlayer)
-		("get_closest_worm", l_baseObject_getClosestWorm)
+#ifndef NO_DEPRECATED
+		("get_player", l_baseObject_getPlayer_depr)
+		("get_closest_worm", l_baseObject_getClosestWorm_depr)
+		("get_angle", l_baseObject_getAngle_depr)
+#endif
+		("player", l_baseObject_getPlayer)
+		("closest_worm", l_baseObject_getClosestWorm)
 		("data", l_baseObject_data)
 		("shoot", l_baseObject_shoot)
-		("get_angle", l_baseObject_getAngle)
+		("angle", l_baseObject_getAngle)
 		("set_pos", l_baseObject_setPos)
 		("set_spd", l_baseObject_setSpd)
 		("damage", l_baseObject_damage)
@@ -548,8 +630,12 @@ void initObjects()
 	addBaseObjectFunctions(context); // BaseWorm inherits from BaseObject
 
 	context.tableFunctions()
-		("get_health", l_worm_getHealth)
+#ifndef NO_DEPRECATED
+		("get_health", l_worm_getHealth_depr)
+#endif
+		("health", l_worm_getHealth)
 		("current_weapon", l_worm_current_weapon)
+		("is_changing", l_worm_isChanging)
 	;
 	
 	lua_rawset(context, -3);

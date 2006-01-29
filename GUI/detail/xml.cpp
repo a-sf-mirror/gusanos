@@ -5,6 +5,7 @@
 #include "button.h"
 #include "edit.h"
 #include "group.h"
+#include "check.h"
 #include <sstream>
 #include <iostream>
 #include <utility>
@@ -16,7 +17,7 @@ using namespace std;
 namespace OmfgGUI
 {
 	
-
+/*
 struct GSSHandler
 {
 	GSSHandler(Context::GSSselectorMap& style_)
@@ -33,7 +34,6 @@ struct GSSHandler
 	void selector(std::string const& tagLabel, std::string const& className, std::string const& id, std::string const& state
 	, std::string const& property, std::vector<std::string> const& value)
 	{
-		//cerr << "GSS " << tagLabel << "." << className << "#" << id << ":" << state << "  " << property << endl;
 		Context::GSSpropertyMap& dest = style.insert(tagLabel).insert(className).insert(id).insert(state);
 
 		dest.push_back(std::make_pair(property, value));
@@ -46,7 +46,7 @@ void Context::loadGSS(std::istream& s)
 {
 	GSSHandler handler(m_gss);
 	gssSheet(s, handler);
-}
+}*/
 
 struct XMLHandler
 {
@@ -72,8 +72,8 @@ struct XMLHandler
 		Wnd* wnd;
 	};
 	
-	XMLHandler(Context& context_, Wnd* dest_, Context::GSSselectorMap& style_)
-	: tag(""), context(context_), style(style_), firstWindow(0)
+	XMLHandler(Context& context_, Wnd* dest_)
+	: tag(""), context(context_), firstWindow(0)
 	{
 		windows.push(WndInfo(dest_));
 	}
@@ -107,34 +107,39 @@ struct XMLHandler
 
 	void endAttributes()
 	{
+		/*
 		std::string className = getAttrib("class", "");
 		std::string label = getAttrib("label", "");
 		std::string id = getAttrib("id", "");
 		bool focusable = getAttrib("selectable", "1") != "0";
-				
+		*/
 		Wnd* newWindow = 0;
 					
 		if(tag.label == "window")
 		{
-			newWindow = lua_new(Wnd, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
+			newWindow = lua_new(Wnd, (windows.top().wnd, tag.attributes), lua);
 		}
 		else if(tag.label == "list")
 		{
-			newWindow = lua_new(List, (windows.top().wnd, tag.label, className, id, tag.attributes), lua);
+			newWindow = lua_new(List, (windows.top().wnd, /*tag.label, className, id,*/ tag.attributes/*, label*/), lua);
 		}
 		else if(tag.label == "button")
 		{
-			newWindow = lua_new(Button, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
+			newWindow = lua_new(Button, (windows.top().wnd, /*tag.label, className, id,*/ tag.attributes/*, label*/), lua);
 		}
 		else if(tag.label == "group")
 		{
-			newWindow = lua_new(Group, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
+			newWindow = lua_new(Group, (windows.top().wnd, /*tag.label, className, id,*/ tag.attributes/*, label*/), lua);
 		}
 		else if(tag.label == "edit")
 		{
-			newWindow = lua_new(Edit, (windows.top().wnd, tag.label, className, id, tag.attributes, label), lua);
+			newWindow = lua_new(Edit, (windows.top().wnd, /*tag.label, className, id,*/ tag.attributes/*, label*/), lua);
 		}
-		newWindow->m_focusable = focusable;
+		else if(tag.label == "check")
+		{
+			newWindow = lua_new(Check, (windows.top().wnd, /*tag.label, className, id,*/ tag.attributes/*, label*/), lua);
+		}
+		//newWindow->m_focusable = focusable;
 		
 		if(!windows.top().wnd)
 		{
@@ -146,9 +151,10 @@ struct XMLHandler
 		{
 			if(!firstWindow)
 				firstWindow = newWindow;
+			/*
 			newWindow->applyGSS(style);
 			newWindow->updatePlacement();
-
+*/
 			windows.push(WndInfo(newWindow)); // Done last
 		}
 	}
@@ -162,7 +168,6 @@ struct XMLHandler
 	
 	std::stack<WndInfo> windows;
 	Context& context;
-	Context::GSSselectorMap& style;
 	Wnd* firstWindow;
 };
 
@@ -173,11 +178,12 @@ Wnd* Context::buildFromXML(std::istream& s, Wnd* dest)
 		return 0; // The destination window belongs to a different context
 	}
 
-	XMLHandler handler(*this, dest, m_gss);
+	XMLHandler handler(*this, dest);
 	xmlDocument(s, handler);
 	return handler.firstWindow;
 }
-	
+
+/*
 void Context::testParseXML()
 {
 	istringstream rootGSS(
@@ -185,7 +191,7 @@ void Context::testParseXML()
 		
 	istringstream rootXML("<window id=\"root\" />");
 	
-	loadGSS(rootGSS);
+	loadGSS(rootGSS, "root");
 	buildFromXML(rootXML, 0);
 	
 	// ========================== test XML and GSS ====================
@@ -204,11 +210,11 @@ void Context::testParseXML()
 	
 	// ================================================================
 	
-	loadGSS(gss);
+	loadGSS(gss, "default");
 	
 	buildFromXML(xml, getRoot());
 	
 	setFocus(findNamedWindow("f"));
 }
-
+*/
 }

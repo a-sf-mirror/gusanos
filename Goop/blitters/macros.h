@@ -196,11 +196,29 @@
 				b##f += grad; \
 		} } }
 		
-/* These are unused atm
-
-*/
-		
 #define SIGN(x_) ((x_) < 0 ? -1 : (x_) > 0 ? 1 : 0)
+
+#define LINEWORK(a, b, BLEND, DEPTH) do { \
+long i = a##diff >> 1; \
+long c = a##diff; \
+while(c-- >= 0) { \
+	if((unsigned int)x < (unsigned int)where->w && (unsigned int)y < (unsigned int)where->h) { \
+	Pixel##DEPTH* p = ((Pixel##DEPTH *)where->line[y]) + x; \
+	*p = BLEND(*p, colour); } \
+	i -= b##diff; \
+	a += s##a; \
+	if(i < 0) b += s##b, i += a##diff; } } while(0)
+	
+#define LINE(BLEND, DEPTH) do { \
+	long xdiff = desty - y; \
+	long ydiff = destx - x; \
+	long sx = SIGN(xdiff); \
+	long sy = SIGN(ydiff); \
+	xdiff = labs(xdiff); \
+	ydiff = labs(ydiff); \
+	if(xdiff > ydiff) LINEWORK(x, y, BLEND, DEPTH); \
+	else LINEWORK(y, x, BLEND, DEPTH); \
+} while(0)
 
 #define FILTER_2X_TO_VIDEO_DO_ROW(Even_, Odd_) { \
 		for(int x = 0; x < 319; ++x) { \

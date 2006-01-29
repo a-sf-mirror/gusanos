@@ -31,6 +31,36 @@ private:
 	std::map<std::string, LuaReference> cachedReferences;
 };
 
+struct LazyScript
+{
+	enum Type
+	{
+		FunctionName,
+		Code
+	};
+	
+	LazyScript();
+	
+	LazyScript(std::string const& data);
+	
+	~LazyScript();
+	
+	LazyScript& operator=(std::string const& data);
+	
+	LuaReference get();
+	
+	bool empty();
+	
+	void makeNil();
+
+private:
+	void free_();
+	
+	Type type;
+	LuaReference cached;
+	std::string data;
+};
+
 extern ResourceLocator<Script> scriptLocator;
 
 #endif //SCRIPT_H

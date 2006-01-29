@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 #include "util/macros.h"
+#include <boost/preprocessor/cat.hpp>
 
 struct Location
 {
@@ -89,6 +90,10 @@ extern LogStreams logStreams_;
 #define LOG(x_) (std::cout << x_ << std::endl)
 
 #define FLOG(f_, x_) (logStreams_(#f_, #f_ ".log") << x_ << std::endl)
+
+#define WLOG_ONCE(x_) do { static bool warned = false; if(!warned) { WLOG(x_); warned = true; } } while(0)
+
+#define LUA_WLOG_ONCE(x_) if(context.logOnce(std::cout)) std::cout << x_ << std::endl
 
 #ifdef LOG_RUNTIME
 #	define DLOG(x_)	if(logOptions.debug) { (std::cout << __FILE__ ":" << __LINE__ << ": " << x_ << std::endl); } else (void)0

@@ -36,10 +36,11 @@ struct Handler
 	: str(str_), tokenNumber(1), setNumber(1), assumeset(0)
 	, line(1), file(file_)
 	{
+		/*
 		Token* t = new Token("EOF");
 		t->idx = 0;
 		t->def = "\"\\000\"";
-		tokens.push_back(t);
+		tokens.push_back(t);*/
 		next();
 	}
 	
@@ -62,10 +63,11 @@ struct Handler
 		rules_[r->name] = r;
 	}
 	
-	void addToken(Token* t)
+	void addToken(Token* t, int state)
 	{
 		t->idx = tokenNumber++;
 		tokens.push_back(t);
+		states[state].push_back(t);
 	}
 	
 	void addAlias(std::string const& name, std::string const& content)
@@ -83,121 +85,6 @@ struct Handler
 		
 		return 0;
 	}
-	
-	/*
-	bool firstSet(Element& self, std::set<int>& s)
-	{
-		if(self.sub)
-			firstSet(*self.sub, s);
-		else if(!self.child.empty() && self.func == Element::NoFunc)
-		{
-			let_(i, rules_.find(self.child));
-			if(i != rules_.end())
-				firstSet(*i->second, s);
-			else
-			{
-				let_(j, findToken(self.child));
-				if(j)
-					s.insert(j->idx);
-				else
-				{
-					error("Identifier '" + self.child + "' not declared");
-					exit(1);
-				}
-			}
-		}
-		else
-			return false;
-		return true;
-	}
-	
-	
-	void firstSet(Option& self, std::set<int>& s)
-	{
-		foreach(i, self.elements)
-		{
-			if(firstSet(**i, s) && !(*i)->optional)
-				return;
-		}
-	}
-	
-	void firstSet(Def& self, std::set<int>& s)
-	{
-		foreach(i, self.options)
-		{
-			firstSet(**i, s);
-		}
-	}
-	
-	void firstSet(Rule& self, std::set<int>& s)
-	{
-		firstSet(*self.def, s);
-	}
-	
-	std::string firstSetTest(Element& self)
-	{
-		if(self.sub)
-			return firstSetTest(*self.sub);
-		else if(!self.child.empty() && self.func == Element::NoFunc)
-		{
-			let_(i, rules_.find(self.child));
-			if(i != rules_.end())
-				return firstSetTest(*i->second);
-			else
-			{
-				let_(j, findToken(self.child));
-				if(j)
-				{
-					return "optionalMatch(" + lexical_cast<std::string>(j->idx) + ")";
-				}
-				else
-				{
-					error("Identifier '" + self.child + "' not declared");
-					exit(1);
-				}
-			}
-		}
-		else
-			return "";
-	}
-	
-	std::string firstSetTest(Option& self)
-	{
-		foreach(i, self.elements)
-		{
-			std::string s = firstSetTest(**i); 
-			if(!s.empty())
-				return s;
-		}
-		
-		return "true";
-	}
-	
-	std::string firstSetTest(Def& self)
-	{
-		if(self.options.size() == 1)
-		{
-			Option& op = *self.options.front();
-			if(op.elements.size() == 0 || !op.elements.front()->optional)
-				return firstSetTest(op);
-		}
-		
-		if(!self.firstSet.empty())
-			return self.firstSet;
-		
-		std::string setTest = "set_" + lexical_cast<std::string>(setNumber++);
-		self.firstSet = setTest + "[cur]";
-		
-		firstSet(self, sets[setTest]);
-		
-		return self.firstSet;
-	}
-		
-	std::string firstSetTest(Rule& self)
-	{
-		return firstSetTest(*self.def);
-	}
-	*/
 	
 	int indexFirstSet(std::set<int>& s)
 	{
@@ -540,25 +427,46 @@ struct Handler
 		"#define YYFILL(n) fill(n)\n"
 		"retry:\n"
 		"begin = curp;\n"
-		"/*!re2c\n"
-		;
-		
+		"goto append; append:\n"
+		"/*!re2c\n";
 		foreach(i, aliases)
 		{
 			s << i->first << " = " << i->second << ";\n";
 		}
+		s <<
+		"*/\nswitch(state) {";
 		
-		foreach(i, tokens)
+		foreach(state, states)
 		{
-			Token& token = **i;
-			
-			s << token.def << "{ ";
-				
-			if(token.linecounter)
-				s << "++this->line; ";
-			
-			if(!token.skip)
+			s <<
+			"case " << state->first << ":\n"
+			"/*!re2c\n"
+			;
+
+			foreach(i, state->second)
 			{
+				Token& token = **i;
+				
+				s << token.def << "{ ";
+					
+				/*
+				if(token.linecounter)
+					s << "++this->line; ";
+				*/
+				if(!token.code2.empty())
+				{
+					s <<
+					"\n#define linecounter() (++this->line)\n"
+					"#define skip() goto retry\n"
+					"#define append() goto append\n"
+					"#define setstate(x_) (state = (x_))\n"
+					<< token.code2 << // Append this token at the beginning of others
+					"\n#undef setstate\n"
+					"#undef append\n"
+					"#undef skip\n"
+					"#undef linecounter\n";
+				}
+				
 				if(!token.copy.empty())
 				{
 					let_(j, findToken(token.copy));
@@ -576,7 +484,9 @@ struct Handler
 						s << "curData.reset(new " << j->name << "(*self, " << token.code << ")); ";
 					else if(!j->code.empty())
 						s << "curData.reset(new " << j->name << "(*self, b, e)); ";
+					
 					s <<
+					//"std::cout << \"" << j->name << " \"; \n" 
 					"return; \n"
 					"\n#undef b\n"
 					"#undef e\n";
@@ -588,18 +498,23 @@ struct Handler
 						s << "curData.reset(new " << token.name << "(*self, begin, YYCURSOR)); ";
 		
 					//s << " std::cout << \"" << token.idx << " \"; ";
-					s << "return; ";
+					s <<
+					//"std::cout << \"" << token.name << " \"; \n" 
+					"return; ";
 				}
+			
+				s << "}\n";
 			}
-			else
-				s << "goto retry;";
-		
-			s << "}\n";
+			
+			s <<
+			"\"\\000\" { cur = 0; return; }\n"
+			"[\\000-\\377] { semanticError(std::string(\"Unknown character '\") + *begin + \"'\"); goto retry; }\n"
+			"*/\n"
+			"break;\n";
+			
 		}
-		
 		s <<
-		"[\\000-\\377] { semanticError(std::string(\"Unknown character '\") + *begin + \"'\"); goto retry; }\n"
-		"*/\n"
+		"}\n"
 		"#undef YYCTYPE\n"
 		"#undef YYCURSOR\n"
 		"#undef YYLIMIT\n"
@@ -715,7 +630,7 @@ struct Handler
 		}
 		
 		s <<
-		name << "() : cur(-1), begin(0), marker(0), buffer(0), curp(0), limit(0), line(1), syncTokens(false), error(false) {\n";
+		name << "() : cur(-1), begin(0), marker(0), buffer(0), curp(0), limit(0), line(1), syncTokens(false), error(false), state(0) {\n";
 		
 		foreach(i, tokensets)
 		{
@@ -741,6 +656,7 @@ struct Handler
 		"char* begin;\n"
 		"char* buffer;\n"
 		"int line;\n"
+		"int state;\n"
 		"bool syncTokens;\n"
 		"bool error;\n"
 		"#undef self\n"
@@ -760,6 +676,7 @@ struct Handler
 	std::string file;
 	std::map<std::string, Rule *> rules_;
 	std::list<Token *> tokens;
+	std::map<int, std::list<Token *> > states;
 	std::list<std::pair<std::string, std::string> > aliases;  
 	//std::map<std::string, std::set<int> > sets;
 	std::vector<TokenSet> tokensets;

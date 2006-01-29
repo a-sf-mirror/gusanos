@@ -19,12 +19,15 @@
 #include <list>
 
 
-Server::Server( int _udpport ) : m_preShutdown(false)
+Server::Server( int _udpport )
+: m_preShutdown(false), socketsInited(false), port(_udpport)
 {
 	if(network.simLag > 0)
 		ZCom_simulateLag(0, network.simLag);
 	if(network.simLoss > 0.f)
 		ZCom_simulateLoss(0, network.simLoss);
+
+	// TODO: Asynchronize this loop
 	int tries = 10;
 	bool result = false;
 	while ( !result && tries-- > 0 )
@@ -34,6 +37,7 @@ Server::Server( int _udpport ) : m_preShutdown(false)
 	}
 	if(!result)
 		console.addLogMsg("* ERROR: FAILED TO INITIALIZE SOCKETS");
+
 	ZCom_setControlID(0);
 	ZCom_setDebugName("ZCOM_CLI");
 	ZCom_setUpstreamLimit(network.upLimit, network.upLimit);
@@ -43,6 +47,15 @@ Server::Server( int _udpport ) : m_preShutdown(false)
 Server::~Server()
 {	
 }
+
+/*
+bool Server::initSockets()
+{
+	if(socketsInited)
+		return true;
+	socketsInited = ZCom_initSockets( true, port, 1, 0 );
+	return socketsInited; 
+}*/
 
 void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data) 
 {
@@ -116,25 +129,30 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID  _id, ZCom_BitStream &_data)
 	}
 }
 
-bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
+bool Server::ZCom_cbConnectionRequest( ZCom_ConnID id, ZCom_BitStream &_request, ZCom_BitStream &reply )
 {
-	if(network.clientRetry)
+	if(network.isBanned(id))
 	{
-		_reply.addInt(Network::ConnectionReply::Retry, 8);
+		reply.addInt(Network::ConnectionReply::Banned, 8);
+		return false;
+	}
+	else if(network.clientRetry)
+	{
+		reply.addInt(Network::ConnectionReply::Retry, 8);
 		return false;
 	}
 	else if ( !m_preShutdown )
 	{
 		console.addLogMsg("* CONNECTION REQUESTED");
 		//_reply.addInt(Network::ConnectionReply::Ok, 8);
-		_reply.addString( game.getMod().c_str() );
-		_reply.addString( game.level.getName().c_str() );
+		reply.addString( game.getMod().c_str() );
+		reply.addString( game.level.getName().c_str() );
 
 		return true;
 	}
 	else
 	{
-		_reply.addInt(Network::ConnectionReply::Refused, 8);
+		reply.addInt(Network::ConnectionReply::Refused, 8);
 		return false;
 	}
 }

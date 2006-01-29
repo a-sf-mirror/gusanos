@@ -23,6 +23,9 @@ inline unsigned int bitsOf(unsigned long n)
 	return bits;
 }
 
+/*
+inline void encode(ZCom_BitStream& stream, int i, int count)
+*/
 inline void encode(ZCom_BitStream& stream, int i, int count)
 {
 	assert(count > 0);

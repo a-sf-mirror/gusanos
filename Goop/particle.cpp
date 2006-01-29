@@ -14,6 +14,7 @@
 #include "viewport.h"
 #endif
 #include "glua.h"
+#include "luaapi/context.h"
 #include "lua/bindings-objects.h"
 #include "detect_event.h"
 #include "noise_line.h"
@@ -24,8 +25,6 @@
 #include "network.h"
 #include <zoidcom.h>
 #include "posspd_replicator.h"
-
-
 
 #include <vector>
 #include <iostream>
@@ -129,6 +128,8 @@ Particle::Particle(PartType *type, Vec pos_, Vec spd_, int dir, BasePlayer* owne
 , m_origin(pos_)
 , m_node(0), interceptor(0)
 {
+	m_type->touch();
+	
 	m_angle.clamp();
 	
 	flags = (dir > 0 ? FaceRight : 0)
@@ -302,7 +303,7 @@ void Particle::think()
 				
 				case eZCom_EventInit:
 				{
-					LuaReference r = m_type->getNetworkInit();
+					LuaReference r = m_type->networkInit.get();
 					if(r)
 						(lua.call(r), getLuaReference(), conn_id)();
 				}
@@ -342,8 +343,9 @@ void Particle::think()
 			float friction = m_type->groundFriction;
 			IVec iPos = IVec( pos );
 			int n = 0;
-			for ( int y = -radius; y <= radius; ++y )
-			for ( int x = -radius; x <= radius; ++x )
+			int iradius = static_cast<int>(radius);
+			for ( int y = -iradius; y <= iradius; ++y )
+			for ( int x = -iradius; x <= iradius; ++x )
 			{
 				if ( !game.level.getMaterial( iPos.x + x, iPos.y + y ).particle_pass )
 				{
@@ -534,6 +536,7 @@ void Particle::draw(Viewport* viewport)
 			game.level.culledDrawSprite(renderSprite, viewport, IVec(pos), (int)m_alpha );
 		}
 	}
+
 	if (m_type->distortion)
 	{
 		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
@@ -561,6 +564,12 @@ void Particle::sendLuaEvent(LuaEventDef* event, eZCom_SendMode mode, zU8 rules, 
 		m_node->sendEventDirect(mode, data, connID);
 }
 
+void Particle::makeReference()
+{
+	lua.pushFullReference(*this, metaTable);
+}
+
+/*
 LuaReference Particle::getLuaReference()
 {
 	if(luaReference)
@@ -571,7 +580,7 @@ LuaReference Particle::getLuaReference()
 		luaReference = lua.createReference();
 		return luaReference;
 	}
-}
+}*/
 
 void Particle::finalize()
 {

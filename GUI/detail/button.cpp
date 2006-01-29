@@ -90,9 +90,5 @@ bool Button::keyDown(int key)
 	return true;
 }
 
-int Button::classID()
-{
-	return Context::Button;
-}
 
 }

@@ -21,11 +21,11 @@ public:
 	
 private:
 
-	//int m_totalFrames;
+	int m_totalFrames;
 	int m_animPos;
-	//int m_duration;
-	int m_step;
-	int m_max;
+	int m_duration;
+	//int m_step;
+	//int m_max;
 	char m_currentDir;
 };
 
@@ -41,11 +41,11 @@ public:
 	
 private:
 
-	//int m_totalFrames;
+	int m_totalFrames;
 	int m_animPos;
-	//int m_duration;
-	int m_step;
-	int m_max;
+	int m_duration;
+	//int m_step;
+	//int m_max;
 };
 
 class AnimRightOnce : public BaseAnimator
@@ -60,11 +60,11 @@ public:
 
 private:
 
-	//int m_totalFrames;
+	int m_totalFrames;
 	int m_animPos;
-	//int m_duration;
-	int m_step;
-	int m_max;
+	int m_duration;
+	//int m_step;
+	//int m_max;
 };
 
 #endif // _ANIMATORS_

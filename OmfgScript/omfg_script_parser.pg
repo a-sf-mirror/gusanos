@@ -136,10 +136,15 @@ NUMBER : ("-")?[0-9]+"."[0-9]* {
 	double v;
 } ;
 
-SKIP : [\ \r\t] = @skip ;
-COMMENT : "#"[^\r\n\000]* = @skip ;
-LINE : "\n" = @linecounter @skip ;
-QUOTESTRING : [\"][^\"]*[\"] = STRING<b + 1, e - 1> ;
+SKIP : [\ \r\t] = { skip(); } ;
+COMMENT : "#"[^\r\n\000]* = { skip(); } ;
+LINE : "\n" = { linecounter(); skip(); } ;
+QUOTESTRING : [\"][^\"\000]*[\"] = STRING<b + 1, e - 1> ;
+
+LONGSTRING : "<<<" = { setstate(1); skip(); } ;
+LONGSTRINGE 1 : ">>>" = { setstate(0); } STRING<b, e - 3> ;
+LONGSTRINGB 1 : [^\000] = { append(); } ;
+
 
 leaf<TokenBase::ptr& a> = (
 	| TRUE $( a.reset(new INTEGER(*self, 1)); )

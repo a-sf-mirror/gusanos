@@ -43,7 +43,7 @@ struct XMLLoader : ResourceLocator<XMLFile, false, false>::BaseLoader
 	static XMLLoader instance;
 };
 
-struct GSSLoader : ResourceLocator<GSSFile, false, false>::BaseLoader
+struct GSSLoader : ResourceLocator<GSSFile>::BaseLoader
 {
 	virtual bool canLoad(fs::path const& path, std::string& name);
 	

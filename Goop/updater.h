@@ -2,6 +2,7 @@
 #define GUSANOS_UPDATE_H
 
 #include <zoidcom.h>
+#include <string>
 
 // Manages file transfers to clients
 class Updater
@@ -14,9 +15,8 @@ public:
 	void think();
 	void removeNode();
 	
-private:
-	ZCom_Node* m_node;
-	bool m_isAuthority;
+	void requestLevel(std::string const& name);
+	
 };
 
 extern Updater updater;

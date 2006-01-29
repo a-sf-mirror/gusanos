@@ -15,12 +15,13 @@ using std::cout;
 using std::endl;
 #endif
 
-template<class CursorT>
-struct Culler : public CursorT
+template<class Derived>
+struct Culler
 {
-	Culler(CursorT const& base, Rect const& rect_)
-	: CursorT(base)
-	, rect(rect_)
+#define self (static_cast<Derived *>(this))
+
+	Culler(Rect const& rect_)
+	: rect(rect_)
 	{
 	}
 /*
@@ -239,7 +240,7 @@ struct Culler : public CursorT
 				
 			for(; x > m ; --x)
 			{
-				if(this->block(x, y))
+				if(self->block(x, y))
 					return true;
 			}
 			
@@ -251,7 +252,7 @@ struct Culler : public CursorT
 				
 			for(; x < m ; ++x)
 			{
-				if(this->block(x, y))
+				if(self->block(x, y))
 					return true;
 			}
 			
@@ -270,12 +271,12 @@ struct Culler : public CursorT
 			if(x <= m)
 				return true;
 			
-			if(!this->block(x, y))
+			if(!self->block(x, y))
 				return false;
 				
 			for(--x; x > m; --x)
 			{
-				if(!this->block(x, y))
+				if(!self->block(x, y))
 					return false;
 			}
 			
@@ -288,12 +289,12 @@ struct Culler : public CursorT
 			if(x >= m)
 				return true;
 			
-			if(!this->block(x, y))
+			if(!self->block(x, y))
 				return false;
 				
 			for(++x; x < m; ++x)
 			{
-				if(!this->block(x, y))
+				if(!self->block(x, y))
 					return false;
 			}
 			
@@ -363,7 +364,7 @@ struct Culler : public CursorT
 		l = extend(fix<-1>(xp), flslope);
 
 		cullRows<-1, -1>(y-1, l, fix<-1>(xp+1), diffFix(flslope), x-2, fix<-1>(x-2), diffFix(-1));			
-		this->line(y, xp + 1, r);
+		self->line(y, xp + 1, r);
 		cullRows<1, -1>(y+1, l, fix<-1>(xp+1), diffFix(flslope), x-2, fix<-1>(x-2), diffFix(-1));
 		
 		cullRowsStraight<-1>(y-1, fix<1>(x+1), diffFix(1), fix<1>(x-1), diffFix(-1));
@@ -389,9 +390,9 @@ struct Culler : public CursorT
 			if(xp != r) // If we start in a blocked pixel, don't try to fill
 			{
 				if(HDir < 0)
-					this->line(y, xp - HDir, r);
+					self->line(y, xp - HDir, r);
 				else
-					this->line(y, r, xp - HDir);
+					self->line(y, r, xp - HDir);
 				
 				if(checkY<VDir>(y + VDir))
 				{
@@ -432,9 +433,9 @@ struct Culler : public CursorT
 		if(xp != r)
 		{
 			if(HDir < 0)
-				this->line(y, xp - HDir, r);
+				self->line(y, xp - HDir, r);
 			else
-				this->line(y, r, xp - HDir);
+				self->line(y, r, xp - HDir);
 			
 			if(checkY<VDir>(y + VDir))
 			{
@@ -483,7 +484,7 @@ struct Culler : public CursorT
 			{
 				int t = xp - 1;
 				
-				this->line(y, r, t);
+				self->line(y, r, t);
 
 				if(checkY<VDir>(y + VDir)) 
 				{
@@ -509,7 +510,7 @@ struct Culler : public CursorT
 		if(xp != r)
 		{
 			int t = xp - 1;
-			this->line(y, r, t);
+			self->line(y, r, t);
 			
 			if(checkY<VDir>(y + VDir))
 			{

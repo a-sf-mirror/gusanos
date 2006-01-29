@@ -53,7 +53,9 @@ struct LuaEventDef
 class Network
 {
 public:
-
+	friend class Client;
+	friend class Server;
+	
 	static int const protocolVersion;
 		
 	enum NetEvents
@@ -87,6 +89,7 @@ public:
 		{
 			Refused = 0,
 			Retry,
+			Banned,
 		};
 	};
 	
@@ -119,7 +122,8 @@ public:
 	static void reconnect(int delay = 1);
 	static void clear();
 	
-	static void kick( ZCom_ConnID connId );
+	static void kick( ZCom_ConnID connID );
+	static void ban( ZCom_ConnID connID );
 	
 	static void setServerID( ZCom_ConnID serverID );
 	static ZCom_ConnID getServerID();
@@ -142,6 +146,9 @@ public:
 	static void decConnCount();
 	
 	static bool isDisconnected();
+	static bool isDisconnecting();
+	
+	static bool isBanned(ZCom_ConnID connID);
 	
 	int simLag;
 	float simLoss;
@@ -151,24 +158,8 @@ public:
 	int checkCRC;
 	bool clientRetry;
 	
-	mq_define_message(Connect, 0, (std::string addr_))
-		: addr(addr_)
-		{
-			
-		}
-		
-		std::string addr;
-	mq_end_define_message()
-	
-/*
-	mq_define_message(Host, 1, (std::string levelName_))
-		: levelName(levelName_)
-		{
-			
-		}
-		
-		std::string levelName;
-	mq_end_define_message()*/
+private:
+	static void setClient(bool v);
 };
 
 extern Network network;

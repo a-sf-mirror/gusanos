@@ -14,10 +14,10 @@ class Edit : public Wnd
 public:
 	static LuaReference metaTable;
 	
-	Edit(Wnd* parent, std::string const& tagLabel, std::string const& className,
-	  std::string const& id, std::map<std::string, std::string> const& attributes,
-	  std::string const& text = std::string(""))
-	: Wnd(parent, tagLabel, className, id, attributes, text)
+	Edit(Wnd* parent, /*std::string const& tagLabel, std::string const& className,
+	  std::string const& id,*/ std::map<std::string, std::string> const& attributes/*,
+	  std::string const& text = std::string("")*/)
+	: Wnd(parent, attributes, "edit")
 	, m_drag(false), m_caretPos(0), m_selTo(0)
 	, m_hscroll(0), m_lock(false)
 	{
@@ -28,7 +28,7 @@ public:
 	
 	virtual void process();
 
-	void setCaretPos(long caretPos)
+	void setCaretPos(ulong caretPos)
 	{
 		if(m_caretPos != caretPos)
 		{
@@ -37,7 +37,7 @@ public:
 		}
 	}
 	
-	void setSelTo(long selTo)
+	void setSelTo(ulong selTo)
 	{
 		if(m_selTo != selTo)
 		{

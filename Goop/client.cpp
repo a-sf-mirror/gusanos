@@ -9,6 +9,7 @@
 #include "network.h"
 #include "player_options.h"
 #include "encoding.h"
+#include "updater.h"
 #include <memory>
 #include "util/log.h"
 
@@ -72,6 +73,10 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 			DLOG("Got retry from server");
 			network.reconnect(50);
 		}
+		else if(r == Network::ConnectionReply::Banned)
+		{
+			console.addLogMsg("* YOU ARE BANNED FROM THIS SERVER");
+		}
 		else
 		{
 			console.addLogMsg("* COULDNT ESTABLISH CONNECTION");
@@ -79,26 +84,44 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 	}
 	else
 	{
+		network.setClient(true);
 		ZCom_requestDownstreamLimit(_id, network.downPPS, network.downBPP);
 		console.addLogMsg("* CONNECTION ACCEPTED");
 		network.setServerID(_id);
 		network.incConnCount();
 		
-#if 0
-		ZCom_requestZoidMode(_id, 2); // We need to update
-		// TODO: Unload game
-#else
-		game.setMod( _reply.getStringStatic() );
-		if(game.changeLevel( _reply.getStringStatic() ) && game.isLoaded())
+		std::string mod = _reply.getStringStatic();
+		std::string map = _reply.getStringStatic();
+		
+#ifdef MAP_DOWNLOADING
+		bool hasLevel = game.hasLevel(map);
+		bool hasMod = true; //game.hasMod(mod);
+		
+		if(!hasLevel || !hasMod)
 		{
-			game.runInitScripts();
-			sendConsistencyInfo();
-			ZCom_requestZoidMode(_id, 1);
+			ZCom_requestZoidMode(_id, 2); // We need to update
+			if(!hasLevel)
+				updater.requestLevel(map);
+			/*
+			if(!hasMod)
+				updater.requestMod(mod);*/
 		}
 		else
 		{
-			console.addLogMsg("* COULDN'T LOAD MOD OR LEVEL");
-			network.disconnect();
+#endif
+			game.setMod( mod );
+			if(game.changeLevel( map ) && game.isLoaded())
+			{
+				game.runInitScripts();
+				sendConsistencyInfo();
+				ZCom_requestZoidMode(_id, 1);
+			}
+			else
+			{
+				console.addLogMsg("* COULDN'T LOAD MOD OR LEVEL");
+				network.disconnect();
+			}
+#ifdef MAP_DOWNLOADING
 		}
 #endif
 	}
@@ -117,36 +140,39 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 				case Network::ServerMapChange:
 				{
 					console.addLogMsg("* SERVER CHANGED MAP");
-					network.reconnect(50);
+					network.reconnect(150);
 				}
 				break;
 				case Network::Quit:
 				{
 					console.addLogMsg("* CONNECTION CLOSED BY SERVER");
-					//network.reconnect(500);
-					//network.disconnect();
+					game.reset(Game::ServerQuit);
 				}
 				break;
 				case Network::Kick:
 				{
 					console.addLogMsg("* YOU WERE KICKED");
+					game.reset(Game::Kicked);
 				}
 				break;
 				case Network::IncompatibleData:
 				{
 					console.addLogMsg("* YOU HAVE INCOMPATIBLE DATA");
+					game.reset(Game::IncompatibleData);
 				}
 				break;
 				
 				case Network::IncompatibleProtocol:
 				{
 					console.addLogMsg("* THE HOST RUNS AN INCOMPATIBLE VERSION OF GUSANOS");
+					game.reset(Game::IncompatibleProtocol);
 				}
 				break;
 				
 				default:
 				{
 					console.addLogMsg("* CONNECTION CLOSED BY DUNNO WHAT :O");
+					game.reset(Game::ServerQuit);
 				}
 				break;
 			}
@@ -155,6 +181,7 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 		
 		case eZCom_ClosedTimeout:
 			console.addLogMsg("* CONNECTION TIMEDOUT");
+			game.reset(Game::ServerQuit);
 		break;
 		
 		case eZCom_ClosedReconnect:

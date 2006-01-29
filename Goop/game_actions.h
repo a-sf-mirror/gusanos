@@ -3,7 +3,8 @@
 
 #include "base_action.h"
 #include "util/angle.h"
-#include "luaapi/types.h"
+//#include "luaapi/types.h"
+#include "script.h"
 #include <string>
 #include <vector>
 
@@ -162,8 +163,10 @@ GAME_ACTION(RunCustomEvent,
 )
 
 GAME_ACTION(RunScript,
+	/*
 	LuaReference function;
-	std::string scriptName;
+	std::string scriptName;*/
+	LazyScript script;
 )
 
 GAME_ACTION(ApplyMapEffect,

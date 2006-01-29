@@ -89,15 +89,18 @@ METHODC(SpriteSet, sprites_render,
 	int frame = lua_tointeger(context, 3);
 	int x = lua_tointeger(context, 4);
 	int y = lua_tointeger(context, 5);
-	p->getSprite(frame)->draw(b, x, y);
+	p->getSprite(frame)->draw(b, x, y, blitter);
 	
 	return 0;
 )
 
-/*! SpriteSet:render_skinned_box(bitmap, x1, y1, x2, y2, r, g, b)
+/*! SpriteSet:render_skinned_box(bitmap, x1, y1, x2, y2, color)
 
 	Draws the sprite set as a skinned box with the rectangle (x1, y1) - (x2, y2)
-	and background color (r, g, b).
+	and background color //color//.
+	
+	**Note that in versions before 0.9c, color was specified as
+	three parameters. This has been deprecated.**
 */
 METHODC(SpriteSet, sprites_render_skinned_box,
 	//BITMAP* b = *static_cast<BITMAP **>(lua_touserdata(context, 2));
@@ -107,10 +110,17 @@ METHODC(SpriteSet, sprites_render_skinned_box,
 	int y1 = lua_tointeger(context, 4);
 	int x2 = lua_tointeger(context, 5);
 	int y2 = lua_tointeger(context, 6);
-	int cr = lua_tointeger(context, 7);
-	int cg = lua_tointeger(context, 8);
-	int cb = lua_tointeger(context, 9);
-	p->drawSkinnedBox(b, blitter, Rect(x1, y1, x2, y2), makecol(cr, cg, cb));
+	int c = lua_tointeger(context, 7);
+#ifndef NO_DEPRECATED
+	if(lua_gettop(context) >= 9) // Deprecated
+	{
+		LUA_WLOG_ONCE("The r, g, b version of render_skinned_box is deprecated, replace the r, g, b parameters by color(r, g, b)");
+		int g = lua_tointeger(context, 8);
+		int b = lua_tointeger(context, 9);
+		c = makecol(c, g, b);
+	}
+#endif
+	p->drawSkinnedBox(b, blitter, Rect(x1, y1, x2, y2), c);
 	
 	return 0;
 )
@@ -165,19 +175,24 @@ int l_font_load2(lua_State* L)
 
 
 
-/*! Font:render(bitmap, string, x, y[, r, g, b[, flags]])
+/*! Font:render(bitmap, string, x, y[, color[, flags]])
 
 	Draws the text 'string' on 'bitmap' at the position (x, y).
 	
-	If (r, g, b) is supplied, it draws the text with that color,
+	If //color// is supplied, it draws the text with that color,
 	otherwise it draws the text white.
+	
+	**Note that in versions before 0.9c, color was specified as
+	three parameters. This has been deprecated.**
 
 	//flags// can be a sum of these values:
-	Font.None : No flags (default).
-	Font.CenterV : Center the text vertically with y at the middle.
-	Font.CenterH : Center the text horizontally with x at the middle.
-	Font.Shadow : Draw a shadow under the text.
+	* Font.None : No flags (default).
+	* Font.CenterV : Center the text vertically with y at the middle.
+	* Font.CenterH : Center the text horizontally with x at the middle.
+	* Font.Shadow : Draw a shadow under the text.
+	
 	Font.Formatting : Draw the text with formatting.
+	
 */
 
 METHODC(Font, font_render,
@@ -202,15 +217,25 @@ METHODC(Font, font_render,
 	int cb = 255;
 	int flags = 0;
 	
-	if(params >= 8)
+	if(params >= 6)
 	{
-		cr = lua_tointeger(context, 6);
-		cg = lua_tointeger(context, 7);
-		cb = lua_tointeger(context, 8);
-		
-		if(params >= 9)
+		int c = lua_tointeger(context, 6);
+		if(params >= 8)
 		{
-			flags = lua_tointeger(context, 9);
+			LUA_WLOG_ONCE("The r, g, b version of Font:render is deprecated, replace the r, g, b parameters by color(r, g, b)");
+			cr = c;
+			cg = lua_tointeger(context, 7);
+			cb = lua_tointeger(context, 8);
+			if(params >= 9)
+				flags = lua_tointeger(context, 9);
+		}
+		else
+		{
+			cr = getr(c);
+			cg = getg(c);
+			cb = getb(c);
+			if(params >= 7)
+				flags = lua_tointeger(context, 7);
 		}
 	}
 	
@@ -235,11 +260,25 @@ METHODC(Font, font_render,
 			y -= (dim.second - 1) / 2;
 	}
 
-	p->draw(b, s, x, y, 0, 256, cr, cg, cb, realFlags);
+	int fact = (blitter.type() != BlitterContext::Alpha ? 256 : blitter.fact());
+	p->draw(b, s, x, y, 0, fact, cr, cg, cb, realFlags);
 	
 	return 0;
 )
 
+//! version 0.9c
+
+/*! sounds
+
+	This table returns Sound objects when indexed with a valid sound name, and
+	nil otherwise.
+	
+	Example:
+	<code>
+	local mySound = sounds["bazooka.wav"]
+	mySound:play(10, 10)
+	</code>
+*/
 
 int l_sound_load2(lua_State* L)
 {
@@ -258,6 +297,11 @@ int l_sound_load2(lua_State* L)
 	return 1;
 }
 
+/*! Sound:play([x, y | object] [, loudness, pitch, pitchVariation])
+
+	Plays a sound either at position (x, y) on the map, or attached to
+	object //object// (depending on which is passed to the function).
+*/
 METHODC(Sound, sound_play,
 	lua_Number loudness = 100.0;
 	lua_Number pitch = 1.0;
@@ -301,6 +345,8 @@ METHODC(Sound, sound_play,
 	return 0;
 )
 #endif
+
+//! version any
 
 /*! map_is_loaded()
 
@@ -431,6 +477,44 @@ BINOP(WeaponType, weapon_eq,
 	return 1;
 )
 
+
+int l_modIterator(lua_State* L)
+{
+	LuaContext context(L);
+	
+	typedef std::set<std::string>::const_iterator iter;
+	
+	iter& i = *(iter *)lua_touserdata(L, 1);
+	if(i == game.modList.end())
+		lua_pushnil(L);
+	else
+	{
+		context.push(*i);
+		++i;
+	}
+	
+	return 1;
+}
+
+/*! mods()
+
+	Returns an iterator that iterates through all mods.
+*/
+int l_mods(lua_State* L)
+{
+	LuaContext context(L);
+	
+	context.push(l_modIterator);
+	
+	typedef std::set<std::string>::const_iterator iter;
+	
+	iter& i = *(iter *)lua_newuserdata (L, sizeof(iter));
+	i = game.modList.begin();
+	lua_pushnil(L);
+	
+	return 3;
+}
+
 /*! maps()
 
 	Returns an iterator that iterates through all maps.
@@ -518,7 +602,7 @@ void initResources()
 #endif
 		("map_is_loaded", l_map_is_loaded)
 		("maps", l_maps)
-		
+		("mods", l_mods)
 	;
 	
 	CLASS(PartType,

@@ -207,8 +207,8 @@ void NetWorm::think()
 						BaseWorm::clearWeapons();
 						while ( data->getBool() )
 						{
-							int index = Encoding::decode(*data, m_weapons.size());
-							int weapTypeIndex = Encoding::decode(*data, game.weaponList.size());
+							size_t index = Encoding::decode(*data, m_weapons.size());
+							size_t weapTypeIndex = Encoding::decode(*data, game.weaponList.size());
 							if(weapTypeIndex < game.weaponList.size() && index < m_weapons.size())
 							{
 								delete m_weapons[index]; m_weapons[index] = 0; 

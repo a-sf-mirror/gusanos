@@ -134,6 +134,8 @@ public:
 	
 	static int errorReport(lua_State* L);
 	
+	bool logOnce(std::ostream& str);
+	
 	LuaContext();
 	
 	LuaContext(LuaContext const&);
@@ -147,6 +149,8 @@ public:
 	static const char * istreamChunkReader(lua_State *L, void *data, size_t *size);
 
 	void load(std::string const& chunk, istream& stream);
+	
+	int loadFunction(std::string const& chunk, std::string const& data);
 	/*
 	void load(std::string const& chunk, istream& stream, string const& table);
 	*/

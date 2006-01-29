@@ -10,7 +10,7 @@ struct Binding
 
 class BindTable
 {
-	public:
+public:
 	
 	BindTable(void);
 	~BindTable(void);
@@ -19,8 +19,9 @@ class BindTable
 	void unBind(char key);
 	void unBindAll();
 	std::string getBindingAction(char key);
+	char getKeyForAction(std::string const& action);
 	
-	private:
+private:
 	
 	Binding binding[256];
 };

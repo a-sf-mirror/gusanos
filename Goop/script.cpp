@@ -59,3 +59,77 @@ LuaReference Script::functionFromString(std::string const& name)
 	
 	return LuaReference();
 }
+
+LazyScript::LazyScript()
+: type(Code)
+{
+}
+
+LazyScript::LazyScript(std::string const& data)
+: data(data), type(Code)
+{
+	/* This is more of an optimization
+	std::string::size_type dot = data.find('.');
+	if(dot != std::string::npos)
+	{
+		for(size_t i = 0; i < data.size(); ++i)
+		{
+			if(!isalnum(data[i]) && data[i] != '_')
+				return;
+		}
+		
+		type = FunctionName;
+	}*/
+}
+
+LuaReference LazyScript::get()
+{
+	if(!cached && !data.empty())
+	{
+		if(type == FunctionName)
+			cached = Script::functionFromString(data);
+		else if(type == Code)
+		{
+			lua.loadFunction("<inlined block>", data);
+			cached = lua.createReference();
+		}
+		
+		data.clear();
+	}
+	
+	return cached;
+}
+
+void LazyScript::free_()
+{
+	if(cached)
+	{
+		lua.destroyReference(cached);
+		cached.reset();
+	}
+}
+
+LazyScript::~LazyScript()
+{
+	free_();
+}
+
+void LazyScript::makeNil()
+{
+	if(!cached)
+		return;
+	lua_pushnil(lua);
+	lua.assignReference(cached);
+}
+
+LazyScript& LazyScript::operator=(std::string const& data)
+{
+	free_();
+	this->data = data;
+	return *this;
+}
+
+bool LazyScript::empty()
+{
+	return !cached && data.empty();
+}

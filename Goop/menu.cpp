@@ -23,7 +23,7 @@ using std::cout;
 using std::endl;
 
 ResourceLocator<XMLFile, false, false> xmlLocator;
-ResourceLocator<GSSFile, false, false> gssLocator;
+ResourceLocator<GSSFile> gssLocator;
 
 namespace OmfgGUI
 {
@@ -77,12 +77,15 @@ std::string cmdLoadGSS(std::list<std::string> const& args)
 				passive = true;
 		}
 		
-
-		GSSFile f;
-		if(gssLocator.load(&f, path))
+		
+		if(GSSFile* f = gssLocator.load(path))
 		{
-			menu.loadGSS(f.f);
-			if(!passive) menu.updateGSS();
+			if(!f->loaded)
+			{
+				f->loaded = true;
+				if(!passive)
+					menu.updateGSS();
+			}
 			return "";
 		}
 		else
@@ -111,7 +114,7 @@ std::string cmdGSS(std::list<std::string> const& args)
 
 		std::istringstream f(gss);
 
-		menu.loadGSS(f);
+		menu.loadGSS(f, "<internal>");
 		if(!passive) menu.updateGSS();
 		
 		return "";
@@ -360,10 +363,15 @@ void GContext::clear()
 		"edit { background: #FFFFFF ; border: #666666; border-bottom: #A0A0A0 ; border-right: #A0A0A0 ;"
 		" width: 100 ; height: 15 ; font-family: big }");
 		
-	std::istringstream rootXML("<window id=\"root\" />");
+	//std::istringstream rootXML("<window id=\"root\" />");
 	
-	loadGSS(rootGSS);
-	buildFromXML(rootXML, 0);
+	loadGSS(rootGSS, "default");
+	//buildFromXML(rootXML, 0);
+	
+	std::map<std::string, std::string> attributes;
+	attributes["id"] = "root";
+	Wnd* root = lua_new(Wnd, (0, attributes), lua);
+	setRoot(root);
 }
 
 BaseFont* GContext::loadFont(std::string const& name)
@@ -384,12 +392,14 @@ BaseSpriteSet* GContext::loadSpriteSet(std::string const& name)
 
 void GContext::loadGSSFile(std::string const& name, bool passive)
 {
-	GSSFile f;
-	if(gssLocator.load(&f, name))
+	if(GSSFile* f = gssLocator.load(name))
 	{
-		loadGSS(f.f);
-		if(!passive)
-			updateGSS();
+		if(!f->loaded)
+		{
+			f->loaded = true;
+			if(!passive)
+				updateGSS();
+		}
 	}
 }
 

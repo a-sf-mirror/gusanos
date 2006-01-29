@@ -36,9 +36,9 @@ switch(m->getID()) {
 #define mq_case(m_) case m_##_MQMessage::id: { m_##_MQMessage& data = *static_cast<m_##_MQMessage*>(m); 
 #define mq_end_case() } break;
 
-#define mq_delay() goto mq_delay_message;
+#define mq_delay() goto mq_delay_message
 	
-#define mq_end_process_messages() } delete m; q.messages.erase(i); mq_delay_message: (void)0; } }
+#define mq_end_process_messages() } delete m; q.messages.erase(i); goto mq_delay_message; mq_delay_message: (void)0; } }
 
 /*
 mq_define_message(ChangeLevel, 0, (std::string level_))

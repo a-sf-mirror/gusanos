@@ -11,6 +11,8 @@ using std::endl;
 
 #include <zoidcom.h>
 #include <cmath>
+#include <map>
+#include <set>
 
 #define FREELIST_REF 1
 #define ARRAY_SIZE   2
@@ -25,18 +27,52 @@ int LuaContext::errorReport(lua_State* L)
 	
 	lua_Debug info;
 	
-	cerr << "Lua error: " << s << ", call stack:" << endl;
+	// Skip until the second colon
+	char const* olds = s;
+	for(int cc = 2; *s && ((*s != ':') || (--cc > 0)); ++s);
+	
+	if(!*s)
+		s = olds;
+	else
+		s += 2; // Skip until beginning of message
+	
+	char const* lastname;
+	
 	for(int i = 1; lua_getstack(context, i, &info); ++i)
 	{
 		lua_getinfo (context, "Snl", &info);
 		
 		char const* name = info.name ? info.name : "N/A";
 		
-		cerr << i << ". " << name << " (" << info.namewhat << ") @ " << info.short_src << ":" << info.currentline << endl;
+		if(i == 1)
+			cerr << info.source << ":" << info.currentline << ": " << s << endl;
+		else
+			cerr << info.source << ":" << info.currentline << ": " << lastname << " called from here" << endl;
+		
+		lastname = name;
 	}
 	
 	context.pushvalue(1);
 	return 1;
+}
+
+bool LuaContext::logOnce(std::ostream& str)
+{
+	typedef std::map<std::string, std::set<int> > MapT;
+	static MapT linesWarned;
+	
+	lua_Debug info;
+	if(!lua_getstack(m_State, 1, &info)) return false;
+	lua_getinfo (m_State, "Snl", &info);
+	
+	MapT::iterator i = linesWarned.find(info.source);
+	if(i == linesWarned.end() || (i->second.find(info.currentline) == i->second.end()))
+	{
+		linesWarned[info.source].insert(info.currentline);
+		str << info.source << ":" << info.currentline << ": ";
+		return true;
+	}
+	return false;
 }
 
 LuaContext::LuaContext()
@@ -113,12 +149,10 @@ void LuaContext::load(std::string const& chunk, istream& stream)
 	if(result)
 	{
 		cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
-		pop(1);
+		pop(2);
 		return;
 	}
 	
-	//TODO: Create an error handler function that returns additional
-	//debug info.
 	result = lua_pcall (m_State, 0, 0, -2);
 	
 	switch(result)
@@ -127,15 +161,74 @@ void LuaContext::load(std::string const& chunk, istream& stream)
 		case LUA_ERRMEM:
 		case LUA_ERRERR:
 		{
-			/*strcpy(errMsgSpace, lua_tostring(m_State, -1));
-			lua_pop(m_State, 1);*/
-			//TODO: throw lua_exception(*this);
-			//cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
-			pop(1);
+			pop(1); // Pop error message
 		}
 		break;
 	}
 	pop(1); // Pop error function
+}
+
+typedef std::pair<std::string const*, int> StringData;
+
+const char * stringChunkReader(lua_State *L, void *data, size_t *size)
+{
+	StringData& readData = *(StringData *)data;
+	
+	char const* ret = 0;
+	
+	switch(readData.second)
+	{
+		case 0:
+			ret = "return (";
+			*size = 8;
+		break;
+		
+		case 1:
+			ret = readData.first->data();
+			*size = readData.first->size();
+		break;
+		
+		case 2:
+			ret = ")";
+			*size = 1;
+		break;
+	}
+
+	++readData.second;
+	return ret;
+}
+
+int LuaContext::loadFunction(std::string const& chunk, std::string const& data)
+{
+	StringData readData(&data, 0);
+	
+	lua_pushcfunction(m_State, errorReport);
+	int result = lua_load(m_State, stringChunkReader, &readData, chunk.c_str());
+	
+	if(result)
+	{
+		cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
+		pop(2);
+		return 0;
+	}
+	
+	result = lua_pcall (m_State, 0, 1, -2);
+	
+	switch(result)
+	{
+		case LUA_ERRRUN:
+		case LUA_ERRMEM:
+		case LUA_ERRERR:
+		{
+			cerr << lua_tostring(m_State, -1) << endl;
+			pop(2); // Pop error message and error function
+			return 0;
+		}
+		break;
+	}
+	
+	lua_remove(m_State, -2); // Remove error function
+	return 1;
 }
 
 /*

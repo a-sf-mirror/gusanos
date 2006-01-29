@@ -122,7 +122,8 @@ string mapCmd(const list<string> &args)
 		if(!game.changeLevelCmd( tmp ))
 			return "ERROR LOADING MAP";
 		*/
-		mq_queue(game.msg, Game::ChangeLevel, tmp);
+		//mq_queue(game.msg, Game::ChangeLevel, tmp);
+		game.changeLevelCmd( tmp );
 		return "";
 	}
 	return "MAP <MAPNAME> : LOAD A MAP";
@@ -162,6 +163,29 @@ string gameCmd(const list<string> &args)
 		return "THE GAME WILL CHANGE THE NEXT TIME YOU CHANGE MAP";
 	}
 	return "GAME <MODNAME> : SET THE MOD TO LOAD THE NEXT MAP CHANGE";
+}
+
+struct GameIterGetText
+{
+	template<class IteratorT>
+	std::string const& operator()(IteratorT i) const
+	{
+		return *i;
+	}
+};
+
+string gameCompleter(Console* con, int idx, std::string const& beginning)
+{
+	if(idx != 0)
+		return beginning;
+		
+	return shellComplete(
+		game.modList,
+		beginning.begin(),
+		beginning.end(),
+		GameIterGetText(),
+		ConsoleAddLines(*con)
+	);
 }
 
 string addbotCmd(const list<string> &args)
@@ -220,39 +244,46 @@ string rConCompleter(Console* con, int idx, std::string const& beginning)
 	return con->completeCommand(beginning);
 }
 
+BasePlayer* findPlayerByName(std::string const& name)
+{
+	BasePlayer* player2Kick = 0;
+	//for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
+	foreach(iter, game.players)
+	{
+		if ( (*iter)->m_name == name )
+		{
+			return *iter;
+		}
+	}
+	
+	return 0;
+}
+
+string banCmd(list<string> const& args)
+{
+	if ( !network.isClient() && !args.empty() )
+	{
+		if ( BasePlayer* player = findPlayerByName(*args.begin()))
+		if ( !player->local )
+		{
+			network.ban( player->getConnectionID() );
+			return "PLAYER BANNED";
+		}
+		return "PLAYER NOT FOUND OR IS LOCAL";
+	}
+	return "BAN <PLAYER_NAME> : BANS THE PLAYER WITH THE SPECIFIED NAME";
+}
+
 string kickCmd(const list<string> &args)
 {
 	if ( !network.isClient() && !args.empty() )
 	{
-		BasePlayer* player2Kick = 0;
-		//for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
-		foreach(iter, game.players)
+		if ( BasePlayer* player2Kick = findPlayerByName(*args.begin()))
+		if ( !player2Kick->local )
 		{
-			if ( (*iter)->m_name == *args.begin() )
-			{
-				player2Kick = *iter;
-				break;
-			}
-		}
-		if ( player2Kick )
-		{
-			//bool isLocal = false;
-			let_(isLocal, false); // l33t macro maybe :o
-			//for ( std::vector<Player*>::iterator iter = game.localPlayers.begin(); iter != game.localPlayers.end(); iter++)
-			foreach(iter, game.localPlayers)
-			{
-				if ( (*iter)->m_name == player2Kick->m_name )
-				{
-					isLocal = true;
-					break;
-				}
-			}
-			if (!isLocal)
-			{
-				player2Kick->deleteMe = true;
-				network.kick( player2Kick->getConnectionID() );
-				return "PLAYER KICKED";
-			}
+			player2Kick->deleteMe = true;
+			network.kick( player2Kick->getConnectionID() );
+			return "PLAYER KICKED";
 		}
 		return "PLAYER NOT FOUND OR IS LOCAL";
 	}
@@ -331,11 +362,12 @@ void Options::registerInConsole()
 	
 	console.registerCommands()
 		("MAP", mapCmd, mapCompleter)
-		("GAME", gameCmd)
+		("GAME", gameCmd, gameCompleter)
 		("ADDBOT", addbotCmd)
-		("CONNECT",connectCmd)
+		("CONNECT", connectCmd)
 		("RCON", rConCmd, rConCompleter)
 		("KICK", kickCmd, kickCompleter)
+		("BAN", banCmd, kickCompleter)
 	;
 }
 
@@ -412,7 +444,7 @@ void Game::init(int argc, char** argv)
 	network.registerInConsole();
 #endif
 	
-	for ( int i = 0; i< MAX_LOCAL_PLAYERS; ++i)
+	for ( size_t i = 0; i< MAX_LOCAL_PLAYERS; ++i)
 	{
 		shared_ptr<PlayerOptions> options(new PlayerOptions);
 		options->registerInConsole(i);
@@ -465,15 +497,20 @@ void Game::think()
 {
 	mq_process_messages(msg)
 		mq_case(ChangeLevel)
-			if(!changeLevelCmd(data.level))
-				console.addLogMsg("ERROR LOADING MAP");
-		mq_end_case()
-		
-		mq_case(ChangeLevelReal)
 			
 			if(!network.isDisconnected())
+			{
+				if(!network.isDisconnecting())
+				{
+					if( network.isHost() && options.host )
+						network.disconnect( Network::ServerMapChange );
+					else
+						network.disconnect();
+				}
+				
 				mq_delay(); // Wait until network is disconnected
-			
+			}
+
 			// Network is disconnected
 
 			refreshLevels();
@@ -501,13 +538,13 @@ void Game::think()
 					if(true)
 					{
 						BaseWorm* worm = addWorm(true);
-						BasePlayer* player = addPlayer ( OWNER, -1, worm );
+						addPlayer ( OWNER, -1, worm );
 						//player->assignWorm(worm);
 					}
 					if(options.splitScreen)
 					{
 						BaseWorm* worm = addWorm(true);
-						BasePlayer* player = addPlayer ( OWNER, -1, worm );
+						addPlayer ( OWNER, -1, worm );
 						//player->assignWorm(worm);
 					}
 				}
@@ -712,17 +749,8 @@ void Game::runInitScripts()
 	partTypeList.indexate();
 }
 
-void Game::unload()
+void Game::reset(ResetReason reason)
 {
-	//cerr << "Unloading..." << endl;
-	loaded = false;
-#ifndef DEDSERV
-	OmfgGUI::menu.destroy();
-	sfx.clear();
-#endif
-	
-	console.clearTemporaries();
-	
 	// Delete all players
 	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
 	{
@@ -746,6 +774,51 @@ void Game::unload()
 	
 	level.unload();
 	
+	if(reason != LoadingLevel)
+	{
+		EACH_CALLBACK(i, gameEnded)
+		{
+			(lua.call(*i), static_cast<int>(reason))();
+		}
+	}
+}
+
+void Game::unload()
+{
+	//cerr << "Unloading..." << endl;
+	loaded = false;
+#ifndef DEDSERV
+	OmfgGUI::menu.destroy();
+	sfx.clear();
+#endif
+	
+	console.clearTemporaries();
+	
+	reset(LoadingLevel);
+/*
+	// Delete all players
+	for ( list<BasePlayer*>::iterator iter = players.begin(); iter != players.end(); ++iter)
+	{
+		(*iter)->deleteThis();
+	}
+	players.clear();
+	localPlayers.clear();
+	
+	// Delete all objects
+#ifdef USE_GRID
+	objects.clear();
+#else
+	for ( ObjectsList::Iterator iter = objects.begin(); (bool)iter; ++iter)
+	{
+		(*iter)->deleteThis();
+	}
+	objects.clear();
+#endif
+
+	appliedLevelEffects.clear();
+	
+	level.unload();
+*/
 	for ( vector<WeaponType*>::iterator iter = weaponList.begin(); iter != weaponList.end(); ++iter)
 	{
 		delete (*iter);
@@ -771,6 +844,7 @@ void Game::unload()
 	network.clear();
 	lua.reset();
 	luaCallbacks = LuaCallbacks(); // Reset callbacks
+	LuaBindings::init();
 #ifndef DEDSERV
 	OmfgGUI::menu.clear();
 #endif
@@ -830,6 +904,18 @@ void Game::refreshResources(fs::path const& levelPath)
 	levelEffectList.addPath(levelPath / "mapeffects");
 	levelEffectList.addPath(fs::path(nextMod) / "mapeffects");
 	levelEffectList.addPath(fs::path("default/mapeffects"));
+	
+	modList.clear();
+	for( fs::directory_iterator i("."), e; i != e; ++i)
+	{
+		if( is_directory(*i) )
+		{
+			if ( fs::exists(*i / "mod.cfg"))
+			{
+				modList.insert(i->string());
+			}
+		}
+	}
 }
 
 void Game::refreshLevels()
@@ -857,14 +943,16 @@ void Game::createNetworkPlayers()
 	}
 }
 
+
 bool Game::changeLevelCmd(const std::string& levelName )
 {
+	/*
 	if( network.isHost() && options.host )
 		network.disconnect( Network::ServerMapChange );
 	else
 		network.disconnect();
-	
-	mq_queue(msg, ChangeLevelReal, levelName);
+	*/
+	mq_queue(msg, ChangeLevel, levelName);
 
 	return true;
 }
@@ -872,11 +960,16 @@ bool Game::changeLevelCmd(const std::string& levelName )
 bool Game::reloadMod()
 {
 	unload();
-	LuaBindings::init();
+	//LuaBindings::init();
 		
 	loadMod();
 	
 	return true;
+}
+
+bool Game::hasLevel(std::string const& level)
+{
+	return levelLocator.exists(level);
 }
 
 bool Game::changeLevel(const std::string& levelName, bool refresh )
@@ -890,7 +983,7 @@ bool Game::changeLevel(const std::string& levelName, bool refresh )
 	fs::path const& levelPath = levelLocator.getPathOf(levelName);
 	
 	unload();
-	LuaBindings::init();
+	
 	
 	m_modName = nextMod;
 	m_modPath = nextMod + "/";
@@ -915,11 +1008,7 @@ bool Game::changeLevel(const std::string& levelName, bool refresh )
 void Game::assignNetworkRole( bool authority )
 {
 	m_node = new ZCom_Node;
-	if (!m_node)
-	{
-		allegro_message("ERROR: Unable to create game node.");
-	}
-
+	
 	m_node->beginReplicationSetup(2);
 		//m_node->addReplicationInt( (zS32*)&deaths, 32, false, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL , 0);
 	m_node->addReplicationInt( (zS32*)&options.worm_gravity, 32, false, ZCOM_REPFLAG_MOSTRECENT | ZCOM_REPFLAG_RARELYCHANGED, ZCOM_REPRULE_AUTH_2_ALL );
@@ -932,11 +1021,11 @@ void Game::assignNetworkRole( bool authority )
 	{
 		m_node->setEventNotification(true, false); // Enables the eEvent_Init.
 		if( !m_node->registerNodeUnique(classID, eZCom_RoleAuthority, network.getZControl() ) )
-			allegro_message("ERROR: Unable to register game authority node.");
+			ELOG("Unable to register game authority node.");
 	}else
 	{
 		if( !m_node->registerNodeUnique( classID, eZCom_RoleProxy, network.getZControl() ) )
-			allegro_message("ERROR: Unable to register game requested node.");
+			ELOG("Unable to register game requested node.");
 	}
 
 	m_node->applyForZoidLevel(1);
@@ -959,7 +1048,6 @@ void Game::removeNode()
 
 bool Game::setMod( const string& modname )
 {
-	//if ( file_exists( modname.c_str(), FA_DIREC, NULL) ) //TODO: Change to Boost.Filesystem
 	if( fs::exists(modname) )
 	{
 		nextMod = modname;

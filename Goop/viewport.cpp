@@ -21,7 +21,7 @@
 using namespace std;
 
 Viewport::Viewport()
-: dest(0)
+: dest(0), hud(0)
 {
 	lua.pushFullReference(*this, LuaBindings::ViewportMetaTable);
 	//lua.pushLightReference(this, LuaBindings::viewportMetaTable);
@@ -32,14 +32,16 @@ Viewport::~Viewport()
 {
 	lua.destroyReference(luaReference);
 	destroy_bitmap(dest);
+	destroy_bitmap(hud);
 	sfx.freeListener(m_listener);
 	destroy_bitmap(fadeBuffer);
 }
 
-struct TestCuller
+struct TestCuller : public Culler<TestCuller>
 {
-	TestCuller(BITMAP* dest_, BITMAP* src_, int scrOffX_, int scrOffY_, int destOffX_, int destOffY_)
+	TestCuller(BITMAP* dest_, BITMAP* src_, int scrOffX_, int scrOffY_, int destOffX_, int destOffY_, Rect const& rect)
 	: dest(dest_), src(src_), scrOffX(scrOffX_), scrOffY(scrOffY_), destOffX(destOffX_), destOffY(destOffY_)
+	, Culler<TestCuller>(rect)
 	{
 		
 	}
@@ -83,11 +85,13 @@ void Viewport::setDestination(BITMAP* where, int x, int y, int width, int height
 		return;
 	
 	destroy_bitmap(dest);
+	destroy_bitmap(hud);
 	if ( x < 0 ) x = 0;
 	if ( y < 0 ) y = 0;
 	if ( x + width > where->w ) x = where->w - width;
 	if ( y + height > where->h ) y = where->h - height;
 	dest = create_sub_bitmap(where,x,y,width,height);
+	hud = create_sub_bitmap(where,x,y,width,height);
 	
 	m_listener = sfx.newListener();
 
@@ -118,7 +122,7 @@ void Viewport::drawLight(IVec const& v)
 	Rect r(0, 0, game.level.width() - 1, game.level.height() - 1);
 	r &= Rect(testLight) + loff;
 	
-	Culler<TestCuller> testCuller(TestCuller(fadeBuffer, testLight, -off.x, -off.y, -loff.x, -loff.y), r);
+	TestCuller testCuller(fadeBuffer, testLight, -off.x, -off.y, -loff.x, -loff.y, r);
 
 	testCuller.cullOmni(v.x, v.y);
 }
@@ -167,7 +171,7 @@ void Viewport::render(BasePlayer* player)
 #endif
 
 	if(gfx.darkMode)
-	drawSprite_mult_8(dest, fadeBuffer, 0, 0);
+		drawSprite_mult_8(dest, fadeBuffer, 0, 0);
 
 	EACH_CALLBACK(i, wormRender)
 	{

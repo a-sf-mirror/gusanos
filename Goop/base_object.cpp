@@ -3,6 +3,7 @@
 #include "util/angle.h"
 #include "base_player.h"
 #include "glua.h"
+#include "luaapi/context.h"
 #include "lua/bindings-objects.h"
 
 LuaReference BaseObject::metaTable;
@@ -56,6 +57,7 @@ void BaseObject::removeRefsToPlayer(BasePlayer* player)
 		m_owner = NULL;
 }
 
+/*
 LuaReference BaseObject::getLuaReference()
 {
 	if(luaReference)
@@ -66,8 +68,14 @@ LuaReference BaseObject::getLuaReference()
 		luaReference = lua.createReference();
 		return luaReference;
 	}
+}*/
+
+void BaseObject::makeReference()
+{
+	lua.pushFullReference(*this, metaTable);
 }
 
+/*
 void BaseObject::pushLuaReference()
 {
 	lua.push(getLuaReference());
@@ -85,3 +93,4 @@ void BaseObject::deleteThis()
 	else
 		delete this;
 }
+*/
