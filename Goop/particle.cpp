@@ -22,6 +22,7 @@
 #include "util/vec.h"
 #include "util/angle.h"
 #include "util/log.h"
+#include "util/math_func.h"
 #include "network.h"
 #include <zoidcom.h>
 #include "posspd_replicator.h"
@@ -325,7 +326,7 @@ void Particle::think()
 		}
 	
 		spd.y += m_type->gravity;
-		// TODO: Remove this TODO
+
 		if ( m_type->acceleration )
 		{
 			Vec dir(m_angle);
@@ -367,13 +368,13 @@ void Particle::think()
 		}
 
 		bool collision = false;
-		if ( !game.level.getMaterial( (int)(pos.x + spd.x), (int)pos.y ).particle_pass)
+		if ( !game.level.getMaterial( roundAny(pos.x + spd.x), roundAny(pos.y) ).particle_pass)
 		{
 			spd.x *= -m_type->bounceFactor; // TODO: Precompute the negative of this
 			spd.y *= m_type->groundFriction;
 			collision = true;
 		}
-		if ( !game.level.getMaterial( (int)pos.x, (int)(pos.y + spd.y) ).particle_pass)
+		if ( !game.level.getMaterial( roundAny(pos.x), roundAny(pos.y + spd.y) ).particle_pass)
 		{
 			spd.y *= -m_type->bounceFactor; // TODO: Precompute the negative of this
 			spd.x *= m_type->groundFriction;
@@ -420,7 +421,7 @@ void Particle::think()
 		m_angle.clamp();
 		
 		//Position update
-		pos = pos + spd;
+		pos += spd;
 		
 #ifndef DEDSERV
 		// Animation
@@ -494,7 +495,7 @@ void Particle::drawLine2Origin( Viewport* viewport, BlitterContext const& blitte
 	{
 		IVec rPos = viewport->convertCoords( IVec(pos) );
 		IVec rOPos = viewport->convertCoords( IVec(m_origin) );
-		line(viewport->dest, rOPos.x,rOPos.y,rPos.x,rPos.y,m_type->colour); //TODO: Change to use blitter
+		blitter.line(viewport->dest, rOPos.x, rOPos.y, rPos.x, rPos.y, m_type->colour);
 		//mooo.createPath( 7, 7);
 		//mooo.render(where, x,y,x2,y2, m_type->colour);
 		//mooo.createPath( 5, 10);
@@ -529,7 +530,11 @@ void Particle::draw(Viewport* viewport)
 	else
 	{
 		if ( !m_type->culled )
+		{
 			m_sprite->getSprite(m_animator->getFrame(), m_angle)->draw(where, x, y, blitter);
+			
+			//Blitters::drawSpriteRotate_solid_32(where, m_sprite->getSprite(m_animator->getFrame())->m_bitmap, x, y, -m_angle.toRad()); 
+		}
 		else
 		{
 			Sprite* renderSprite = m_sprite->getSprite(m_animator->getFrame(), m_angle);
@@ -541,7 +546,7 @@ void Particle::draw(Viewport* viewport)
 	{
 		m_type->distortion->apply( where, x, y, m_type->distortMagnitude );
 	}
-	if ( gfx.darkMode && m_type->lightHax )
+	if ( game.level.config()->darkMode && m_type->lightHax )
 	{
 		game.level.culledDrawLight( m_type->lightHax, viewport, IVec(pos), (int)m_alpha );
 	}

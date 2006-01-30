@@ -38,6 +38,7 @@ class List;
 struct ListNode;
 class Edit;
 class Check;
+class Label;
 }
 
 CLASSID(BaseObject, 1);
@@ -63,6 +64,7 @@ CLASSID(OmfgGUI::List, 20);
 CLASSID(OmfgGUI::ListNode, 21);
 CLASSID(OmfgGUI::Edit, 22);
 CLASSID(OmfgGUI::Check, 23);
+CLASSID(OmfgGUI::Label, 24);
 
 #undef CLASSID
 
@@ -72,7 +74,8 @@ inline T* getObject(LuaContext& context, int idx)
 	void* p = lua_touserdata(context, idx);
 	if(!p)
 		return 0;
-	lua_getmetatable(context, idx);
+	if(!lua_getmetatable(context, idx))
+		return 0;
 	lua_rawgeti(context, -1, LuaID<T>::value);
 	bool b = lua_isnil(context, -1);
 	context.pop(2);
@@ -87,7 +90,8 @@ inline T* getLObject(LuaContext& context, int idx)
 	void* p = lua_touserdata(context, idx);
 	if(!p)
 		return 0;
-	lua_getmetatable(context, idx);
+	if(!lua_getmetatable(context, idx))
+		return 0;
 	lua_rawgeti(context, -1, LuaID<T>::value);
 	bool b = lua_isnil(context, -1);
 	context.pop(2);

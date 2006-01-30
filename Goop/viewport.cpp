@@ -15,6 +15,8 @@
 #include "culling.h"
 #include <list>
 
+#include "sprite_set.h" // TEMP
+#include "sprite.h" // TEMP
 
 #include <iostream>
 
@@ -135,7 +137,7 @@ void Viewport::render(BasePlayer* player)
 	
 	game.level.draw(dest, offX, offY);
 
-	if ( gfx.darkMode && game.level.lightmap )
+	if ( game.level.config()->darkMode && game.level.lightmap )
 		blit( game.level.lightmap, fadeBuffer, offX,offY, 0, 0, fadeBuffer->w, fadeBuffer->h );
 
 #ifdef USE_GRID
@@ -156,6 +158,12 @@ void Viewport::render(BasePlayer* player)
 	}
 #endif
 
+/*
+	static double a = 0.0;
+	a += 0.003;
+	*/
+	
+
 #if 0
 	if(gfx.m_haxWormLight)
 	{
@@ -170,7 +178,7 @@ void Viewport::render(BasePlayer* player)
 	}
 #endif
 
-	if(gfx.darkMode)
+	if(game.level.config()->darkMode)
 		drawSprite_mult_8(dest, fadeBuffer, 0, 0);
 
 	EACH_CALLBACK(i, wormRender)

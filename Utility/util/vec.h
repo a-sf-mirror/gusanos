@@ -4,7 +4,6 @@
 #include <cmath>
 #include "angle.h"
 
-
 template<class T>
 struct BaseVec
 {

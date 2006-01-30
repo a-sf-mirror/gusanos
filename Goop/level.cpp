@@ -323,7 +323,7 @@ void Level::culledDrawSprite( Sprite* sprite, Viewport* viewport, const IVec& po
 	r &= Rect(renderBitmap) + loff;
 	
 
-	if ( r.isIntersecting( Rect( viewport->fadeBuffer ) + off ) ) // Check that it can be seen
+	if ( r.isIntersecting( Rect( viewport->dest ) + off ) ) // Check that it can be seen
 	{
 		AddCuller addCuller(
 			*this,
@@ -538,4 +538,7 @@ void Level::loaderSucceeded()
 	intVectorEncoding = Encoding::VectorEncoding(Rect(-1, -1, width() + 1, height() + 1), 1);
 	diffVectorEncoding = Encoding::DiffVectorEncoding(1024);
 	//cerr << "vectorEncoding: " << vectorEncoding.totalBits() << endl;
+	
+	if(!m_config)
+		m_config = new LevelConfig(); // Default config
 }

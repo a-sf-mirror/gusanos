@@ -135,6 +135,7 @@ public:
 	static int errorReport(lua_State* L);
 	
 	bool logOnce(std::ostream& str);
+	void log(std::ostream& str);
 	
 	LuaContext();
 	
@@ -150,7 +151,8 @@ public:
 
 	void load(std::string const& chunk, istream& stream);
 	
-	int loadFunction(std::string const& chunk, std::string const& data);
+	int evalExpression(std::string const& chunk, std::string const& data);
+	int evalExpression(std::string const& chunk, istream& stream);
 	/*
 	void load(std::string const& chunk, istream& stream, string const& table);
 	*/

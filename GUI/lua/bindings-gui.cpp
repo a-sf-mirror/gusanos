@@ -686,6 +686,7 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 		("gui_button", l_gui_wnd<OmfgGUI::Button>)
 		("gui_edit", l_gui_wnd<OmfgGUI::Edit>)
 		("gui_list", l_gui_wnd<OmfgGUI::List>)
+		("gui_label", l_gui_wnd<OmfgGUI::Label>)
 		("gui_group", l_gui_wnd<OmfgGUI::Group>)
 		("gui_check", l_gui_wnd<OmfgGUI::Check>)
 		("gui_window", l_gui_wnd<OmfgGUI::Wnd>)
@@ -704,9 +705,11 @@ void initGUI(OmfgGUI::Context& gui, LuaContext& context)
 	//LuaReference ref = context.createReference();
 	context.pushvalue(-1);
 	context.pushvalue(-1);
+	context.pushvalue(-1);
 	OmfgGUI::Wnd::metaTable = context.createReference();
 	OmfgGUI::Button::metaTable = context.createReference();
 	OmfgGUI::Group::metaTable = context.createReference();
+	OmfgGUI::Label::metaTable = context.createReference();
 	
 	// GUI Check method and metatable
 	

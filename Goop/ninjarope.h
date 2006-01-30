@@ -6,6 +6,7 @@
 #include "util/vec.h"
 #include "util/angle.h"
 #include "timer_event.h"
+#include "particle.h"
 #include <vector>
 //#include <boost/variant.hpp>
 
@@ -29,6 +30,7 @@ public:
 	void draw(Viewport *viewport);
 #endif
 	void think();
+
 	Angle getAngle();
 	void addAngleSpeed(AngleDiff);
 	

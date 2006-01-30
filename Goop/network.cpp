@@ -250,6 +250,7 @@ namespace
 			("title", serverName)
 			("desc", serverDesc)
 			("port", convert<std::string>::value(m_serverPort))
+			("protocol", convert<std::string>::value(Network::protocolVersion))
 			("mod", game.getModName())
 			("map", game.level.getName())
 		;
@@ -505,6 +506,7 @@ HTTP::Request* Network::fetchServerList()
 	std::list<std::pair<std::string, std::string> > data;
 	push_back(data)
 		("action", "list")
+		("protocol", convert<std::string>::value(protocolVersion))
 	;
 	return masterServer.post("gusserv.php", data);
 }

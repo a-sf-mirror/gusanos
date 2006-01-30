@@ -90,7 +90,7 @@ LuaReference LazyScript::get()
 			cached = Script::functionFromString(data);
 		else if(type == Code)
 		{
-			lua.loadFunction("<inlined block>", data);
+			lua.evalExpression("<inlined block>", data);
 			cached = lua.createReference();
 		}
 		

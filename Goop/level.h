@@ -56,7 +56,9 @@ struct SpawnPoint
 
 struct LevelConfig
 {
-	LevelConfig() : gameStart(0), gameEnd(0)
+	LevelConfig()
+	: gameStart(0), gameEnd(0)
+	, darkMode(false)
 	{
 	}
 	
@@ -69,6 +71,7 @@ struct LevelConfig
 	std::vector<SpawnPoint> spawnPoints;
 	Event* gameStart;
 	Event* gameEnd;
+	bool darkMode;
 };
 
 class Level
@@ -186,7 +189,10 @@ class Level
 		m_config = events;
 	}
 	
-	private:
+	LevelConfig* config()
+	{ return m_config; }
+	
+private:
 	
 	
 	void checkWBorders( int x, int y );

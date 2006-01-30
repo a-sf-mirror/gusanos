@@ -546,7 +546,6 @@ bool PartType::load(fs::path const& filename)
 #else
 		newParticle = newParticle_Dummy;
 #endif
-		cerr << filename.native_file_string() << ": blood" << endl;
 	}
 	else
 		newParticle = newParticle_Particle;

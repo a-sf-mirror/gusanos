@@ -112,6 +112,7 @@ void drawSpriteLine_add_32(BITMAP* where, BITMAP* from, int x, int y, int x1, in
 void drawSpriteLine_add_16(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
 void drawSpriteLine_add_8(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
 void drawSpriteLine_add_8_mmx_sse(BITMAP* where, BITMAP* from, int x, int y, int x1, int y1, int x2, int fact);
+void drawSpriteRotate_solid_32(BITMAP* where, BITMAP* from, int x, int y, double angle);
 } // namespace Blitters
 
 using Blitters::linewu_blend;

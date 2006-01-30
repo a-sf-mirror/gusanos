@@ -25,7 +25,7 @@ NinjaRope::NinjaRope(PartType *type, BaseObject* worm)
 	active = false;
 	attached = false;
 	m_type = type;
-	
+
 	m_angle = 0;
 	m_angleSpeed = 0;
 	//m_animator = NULL;

@@ -253,7 +253,8 @@ public:
 				Tag = 0,
 				Class,
 				ID,
-				State
+				State,
+				Group
 			};
 			
 			Condition(Type type, std::string v)
@@ -269,7 +270,7 @@ public:
 		{
 			cond.push_back(Condition(Condition::Tag, name)); 
 		}
-		
+
 		void addClass(std::string const& name)
 		{
 			cond.push_back(Condition(Condition::Class, name)); 
@@ -283,6 +284,11 @@ public:
 		void addState(std::string const& name)
 		{
 			cond.push_back(Condition(Condition::State, name)); 
+		}
+		
+		void addGroup(std::string const& name)
+		{
+			cond.push_back(Condition(Condition::Group, name)); 
 		}
 		
 		int matchesWindow(Wnd*) const;

@@ -126,9 +126,6 @@ void Context::mouseScroll(int x, int y, int offs)
 
 void Context::setFocus(Wnd* aWnd)
 {
-	if(aWnd == m_keyboardFocusWnd)
-		return;
-	
 	if(aWnd)
 	{
 		/* TODO: Fix
@@ -146,6 +143,9 @@ void Context::setFocus(Wnd* aWnd)
 			aWnd = aWnd->m_lastChildFocus;
 		}
 	}
+	
+	if(aWnd == m_keyboardFocusWnd)
+		return;
 	
 	Wnd* oldFocus = m_keyboardFocusWnd;
 	m_keyboardFocusWnd = aWnd;
@@ -229,7 +229,7 @@ int Context::GSSselector::matchesWindow(Wnd* w) const
 					return 0;
 				matchLevel += 1;
 			break;
-			
+
 			case Condition::Class:
 				if(w->m_className != c->v)
 					return 0;
@@ -246,6 +246,12 @@ int Context::GSSselector::matchesWindow(Wnd* w) const
 				if(w->m_state != c->v)
 					return 0;
 				matchLevel += 8;
+			break;
+			
+			case Condition::Group:
+				if(w->m_group != c->v)
+					return 0;
+				matchLevel += 16;
 			break;
 		}
 	}

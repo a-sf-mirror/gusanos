@@ -13,7 +13,7 @@
 #include "luaapi/types.h"
 #include "luaapi/macros.h"
 
-//#include "../game.h"
+#include "../game.h"
 //#include "../vec.h"
 //#include "../gfx.h"
 #include "../network.h"
@@ -298,8 +298,10 @@ int l_host(lua_State* L)
 		return 0;
 	lua_pushboolean(L, true);*/
 	
-	console.addQueueCommand("host 1");
-	console.addQueueCommand(std::string("map \"") + map + '"');
+	//console.addQueueCommand("host 1");
+	//console.addQueueCommand(std::string("map \"") + map + '"');
+	game.options.host = 1;
+	game.changeLevelCmd( map );
 	return 0;
 }
 
@@ -319,7 +321,8 @@ int l_map(lua_State* L)
 		return 0;
 	lua_pushboolean(L, true);*/
 	
-	console.addQueueCommand(std::string("map \"") + map + '"');
+	//console.addQueueCommand(std::string("map \"") + map + '"');
+	game.changeLevelCmd( map );
 	return 0;
 }
 
@@ -358,15 +361,22 @@ int l_dump(lua_State* L)
 {
 	LuaContext context(L);
 	
-	char const* s = lua_tostring(context, 1);
+	lua_pushvalue(context, 2);
+	lua_pushvalue(context, 3);
+	lua_rawset(context, 1); // Set table entry
+	
+	char const* s = lua_tostring(context, 2);
 	if(!s)
 		return 0;
 	
 	// Allow only [A-Za-z0-9\-]
 	for(char const* p = s; *p; ++p)
 	{
-		if(!isalnum(*p) && *p != '-')
+		if(!isalnum(*p) && *p != '-' && *p != '_')
+		{
+			LUA_ELOG("Persistence name '" << s << "' invalid. Data not stored.");
 			return 0;
+		}
 	}
 
 	try
@@ -378,7 +388,7 @@ int l_dump(lua_State* L)
 		if(!f.is_open())
 			return 0;
 			
-		context.serializeT(f, 2);
+		context.serializeT(f, 3);
 	}
 	catch(std::exception& e)
 	{
@@ -393,15 +403,18 @@ int l_undump(lua_State* L)
 {
 	LuaContext context(L);
 	
-	char const* s = lua_tostring(context, 1);
+	char const* s = lua_tostring(context, 2);
 	if(!s)
 		return 0;
 	
-	// Don't allow '.'
+	// Allow only [A-Za-z0-9\-_]
 	for(char const* p = s; *p; ++p)
 	{
-		if(*p == '.')
+		if(!isalnum(*p) && *p != '-' && *p != '_')
+		{
+			LUA_ELOG("Persistence name '" << s << "' invalid. Data not retrieved.");
 			return 0;
+		}
 	}
 	
 	try
@@ -413,7 +426,14 @@ int l_undump(lua_State* L)
 		if(!f.is_open())
 			return 0;
 			
-		context.deserialize(f);
+		//context.deserialize(f);
+		
+		int r = context.evalExpression("<persistent value>", f);
+		if(r != 1)
+			return 0;
+		context.pushvalue(2); // Key
+		context.pushvalue(-2); // Value
+		lua_rawset(context, 1); // Set table entry
 	}
 	catch(std::exception& e)
 	{
@@ -557,8 +577,8 @@ void init()
 		("console_key_for_action", l_console_key_for_action)
 		("console_bind", l_console_bind)
 		("console_action_for_key", l_console_action_for_key)
-		("dump", l_dump)
-		("undump", l_undump)
+		//("dump", l_dump)
+		//("undump", l_undump)
 		("fetch_server_list", l_fetch_server_list)
 #ifndef DEDSERV
 		("clear_keybuf", l_clear_keybuf)
@@ -620,6 +640,8 @@ void init()
 	}
 	lua_setfield(context, LUA_GLOBALSINDEX, "Keys");
 #endif
+
+	SHADOW_TABLE("persistence", l_undump, l_dump);
 }
 
 }

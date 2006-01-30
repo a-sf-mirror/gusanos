@@ -5,10 +5,10 @@
 #error "Can't use this in dedicated server"
 #endif //DEDSERV
 
-//#include "game.h"
 #include "util/vec.h"
 #include "luaapi/types.h"
-//#include <allegro.h>
+//#include "util/math_func.h"
+
 
 struct Listener;
 struct BITMAP;

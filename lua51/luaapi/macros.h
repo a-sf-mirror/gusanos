@@ -124,5 +124,20 @@
 	lua_rawset(context, -3); \
 	lua_setmetatable(context, -2); \
 	lua_rawset(context, LUA_GLOBALSINDEX); }
+	
+#define SHADOW_TABLE(name_, get_, set_) { \
+	lua_pushstring(context, name_); \
+	lua_newtable(context); \
+	lua_newtable(context); \
+	lua_pushstring(context, "__index"); \
+	lua_pushcfunction(context, get_); \
+	lua_rawset(context, -3); \
+	lua_pushstring(context, "__newindex"); \
+	lua_pushcfunction(context, set_); \
+	lua_rawset(context, -3); \
+	lua_setmetatable(context, -2); \
+	lua_rawset(context, LUA_GLOBALSINDEX); }
+	
+
 
 #endif

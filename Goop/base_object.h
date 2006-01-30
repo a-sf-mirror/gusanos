@@ -83,9 +83,6 @@ public:
 	virtual void setPos( Vec pos_ )
 	{ pos = pos_; }
 	
-	// If this is true the object will be removed from the objects list in the next frame
-	bool deleteMe;
-	
 	// IMPORTANT: The pos and spd vectors should be used as read only. ( Because of netplay needs )
 	// To change their values use the setters provided.
 	Vec pos;
@@ -101,6 +98,9 @@ public:
 protected:
 	//LuaReference luaReference; //Defined in LuaObject
 	BasePlayer* m_owner;
+public:
+	// If this is true the object will be removed from the objects list in the next frame
+	bool deleteMe;
 };
 
 

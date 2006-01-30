@@ -98,6 +98,8 @@ namespace{
 			}
 		}
 		
+		returnConf->darkMode = parser.getBool("dark_mode");
+		
 		OmfgScript::Parser::EventIter i(parser);
 		for(; i; ++i)
 		{

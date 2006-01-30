@@ -204,7 +204,7 @@ void Gfx::registerInConsole()
 		("VID_BITDEPTH", &m_bitdepth, 32)
 		("VID_DISTORTION_AA", &m_distortionAA, 1)
 		("VID_HAX_WORMLIGHT", &m_haxWormLight, 1)
-		("VID_DARK_MODE", &darkMode, 0)
+		//("VID_DARK_MODE", &darkMode, 0)
 	;
 	
 	// NOTE: When/if adding a callback to gfx variables, make it do nothing if

@@ -50,6 +50,7 @@ public:
 		getAttrib("label", m_text);
 		getAttrib("class", m_id);
 		getAttrib("id", m_id);
+		getAttrib("group", m_group);
 		std::string v;
 		if(getAttrib("selectable", v))
 			m_focusable = (v != "0");
@@ -172,6 +173,8 @@ public:
 	
 	virtual bool registerCallback(std::string const& name, LuaReference callb);
 	
+	void setGroup(std::string newGroup);
+	
 	void addChild(Wnd* ch)
 	{
 		if(!ch->m_parent)
@@ -183,6 +186,11 @@ public:
 			if(!ch->m_context && m_context)
 			{
 				ch->setContext_(m_context);
+			}
+			
+			if(!m_group.empty() && ch->m_group.empty())
+			{
+				ch->setGroup(m_group);
 			}
 		}
 	}
@@ -284,6 +292,7 @@ protected:
 	std::string          m_className;
 	std::string          m_id;
 	std::string          m_state;
+	std::string          m_group;
 	
 	std::map<std::string, std::string> m_attributes;
 	
@@ -336,6 +345,7 @@ protected:
 		{
 			Background()
 			: color(128, 128, 128), spriteSet(0), skin(0)
+			, invisible(false)
 			{
 			}
 			
@@ -348,6 +358,7 @@ protected:
 			RGB color;
 			BaseSpriteSet *spriteSet;
 			BaseSpriteSet *skin;
+			bool invisible;
 		} background;
 		
 		int         width;

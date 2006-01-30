@@ -33,4 +33,9 @@ struct ctpow { static unsigned int const value = ctpow<B*B, E>>1>::value * ((E &
 template<unsigned int B>
 struct ctpow<B, 0> { static unsigned int const value = 1; };
 
+inline long roundAny(float v)
+{
+	return lrintf(v);
+}
+
 #endif //GUSANOS_MATH_H

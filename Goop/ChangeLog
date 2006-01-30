@@ -24,10 +24,14 @@
 	* Added mod listing and mod tab-completion.
 	* Fixed weapon switching when number of selected weapons is less than the max.
 	* Made animators favour accuracy over performance.
+	* Added lua distortion and light generator support (and deprecated the old system).
+	* Added dark_mode variable to level config and removed vid_dark_mode console variable.
+	* Master server only lists servers with the same version as you.
+	* Made line_to_origin obey blender mode even without wu_pixels on.
 	* Fixed the bug that let you add bots with the //addbot// command on the network game client.
 	* Optimized the occluded sprites and lights so that they dont render if they cant be seen.
 	* Made the console image and the bitmap fonts not hardcoded to bmp format
-	
+
 	* Improved lua bindings:
 		* Callbacks:
 			* bindings.gameEnded

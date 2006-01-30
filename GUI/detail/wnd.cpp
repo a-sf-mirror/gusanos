@@ -263,6 +263,13 @@ void Wnd::applyFormatting(Context::GSSpropertyMap const& f)
 					break;
 			}
 		}
+		else if(i->first == "background-invisible")
+		{
+			EACH_VALUE(v)
+			{
+				m_formatting.background.invisible = (*v != "0");
+			}
+		}
 		else if(i->first == "skin")
 		{
 			EACH_VALUE(v)
@@ -682,6 +689,19 @@ void Wnd::notifyShow()
 	for(; i != e; ++i)
 	{
 		(*i)->notifyShow();
+	}
+}
+
+void Wnd::setGroup(std::string newGroup)
+{
+	m_group = newGroup;
+	
+	std::list<Wnd *>::iterator i = m_children.begin(), e = m_children.end();
+	
+	for(; i != e; ++i)
+	{
+		if((*i)->m_group.empty())
+			(*i)->setGroup(newGroup);
 	}
 }
 

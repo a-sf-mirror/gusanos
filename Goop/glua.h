@@ -25,6 +25,7 @@ struct LuaCallbacks
 	std::vector<LuaReference> playerNetworkInit;
 	std::vector<LuaReference> gameNetworkInit;
 	std::vector<LuaReference> gameEnded;
+	//TODO: std::vector<LuaReference> connectionRequest;
 	
 	std::vector<LuaReference> localplayerEvent[7];
 	std::vector<LuaReference> localplayerEventAny;

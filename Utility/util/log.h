@@ -95,6 +95,8 @@ extern LogStreams logStreams_;
 
 #define LUA_WLOG_ONCE(x_) if(context.logOnce(std::cout)) std::cout << x_ << std::endl
 
+#define LUA_ELOG(x_) context.log(std::cerr); std::cerr << x_ << '\n'
+
 #ifdef LOG_RUNTIME
 #	define DLOG(x_)	if(logOptions.debug) { (std::cout << __FILE__ ":" << __LINE__ << ": " << x_ << std::endl); } else (void)0
 #	define DLOGL(l_, x_) if(logOptions.debug) { l_.print(x_); } else (void)0

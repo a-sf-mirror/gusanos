@@ -816,7 +816,7 @@ TokenBase* Parser::getDeprProperty(std::string const& a)
 {
 	if(TokenBase* p = pimpl->getRawProperty(a))
 	{
-		p->loc.print("Property " + a + " is deprecated");
+		p->loc.print("Property '" + a + "' is deprecated");
 		return p;
 	}
 	return &globalDefault;

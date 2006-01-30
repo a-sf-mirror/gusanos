@@ -75,6 +75,15 @@ bool LuaContext::logOnce(std::ostream& str)
 	return false;
 }
 
+void LuaContext::log(std::ostream& str)
+{
+	lua_Debug info;
+	if(!lua_getstack(m_State, 1, &info)) return;
+	lua_getinfo (m_State, "Snl", &info);
+	
+	str << info.source << ":" << info.currentline << ": ";
+}
+
 LuaContext::LuaContext()
 {
 	init();
@@ -198,12 +207,81 @@ const char * stringChunkReader(lua_State *L, void *data, size_t *size)
 	return ret;
 }
 
-int LuaContext::loadFunction(std::string const& chunk, std::string const& data)
+int LuaContext::evalExpression(std::string const& chunk, std::string const& data)
 {
 	StringData readData(&data, 0);
 	
 	lua_pushcfunction(m_State, errorReport);
 	int result = lua_load(m_State, stringChunkReader, &readData, chunk.c_str());
+	
+	if(result)
+	{
+		cerr << "Lua error: " << lua_tostring(m_State, -1) << endl;
+		pop(2);
+		return 0;
+	}
+	
+	result = lua_pcall (m_State, 0, 1, -2);
+	
+	switch(result)
+	{
+		case LUA_ERRRUN:
+		case LUA_ERRMEM:
+		case LUA_ERRERR:
+		{
+			cerr << lua_tostring(m_State, -1) << endl;
+			pop(2); // Pop error message and error function
+			return 0;
+		}
+		break;
+	}
+	
+	lua_remove(m_State, -2); // Remove error function
+	return 1;
+}
+
+typedef std::pair<istream*, int> IStreamData;
+
+const char * istreamExprReader(lua_State *L, void *data, size_t *size)
+{
+	IStreamData& readData = *(IStreamData *)data;
+	
+	char const* ret = 0;
+	
+	switch(readData.second)
+	{
+		case 0:
+			ret = "return (";
+			*size = 8;
+			++readData.second;
+		break;
+		
+		case 1:
+		{
+			static char buffer[1024];
+			readData.first->read(buffer, 1024);
+			*size = (size_t)readData.first->gcount();
+			if(!*size)
+			{
+				ret = ")";
+				*size = 1;
+				++readData.second;
+			}
+			else
+				ret = buffer;
+		}
+		break;
+	}
+
+	return ret;
+}
+
+int LuaContext::evalExpression(std::string const& chunk, istream& stream)
+{
+	IStreamData readData(&stream, 0);
+	
+	lua_pushcfunction(m_State, errorReport);
+	int result = lua_load(m_State, istreamExprReader, &readData, chunk.c_str());
 	
 	if(result)
 	{
