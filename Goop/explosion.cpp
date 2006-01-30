@@ -121,12 +121,8 @@ void Explosion::draw(Viewport* viewport)
 	}
 	else
 	{	
-		if ( false )
+		if ( !m_type->rockHidden )
 		{
-			/*
-			if ( !m_type->blender )
-				m_sprite->getSprite(m_animator->getFrame(), Angle(0))->draw(where, x, y);
-			else*/
 			m_sprite->getSprite(m_animator->getFrame(), Angle(0))->draw(where, x, y, blitter);
 		}
 		else

@@ -189,7 +189,7 @@ GusanosFontLoader GusanosFontLoader::instance;
 
 bool GusanosFontLoader::canLoad(fs::path const& path, std::string& name)
 {
-	if(fs::extension(path) == ".bmp")
+	if(fs::extension(path) == ".bmp" || fs::extension(path) == ".png")
 	{
 		name = basename(path);
 		return true;
@@ -205,7 +205,7 @@ bool GusanosFontLoader::load(Font* font, fs::path const& path)
 		LocalSetColorDepth cd(8);
 		LocalSetColorConversion cc(COLORCONV_REDUCE_TO_256 | COLORCONV_KEEP_TRANS);
 	
-		font->m_bitmap = load_bmp(path.native_file_string().c_str(), 0);
+		font->m_bitmap = load_bitmap(path.native_file_string().c_str(), 0);
 		if(!font->m_bitmap)
 			return false;
 		

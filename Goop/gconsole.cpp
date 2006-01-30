@@ -376,7 +376,7 @@ void GConsole::loadResources()
 	if(!m_font)
 		cout << "Console font couldn't be loaded" << endl;
 	
-	background = spriteList.load("con_background.bmp");
+	background = spriteList.load("con_background");
 #endif
 }
 

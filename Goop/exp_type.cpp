@@ -48,6 +48,7 @@ ExpType::ExpType()
 	distortion = NULL;
 	distortMagnitude = 0.8;
 	
+	rockHidden = true;
 	blender = BlitterContext::None;
 #endif
 	
@@ -117,6 +118,7 @@ bool ExpType::load(fs::path const& filename)
 	renderLayer = parser.getInt("render_layer", Grid::WormRenderLayer);
 
 #ifndef DEDSERV
+	rockHidden = parser.getBool("rock_hidden", true);
 	if(OmfgScript::Function const* f = parser.getFunction("distortion"))
 	{
 		if ( f->name == "lens" )

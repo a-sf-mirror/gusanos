@@ -38,6 +38,7 @@ public:
 	SpriteSet* sprite;
 	BlitterContext::Type blender;
 	Sprite* lightHax;
+	bool rockHidden;
 #endif //DEDSERV
 	int renderLayer;
 	int colour;

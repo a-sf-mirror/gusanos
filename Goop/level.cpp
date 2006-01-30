@@ -322,7 +322,10 @@ void Level::culledDrawSprite( Sprite* sprite, Viewport* viewport, const IVec& po
 	Rect r(0, 0, width() - 1, height() - 1);
 	r &= Rect(renderBitmap) + loff;
 	
-	AddCuller addCuller(
+
+	if ( r.isIntersecting( Rect( viewport->fadeBuffer ) + off ) ) // Check that it can be seen
+	{
+		AddCuller addCuller(
 			*this,
 			viewport->dest,
 			renderBitmap,
@@ -332,8 +335,10 @@ void Level::culledDrawSprite( Sprite* sprite, Viewport* viewport, const IVec& po
 			loff.x,
 			loff.y,
 			r );
+	
+		addCuller.cullOmni(pos.x, pos.y);
+	}
 
-	addCuller.cullOmni(pos.x, pos.y);
 }
 
 void Level::culledDrawLight( Sprite* sprite, Viewport* viewport, const IVec& pos, int alpha )
@@ -345,7 +350,10 @@ void Level::culledDrawLight( Sprite* sprite, Viewport* viewport, const IVec& pos
 	Rect r(0, 0, width() - 1, height() - 1);
 	r &= Rect(renderBitmap) + loff;
 	
-	AddCuller addCuller(
+
+	if ( r.isIntersecting( Rect( viewport->fadeBuffer ) + off ) ) // Check that it can be seen
+	{
+		AddCuller addCuller(
 			*this,
 			viewport->fadeBuffer,
 			renderBitmap,
@@ -355,8 +363,9 @@ void Level::culledDrawLight( Sprite* sprite, Viewport* viewport, const IVec& pos
 			loff.x,
 			loff.y,
 			r );
-
-	addCuller.cullOmni(pos.x, pos.y);
+	
+		addCuller.cullOmni(pos.x, pos.y);
+	}
 }
 
 #endif
