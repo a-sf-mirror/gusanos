@@ -88,13 +88,13 @@ bool Check::keyDown(int key)
 
 void Check::toggleState()
 {
-	m_state = !m_state;
+	m_checked = !m_checked;
 	Wnd::applyGSS();
 }
 
 void Check::applyGSS(Context::GSSselectors const& style)
 {
-	if(m_state)
+	if(m_checked)
 	{
 		if(m_active)
 			m_state = "active-checked";

@@ -14,7 +14,7 @@ public:
 	Check(Wnd* parent_, /*std::string const& tagLabel, std::string const& className, 
 	  std::string const& id,*/ std::map<std::string, std::string> const& properties/*,
 	  std::string const& text_ = std::string("")*/)
-	: Wnd(parent_, properties, "check"), m_state(false)
+	: Wnd(parent_, properties, "check"), m_checked(false)
 	{
 
 	}
@@ -33,10 +33,10 @@ public:
 	virtual void applyGSS(Context::GSSselectors const& style);
 	
 	bool getState()
-	{ return m_state; }
+	{ return m_checked; }
 	
 private:
-	bool m_state;
+	bool m_checked;
 };
 
 }
