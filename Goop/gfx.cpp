@@ -41,7 +41,8 @@ namespace
 		SCANLINES2,
 		BILINEAR,
 		SUPER2XSAI,
-		SUPEREAGLE
+		SUPEREAGLE,
+		PIXELATE
 	};
 	
 	int m_fullscreen = 1;
@@ -221,6 +222,7 @@ void Gfx::registerInConsole()
 			("BILINEAR", BILINEAR)
 			("SUPER2XSAI",SUPER2XSAI)
 			("SUPEREAGLE", SUPEREAGLE)
+			("PIXELATE", PIXELATE)
 		;
 
 		console.registerVariable(new EnumVariable("VID_FILTER", &m_filter, NO_FILTER, videoFilters));
@@ -579,6 +581,44 @@ void Gfx::updateScreen()
 			case SUPEREAGLE:
 				SuperEagle(buffer, m_doubleResBuffer, 0, 0, 0, 0, 320, 240);
 				blitFromBuffer = true;
+			break;
+
+			case PIXELATE:
+				switch(bitmap_color_depth(screen))
+				{
+					case 32:
+					{
+						typedef Pixel32 pixel_t_1;
+						
+						FILTER_2X_TO_VIDEO(
+							bmp_write32(dest, ul)
+						,
+							bmp_write32(dest, 0)
+						,
+							bmp_write32(dest, 0)
+						,
+							bmp_write32(dest, 0)
+						)
+					}
+					break;
+					
+					case 16:
+					{
+						typedef Pixel16 pixel_t_1;
+						
+						FILTER_2X_TO_VIDEO(
+							bmp_write16(dest, ul)
+						,
+							bmp_write16(dest, 0)
+						,
+							bmp_write16(dest, 0)
+						,
+							bmp_write16(dest, 0)
+						)
+					}
+					break;
+				}
+				blitFromBuffer = false;
 			break;
 			
 		}
