@@ -49,6 +49,7 @@ struct Options
 	float ninja_rope_shootSpeed;
 	float ninja_rope_pullForce;
 	float ninja_rope_startDistance;
+	float ninja_rope_maxLength;
 	float worm_maxSpeed;
 	float worm_acceleration;
 	float worm_airAccelerationFactor;
@@ -75,6 +76,8 @@ struct Options
 	bool splitScreen;
 	std::string rConPassword;
 	int teamPlay;
+	bool showDeathMessages;
+	bool logDeathMessages;
 	
 	int showMapDebug;
 };

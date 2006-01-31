@@ -8,6 +8,12 @@
 			* Deprecated all get_* functions (except in Bitstream) in favour of functions without the "get_" part.
 			* Deprecated colors specified as three parameters in favour of passing the result of the //color// function.
 			* Deprecated //gfx_draw_box// in favour of the draw_box method in Bitmap.
+	* Default mod:
+		* Updated weapons so that they are more net friendly.
+		* Converted all wavs to ogg format.
+		* Converted all bmps to png format.
+		* Expanded the menu a bit. Now it includes a local game menu and some options.
+
 	* OmfgScript:
 		* Added //sync_shot// and //sync_reload// flag properties to weapons to improve and fix some netplay issues.
 		* Added network_init property to particle scripts.
@@ -31,6 +37,9 @@
 	* Fixed the bug that let you add bots with the //addbot// command on the network game client.
 	* Optimized the occluded sprites and lights so that they dont render if they cant be seen.
 	* Made the console image and the bitmap fonts not hardcoded to bmp format
+	* Added SV_NINJAROPE_MAX_LENGTH console variable.
+	* Added CL_SHOW_DEATH_MESSAGES console variable.
+	* Added CL_LOG_DEATH_MESSAGES console variable.
 
 	* Improved lua bindings:
 		* Callbacks:
@@ -42,6 +51,7 @@
 			* color
 			* console_register_control
 			* gfx_set_alphach
+			* map ( sets host to 0 and changes map )
 		* Added Sound class and 'sounds' resource table.
 		* Added drawing methods to Bitmap class:
 			* draw_box (existed previously as the global function gfx_draw_box which is now deprecated)

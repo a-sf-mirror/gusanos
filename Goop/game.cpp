@@ -322,6 +322,7 @@ void Options::registerInConsole()
 		
 		//("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 20)
 		("SV_NINJAROPE_START_DISTANCE", &ninja_rope_startDistance, 4000.0f / 16.f - 1.f)
+		("SV_NINJAROPE_MAX_LENGTH", &ninja_rope_maxLength, 2000.f)
 
 		("SV_WORM_MAX_SPEED", &worm_maxSpeed, 0.45)
 		("SV_WORM_ACCELERATION", &worm_acceleration, 0.03)
@@ -356,6 +357,8 @@ void Options::registerInConsole()
 			
 		("RCON_PASSWORD", &rConPassword, "" )
 		("CL_SHOW_MAP_DEBUG", &showMapDebug, 0 )
+		("CL_SHOW_DEATH_MESSAGES", &showDeathMessages, true )
+		("CL_LOG_DEATH_MESSAGES", &logDeathMessages, false )
 	;
 	maxWeapons = 5;
 	splitScreen = false;
@@ -1090,7 +1093,8 @@ void Game::displayKillMsg( BasePlayer* killed, BasePlayer* killer )
 		str += "commited suicide";
 	}
 	
-	displayMessage(ScreenMessage(ScreenMessage::Death, str, 400));
+	if ( options.showDeathMessages ) displayMessage(ScreenMessage(ScreenMessage::Death, str, 400));
+	if ( options.logDeathMessages ) console.addLogMsg(str);
 }
 
 void Game::displayMessage( ScreenMessage const& msg )

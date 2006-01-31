@@ -322,6 +322,7 @@ int l_map(lua_State* L)
 	lua_pushboolean(L, true);*/
 	
 	//console.addQueueCommand(std::string("map \"") + map + '"');
+	game.options.host = 0;
 	game.changeLevelCmd( map );
 	return 0;
 }

@@ -73,6 +73,9 @@ void NinjaRope::remove()
 
 void NinjaRope::think()
 {
+	if ( m_length > game.options.ninja_rope_maxLength )
+		m_length = game.options.ninja_rope_maxLength;
+
 	if (!active)
 		return;
 		
