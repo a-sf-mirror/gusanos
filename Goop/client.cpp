@@ -105,9 +105,14 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 		}
 		else if(!hasLevel)
 		{
-			ZCom_requestZoidMode(_id, 2); // We need to update
-			if(!hasLevel)
-				updater.requestLevel(map);
+			if(network.autoDownloads)
+			{
+				ZCom_requestZoidMode(_id, 2); // We need to update
+				if(!hasLevel)
+					updater.requestLevel(map);
+			}
+			else
+				game.error(Game::ErrorMapNotFound);
 		}
 		else
 		{

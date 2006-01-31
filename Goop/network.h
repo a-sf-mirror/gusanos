@@ -167,6 +167,7 @@ public:
 	int downPPS;
 	int checkCRC;
 	bool clientRetry;
+	bool autoDownloads;
 	
 private:
 	static void setClient(bool v);

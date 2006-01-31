@@ -9,7 +9,9 @@
 #include "../game.h"
 #include "../gfx.h"
 #include "../script.h"
+#ifndef DEDSERV
 #include "../sound.h"
+#endif
 #include "../part_type.h"
 #include "../weapon_type.h"
 #include "../glua.h"

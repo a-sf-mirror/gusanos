@@ -388,6 +388,7 @@ void Network::registerInConsole()
 		("NET_DOWN_PPS", &network.downPPS, 20)
 		("NET_CHECK_CRC", &network.checkCRC, 1)
 		("NET_LOG", &logZoidcom, 0)
+		("NET_AUTODOWNLOADS", &network.autoDownloads, 1)
 	;
 	
 	console.registerCommands()

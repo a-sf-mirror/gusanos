@@ -4,7 +4,9 @@
 #include "../glua.h"
 #include "luaapi/context.h"
 #include "../events.h"
+#ifndef DEDSERV
 #include "../menu.h"
+#endif
 #include "../game_actions.h"
 #include "../parser.h"
 #include "util/macros.h"

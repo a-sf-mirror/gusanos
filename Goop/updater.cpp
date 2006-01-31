@@ -27,7 +27,8 @@ namespace
 	{
 		MsgRequestLevel = 0,
 		MsgHello,
-		MsgRequestDone
+		MsgRequestDone,
+		MsgSorry,
 	};
 	
 	mq_define_message(RequestLevel, 0, (std::string name))
@@ -79,6 +80,7 @@ namespace
 	ZCom_Node* node = 0;
 	bool isAuthority = false;
 	bool ready = false;
+	bool noTransfers = false;
 	
 	void ConnData::sendOne()
 	{
@@ -137,6 +139,7 @@ namespace
 
 Updater::Updater()
 {
+	
 }
 
 void Updater::assignNetworkRole( bool authority )
@@ -200,7 +203,14 @@ void Updater::think()
 			{
 				case eZCom_EventFile_Incoming:
 				{
+					
 					ZCom_FileTransID fid = static_cast<ZCom_FileTransID>(data->getInt(ZCOM_FTRANS_ID_BITS));
+					
+					if(!network.autoDownloads)
+					{
+						node->acceptFile(conn_id, fid, 0, false);
+						break;
+					}
 					
 					ZCom_FileTransInfo const& info = node->getFileInfo(conn_id, fid);
 					
@@ -261,9 +271,18 @@ void Updater::think()
 				
 				case eZCom_EventInit:
 				{
-					ZCom_BitStream* str = new ZCom_BitStream;
-					str->addInt(MsgHello, 8);
-					node->sendEventDirect(eZCom_ReliableOrdered, str, conn_id );
+					if(network.autoDownloads)
+					{
+						ZCom_BitStream* str = new ZCom_BitStream;
+						str->addInt(MsgHello, 8);
+						node->sendEventDirect(eZCom_ReliableOrdered, str, conn_id );
+					}
+					else
+					{
+						ZCom_BitStream* str = new ZCom_BitStream;
+						str->addInt(MsgSorry, 8);
+						node->sendEventDirect(eZCom_ReliableOrdered, str, conn_id );
+					}
 				}
 				break;
 				
@@ -276,7 +295,7 @@ void Updater::think()
 					{
 						case MsgRequestLevel:
 						{
-							if(isAuthority)
+							if(isAuthority && network.autoDownloads)
 							{
 								unsigned long reqID = data->getInt(32);
 								ConnData& c = getConnection(conn_id);
@@ -291,6 +310,17 @@ void Updater::think()
 							{
 								DLOG("Got hello from server, connection " << conn_id);
 								ready = true;
+							}
+						}
+						break;
+						
+						case MsgSorry:
+						{
+							if(!isAuthority)
+							{
+								DLOG("Got hello from server, connection " << conn_id);
+								ready = false;
+								noTransfers = true;
 							}
 						}
 						break;
@@ -324,6 +354,7 @@ void Updater::removeNode()
 {
 	delete node; node = 0;
 	ready = false;
+	noTransfers = false;
 }
 
 void Updater::requestLevel(std::string const& name)

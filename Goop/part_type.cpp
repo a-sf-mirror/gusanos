@@ -180,6 +180,7 @@ PartType::~PartType()
 
 void PartType::touch()
 {
+#ifndef DEDSERV
 	if(!distortion && !distortionGen.empty())
 	{
 		LuaReference f = distortionGen.get();
@@ -244,6 +245,7 @@ void PartType::touch()
 		}
 		// TODO: free lightGen function
 	}
+#endif
 }
 
 bool PartType::isSimpleParticleType()
