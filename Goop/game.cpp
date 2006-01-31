@@ -717,7 +717,9 @@ void Game::loadMod(bool doLoadWeapons)
 	deathObject = partTypeList.load("death.obj");
 	digObject = partTypeList.load("wormdig.obj");
 #ifndef DEDSERV
-	chatSound = sound1DList.load("chat.wav");
+	chatSound = sound1DList.load("chat.ogg");
+	if (!chatSound)
+		sound1DList.load("chat.wav");
 	infoFont = fontLocator.load("minifont");
 #endif
 	if(doLoadWeapons)
