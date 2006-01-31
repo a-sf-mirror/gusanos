@@ -6,17 +6,18 @@
 #include "util/vec.h"
 #include "util/angle.h"
 #include "util/macros.h"
+#include "util/log.h"
 #include "timer_event.h"
 #include "sprite_set.h"
 #include "sprite.h"
-
+#include "luaapi/context.h"
 #include "network.h"
 
 #include <iostream>
 
 class BaseObject;
 
-//LuaReference Weapon::metaTable;
+LuaReference Weapon::metaTable;
 
 Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 {
@@ -45,6 +46,7 @@ Weapon::Weapon(WeaponType* type, BaseWorm* owner)
 
 Weapon::~Weapon()
 {
+
 }
 
 void Weapon::reset()
@@ -343,3 +345,13 @@ void Weapon::useAmmo( int amount )
 	if ( ammo < 0 ) ammo = 0;
 }
 
+void Weapon::makeReference()
+{
+	lua.pushFullReference(*this, metaTable);
+}
+
+void Weapon::finalize()
+{
+	m_owner = 0;
+	m_type = 0;
+}

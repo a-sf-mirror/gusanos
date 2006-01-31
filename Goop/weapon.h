@@ -3,20 +3,21 @@
 
 #include <zoidcom.h>
 #include "timer_event.h"
-#include "luaapi/types.h"
+//#include "luaapi/types.h"
+#include "glua.h"
 //#include <cstddef>
 
 class BITMAP;
 class BaseWorm;
 class WeaponType;
 
-class Weapon
+class Weapon : public LuaObject
 {
 public:
 	
 	friend class BaseWorm;
 	
-	//static LuaReference metaTable;
+	static LuaReference metaTable;
 	//static int const luaID = 4;
 
 	enum Actions
@@ -59,6 +60,9 @@ public:
 	
 	int getReloadTime() { return reloadTime; }
 	int getAmmo() { return ammo; }
+	
+	virtual void makeReference();
+	virtual void finalize();
 	
 	bool reloading;
 

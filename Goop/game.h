@@ -146,10 +146,20 @@ public:
 	enum ResetReason
 	{
 		ServerQuit,
+		ServerChangeMap,
 		Kicked,
 		LoadingLevel,
 		IncompatibleProtocol,
-		IncompatibleData
+		IncompatibleData,
+	};
+	
+	enum Error
+	{
+		ErrorNone = 0,
+		ErrorMapNotFound,
+		ErrorMapLoading,
+		ErrorModNotFound,
+		ErrorModLoading
 	};
 		
 	Game();
@@ -164,15 +174,18 @@ public:
 	void loadWeapons();
 	void reset(ResetReason reason);
 	void unload();
-	void loadMod();
+	void error(Error err);
+	void loadMod(bool doLoadWeapons = true);
 	bool isLoaded();
 	void refreshResources(fs::path const& levelPath);
 	void refreshLevels();
-	bool reloadMod();
+	void refreshMods();
+	bool reloadModWithoutMap();
 	void createNetworkPlayers();
 	bool changeLevel(const std::string& level, bool refresh = true);
 	bool changeLevelCmd(const std::string& level);
 	bool hasLevel(std::string const& level);
+	bool hasMod(std::string const& mod);
 	void runInitScripts();
 	void addBot( int team = -1 );
 	BasePlayer* findPlayerWithID( ZCom_NodeID ID );
@@ -215,8 +228,8 @@ public:
 	PartType* digObject;
 		
 	const std::string& getMod();
-	const std::string& getModPath();
-	const std::string& getDefaultPath();
+	fs::path const& getModPath();
+	fs::path const& getDefaultPath();
 
 #ifndef DEDSERV
 	Sound1D* chatSound;

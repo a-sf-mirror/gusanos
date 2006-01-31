@@ -37,7 +37,9 @@ BaseObject* newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, 
 
 class PartType : public ResourceBase
 {
-	public:
+public:
+	
+	static LuaReference metaTable;
 		
 	PartType();
 	~PartType();
@@ -45,6 +47,9 @@ class PartType : public ResourceBase
 	void touch();
 	bool isSimpleParticleType();
 	bool load(fs::path const& filename);
+	
+	virtual void makeReference();
+	virtual void finalize();
 
 #ifndef DEDSERV
 	BaseAnimator* allocateAnimator();

@@ -10,6 +10,8 @@ using namespace std;
 *  separates the string in 2 chunks the first chunk is from index 0 to the first *
 *  occurence of the given char, the second chunk is the rest of the src string   *
 *********************************************************************************/
+
+/*
 // should be changed to std::pair<string,string> acording to Gliptitc
 void separate_str_by(char ch, const string &src, string &left, string &right)
 {
@@ -110,12 +112,14 @@ list< list<string> > text2Tree(const string &text)
 	}
 	return argTree;
 }
-
+*/
 namespace
 {
-	int minimum(int a, int b, int c)
+	typedef std::string::size_type size_type; 
+	
+	int minimum(size_type a, size_type b, size_type c)
 	{
-		int min = a;
+		size_type min = a;
 		if(b < min)
 			min = b;
 		if(c < min)
@@ -128,26 +132,26 @@ int levenshteinDistance(std::string const& a, std::string const& b)
 {
 	if(a == b)
 		return 0;
-	
+
 	// n = alen, m = blen
-	std::string::size_type alen = a.size();
-	std::string::size_type blen = b.size();
+	size_type alen = a.size();
+	size_type blen = b.size();
 	
 	if(alen && blen)
 	{
 		++alen; ++blen;
-		int* d = new int[alen * blen];
+		size_type* d = new size_type[alen * blen];
 		
-		for(int k = 0; k < alen; ++k)
+		for(size_type k = 0; k < alen; ++k)
 			d[k] = k;
 		
-		for(int k = 0; k < blen; ++k)
+		for(size_type k = 0; k < blen; ++k)
 			d[k * alen] = k;
 			
-		for(int i = 1; i < alen; ++i)
-		for(int j = 1; j < blen; ++j)
+		for(size_type i = 1; i < alen; ++i)
+		for(size_type j = 1; j < blen; ++j)
 		{
-			int cost = (tolower(a[i - 1]) == tolower(b[j - 1])) ? 0 : 1;
+			size_type cost = (tolower(a[i - 1]) == tolower(b[j - 1])) ? 0 : 1;
 
         	d[j*alen + i] = minimum(
 				d[(j - 1)*alen + i] + 1,
@@ -155,7 +159,7 @@ int levenshteinDistance(std::string const& a, std::string const& b)
 				d[(j - 1)*alen + i - 1] + cost
 			);
 		}
-		int distance = d[alen*blen - 1];
+		size_type distance = d[alen*blen - 1];
 		delete[] d;
 		return distance;
 	}

@@ -186,8 +186,12 @@ void NetWorm::think()
 						if ( data->getBool() )
 						{
 							size_t weaponIndex = Encoding::decode(*data, game.weaponList.size());
-							BaseWorm::setWeapon( index, game.weaponList[weaponIndex] );
-						}else
+							if(weaponIndex < game.weaponList.size())
+								BaseWorm::setWeapon( index, game.weaponList[weaponIndex] );
+							else
+								BaseWorm::setWeapon( index, 0 );
+						}
+						else
 						{
 							BaseWorm::setWeapon( index, 0 );
 						}
@@ -195,6 +199,7 @@ void NetWorm::think()
 					break;
 					case ClearWeapons:
 					{
+						DLOG("Clearing weapons");
 						BaseWorm::clearWeapons();
 					}
 					break;
@@ -211,7 +216,7 @@ void NetWorm::think()
 							size_t weapTypeIndex = Encoding::decode(*data, game.weaponList.size());
 							if(weapTypeIndex < game.weaponList.size() && index < m_weapons.size())
 							{
-								delete m_weapons[index]; m_weapons[index] = 0; 
+								luaDelete(m_weapons[index]); m_weapons[index] = 0; 
 								m_weapons[index] = new Weapon(game.weaponList[weapTypeIndex], this);
 							}
 						}

@@ -10,6 +10,7 @@
 #include "util/math_func.h"
 
 #include <cmath>
+#include <cstdio>
 #include <string>
 #include <iostream>
 
@@ -57,6 +58,15 @@ int l_abs(lua_State* L)
 int l_floor(lua_State* L)
 {
 	lua_pushnumber(L, floor(luaL_checknumber(L, 1)));
+	return 1;
+}
+
+int l_round(lua_State* L)
+{
+	int d = lua_tointeger(L, 2);
+	char buffer[256];
+	sprintf(buffer, "%.*f", d, lua_tonumber(L, 1));
+	lua_pushstring(L, buffer);
 	return 1;
 }
 
@@ -226,6 +236,8 @@ void initMath()
 		("sqrt", l_sqrt)
 		("abs", l_abs)
 		("floor", l_floor)
+		
+		("round", l_round)
 	
 		("randomint", l_randomint)
 		("randomfloat", l_randomfloat)

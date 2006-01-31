@@ -41,6 +41,8 @@ using namespace std;
 
 ResourceList<PartType> partTypeList;
 
+LuaReference PartType::metaTable;
+
 BaseObject* newParticle_requested( PartType* type, Vec pos_, Vec spd_, int dir, BasePlayer* owner, Angle angle )
 {
 	assert(type->needsNode);
@@ -558,19 +560,32 @@ bool PartType::load(fs::path const& filename)
 	return true;
 }
 
-/*
-LuaReference PartType::getNetworkInit()
+
+void PartType::makeReference()
 {
-	if(!networkInit && !networkInitName.empty())
-	{
-		networkInit = Script::functionFromString(networkInitName);
-		
-		networkInitName.clear();
-	}
-	
-	return networkInit;
+	lua.pushFullReference(*this, metaTable);
 }
-*/
+
+void PartType::finalize()
+{
+	delete groundCollision; groundCollision = 0;
+	delete creation; creation = 0;
+#ifndef DEDSERV
+	delete distortion; distortion = 0;
+	delete lightHax; lightHax = 0;
+#endif
+	for ( vector<TimerEvent*>::iterator i = timer.begin(); i != timer.end(); i++)
+	{
+		delete *i;
+	}
+	timer.clear();
+	
+	for ( vector<DetectEvent*>::iterator i = detectRanges.begin(); i != detectRanges.end(); i++)
+	{
+		delete *i;
+	}
+	detectRanges.clear();
+}
 
 #ifndef DEDSERV
 BaseAnimator* PartType::allocateAnimator()

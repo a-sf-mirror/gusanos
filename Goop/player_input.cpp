@@ -25,7 +25,7 @@ string eventStart(size_t index, Player::Actions action, list<string> const& args
 		
 		bool ignore = false;
 		
-		EACH_CALLBACK(i, localplayerEvent[action])
+		EACH_CALLBACK(i, localplayerEvent+action)
 		{
 			int n = (lua.call(*i, 1), player.getLuaReference(), true)();
 			if(n > 0 && lua.get<bool>(-1))
@@ -55,7 +55,7 @@ string eventStop(size_t index, Player::Actions action, list<string> const& args)
 		
 		bool ignore = false;
 		
-		EACH_CALLBACK(i, localplayerEvent[action])
+		EACH_CALLBACK(i, localplayerEvent+action)
 		{
 			int n = (lua.call(*i, 1), player.getLuaReference(), false)();
 			if(n > 0 && lua.get<bool>(-1))

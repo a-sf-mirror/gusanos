@@ -812,6 +812,11 @@ TokenBase* Parser::getProperty(std::string const& a)
 	return &globalDefault;
 }
 
+TokenBase* Parser::getRawProperty(std::string const& a)
+{
+	return pimpl->getRawProperty(a);
+}
+
 TokenBase* Parser::getDeprProperty(std::string const& a)
 {
 	if(TokenBase* p = pimpl->getRawProperty(a))
@@ -848,6 +853,11 @@ void Parser::error(std::string const& msg)
 boost::crc_32_type::value_type Parser::getCRC()
 {
 	return pimpl->crc.checksum();
+}
+
+void Parser::crcProcessByte(unsigned char byte)
+{
+	pimpl->crc.process_byte(byte);
 }
 
 }

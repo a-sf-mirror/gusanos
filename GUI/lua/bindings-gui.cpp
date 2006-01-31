@@ -222,28 +222,32 @@ int l_gui_windows_index(lua_State* L)
 	//windows// can be either a table of Wnd objects or a single Wnd object.
 */
 LMETHODC(OmfgGUI::Wnd, gui_wnd_add,
-	if(OmfgGUI::Wnd* w = getLObject<OmfgGUI::Wnd>(context, 2))
+	int top = lua_gettop(context);
+	for(int s = 2; s <= top; ++s)
 	{
-		p->addChild(w);
-	}
-	else if(lua_istable(context, 2))
-	{
-		for(int i = 1; ; ++i)
+		if(OmfgGUI::Wnd* w = getLObject<OmfgGUI::Wnd>(context, s))
 		{
-			lua_rawgeti(context, 2, i);
-			if(lua_isnil(context, -1))
-			{
-				context.pop(1);
-				break;
-			}
-			OmfgGUI::Wnd* w = ASSERT_LOBJECT(OmfgGUI::Wnd, -1);
 			p->addChild(w);
-			context.pop(1);
 		}
-	}
-	else
-	{
-		// TODO: Error
+		else if(lua_istable(context, s))
+		{
+			for(int i = 1; ; ++i)
+			{
+				lua_rawgeti(context, s, i);
+				if(lua_isnil(context, -1))
+				{
+					context.pop(1);
+					break;
+				}
+				OmfgGUI::Wnd* w = ASSERT_LOBJECT(OmfgGUI::Wnd, -1);
+				p->addChild(w);
+				context.pop(1);
+			}
+		}
+		else
+		{
+			// TODO: Error
+		}
 	}
 	
 	return 0;
@@ -413,7 +417,7 @@ LMETHODC(OmfgGUI::Check, gui_check_state,
 )
 
 LMETHODC(OmfgGUI::Check, gui_check_set_state,
-	if(lua_toboolean(context, 1) != p->getState())
+	if(lua_toboolean(context, 2) != p->getState())
 		p->toggleState();
 	return 0;
 )
@@ -421,7 +425,7 @@ LMETHODC(OmfgGUI::Check, gui_check_set_state,
 //! Edit inherits Wnd
 
 LMETHODC(OmfgGUI::Edit, gui_edit_set_lock,
-	p->setLock(lua_toboolean(context, 1));
+	p->setLock(lua_toboolean(context, 2));
 	return 0;
 )
 

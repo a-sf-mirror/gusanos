@@ -2,6 +2,7 @@
 #define GUSANOS_MESSAGE_QUEUE_H
 
 #include <list>
+#include "util/macros.h"
 
 struct MQMessage
 {
@@ -15,6 +16,30 @@ struct MessageQueue
 	void queue(MQMessage* msg)
 	{
 		messages.push_back(msg);
+	}
+	
+	void deleteMessage(void* p)
+	{
+		foreach_delete(i, messages)
+		{
+			if(static_cast<void*>(*i) == p)
+			{
+				delete *i;
+				messages.erase(i);
+			}
+		}
+	}
+	
+	void clear()
+	{
+		foreach(i, messages)
+			delete *i;
+		messages.clear();
+	}
+	
+	bool empty()
+	{
+		return messages.empty();
 	}
 	
 	std::list<MQMessage*> messages;

@@ -95,9 +95,9 @@ BaseWorm::~BaseWorm()
 #endif
 
 	//m_ninjaRope->deleteMe = true;
-	for ( size_t i = 0; i < m_weapons.size(); i++)
+	for ( size_t i = 0; i < m_weapons.size(); ++i)
 	{
-		delete m_weapons[i];
+		luaDelete(m_weapons[i]); m_weapons[i] = 0;
 	}
 }
 
@@ -121,7 +121,7 @@ void BaseWorm::setWeapon( size_t index, WeaponType* type )
 	if(index >= m_weapons.size())
 		return;
 		
-	delete m_weapons[index];
+	luaDelete(m_weapons[index]);
 	m_weapons[index] = 0;
 
 	if ( type )
@@ -143,9 +143,9 @@ void BaseWorm::setWeapons( std::vector<WeaponType*> const& weaps )
 
 void BaseWorm::clearWeapons()
 {
-	for ( size_t i = 0; i < m_weapons.size(); i++)
+	for ( size_t i = 0; i < m_weapons.size(); ++i)
 	{
-		delete m_weapons[i]; m_weapons[i] = 0;
+		luaDelete(m_weapons[i]); m_weapons[i] = 0;
 	}
 }
 
@@ -1103,5 +1103,10 @@ void BaseWorm::finalize()
 	EACH_CALLBACK(i, wormRemoved)
 	{
 		(lua.call(*i), getLuaReference())();
+	}
+	
+	for ( size_t i = 0; i < m_weapons.size(); ++i)
+	{
+		luaDelete(m_weapons[i]); m_weapons[i] = 0;
 	}
 }

@@ -74,6 +74,16 @@ public:
 		IncompatibleProtocol
 	};
 	
+	enum State
+	{
+		StateIdle,	// Not doing anything
+		StateDisconnecting, // Starting disconnection sequence
+		StateDisconnected, // Disconnected
+		
+		StateConnecting, // Pseudo-state
+		StateHosting,  // Pseudo-state
+	};
+	
 	struct ClientEvents
 	{
 		enum type

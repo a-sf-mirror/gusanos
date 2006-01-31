@@ -87,8 +87,9 @@ try
 #ifndef DEDSERV
 	OmfgGUI::menu.clear();
 #endif
-	game.loadMod();
-	game.runInitScripts();
+	//game.loadMod();
+	game.reloadModWithoutMap();
+	//game.runInitScripts();
 	
 	//install millisecond timer
 	LOCK_VARIABLE(timer);

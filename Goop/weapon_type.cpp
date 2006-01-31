@@ -9,6 +9,7 @@
 #include "omfg_script.h"
 #include "util/macros.h"
 #include "timer_event.h"
+#include "luaapi/context.h"
 
 #include <string>
 #include <vector>
@@ -20,6 +21,8 @@
 namespace fs = boost::filesystem;
 
 using namespace std;
+
+LuaReference WeaponType::metaTable;
 
 WeaponType::WeaponType() : ResourceBase()
 {
@@ -193,3 +196,36 @@ bool WeaponType::load(fs::path const& filename)
 	
 	return true;
 }
+
+void WeaponType::makeReference()
+{
+	lua.pushFullReference(*this, metaTable);
+}
+
+void WeaponType::finalize()
+{
+	delete primaryShoot; primaryShoot = 0;
+	delete primaryPressed; primaryPressed = 0;
+	delete primaryReleased; primaryReleased = 0;
+	delete outOfAmmo; outOfAmmo = 0;
+	delete reloadEnd; reloadEnd = 0;
+	
+	foreach( t, timer )
+	{
+		delete (*t);
+	}
+	timer.clear();
+	
+	foreach( t, activeTimer )
+	{
+		delete (*t);
+	}
+	activeTimer.clear();
+	
+	foreach( t, shootTimer )
+	{
+		delete (*t);
+	}
+	shootTimer.clear();
+}
+

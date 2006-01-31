@@ -239,7 +239,8 @@ public:
 	
 	void focus()
 	{
-		m_context->setFocus(this);
+		if(m_context)
+			m_context->setFocus(this);
 	}
 	
 	void setSubFocus(Wnd* p)

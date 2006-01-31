@@ -37,10 +37,10 @@
 	* Fixed the bug that let you add bots with the //addbot// command on the network game client.
 	* Optimized the occluded sprites and lights so that they dont render if they cant be seen.
 	* Made the console image and the bitmap fonts not hardcoded to bmp format
+	* Fixed alpha wu-pixels in 16-bit mode.
 	* Added SV_NINJAROPE_MAX_LENGTH console variable.
 	* Added CL_SHOW_DEATH_MESSAGES console variable.
 	* Added CL_LOG_DEATH_MESSAGES console variable.
-
 	* Improved lua bindings:
 		* Callbacks:
 			* bindings.gameEnded

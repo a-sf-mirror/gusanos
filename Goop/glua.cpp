@@ -8,44 +8,55 @@ LuaCallbacks luaCallbacks;
 
 void LuaCallbacks::bind(std::string callback, LuaReference ref)
 {
-	#define CB(x_) else if(callback == #x_) x_.push_back(ref)
+	int idx = -1;
+	
+	#define CB(x_) else if(callback == #x_) idx = x_
 	if(callback == "afterRender")
-		afterRender.push_back(ref);
+		idx = afterRender;
 	else if(callback == "afterUpdate")
-		afterUpdate.push_back(ref);
+		idx = afterUpdate;
 	else if(callback == "wormRender")
-		wormRender.push_back(ref);
+		idx = wormRender;
 	else if(callback == "viewportRender")
-		viewportRender.push_back(ref);
+		idx = viewportRender;
 	else if(callback == "localplayerLeft")
-		localplayerEvent[Player::LEFT].push_back(ref);
+		idx = localplayerEvent + Player::LEFT;
 	else if(callback == "localplayerRight")
-		localplayerEvent[Player::RIGHT].push_back(ref);
+		idx = localplayerEvent + Player::RIGHT;
 	else if(callback == "localplayerUp")
-		localplayerEvent[Player::UP].push_back(ref);
+		idx = localplayerEvent + Player::UP;
 	else if(callback == "localplayerDown")
-		localplayerEvent[Player::DOWN].push_back(ref);
+		idx = localplayerEvent + Player::DOWN;
 	else if(callback == "localplayerJump")
-		localplayerEvent[Player::JUMP].push_back(ref);
+		idx = localplayerEvent + Player::JUMP;
 	else if(callback == "localplayerFire")
-		localplayerEvent[Player::FIRE].push_back(ref);
+		idx = localplayerEvent + Player::FIRE;
 	else if(callback == "localplayerChange")
-		localplayerEvent[Player::CHANGE].push_back(ref);
+		idx = localplayerEvent + Player::CHANGE;
 	else if(callback == "localplayerInit")
-		localplayerInit.push_back(ref);
+		idx = localplayerInit;
 	else if(callback == "wormDeath")
-		wormDeath.push_back(ref);
+		idx = wormDeath;
 	else if(callback == "playerUpdate")
-		playerUpdate.push_back(ref);
+		idx = playerUpdate;
 	else if(callback == "playerInit")
-		playerInit.push_back(ref);
+		idx = playerInit;
 	else if(callback == "localplayerEvent")
-		localplayerEventAny.push_back(ref);
+		idx = localplayerEventAny;
 	CB(wormRemoved);
 	CB(playerNetworkInit);
 	CB(playerRemoved);
 	CB(gameNetworkInit);
 	CB(gameEnded);
+	CB(transferUpdate);
+	CB(transferFinished);
+	CB(networkStateChange);
+	CB(gameError);
+	
+	if(idx != -1)
+	{
+		callbacks[idx].push_back(ref);
+	}
 }
 
 void LuaObject::pushLuaReference()
@@ -60,6 +71,7 @@ void LuaObject::makeReference()
 
 LuaReference LuaObject::getLuaReference()
 {
+	assert(!deleted);
 	if(luaReference)
 		return luaReference;
 	else
@@ -73,6 +85,10 @@ LuaReference LuaObject::getLuaReference()
 void LuaObject::deleteThis()
 {
 	finalize();
+
+#ifndef NDEBUG
+	deleted = true;
+#endif
 	
 	if(luaReference)
 	{
@@ -81,4 +97,6 @@ void LuaObject::deleteThis()
 	}
 	else
 		delete this;
+	
+	
 }

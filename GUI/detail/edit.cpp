@@ -52,12 +52,12 @@ bool Edit::render()
 			else
 				x1 += dim.first, x2 += dim2.first;
 				
-			RGB color(150, 150, 255);
+			RGB color(50, 50, 120);
 				
 			renderer->drawBox(Rect(x1, m_rect.y1 + 2, x2, m_rect.y2 - 2), color, color, color, color, color);
 		}
 		
-		renderer->drawVLine(m_rect.x1 + xoff + dim.first, m_rect.y1 + 2, m_rect.y2 - 2, RGB(0, 0, 0));
+		renderer->drawVLine(m_rect.x1 + xoff + dim.first, m_rect.y1 + 2, m_rect.y2 - 2, RGB(255, 255, 255));
 	}
 	
 	if(m_font)

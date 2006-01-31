@@ -2,6 +2,7 @@
 #define EXP_TYPE_H
 
 #include "resource_list.h"
+#include "glua.h"
 #ifndef DEDSERV
 #include "gfx.h"
 #include "blitters/context.h"
@@ -20,7 +21,7 @@ class Event;
 class DetectEvent;
 class Sprite;
 
-class ExpType
+class ExpType : public LuaObject
 {
 public:
 	

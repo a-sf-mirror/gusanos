@@ -6,13 +6,14 @@
 #endif //DEDSERV
 
 #include "resource_list.h"
+#include "glua.h"
 #include <string>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
 
 struct FSOUND_SAMPLE;
 
-class Sound1D
+class Sound1D : public LuaObject
 {
 	public:
 		

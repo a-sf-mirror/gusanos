@@ -1,7 +1,9 @@
 #ifndef RESOURCE_BASE_H
 #define RESOURCE_BASE_H
 
-class ResourceBase
+#include "glua.h"
+
+class ResourceBase : public LuaObject
 {
 
 public:

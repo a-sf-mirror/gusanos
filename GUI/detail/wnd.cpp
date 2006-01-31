@@ -668,6 +668,9 @@ void Wnd::pushReference()
 
 void Wnd::notifyHide()
 {
+	if(!m_context)
+		return;
+	
 	if(m_context->getFocus() == this)
 		m_context->hiddenFocus();
 	
@@ -681,6 +684,9 @@ void Wnd::notifyHide()
 
 void Wnd::notifyShow()
 {
+	if(!m_context)
+		return;
+	
 	if(m_context->getFocus() == this)
 		m_context->shownFocus();
 		

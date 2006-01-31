@@ -54,18 +54,32 @@ namespace
 	mq_end_define_message()
 	*/
 	
+	/*
 	enum State
 	{
 		StateIdle,	// Not doing anything
 		StateDisconnecting, // Starting disconnection sequence
 		StateDisconnected, // Disconnected
-	};
+	};*/
 	
-	State state = StateDisconnected;
+	Network::State state = Network::StateDisconnected;
 	int stateTimeOut = 0;
 	
-	#define SET_STATE(s_) DLOG("Network state: " #s_); state = State##s_;
+	void setLuaState(Network::State s)
+	{
+		EACH_CALLBACK(i, networkStateChange)
+		{
+			(lua.call(*i), s)();
+		}
+	}
 	
+	void setState(Network::State s)
+	{
+		state = s;
+	}
+	
+	#define SET_STATE(s_) DLOG("Network state: " #s_); setState(State##s_)
+
 	MessageQueue msg;
 	
 	struct HttpRequest
@@ -280,6 +294,12 @@ namespace
 		}
 		return "NET_SET_PROXY"; //TODO: help
 	}
+	
+	std::string disconnectCmd(std::list<std::string> const& args) 
+	{
+		network.disconnect();
+		return "";
+	}
 }
 
 Network network;
@@ -371,7 +391,8 @@ void Network::registerInConsole()
 	;
 	
 	console.registerCommands()
-		("NET_SET_PROXY", setProxy) 
+		("NET_SET_PROXY", setProxy)
+		("DISCONNECT", disconnectCmd)
 	;
 }
 
@@ -412,6 +433,7 @@ void Network::update()
 					m_control->ZCom_Connect( address, NULL );
 					//m_client = true; // We wait with setting this until we've connected
 					m_lastServerAddr = data.addr;
+					setLuaState(StateConnecting);
 					SET_STATE(Idle);
 				mq_end_case()
 				
@@ -465,6 +487,7 @@ void Network::update()
 			{
 				if(connCount != 0)
 					WLOG(connCount << " connection(s) might not have disconnected properly.");
+				setLuaState(StateDisconnected);
 				SET_STATE(Disconnected);
 				
 				if(m_control)
@@ -523,6 +546,7 @@ void Network::host()
 	game.assignNetworkRole( true ); // Gives the game class node authority role
 	updater.assignNetworkRole(true);
 	registerToMasterServer();
+	setLuaState(StateHosting);
 	SET_STATE(Idle);
 }
 
@@ -537,6 +561,7 @@ void Network::disconnect( DConnEvents event )
 {
 	if(state == StateIdle && m_control)
 	{
+		setLuaState(StateDisconnecting);
 		SET_STATE(Disconnecting);
 		stateTimeOut = 1000;
 

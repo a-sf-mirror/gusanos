@@ -163,7 +163,7 @@ env.Append(
 if env.build == 'release':
 	env.Append(CPPFLAGS = Split('-O3 -g -DNDEBUG -fomit-frame-pointer'))
 elif env.build == 'debug':
-	env.Append(CPPFLAGS = Split('-O0 -g -DDEBUG -DLOG_RUNTIME'))
+	env.Append(CPPFLAGS = Split('-O0 -g -DDEBUG -DMAP_DOWNLOADING -DLOG_RUNTIME'))
 elif env.build == 'dedserv':
 	env.Append(CPPFLAGS = Split('-O3 -g -DNDEBUG -DDEDSERV -fomit-frame-pointer'))
 elif env.build == 'dedserv-debug':

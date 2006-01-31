@@ -281,13 +281,17 @@ struct Parser : public Pimpl<ParserImpl>
 	
 	Function const* getDeprFunction(std::string const& name);
 	
-	TokenBase* getProperty(std::string const& name);
+	TokenBase* getRawProperty(std::string const& a);
+	
+	TokenBase* getProperty(std::string const& a);
 		
 	TokenBase* getProperty(std::string const& a, std::string const& b);
 	
 	TokenBase* getDeprProperty(std::string const& name);
 	
 	boost::crc_32_type::value_type getCRC();
+	
+	void crcProcessByte(unsigned char byte);
 	
 	bool incomplete();
 	

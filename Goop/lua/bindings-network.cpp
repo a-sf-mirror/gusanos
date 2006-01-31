@@ -597,6 +597,15 @@ void initNetwork(LuaContext& context)
 		("Owner2Auth", ZCOM_REPRULE_OWNER_2_AUTH)
 	)
 	
+	
+	ENUM(Network,
+		("Connecting", Network::StateConnecting)
+		("Disconnecting", Network::StateDisconnecting)
+		("Disconnected", Network::StateDisconnected)
+		("Hosting", Network::StateHosting)
+	)
+
+	
 	lua_pushboolean(context, !network.isClient());
 	lua_setfield(context, LUA_GLOBALSINDEX, "AUTH");
 }

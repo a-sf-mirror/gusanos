@@ -5,6 +5,7 @@
 #include "util/angle.h"
 #include "util/cache.h"
 #include "util/rect.h"
+#include "glua.h"
 #include <allegro.h>
 #include <string>
 #include <vector>
@@ -17,7 +18,7 @@ class Sprite;
 
 class BlitterContext;
 
-class SpriteSet
+class SpriteSet : public LuaObject
 {
 public:
 		

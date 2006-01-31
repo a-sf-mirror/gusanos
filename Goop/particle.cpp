@@ -590,4 +590,5 @@ LuaReference Particle::getLuaReference()
 void Particle::finalize()
 {
 	delete m_node; m_node = 0;
+	m_type = 0; // This pointer may become invalid at any moment
 }

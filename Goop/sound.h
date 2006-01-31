@@ -7,6 +7,7 @@
 
 #include "resource_list.h"
 #include "util/vec.h"
+#include "glua.h"
 #include <string>
 #include <boost/filesystem/path.hpp>
 namespace fs = boost::filesystem;
@@ -14,7 +15,7 @@ namespace fs = boost::filesystem;
 class BaseObject;
 struct FSOUND_SAMPLE;
 
-class Sound
+class Sound : public LuaObject
 {
 	public:
 		

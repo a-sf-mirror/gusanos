@@ -6,12 +6,37 @@
 //#include "luaapi/context.h"
 #include "luaapi/types.h"
 
-#define EACH_CALLBACK(i_, type_) for(std::vector<LuaReference>::iterator i_ = luaCallbacks.type_.begin(); \
-			i_ != luaCallbacks.type_.end(); ++i_)
+#define EACH_CALLBACK(i_, type_) for(std::vector<LuaReference>::iterator i_ = luaCallbacks.callbacks[LuaCallbacks::type_].begin(); \
+			i_ != luaCallbacks.callbacks[LuaCallbacks::type_].end(); ++i_)
 
 struct LuaCallbacks
 {
+	enum
+	{
+		atGameStart = 0,
+		afterRender = 1,
+		afterUpdate = 2,
+		wormRender = 3,
+		viewportRender = 4,
+		wormDeath = 5,
+		wormRemoved = 6,
+		playerUpdate = 7,
+		playerInit = 8,
+		playerRemoved = 9,
+		playerNetworkInit = 10,
+		gameNetworkInit = 11,
+		gameEnded = 12,
+		localplayerEventAny = 13,
+		localplayerInit = 14,
+		localplayerEvent = 15,
+		transferUpdate = localplayerEvent+7,
+		transferFinished = transferUpdate+1,
+		networkStateChange = transferFinished+1,
+		gameError = networkStateChange+1,
+		max
+	};
 	void bind(std::string callback, LuaReference ref);
+	/*
 	std::vector<LuaReference> atGameStart;
 	std::vector<LuaReference> afterRender;
 	std::vector<LuaReference> afterUpdate;
@@ -30,6 +55,8 @@ struct LuaCallbacks
 	std::vector<LuaReference> localplayerEvent[7];
 	std::vector<LuaReference> localplayerEventAny;
 	std::vector<LuaReference> localplayerInit;
+	*/
+	std::vector<LuaReference> callbacks[max];
 };
 
 //extern LuaContext lua;
@@ -54,6 +81,13 @@ extern LuaCallbacks luaCallbacks;
 
 struct LuaObject 
 {
+#ifndef NDEBUG
+	LuaObject()
+	: deleted(false)
+	{
+	}
+#endif
+	
 	void pushLuaReference();
 	
 	LuaReference getLuaReference();
@@ -71,6 +105,16 @@ struct LuaObject
 	}
 	
 	LuaReference luaReference;
+#ifndef NDEBUG
+	bool deleted;
+#endif
 };
+
+template<class T>
+inline void luaDelete(T* p)
+{
+	if(p)
+		p->deleteThis();
+}
 
 #endif //GUSANOS_GLUA_H

@@ -86,9 +86,9 @@ namespace
 	std::list<LevelEffectEvent> appliedLevelEffects;
 
 	std::string nextMod;
-	std::string m_modPath;
+	fs::path    m_modPath;
 	std::string m_modName;
-	std::string m_defaultPath;
+	fs::path    m_defaultPath;
 	bool loaded;
 	ZCom_Node *m_node;
 	bool m_isAuthority;
@@ -246,7 +246,7 @@ string rConCompleter(Console* con, int idx, std::string const& beginning)
 
 BasePlayer* findPlayerByName(std::string const& name)
 {
-	BasePlayer* player2Kick = 0;
+	//BasePlayer* player2Kick = 0;
 	//for ( std::list<BasePlayer*>::iterator iter = game.players.begin(); iter != game.players.end(); iter++)
 	foreach(iter, game.players)
 	{
@@ -429,8 +429,8 @@ void Game::init(int argc, char** argv)
 	
 	LuaBindings::init();
 
-	m_defaultPath = "default/";
-	m_modPath = "default/";
+	m_defaultPath = "default";
+	m_modPath = "default";
 	m_modName = "default";
 	setMod("default");
 	refreshResources("default");
@@ -706,13 +706,13 @@ void Game::loadWeapons()
 	}
 };
 
-void Game::loadMod()
+void Game::loadMod(bool doLoadWeapons)
 {
 	options.maxWeapons = options.maxWeaponsVar;
 	options.splitScreen = ( options.splitScreenVar != 0 );
 	console.loadResources();
 	gfx.loadResources();
-	loadWeapons();
+	
 	NRPartType = partTypeList.load("ninjarope.obj");
 	deathObject = partTypeList.load("death.obj");
 	digObject = partTypeList.load("wormdig.obj");
@@ -720,16 +720,23 @@ void Game::loadMod()
 	chatSound = sound1DList.load("chat.wav");
 	infoFont = fontLocator.load("minifont");
 #endif
-	if (weaponList.size() > 0 )
+	if(doLoadWeapons)
 	{
-		loaded = true;
-	}
-	else
-	{
-		loaded = false;
-		console.addLogMsg("ERROR: NO WEAPONS FOUND IN MOD FOLDER");
+		loadWeapons();
+		if (weaponList.size() > 0 )
+		{
+			loaded = true;
+		}
+		else
+		{
+			loaded = false;
+			console.addLogMsg("ERROR: NO WEAPONS FOUND IN MOD FOLDER");
+		}
 	}
 	console.executeConfig("mod.cfg");
+	
+	if(!loaded)
+		error(ErrorModLoading);
 }
 
 void Game::runInitScripts()
@@ -824,7 +831,7 @@ void Game::unload()
 */
 	for ( vector<WeaponType*>::iterator iter = weaponList.begin(); iter != weaponList.end(); ++iter)
 	{
-		delete (*iter);
+		luaDelete(*iter);
 	}
 	weaponList.clear();
 	
@@ -862,21 +869,21 @@ void Game::refreshResources(fs::path const& levelPath)
 {
 #ifndef DEDSERV
 	fontLocator.addPath(levelPath / "fonts");
-	fontLocator.addPath(fs::path("default/fonts"));
+	fontLocator.addPath(m_defaultPath / "fonts");
 	fontLocator.addPath(fs::path(nextMod) / "fonts");
 	fontLocator.refresh();
 
-	xmlLocator.addPath(fs::path("default/gui"));
+	xmlLocator.addPath(m_defaultPath / "gui");
 	xmlLocator.addPath(fs::path(nextMod) / "gui");
 	xmlLocator.refresh();
 	
-	gssLocator.addPath(fs::path("default/gui"));
+	gssLocator.addPath(m_defaultPath / "gui");
 	gssLocator.addPath(fs::path(nextMod) / "gui");
 	gssLocator.refresh();
 #endif
 	
 	scriptLocator.addPath(levelPath / "scripts");
-	scriptLocator.addPath(fs::path("default/scripts"));
+	scriptLocator.addPath(m_defaultPath / "scripts");
 	scriptLocator.addPath(fs::path(nextMod) / "scripts");
 	scriptLocator.refresh();
 	
@@ -884,49 +891,54 @@ void Game::refreshResources(fs::path const& levelPath)
 	// the resource locator paths! Fix maybe?
 	partTypeList.addPath(levelPath / "objects");
 	partTypeList.addPath(fs::path(nextMod) / "objects");
-	partTypeList.addPath(fs::path("default/objects"));
+	partTypeList.addPath(m_defaultPath / "objects");
 	
 	expTypeList.addPath(levelPath / "objects");
 	expTypeList.addPath(fs::path(nextMod) / "objects");
-	expTypeList.addPath(fs::path("default/objects"));
+	expTypeList.addPath(m_defaultPath / "objects");
 	
 #ifndef DEDSERV
 	soundList.addPath(levelPath / "sounds");
 	soundList.addPath(fs::path(nextMod) / "sounds");
-	soundList.addPath(fs::path("default/sounds"));
+	soundList.addPath(m_defaultPath / "sounds");
 	
 	sound1DList.addPath(levelPath / "sounds");
 	sound1DList.addPath(fs::path(nextMod) / "sounds");
-	sound1DList.addPath(fs::path("default/sounds"));
+	sound1DList.addPath(m_defaultPath / "sounds");
 #endif
 	
 	spriteList.addPath(levelPath / "sprites");
 	spriteList.addPath(fs::path(nextMod) / "sprites");
-	spriteList.addPath(fs::path("default/sprites"));
+	spriteList.addPath(m_defaultPath / "sprites");
 	
 	levelEffectList.addPath(levelPath / "mapeffects");
 	levelEffectList.addPath(fs::path(nextMod) / "mapeffects");
-	levelEffectList.addPath(fs::path("default/mapeffects"));
+	levelEffectList.addPath(m_defaultPath / "mapeffects");
 	
-	modList.clear();
-	for( fs::directory_iterator i("."), e; i != e; ++i)
-	{
-		if( is_directory(*i) )
-		{
-			if ( fs::exists(*i / "mod.cfg"))
-			{
-				modList.insert(i->string());
-			}
-		}
-	}
+	refreshMods();
 }
 
 void Game::refreshLevels()
 {
 	levelLocator.clear();
-	levelLocator.addPath(fs::path("default/maps"));
+	levelLocator.addPath(m_defaultPath / "maps");
 	levelLocator.addPath(fs::path(nextMod) / "maps");
 	levelLocator.refresh();
+}
+
+void Game::refreshMods()
+{
+	modList.clear();
+	for( fs::directory_iterator i("."), e; i != e; ++i)
+	{
+		if( is_directory(*i) )
+		{
+			if ( fs::exists(*i / "weapons"))
+			{
+				modList.insert(i->string());
+			}
+		}
+	}
 }
 
 void Game::createNetworkPlayers()
@@ -960,19 +972,33 @@ bool Game::changeLevelCmd(const std::string& levelName )
 	return true;
 }
 
-bool Game::reloadMod()
+bool Game::reloadModWithoutMap()
 {
 	unload();
-	//LuaBindings::init();
-		
-	loadMod();
+	level.setName("");
+	refreshResources("default");
+	loadMod(false);
+	runInitScripts();
 	
 	return true;
+}
+
+void Game::error(Error err)
+{
+	EACH_CALLBACK(i, gameError)
+	{
+		(lua.call(*i), static_cast<int>(err))();
+	}
 }
 
 bool Game::hasLevel(std::string const& level)
 {
 	return levelLocator.exists(level);
+}
+
+bool Game::hasMod(std::string const& mod)
+{
+	return modList.find(mod) != modList.end();
 }
 
 bool Game::changeLevel(const std::string& levelName, bool refresh )
@@ -981,22 +1007,28 @@ bool Game::changeLevel(const std::string& levelName, bool refresh )
 		refreshLevels();
 		
 	if(!levelLocator.exists(levelName))
+	{
+		error(ErrorMapNotFound);
 		return false;
+	}
 		
 	fs::path const& levelPath = levelLocator.getPathOf(levelName);
 	
 	unload();
 	
-	
 	m_modName = nextMod;
-	m_modPath = nextMod + "/";
+	m_modPath = nextMod;
 
 	level.setName(levelName);
 	refreshResources(levelPath);
 	//cerr << "Loading level" << endl;
 	
-	
-	levelLocator.load(&level, levelName);
+	if(!levelLocator.load(&level, levelName))
+	{
+		reloadModWithoutMap();
+		error(ErrorMapLoading);
+		return false;
+	}
 
 #ifdef USE_GRID
 	objects.resize(0, 0, level.width(), level.height());
@@ -1107,12 +1139,12 @@ const string& Game::getMod()
 	return m_modName;
 }
 
-const string& Game::getModPath()
+fs::path const& Game::getModPath()
 {
 	return m_modPath;
 }
 
-const string& Game::getDefaultPath()
+fs::path const& Game::getDefaultPath()
 {
 	return m_defaultPath;
 }

@@ -92,25 +92,27 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 		
 		std::string mod = _reply.getStringStatic();
 		std::string map = _reply.getStringStatic();
-		
-#ifdef MAP_DOWNLOADING
+		game.refreshLevels();
+		game.refreshMods();
 		bool hasLevel = game.hasLevel(map);
-		bool hasMod = true; //game.hasMod(mod);
+		bool hasMod = game.hasMod(mod);
 		
-		if(!hasLevel || !hasMod)
+		if(!hasMod)
+		{
+			game.error(Game::ErrorModNotFound);
+			//This doesn't work somewhy: network.disconnect();
+			//And maybe we don't want to do it since it would overwrite our error message
+		}
+		else if(!hasLevel)
 		{
 			ZCom_requestZoidMode(_id, 2); // We need to update
 			if(!hasLevel)
 				updater.requestLevel(map);
-			/*
-			if(!hasMod)
-				updater.requestMod(mod);*/
 		}
 		else
 		{
-#endif
 			game.setMod( mod );
-			if(game.changeLevel( map ) && game.isLoaded())
+			if(game.changeLevel( map, false ) && game.isLoaded())
 			{
 				game.runInitScripts();
 				sendConsistencyInfo();
@@ -121,11 +123,23 @@ void Client::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result,
 				console.addLogMsg("* COULDN'T LOAD MOD OR LEVEL");
 				network.disconnect();
 			}
-#ifdef MAP_DOWNLOADING
 		}
-#endif
 	}
-} 
+}
+
+/*
+void Client::loadNextGame()
+{
+	game.setMod( nextMod );
+	if(game.changeLevel( nextMap ) && game.isLoaded())
+	{
+		game.runInitScripts();
+		sendConsistencyInfo();
+		ZCom_requestZoidMode(network.getServerID(), 1);
+	}
+	else
+		network.disconnect();
+}*/
 
 void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata)
 {
@@ -141,6 +155,7 @@ void Client::ZCom_cbConnectionClosed(ZCom_ConnID _id, eZCom_CloseReason _reason,
 				{
 					console.addLogMsg("* SERVER CHANGED MAP");
 					network.reconnect(150);
+					game.reset(Game::ServerChangeMap);
 				}
 				break;
 				case Network::Quit:

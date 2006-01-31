@@ -4,6 +4,7 @@
 #ifndef DISABLE_ZOIDCOM
 
 #include <zoidcom.h>
+//#include <string>
 
 class PlayerOptions;
 
@@ -17,6 +18,11 @@ public:
 	void requestPlayer(PlayerOptions const& playerOptions);
 	void requestPlayers();
 	void sendConsistencyInfo();
+	
+	void loadNextGame();
+	
+	//std::string nextMod;
+	//std::string nextMap;
 
 protected:
 

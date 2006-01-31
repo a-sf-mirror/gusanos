@@ -16,6 +16,7 @@ public:
 	void removeNode();
 	
 	void requestLevel(std::string const& name);
+	//bool requestsFulfilled();
 	
 };
 

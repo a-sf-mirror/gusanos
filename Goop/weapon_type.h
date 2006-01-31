@@ -19,12 +19,16 @@ class TimerEvent;
 
 class WeaponType : public ResourceBase
 {
-	public:
-		
+public:
+	static LuaReference metaTable;
+	
 	WeaponType();
 	~WeaponType();
 	
 	bool load(const fs::path &filename);
+	
+	virtual void makeReference();
+	virtual void finalize();
 
 	int ammo;
 	int reloadTime;

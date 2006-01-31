@@ -40,7 +40,7 @@ void NoiseLine::render(BITMAP* where, int x, int y, int x1, int y1, int colour)
 	Vec perpToLine = inc.perp().normal();
 	Vec pos = Vec(x,y);
 	Vec oldRenderPos = pos;
-	for ( int x = 0; x < m_nodes.size(); ++x )
+	for ( size_t x = 0; x < m_nodes.size(); ++x )
 	{
 		pos += inc;
 		Vec renderPos = pos + perpToLine*m_nodes[x];

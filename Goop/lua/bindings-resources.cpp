@@ -40,8 +40,8 @@ LuaReference FontMetaTable;
 LuaReference SpriteSetMetaTable;
 LuaReference SoundMetaTable;
 #endif
-LuaReference PartTypeMetaTable;
-LuaReference WeaponTypeMetaTable;
+//LuaReference PartTypeMetaTable;
+//LuaReference WeaponTypeMetaTable;
 LuaReference mapIterator;
 
 enum FontFlags
@@ -393,7 +393,8 @@ int l_load_particle(lua_State* L)
 	
 	LuaContext context(L);
 	
-	context.pushFullReference(*type, PartTypeMetaTable);
+	//context.pushFullReference(*type, PartTypeMetaTable);
+	type->pushLuaReference();
 	return 1;
 }
 
@@ -405,7 +406,8 @@ int l_weapon_random(lua_State* L)
 {
 	LuaContext context(L);
 	WeaponType* p = game.weaponList[rndInt(game.weaponList.size())];
-	context.pushFullReference(*p, WeaponTypeMetaTable);
+	//context.pushFullReference(*p, WeaponTypeMetaTable);
+	p->pushLuaReference();
 	return 1;
 }
 
@@ -427,7 +429,7 @@ METHODC(WeaponType, weapon_next,
 	size_t n = p->getIndex() + 1;
 	if(n >= game.weaponList.size())
 		n = 0;
-	context.pushFullReference(*game.weaponList[n], WeaponTypeMetaTable);
+	game.weaponList[n]->pushLuaReference();
 	return 1;
 )
 
@@ -441,7 +443,7 @@ METHODC(WeaponType, weapon_prev,
 		n = game.weaponList.size() - 1;
 	else
 		--n;
-	context.pushFullReference(*game.weaponList[n], WeaponTypeMetaTable);
+	game.weaponList[n]->pushLuaReference();
 	return 1;
 )
 
@@ -472,11 +474,16 @@ METHODC(WeaponType, weapon_ammo,
 	return 1;
 )
 
+METHOD(WeaponType, weapon_destroy,
+	delete p;
+	return 0;
+)
+
+/*
 BINOP(WeaponType, weapon_eq,
 	context.push(a == b);
 	return 1;
-)
-
+)*/
 
 int l_modIterator(lua_State* L)
 {
@@ -583,6 +590,11 @@ METHODC(PartType, parttype_put,
 	return 0;
 )
 
+METHOD(PartType, parttype_destroy,
+	delete p;
+	return 0;
+)
+
 void initResources()
 {
 	LuaContext& context = lua;
@@ -605,12 +617,14 @@ void initResources()
 		("mods", l_mods)
 	;
 	
-	CLASS(PartType,
+	CLASSM_(PartType,
+		("__gc", l_parttype_destroy)
+	,
 		("put", l_parttype_put)
 	)
 	
-	CLASSM(WeaponType,
-		("__eq", l_weapon_eq)
+	CLASSM_(WeaponType,
+		("__gc", l_weapon_destroy)
 	,
 		("next", l_weapon_next)
 		("prev", l_weapon_prev)

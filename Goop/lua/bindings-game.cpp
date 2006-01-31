@@ -389,10 +389,19 @@ void initGame()
 	
 	ENUM(EndReason,
 		("ServerQuit", Game::ServerQuit)
+		("ServerChangeMap", Game::ServerChangeMap)
 		("Kicked", Game::Kicked)
 		//("LoadingLevel", Game::LoadingLevel)
 		("IncompatibleProtocol", Game::IncompatibleProtocol)
 		("IncompatibleData", Game::IncompatibleData)
+	)
+	
+	ENUM(Error,
+		("None", Game::ErrorNone)
+		("MapNotFound", Game::ErrorMapNotFound)
+		("MapLoading", Game::ErrorMapLoading)
+		("ModNotFound", Game::ErrorModNotFound)
+		("ModLoading", Game::ErrorModLoading)
 	)
 	
 	ENUM(Player,

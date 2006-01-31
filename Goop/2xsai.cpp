@@ -236,8 +236,8 @@ void Super2xSaI_ex(uint8 *src, uint32 src_pitch, uint8 *unused, BITMAP *dest, ui
 	if (is_video_bitmap(dest) || is_planar_bitmap(dest)) {
 		//dst_line[0] = malloc(sizeof(char) * sbpp * width);
 		//dst_line[1] = malloc(sizeof(char) * sbpp * width);
-		dst_line[0] = new unsigned char[sbpp*width];
-		dst_line[1] = new unsigned char[sbpp*width];
+		dst_line[0] = new unsigned char[sbpp*width*2];
+		dst_line[1] = new unsigned char[sbpp*width*2];
 		v = 1;
 	}
 	else {
@@ -415,12 +415,13 @@ void Super2xSaI_ex(uint8 *src, uint32 src_pitch, uint8 *unused, BITMAP *dest, ui
 			unsigned long dst_addr;
 		
 			dst_addr = bmp_write_line(dest, y * 2);
-			for (j = 0; j < dest->w * sbpp; j += sizeof(long))
-				bmp_write32(dst_addr + j, *((unsigned long *) (dst_line[0] + j)));
-				
+			for (j = 0; j < dest->w * sbpp; (j += sizeof(long)), (dst_addr += sizeof(long)))
+				bmp_write32(dst_addr, *((unsigned long *) (dst_line[0] + j)));
+			
+			
 			dst_addr = bmp_write_line(dest, y * 2 + 1);
-			for (j = 0; j < dest->w * sbpp; j += sizeof(long))
-				bmp_write32(dst_addr + j, *((unsigned long *) (dst_line[1] + j)));
+			for (j = 0; j < dest->w * sbpp; (j += sizeof(long)), (dst_addr += sizeof(long)))
+				bmp_write32(dst_addr, *((unsigned long *) (dst_line[1] + j)));
 		}
 		else {
 			if (y < height - 1) {
@@ -430,11 +431,12 @@ void Super2xSaI_ex(uint8 *src, uint32 src_pitch, uint8 *unused, BITMAP *dest, ui
 		}
 	}
 	bmp_unwrite_line(dest);
-	
+
 	if (v) {
 		delete[] dst_line[0];
 		delete[] dst_line[1];
 	}
+
 	delete[] src_line;
 	delete[] dst_line;
 

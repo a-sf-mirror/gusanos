@@ -33,7 +33,7 @@ public:
 		typename MapT::iterator item = m_resItems.begin();
 		for (; item != m_resItems.end(); ++item)
 		{
-			delete item->second;
+			item->second->deleteThis();
 		}
 		m_resItems.clear();
 		m_locked = false;
@@ -81,7 +81,7 @@ public:
 			}
 			else
 			{
-				delete i;
+				i->deleteThis();
 				item = m_resItems.find(filename);
 				m_resItems.erase(item);
 				if(!suppressError)

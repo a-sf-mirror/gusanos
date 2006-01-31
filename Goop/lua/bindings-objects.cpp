@@ -10,7 +10,8 @@
 #include "../base_worm.h"
 #include "../particle.h"
 #include "../weapon.h"
-#include "../game.h" //Do we need this?
+#include "../weapon_type.h"
+#include "../game.h"
 #include "../glua.h"
 #include "util/log.h"
 
@@ -207,7 +208,8 @@ int l_worm_shoot(lua_State* L)
 METHODC(BaseWorm, worm_current_weapon,
 	if(Weapon* w = p->getCurrentWeapon())
 	{
-		context.pushFullReference(*w, WeaponMetaTable);
+		//context.pushFullReference(*w, WeaponMetaTable);
+		w->pushLuaReference();
 		return 1;
 	}
 	return 0;
@@ -523,7 +525,7 @@ METHOD(Particle, particle_destroy,
 	Returns true if this weapon is reloading.
 */
 
-METHODC(Weapon, weaponinstr_reloading,
+METHODC(Weapon, weaponinst_reloading,
 	context.push(p->reloading);
 	return 1;
 )
@@ -533,7 +535,7 @@ METHODC(Weapon, weaponinstr_reloading,
 	Returns the reload time left on this weapon.
 	Does only make sense if is_reloading() is true.
 */
-METHODC(Weapon, weaponinstr_reload_time,
+METHODC(Weapon, weaponinst_reload_time,
 	context.push(p->getReloadTime());
 	return 1;
 )
@@ -542,7 +544,7 @@ METHODC(Weapon, weaponinstr_reload_time,
 
 	Returns the amount of ammo left in this weapon.
 */
-METHODC(Weapon, weaponinstr_ammo,
+METHODC(Weapon, weaponinst_ammo,
 	context.push(p->getAmmo());
 	return 1;
 )
@@ -551,8 +553,15 @@ METHODC(Weapon, weaponinstr_ammo,
 
 	Returns the weapon type in the form of a WeaponType object.
 */
-METHODC(Weapon, weaponinstr_type,
-	context.pushFullReference(*p->getType(), WeaponTypeMetaTable);
+METHODC(Weapon, weaponinst_type,
+	//context.pushFullReference(*p->getType(), WeaponTypeMetaTable);
+	p->getType()->pushLuaReference();
+	return 1;
+)
+
+METHOD(Weapon, weaponinst_destroy,
+	assert(!p->luaReference);
+	delete p;
 	return 1;
 )
 
@@ -643,11 +652,13 @@ void initObjects()
 	context.tableSetField(LuaID<BaseObject>::value);
 	BaseWorm::metaTable = context.createReference();
 	
-	CLASS(Weapon,
-		("is_reloading", l_weaponinstr_reloading)
-		("reload_time", l_weaponinstr_reload_time)
-		("ammo", l_weaponinstr_ammo)
-		("type", l_weaponinstr_type)
+	CLASSM_(Weapon,
+		("__gc", l_weaponinst_destroy)
+	,
+		("is_reloading", l_weaponinst_reloading)
+		("reload_time", l_weaponinst_reload_time)
+		("ammo", l_weaponinst_ammo)
+		("type", l_weaponinst_type)
 	)
 	
 	ENUM(Particle,

@@ -274,8 +274,8 @@ void Level::draw(BITMAP* where, int x, int y)
 		}
 		else
 		{
-			int px = x * (paralax->w - where->w) / (float)( material->w - where->w );
-			int py = y * (paralax->h - where->h) / (float)( material->h - where->h );
+			int px = int(x * (paralax->w - where->w) / float( material->w - where->w ));
+			int py = int(y * (paralax->h - where->h) / float( material->h - where->h ));
 			blit(paralax,where,px,py,0,0,where->w,where->h);
 			masked_blit(image,where,x,y,0,0,where->w,where->h);
 		}
