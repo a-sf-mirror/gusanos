@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:bitstream</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:44+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,bitstream"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:bitstream&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:bitstream"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:bitstream","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#class_bitstream" class="toc">Class Bitstream</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#see_also" class="toc">See also:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#add_bool" class="toc">add_bool</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#add_int" class="toc">add_int</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#add_string" class="toc">add_string</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#decode_elias_gamma" class="toc">decode_elias_gamma</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#dump" class="toc">dump</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#encode_elias_gamma" class="toc">encode_elias_gamma</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#get_bool" class="toc">get_bool</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#get_int" class="toc">get_int</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#get_string" class="toc">get_string</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitstream#undump" class="toc">undump</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_bitstream" id="class_bitstream">Class Bitstream</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class Bitstream" [1-31] -->
+<h2 class="sectionedit2"><a name="see_also" id="see_also">See also:</a></h2>
+<div class="level2">
+
+<p>
+<a href="doku.php?id=main:modding_docs:lua:global#new_bitstream" class="wikilink1" title="main:modding_docs:lua:global">new_bitstream</a>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "See also:" [32-95] -->
+<h2 class="sectionedit3"><a name="add_bool" id="add_bool">add_bool</a></h2>
+<div class="level2">
+<pre class="code">add_bool()</pre>
+
+<p>
+Extracts a boolean value from this bitstream (Returns either true or false).
+</p>
+
+</div>
+<!-- EDIT3 SECTION "add_bool" [96-210] -->
+<h2 class="sectionedit4"><a name="add_int" id="add_int">add_int</a></h2>
+<div class="level2">
+<pre class="code">add_int(value[, bits])</pre>
+
+<p>
+Adds an integer to this bitstream encoded in <em>bits</em> bits.
+</p>
+
+<p>
+If bits is left out, 32 bits is assumed.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "add_int" [211-361] -->
+<h2 class="sectionedit5"><a name="add_string" id="add_string">add_string</a></h2>
+<div class="level2">
+<pre class="code">add_string(str)</pre>
+
+<p>
+Adds the string <em>str</em> to this bitstream.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "add_string" [362-449] -->
+<h2 class="sectionedit6"><a name="decode_elias_gamma" id="decode_elias_gamma">decode_elias_gamma</a></h2>
+<div class="level2">
+<pre class="code">decode_elias_gamma()</pre>
+
+<p>
+Extracts an integer above or equal to 1 encoded using the elias gamma universal encoding.
+</p>
+
+</div>
+<!-- EDIT6 SECTION "decode_elias_gamma" [450-597] -->
+<h2 class="sectionedit7"><a name="dump" id="dump">dump</a></h2>
+<div class="level2">
+<pre class="code">dump(value)</pre>
+
+<p>
+Adds a lua object to the bitstream.
+</p>
+
+<p>
+WARNING: This function is not very space efficient and can only encode tables
+, strings, numbers, booleans and nil (or tables with keys and values of those types)
+</p>
+
+</div>
+<!-- EDIT7 SECTION "dump" [598-832] -->
+<h2 class="sectionedit8"><a name="encode_elias_gamma" id="encode_elias_gamma">encode_elias_gamma</a></h2>
+<div class="level2">
+<pre class="code">encode_elias_gamma(value)</pre>
+
+<p>
+Adds an integer above or equal to 1 encoded using the elias gamma universal encoding.
+</p>
+
+</div>
+<!-- EDIT8 SECTION "encode_elias_gamma" [833-981] -->
+<h2 class="sectionedit9"><a name="get_bool" id="get_bool">get_bool</a></h2>
+<div class="level2">
+<pre class="code">get_bool()</pre>
+
+<p>
+Extracts a boolean value from this bitstream (Returns either true or false).
+</p>
+
+</div>
+<!-- EDIT9 SECTION "get_bool" [982-1096] -->
+<h2 class="sectionedit10"><a name="get_int" id="get_int">get_int</a></h2>
+<div class="level2">
+<pre class="code">get_int([bits])</pre>
+
+<p>
+Extracts an integer from this bitstream encoded in <em>bits</em> bits.
+</p>
+
+<p>
+If bits is left out, 32 bits is assumed.
+</p>
+
+</div>
+<!-- EDIT10 SECTION "get_int" [1097-1246] -->
+<h2 class="sectionedit11"><a name="get_string" id="get_string">get_string</a></h2>
+<div class="level2">
+<pre class="code">get_string()</pre>
+
+<p>
+Extracts a string from this bitstream.
+</p>
+
+</div>
+<!-- EDIT11 SECTION "get_string" [1247-1327] -->
+<h2 class="sectionedit12"><a name="undump" id="undump">undump</a></h2>
+<div class="level2">
+<pre class="code">undump()</pre>
+
+<p>
+Extracts a lua object added to the bitstream using the <em>dump</em> method.
+</p>
+
+</div>
+<!-- EDIT12 SECTION "undump" [1328-] --></div>
+</body>
+</html>

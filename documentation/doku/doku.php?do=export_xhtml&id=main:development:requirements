@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:development:requirements</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,development,requirements"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:development:requirements&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:development"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:development:requirements"/>
+<link rel="canonical" href="doku.php?id=main:development:requirements"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:development';var JSINFO = {"id":"main:development:requirements","namespace":"main:development"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements#gusanos_10_requirements" class="toc">Gusanos 1.0 Requirements</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements#general" class="toc">General</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements#gameplay" class="toc">Gameplay</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements#modding" class="toc">Modding</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements#mapping" class="toc">Mapping</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements#community" class="toc">Community</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements#discussion" class="toc">Discussion</a></span></div></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="gusanos_10_requirements" id="gusanos_10_requirements">Gusanos 1.0 Requirements</a></h1>
+<div class="level1">
+
+<p>
+What gusanos needs and stuff. ( a uneditable requirements page…)
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Gusanos 1.0 Requirements" [1-113] -->
+<h2 class="sectionedit2"><a name="general" id="general">General</a></h2>
+<div class="level2">
+<div class="table sectionedit3"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Task     </th><th class="col1 leftalign"> Priority       </th><th class="col2 leftalign"> Done?          </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0" colspan="3"> <a href="doku.php?id=main:development:requirements:gui" class="wikilink1" title="main:development:requirements:gui">GUI</a> </th>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> Nice, shiny and easy to use <acronym title="Graphical User Interface">GUI</acronym>. Complete with mod choosing, server stuff etc.   </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+	<tr class="row3">
+		<th class="col0" colspan="3"> <a href="doku.php?id=main:development:requirements:netplay" class="wikilink2" title="main:development:requirements:netplay" rel="nofollow">Netplay</a> </th>
+	</tr>
+	<tr class="row4">
+		<td class="col0"> Some netplay requirements: <img src="lib/images/smileys/fixme.gif" class="middle" alt="FIXME" /> </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+</table></div>
+<!-- EDIT3 TABLE [135-455] -->
+</div>
+<!-- EDIT2 SECTION "General" [114-457] -->
+<h2 class="sectionedit4"><a name="gameplay" id="gameplay">Gameplay</a></h2>
+<div class="level2">
+<div class="table sectionedit5"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Task     </th><th class="col1 leftalign"> Priority       </th><th class="col2 leftalign"> Done?          </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0 leftalign" colspan="3"> <a href="doku.php?id=main:development:requirements:defaultmods" class="wikilink2" title="main:development:requirements:defaultmods" rel="nofollow">Default Mod(s)</a>     </th>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> More than 1 mod bundled by default to show off Gusanos capabilities.   </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+</table></div>
+<!-- EDIT5 TABLE [480-696] -->
+</div>
+<!-- EDIT4 SECTION "Gameplay" [458-698] -->
+<h2 class="sectionedit6"><a name="modding" id="modding">Modding</a></h2>
+<div class="level2">
+<div class="table sectionedit7"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Task     </th><th class="col1 leftalign"> Priority       </th><th class="col2 leftalign"> Done?          </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0 leftalign" colspan="3"> Some Power scripting language     </th>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> <img src="lib/images/smileys/fixme.gif" class="middle" alt="FIXME" />   </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+</table></div>
+<!-- EDIT7 TABLE [720-842] -->
+</div>
+<!-- EDIT6 SECTION "Modding" [699-844] -->
+<h2 class="sectionedit8"><a name="mapping" id="mapping">Mapping</a></h2>
+<div class="level2">
+
+</div>
+<!-- EDIT8 SECTION "Mapping" [845-866] -->
+<h2 class="sectionedit9"><a name="community" id="community">Community</a></h2>
+<div class="level2">
+<div class="table sectionedit10"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Task     </th><th class="col1 leftalign"> Priority       </th><th class="col2 leftalign"> Done?          </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0" colspan="3"> Documnentation </th>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> Documentation must be complete and useful! Examples and code snippets should be included.  </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+	<tr class="row3">
+		<th class="col0" colspan="3"> <a href="doku.php?id=main:development:requirements:site" class="wikilink2" title="main:development:requirements:site" rel="nofollow">Gusanos Site</a> </th>
+	</tr>
+	<tr class="row4">
+		<td class="col0 leftalign"> New website with mod/mod hosting, rating etc.  </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+</table></div>
+<!-- EDIT10 TABLE [889-1208] -->
+</div>
+<!-- EDIT9 SECTION "Community" [867-1214] -->
+<h1 class="sectionedit11"><a name="discussion" id="discussion">Discussion</a></h1>
+<div class="level1">
+
+<p>
+Feel free to add comments to any of the tables above or here. 
+</p>
+<blockquote><div class="no">
+ I&#039;ve removed some requirements to do with default mod stuff. (more maps, weapons etc) - Jonny</div></blockquote>
+<blockquote><div class="no">
+<blockquote><div class="no">
+ Ya rly! - Jonny :P</div></blockquote>
+</div></blockquote>
+<blockquote><div class="no">
+<blockquote><div class="no">
+<blockquote><div class="no">
+ this will take 3 years more to be completed oob &gt;:&gt; -Dflies</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+
+<p>
+why not use python for the scripting language?
+</p>
+
+</div>
+<!-- EDIT11 SECTION "Discussion" [1215-] --></div>
+</body>
+</html>

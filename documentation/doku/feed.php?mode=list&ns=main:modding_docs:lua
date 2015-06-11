@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:modding_docs:lua</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:19:56+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:bitmap&amp;rev=1316364404&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:bitstream&amp;rev=1316364404&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:classes&amp;rev=1316364404&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:font&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:global&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:list&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkgameevent&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkparticleevent&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkplayerevent&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkwormevent&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:object&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:particle&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:player&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:sound&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:spriteset&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:tcpsocket&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:viewport&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:weapon&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:weapontype&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:wnd&amp;rev=1316364403&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:worm&amp;rev=1316364403&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:bitmap&amp;rev=1316364404&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:44+00:00</dc:date>
+        <title>main:modding_docs:lua:bitmap</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:bitmap&amp;rev=1316364404&amp;do=diff</link>
+        <description>See also:
+
+gfx_draw_box
+
+draw_box
+draw_box(bitmap, x1, y1, x2, y2, color)
+Draws a filled box with the corners (x1, y1) and (x2, y2)
+with the color color using the currently selected blender.
+
+h
+h()
+Returns the width of this bitmap.
+
+hline
+
+(available from version 0.9c)</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:bitstream&amp;rev=1316364404&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:44+00:00</dc:date>
+        <title>main:modding_docs:lua:bitstream</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:bitstream&amp;rev=1316364404&amp;do=diff</link>
+        <description>See also:
+
+new_bitstream
+
+add_bool
+add_bool()
+Extracts a boolean value from this bitstream (Returns either true or false).
+
+add_int
+add_int(value[, bits])
+Adds an integer to this bitstream encoded in bits bits.
+
+If bits is left out, 32 bits is assumed.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:classes&amp;rev=1316364404&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:44+00:00</dc:date>
+        <title>main:modding_docs:lua:classes</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:classes&amp;rev=1316364404&amp;do=diff</link>
+        <description>*  Global functions
+
+	*  Bitmap
+	*  Bitstream
+	*  Font
+	*  NetworkGameEvent
+	*  NetworkParticleEvent
+	*  NetworkPlayerEvent
+	*  NetworkWormEvent
+	*  Object
+	*  Particle
+	*  Player
+	*  Sound
+	*  SpriteSet
+	*  TCPSocket
+	*  Viewport
+	*  Weapon
+	*  WeaponType
+	*  Worm</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:font&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:font</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:font&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+font_load
+
+render
+render(bitmap, string, x, y[, color[, flags]])
+Draws the text 'string' on 'bitmap' at the position (x, y).
+
+If color is supplied, it draws the text with that color,
+otherwise it draws the text white.
+
+Note that in versions before 0.9c, color was specified as
+three parameters. This has been deprecated.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:global&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:global</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:global&amp;rev=1316364403&amp;do=diff</link>
+        <description>abs
+abs(n)
+Returns the absolute value of n.
+
+angle_clamp
+angle_clamp(angle)
+Returns angle normalized to [0, 360).
+
+angle_diff
+angle_diff(a, b)
+Returns the relative angle in (-180, 180) between
+angle a and b such that (a + angle_diff(a, b)) = b (mod 360)</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:list&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:list</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:list&amp;rev=1316364403&amp;do=diff</link>
+        <description>(inherits from Wnd)
+
+add_column
+add_column(title, width)
+Adds a column to a list with the title title.
+width is a value in (0, 1) that species the width of this column proportional to the total width of the list.
+
+clear
+clear()
+Removes all items in the list.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkgameevent&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:networkgameevent</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkgameevent&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+bindings.gameNetworkInit, network_game_event, network_game_event
+
+send
+send([data[, connection[, mode[, rules]]]])
+Sends a game event to one or more computers.
+
+data is a bitstream to send with the event.
+
+connection is a connection ID to send the event on. If it's 0, the rules parameter decides who to send to.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkparticleevent&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:networkparticleevent</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkparticleevent&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+network_particle_event, network_particle_event
+
+send
+
+(available from version 0.9c)
+send(particle, [data[, connection[, mode[, rules]]]])
+Sends a particle event to one or more computers.
+
+particle is the Particle object to send the event on.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkplayerevent&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:networkplayerevent</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkplayerevent&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+bindings.playerNetworkInit, network_player_event, network_player_event
+
+send
+send(player, [data[, connection[, mode[, rules]]]])
+Sends a player event to one or more computers.
+
+player is the Player object to send the event on.
+
+See NetworkGameEvent:send for documentation of the other parameters.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkwormevent&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:networkwormevent</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:networkwormevent&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+network_worm_event, network_worm_event
+
+send
+send(worm, [data[, connection[, mode[, rules]]]])
+Sends a worm event to one or more computers.
+
+worm is the Worm object to send the event on.
+
+See NetworkGameEvent:send for documentation of the other parameters.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:object&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:object</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:object&amp;rev=1316364403&amp;do=diff</link>
+        <description>angle
+angle()
+(Known as get_angle before 0.9c)
+Returns the current angle of the object.
+
+closest_worm
+closest_worm()
+(Known as get_closest_worm before 0.9c)
+
+Returns the closest worm that fulfills these requirements:
+
+	*  It is not the owner of the object.
+	*  It is visible and active.
+	*  The straight path to it from the object is not, for particles, blocked.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:particle&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:particle</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:particle&amp;rev=1316364403&amp;do=diff</link>
+        <description>(inherits from Object)
+
+See also:
+
+NetworkParticleEvent:send, network_particle_event
+
+set_angle
+set_angle(angle)
+Changes the angle of the particle to angle.
+
+set_replication
+
+(available from version 0.9c)
+set_replication(type, state)
+If the particle is network-aware, this function turns on or off replication
+of different aspects of the particle's state.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:player&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:player</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:player&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+bindings.wormRender, bindings.viewportRender, bindings.playerUpdate, bindings.playerInit, bindings.playerRemoved, NetworkPlayerEvent:send, network_player_event, Object:player, console_register_control, game_players, game_local_player
+
+data
+data()
+Returns a lua table associated with this player.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:sound&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:sound</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:sound&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+sounds
+
+play
+
+(available from version 0.9c)
+play([x, y | object] [, loudness, pitch, pitchVariation])
+Plays a sound either at position (x, y) on the map, or attached to
+object object (depending on which is passed to the function).</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:spriteset&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:spriteset</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:spriteset&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+sprites_load
+
+frames
+frames()
+Returns the number of frames in this sprite set.
+
+render
+render(bitmap, frame, x, y)
+Draws the frame frame of the sprite set on bitmap with the pivot at position (x, y).
+
+render_skinned_box
+render_skinned_box(bitmap, x1, y1, x2, y2, color)
+Draws the sprite set as a skinned box with the rectangle (x1, y1) - (x2, y2)
+and background color color.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:tcpsocket&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:tcpsocket</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:tcpsocket&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+tcp_connect
+
+send
+send(data)
+Sends data on the socket.
+
+think
+think()
+Processes data sending and recieving.
+
+If there's data recieved, it's returned as a string.
+
+If there's no data recieved, nil is returned. 
+
+Must be called regularly for data sends and connection to finish.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:viewport&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:viewport</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:viewport&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+bindings.wormRender, bindings.wormRender, bindings.viewportRender
+
+bitmap
+bitmap()
+(Known as get_bitmap before 0.9c)
+
+Returns the HUD bitmap of this viewport.
+
+from_map
+
+(available from version 0.9c)
+from_map(x, y)
+Converts the map coordinates (x, y) to
+coordinates relative to the viewport bitmap and returns them.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:weapon&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:weapon</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:weapon&amp;rev=1316364403&amp;do=diff</link>
+        <description>ammo
+ammo()
+Returns the amount of ammo left in this weapon.
+
+is_reloading
+is_reloading()
+Returns true if this weapon is reloading.
+
+reload_time
+reload_time()
+Returns the reload time left on this weapon.
+Does only make sense if is_reloading() is true.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:weapontype&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:weapontype</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:weapontype&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+weapon_random, Weapon:type, Player:select_weapons
+
+ammo
+ammo()
+Returns the amount of ammo for this weapon type when reloaded.
+
+name
+name()
+Returns the name of this weapon type.
+
+next
+next()
+Returns the next weapon type after this one.
+
+prev
+prev()
+Returns the previous weapon type after this one.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:wnd&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:wnd</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:wnd&amp;rev=1316364403&amp;do=diff</link>
+        <description>See also:
+
+gui_find
+
+activate
+activate()
+Makes the window recieve input from now on until it's deactivated.
+
+attribute
+attribute(name)
+Returns the value of the attribute name of the window.
+
+focus
+focus()
+Focuses the window.
+
+get_text
+get_text()
+Returns the text of the window.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:worm&amp;rev=1316364403&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:43+00:00</dc:date>
+        <title>main:modding_docs:lua:worm</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:lua:worm&amp;rev=1316364403&amp;do=diff</link>
+        <description>(inherits from Object)
+
+See also:
+
+bindings.wormRender, bindings.viewportRender, bindings.wormDeath, bindings.wormRemoved, NetworkWormEvent:send, network_worm_event
+
+health
+health()
+(Known as get_health before 0.9c)
+Returns the health of this worm.</description>
+    </item>
+</rdf:RDF>

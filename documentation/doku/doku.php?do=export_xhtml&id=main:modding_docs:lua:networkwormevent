@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:networkwormevent</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:43+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,networkwormevent"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:networkwormevent&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkwormevent"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:networkwormevent"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:networkwormevent","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkwormevent#class_networkwormevent" class="toc">Class NetworkWormEvent</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkwormevent#see_also" class="toc">See also:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkwormevent#send" class="toc">send</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_networkwormevent" id="class_networkwormevent">Class NetworkWormEvent</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class NetworkWormEvent" [1-38] -->
+<h2 class="sectionedit2"><a name="see_also" id="see_also">See also:</a></h2>
+<div class="level2">
+
+<p>
+<a href="doku.php?id=main:modding_docs:lua:global#network_worm_event" class="wikilink1" title="main:modding_docs:lua:global">network_worm_event</a>, <a href="doku.php?id=main:modding_docs:lua:global#network_worm_event" class="wikilink1" title="main:modding_docs:lua:global">network_worm_event</a>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "See also:" [39-162] -->
+<h2 class="sectionedit3"><a name="send" id="send">send</a></h2>
+<div class="level2">
+<pre class="code">send(worm, [data[, connection[, mode[, rules]]]])</pre>
+
+<p>
+Sends a worm event to one or more computers.
+</p>
+
+<p>
+<em>worm</em> is the <a href="doku.php?id=main:modding_docs:lua:worm" class="wikilink1" title="main:modding_docs:lua:worm">Worm</a> object to <span class="curid"><a href="doku.php?id=main:modding_docs:lua:networkwormevent#send" class="wikilink1" title="main:modding_docs:lua:networkwormevent">send</a></span> the event on.
+</p>
+
+<p>
+See NetworkGameEvent:send for documentation of the other parameters.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "send" [163-] --></div>
+</body>
+</html>

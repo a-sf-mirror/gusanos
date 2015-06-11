@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:general_docs:faq:usage:general</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:20:13+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:changemod&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:config&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:console&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:installmod&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:keys&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:lxrope&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:playercolour&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:playername&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:splitscreen&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;rev=1316364401&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:changemod&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:changemod</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:changemod&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do I change to a different mod?
+
+ To change to a different map, open the console, and type:
+game &lt;modname&gt; (eg. game default)
+This command will only take effect when map is changed. You can set it before hosting and it will autochange for anyone who joins the server ( If they have the mod ). You can also add this into config.cfg so that gusanos has this settings every time you run it.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:config&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:config</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:config&amp;rev=1316364401&amp;do=diff</link>
+        <description>What is, and where is the &quot;config.cfg&quot;?
+
+The config.cfg file is a file that contains commands and variables the Gusanos executes when Gusanos is first loaded. Player key binds and other common binds (chat, scoreboard etc) are also located in this file.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:console&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:console</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:console&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do open/use the console?
+
+To open the console in Gusanos press the ` key on your keyboard. This is usually located just below the escape key.
+
+For information on how to use the console view the omfgConsole page.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:installmod&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:installmod</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:installmod&amp;rev=1316364401&amp;do=diff</link>
+        <description>first you have to download the mod, (look at the gusanos forum,)
+when you have downloaded the zip/rar file, unzip the map into te main folder of gusanos (the one where the maps default and screenshots already are).
+
+now it is installed, thats it
+if you want to play it, all you have to do is to type in the console: game X (x stands for the mods map name)</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:keys&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:keys</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:keys&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do i change my keys
+
+You can change your keys by opening file named “config.cfg” in Gusanosfolder/default/
+Player one keys are “p0_&lt;effect&gt;”, and player 2 keys are “p1_&lt;effect&gt;”.
+
+----------
+
+Example:
+
+bind W +P0_UP
+
+bind S +P0_DOWN
+
+bind A +P0_LEFT
+
+bind D +P0_RIGHT
+
+bind F +P0_FIRE
+
+bind H +P0_CHANGE
+
+bind G +P0_JUMP</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:lxrope&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:lxrope</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:lxrope&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do I use the ninja rope with a single key like LieroX?
+
+There is a way to use a single key for the ninja rope in Gusanos by using some console command trickery.
+
+Add this to your config.cfg file or open the console and enter:
+bind &lt;key&gt; &quot;+P0_CHANGE;+P0_JUMP;-P0_CHANGE&quot; (eg. bind p &quot;+P0_CHANGE;+P0_JUMP;-P0_CHANGE&quot;)</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:playercolour&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:playercolour</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:playercolour&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do I change my worm colour?
+
+Depending on the player you are, you use p#_colour to change your worm colour. open the console, and type:
+p#_colour &lt;R&gt; &lt;G&gt; &lt;B&gt; (eg . p0_colour 255 0 0, which is red)
+By default, your player number is 0. However, if you are using splitscreen, the player on the left is p0 and the player on the right is p1. You can also add this into config.cfg so that gusanos has this settings every time you run it.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:playername&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:playername</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:playername&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do I change my player name?
+
+ Depending on which player you are, you use p#_name to change your name. open the console, and type:
+p0_name &quot;My Name&quot;
+By default, your player number is 0 (zero). However, if you are using splitscreen, the player on the left is p0 and the player on the right is p1. You can also add this into config.cfg so that gusanos has this settings every time you run it.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:splitscreen&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:splitscreen</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:splitscreen&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do I run Gusanos in splitscreen?
+
+To run Gusanos in splitscreen, open the console, and type:
+cl_splitscreen 1
+This will only take effect when map is changed. You can play with splitscreen on while hosting or when joining an internet game. You can also add this into config.cfg so that gusanos has this settings every time you run Gusanos.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:general:videomode</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;rev=1316364401&amp;do=diff</link>
+        <description>Sometimes you get “Video Not Supported”
+
+2 possible solutions: add 'double' to the bottom of your config.cfg, or, if that doesn't help, use 'windowed'.
+
+It could also be an X configuration thing: I fixed it by fixing my sync rate to 75hz...</description>
+    </item>
+</rdf:RDF>

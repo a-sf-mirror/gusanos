@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:modding_docs:tutorials</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:20:07+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers&amp;rev=1316364404&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:tutorials:implementing_dark_mode_and_lights&amp;rev=1316364404&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers&amp;rev=1316364404&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:44+00:00</dc:date>
+        <title>main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers&amp;rev=1316364404&amp;do=diff</link>
+        <description>This tutorial can of course be modified for other objects as well. However, the “explosive drum” idea is one that we surely all recognize from FPS's. This tutorial will deal with several concepts: collision layers, detection, and object death. For this tutorial, we will make two objects: the explosive drum and a bullet that will trigger it.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:tutorials:implementing_dark_mode_and_lights&amp;rev=1316364404&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:44+00:00</dc:date>
+        <title>main:modding_docs:tutorials:implementing_dark_mode_and_lights</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:tutorials:implementing_dark_mode_and_lights&amp;rev=1316364404&amp;do=diff</link>
+        <description>This tutorial is valid only for gusanos 0.9b, it wont work in 0.9c or any other further versions
+
+Yes, someone should update it or something.
+
+Introduction to Dark Mode
+
+Gusanos 0.9 has lights, but to utilize them, you must activate dark mode. To do this, you must hit ~ to activate the console; then type in vid_dark_mode 1 (0 to deactivate). Note that dark mode will likely eventually be map and mod specific; if the map and mod you're playing don't implement lights, you will likely be shrouded in…</description>
+    </item>
+</rdf:RDF>

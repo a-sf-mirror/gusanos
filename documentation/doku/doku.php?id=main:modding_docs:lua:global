@@ -1,0 +1,940 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:modding_docs:lua:global    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:43+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,global"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:global&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:global"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:global"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:global","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:modding_docs:lua:global&amp;do=backlink"  title="Backlinks">main:modding_docs:lua:global</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:port"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:port">port</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:servern"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:servern">servern</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:serverlag"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:serverlag">serverlag</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:crashes:lowres"  class="breadcrumbs" title="main:general_docs:faq:crashes:lowres">lowres</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:crashes:lowrescrash"  class="breadcrumbs" title="main:general_docs:faq:crashes:lowrescrash">lowrescrash</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:performance:soundwin"  class="breadcrumbs" title="main:general_docs:faq:performance:soundwin">soundwin</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:performance:vid"  class="breadcrumbs" title="main:general_docs:faq:performance:vid">vid</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:variations"  class="breadcrumbs" title="main:modding_docs:variations">variations</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:supported_sound_formats"  class="breadcrumbs" title="main:modding_docs:supported_sound_formats">supported_sound_formats</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global"  class="breadcrumbs" title="main:modding_docs:lua:global">global</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#global_functions" class="toc">Global functions</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#abs" class="toc">abs</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#angle_clamp" class="toc">angle_clamp</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#angle_diff" class="toc">angle_diff</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#angle_vector" class="toc">angle_vector</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsafterrender" class="toc">bindings.afterRender</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsafterupdate" class="toc">bindings.afterUpdate</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsgameended" class="toc">bindings.gameEnded</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingslocalplayerevent" class="toc">bindings.localplayerEvent</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsgamenetworkinit" class="toc">bindings.gameNetworkInit</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsplayerinit" class="toc">bindings.playerInit</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsplayernetworkinit" class="toc">bindings.playerNetworkInit</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsplayerremoved" class="toc">bindings.playerRemoved</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsplayerupdate" class="toc">bindings.playerUpdate</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingsviewportrender" class="toc">bindings.viewportRender</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingswormdeath" class="toc">bindings.wormDeath</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingswormremoved" class="toc">bindings.wormRemoved</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#bindingswormrender" class="toc">bindings.wormRender</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#color" class="toc">color</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#connect" class="toc">connect</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#console_register_command" class="toc">console_register_command</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#console_register_control" class="toc">console_register_control</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#fetch_server_list" class="toc">fetch_server_list</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#floor" class="toc">floor</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#font_load" class="toc">font_load</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#game_local_player" class="toc">game_local_player</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#game_players" class="toc">game_players</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#gfx_draw_box" class="toc">gfx_draw_box</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#gfx_reset_blending" class="toc">gfx_reset_blending</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#gfx_set_add" class="toc">gfx_set_add</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#gfx_set_alpha" class="toc">gfx_set_alpha</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#gfx_set_alphach" class="toc">gfx_set_alphach</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#host" class="toc">host</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#load_particle" class="toc">load_particle</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#map" class="toc">map</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#map_is_blocked" class="toc">map_is_blocked</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#map_is_loaded" class="toc">map_is_loaded</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#map_is_particle_pass" class="toc">map_is_particle_pass</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#maps" class="toc">maps</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#network_game_event" class="toc">network_game_event</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#network_particle_event" class="toc">network_particle_event</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#network_player_event" class="toc">network_player_event</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#network_worm_event" class="toc">network_worm_event</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#new_bitstream" class="toc">new_bitstream</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#randomfloat" class="toc">randomfloat</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#randomint" class="toc">randomint</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#sounds" class="toc">sounds</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#sprites_load" class="toc">sprites_load</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#sqrt" class="toc">sqrt</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#tcp_connect" class="toc">tcp_connect</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#to_time_string" class="toc">to_time_string</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#vector_add" class="toc">vector_add</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#vector_diff" class="toc">vector_diff</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#vector_direction" class="toc">vector_direction</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#vector_distance" class="toc">vector_distance</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#weapon_count" class="toc">weapon_count</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:lua:global#weapon_random" class="toc">weapon_random</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="global_functions" id="global_functions">Global functions</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit2"><a name="abs" id="abs">abs</a></h2>
+<div class="level2">
+<pre class="code">abs(n)</pre>
+
+<p>
+Returns the absolute value of n.
+</p>
+
+</div>
+
+<h2 class="sectionedit3"><a name="angle_clamp" id="angle_clamp">angle_clamp</a></h2>
+<div class="level2">
+<pre class="code">angle_clamp(angle)</pre>
+
+<p>
+Returns <em>angle</em> normalized to [0, 360).
+</p>
+
+</div>
+
+<h2 class="sectionedit4"><a name="angle_diff" id="angle_diff">angle_diff</a></h2>
+<div class="level2">
+<pre class="code">angle_diff(a, b)</pre>
+
+<p>
+Returns the relative angle in (-180, 180) between
+angle <em>a</em> and <em>b</em> such that (a + angle_diff(a, b)) = b (mod 360)
+</p>
+
+</div>
+
+<h2 class="sectionedit5"><a name="angle_vector" id="angle_vector">angle_vector</a></h2>
+<div class="level2">
+<pre class="code">angle_vector(angle[, length = 1])</pre>
+
+<p>
+Returns a tuple representing the angle
+with length <em>length</em>.
+</p>
+
+</div>
+
+<h2 class="sectionedit6"><a name="bindingsafterrender" id="bindingsafterrender">bindings.afterRender</a></h2>
+<div class="level2">
+<pre class="code">bindings.afterRender()</pre>
+
+<p>
+This is called after a rendering cycle is complete
+</p>
+
+</div>
+
+<h2 class="sectionedit7"><a name="bindingsafterupdate" id="bindingsafterupdate">bindings.afterUpdate</a></h2>
+<div class="level2">
+<pre class="code">bindings.afterUpdate()</pre>
+
+<p>
+This is called after every logic cycle is complete.
+</p>
+
+</div>
+
+<h2 class="sectionedit8"><a name="bindingsgameended" id="bindingsgameended">bindings.gameEnded</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">bindings.gameEnded(reason)</pre>
+
+<p>
+This is called when the game ended and no new game is pending.
+</p>
+
+<p>
+<em>reason</em> can be one of the following:
+EndReason.ServerQuit : the server disconnected.
+EndReason.Kicked : you were kicked from the server.
+EndReason.IncompatibleProtocol : you are running a protocol incompatible with the server&#039;s.
+EndReason.IncompatibleData : your data does not match the server&#039;s.
+</p>
+
+</div>
+
+<h2 class="sectionedit9"><a name="bindingslocalplayerevent" id="bindingslocalplayerevent">bindings.localplayerEvent</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">binding.localplayerEvent(player, event, state)</pre>
+
+<p>
+This is called when a special key (direction, jump, change, fire) is pressed on the local machine.
+</p>
+
+<p>
+If state is true then the key was pressed, otherwise it was released.
+</p>
+
+<p>
+The possible events are:
+Player.Up
+Player.Down
+Player.Left
+Player.Right
+Player.Jump
+Player.Fire
+Player.Change
+</p>
+
+</div>
+
+<h2 class="sectionedit10"><a name="bindingsgamenetworkinit" id="bindingsgamenetworkinit">bindings.gameNetworkInit</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">bindings.gameNetworkInit(connID)</pre>
+
+<p>
+This is called when a new client joins the game. <em>connID</em> is the connection ID of the new client.
+</p>
+
+<p>
+The connection ID can be passed to the send() method of a <a href="doku.php?id=main:modding_docs:lua:networkgameevent" class="wikilink1" title="main:modding_docs:lua:networkgameevent">NetworkGameEvent</a> to send events only
+to the new client.
+</p>
+
+</div>
+
+<h2 class="sectionedit11"><a name="bindingsplayerinit" id="bindingsplayerinit">bindings.playerInit</a></h2>
+<div class="level2">
+<pre class="code">bindings.playerInit(player)</pre>
+
+<p>
+This is called when a new player is added to the game. <em>player</em> is the <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object that was added.
+</p>
+
+</div>
+
+<h2 class="sectionedit12"><a name="bindingsplayernetworkinit" id="bindingsplayernetworkinit">bindings.playerNetworkInit</a></h2>
+<div class="level2">
+<pre class="code">bindings.playerNetworkInit(player, connID)</pre>
+
+<p>
+This is called when a player is replicated to a new client. <em>player</em> is the player replicated.
+<em>connID</em> is the connection ID of the new client.
+</p>
+
+<p>
+The connection ID can be passed to the send() method of a <a href="doku.php?id=main:modding_docs:lua:networkplayerevent" class="wikilink1" title="main:modding_docs:lua:networkplayerevent">NetworkPlayerEvent</a> to send events only
+to the player on the new client.
+</p>
+
+</div>
+
+<h2 class="sectionedit13"><a name="bindingsplayerremoved" id="bindingsplayerremoved">bindings.playerRemoved</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">bindings.playerRemoved(player)</pre>
+
+<p>
+This is called when a player is removed from the game. <em>player</em> is the <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object that will be removed.
+</p>
+
+</div>
+
+<h2 class="sectionedit14"><a name="bindingsplayerupdate" id="bindingsplayerupdate">bindings.playerUpdate</a></h2>
+<div class="level2">
+<pre class="code">bindings.playerUpdate(player)</pre>
+
+<p>
+This is called in every logic cycle for every player. <em>player</em> is the relevant <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object.
+</p>
+
+</div>
+
+<h2 class="sectionedit15"><a name="bindingsviewportrender" id="bindingsviewportrender">bindings.viewportRender</a></h2>
+<div class="level2">
+<pre class="code">bindings.viewportRender(viewport, worm)</pre>
+
+<p>
+This is called for every viewport when it&#039;s time to render the viewport HUD.
+</p>
+
+<p>
+<em>viewport</em> is the <a href="doku.php?id=main:modding_docs:lua:viewport" class="wikilink1" title="main:modding_docs:lua:viewport">Viewport</a> object it should be rendered to and <em>worm</em> is the
+<a href="doku.php?id=main:modding_docs:lua:worm" class="wikilink1" title="main:modding_docs:lua:worm">Worm</a> object of the <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object that owns <em>viewport</em>.
+</p>
+
+</div>
+
+<h2 class="sectionedit16"><a name="bindingswormdeath" id="bindingswormdeath">bindings.wormDeath</a></h2>
+<div class="level2">
+<pre class="code">bindings.wormDeath(worm)</pre>
+
+<p>
+This is called when a worm dies. <em>worm</em> is the <a href="doku.php?id=main:modding_docs:lua:worm" class="wikilink1" title="main:modding_docs:lua:worm">Worm</a> object that died.
+</p>
+
+</div>
+
+<h2 class="sectionedit17"><a name="bindingswormremoved" id="bindingswormremoved">bindings.wormRemoved</a></h2>
+<div class="level2">
+<pre class="code">bindings.wormRemoved(worm)</pre>
+
+<p>
+This is called when a worm is removed from the game. <em>worm</em> is the <a href="doku.php?id=main:modding_docs:lua:worm" class="wikilink1" title="main:modding_docs:lua:worm">Worm</a> object that will be removed.
+</p>
+
+</div>
+
+<h2 class="sectionedit18"><a name="bindingswormrender" id="bindingswormrender">bindings.wormRender</a></h2>
+<div class="level2">
+<pre class="code">bindings.wormRender(x, y, worm, viewport, ownerPlayer)</pre>
+
+<p>
+This is called for every worm and viewport combination when it&#039;s time to render
+the worm HUD.
+</p>
+
+<p>
+(x, y) is the position of the worm in viewport coordinates.
+</p>
+
+<p>
+<em>worm</em> is the <a href="doku.php?id=main:modding_docs:lua:worm" class="wikilink1" title="main:modding_docs:lua:worm">Worm</a> object for which HUD should be rendered and <em>viewport</em> is
+the <a href="doku.php?id=main:modding_docs:lua:viewport" class="wikilink1" title="main:modding_docs:lua:viewport">Viewport</a> object it should be rendered to. Use the bitmap() method of <a href="doku.php?id=main:modding_docs:lua:viewport" class="wikilink1" title="main:modding_docs:lua:viewport">Viewport</a>
+to retrieve the relevant bitmap to draw on.
+</p>
+
+<p>
+<em>ownerPlayer</em> is the <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object that owns <em>viewport</em>.
+</p>
+
+</div>
+
+<h2 class="sectionedit19"><a name="color" id="color">color</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">color(r, g, b)</pre>
+
+<p>
+Returns a <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global#color" class="wikilink1" title="main:modding_docs:lua:global">color</a></span>
+</p>
+
+</div>
+
+<h2 class="sectionedit20"><a name="connect" id="connect">connect</a></h2>
+<div class="level2">
+<pre class="code">connect(address)</pre>
+
+<p>
+Connects to the address passed.
+</p>
+
+</div>
+
+<h2 class="sectionedit21"><a name="console_register_command" id="console_register_command">console_register_command</a></h2>
+<div class="level2">
+<pre class="code">console_register_command(name, function)</pre>
+
+<p>
+Registers the function <em>function</em> as a command in the Gusanos console.
+When it is called, it will be passed each console parameter as a seperate parameter to the function.
+The command will be removed automatically when a new <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global#map" class="wikilink1" title="main:modding_docs:lua:global">map</a></span> is loaded.
+</p>
+
+</div>
+
+<h2 class="sectionedit22"><a name="console_register_control" id="console_register_control">console_register_control</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">console_register_control(name, function)</pre>
+
+<p>
+Registers a number of console commands that work like player controls.
+</p>
+
+<p>
+<em>function</em> is a function that is called when the control is activated or
+deactivated. It is of the form:
+</p>
+<pre class="code">function(player, state)
+end</pre>
+
+<p>
+Where <em>player</em> is the <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object the control applies to, and <em>state</em> is either true
+or false depending on if the control is activated or deactivated.
+</p>
+
+<p>
+The control can be bound to keys like built-in controls such as FIRE and JUMP
+by binding to the command +P<em>x</em>_<em>name</em> where <em>x</em> is the local player number
+and <em>name</em> is the name passed to this function.
+</p>
+
+</div>
+
+<h2 class="sectionedit23"><a name="fetch_server_list" id="fetch_server_list">fetch_server_list</a></h2>
+<div class="level2">
+<pre class="code">fetch_server_list(handler)</pre>
+
+<p>
+Fetches the server list from the master server and calls
+<em>handler</em> with one parameter containing an array of
+the servers.
+</p>
+
+</div>
+
+<h2 class="sectionedit24"><a name="floor" id="floor">floor</a></h2>
+<div class="level2">
+<pre class="code">floor(n)</pre>
+
+<p>
+Returns the number n rounded down towards infinity.
+</p>
+
+</div>
+
+<h2 class="sectionedit25"><a name="font_load" id="font_load">font_load</a></h2>
+<div class="level2">
+<pre class="code">font_load(name)</pre>
+
+<p>
+Loads and returns a <a href="doku.php?id=main:modding_docs:lua:font" class="wikilink1" title="main:modding_docs:lua:font">Font</a> object of the font with the passed name.
+</p>
+
+<p>
+If the font couldn&#039;t be loaded, nil is returned.
+</p>
+
+</div>
+
+<h2 class="sectionedit26"><a name="game_local_player" id="game_local_player">game_local_player</a></h2>
+<div class="level2">
+<pre class="code">game_local_player(i)</pre>
+
+<p>
+Returns a <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object of the local player with index i.
+If the index is invalid, nil is returned.
+</p>
+
+</div>
+
+<h2 class="sectionedit27"><a name="game_players" id="game_players">game_players</a></h2>
+<div class="level2">
+<pre class="code">game_players()</pre>
+
+<p>
+Returns an iterator object that returns a <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object
+for every player in the game.
+</p>
+
+<p>
+Intended to be use together
+with a for loop, like this:
+</p>
+<pre class="code">for p in game_players() do
+    -- Do something with p here
+end</pre>
+
+</div>
+
+<h2 class="sectionedit28"><a name="gfx_draw_box" id="gfx_draw_box">gfx_draw_box</a></h2>
+<div class="level2">
+<pre class="code">gfx_draw_box(bitmap, x1, y1, x2, y2, r, g, b)</pre>
+
+<p>
+<em>This function is deprecated in 0.9c and later. Use the draw_box method of <a href="doku.php?id=main:modding_docs:lua:bitmap" class="wikilink1" title="main:modding_docs:lua:bitmap">Bitmap</a> instead</em>.
+</p>
+
+</div>
+
+<h2 class="sectionedit29"><a name="gfx_reset_blending" id="gfx_reset_blending">gfx_reset_blending</a></h2>
+<div class="level2">
+<pre class="code">gfx_reset_blending()</pre>
+
+<p>
+Deactivates any blender that was active.
+Everything drawn after this is called will be drawn solid.
+</p>
+
+</div>
+
+<h2 class="sectionedit30"><a name="gfx_set_add" id="gfx_set_add">gfx_set_add</a></h2>
+<div class="level2">
+<pre class="code">gfx_set_add(alpha)</pre>
+
+<p>
+Activates the add blender.
+<em>alpha</em> is a value in [0, 255] that specifies the scaling factor
+of things drawn after this is called.
+</p>
+
+</div>
+
+<h2 class="sectionedit31"><a name="gfx_set_alpha" id="gfx_set_alpha">gfx_set_alpha</a></h2>
+<div class="level2">
+<pre class="code">gfx_set_alpha(alpha)</pre>
+
+<p>
+Activates the alpha blender.
+<em>alpha</em> is a value in [0, 255] that specifies the opacity
+of things drawn after this is called.
+</p>
+
+</div>
+
+<h2 class="sectionedit32"><a name="gfx_set_alphach" id="gfx_set_alphach">gfx_set_alphach</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">gfx_set_alphach(alpha)</pre>
+
+<p>
+Activates the alphach blender.
+<em>alpha</em> is a value in [0, 255] that specifies the opacity
+of things drawn after this is called.
+</p>
+
+</div>
+
+<h2 class="sectionedit33"><a name="host" id="host">host</a></h2>
+<div class="level2">
+<pre class="code">host(map)</pre>
+
+<p>
+Hosts a networked game with the current mod and <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global#map" class="wikilink1" title="main:modding_docs:lua:global">map</a></span> <em>map</em>.
+</p>
+
+</div>
+
+<h2 class="sectionedit34"><a name="load_particle" id="load_particle">load_particle</a></h2>
+<div class="level2">
+<pre class="code">load_particle(name)</pre>
+
+<p>
+Loads a particle type with the name <em>name</em> and returns it as a
+ParticleType object.
+</p>
+
+</div>
+
+<h2 class="sectionedit35"><a name="map" id="map">map</a></h2>
+<div class="level2">
+<pre class="code">map(map)</pre>
+
+<p>
+Loads the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global#map" class="wikilink1" title="main:modding_docs:lua:global">map</a></span> <em>map</em> with the current mod.
+</p>
+
+</div>
+
+<h2 class="sectionedit36"><a name="map_is_blocked" id="map_is_blocked">map_is_blocked</a></h2>
+<div class="level2">
+<pre class="code">map_is_blocked(x1, y1, x2, y2)</pre>
+
+<p>
+Returns true if the line between (x1, y1) and (x2, y2) on the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global#map" class="wikilink1" title="main:modding_docs:lua:global">map</a></span> is blocked for particles.
+Otherwise false.
+</p>
+
+</div>
+
+<h2 class="sectionedit37"><a name="map_is_loaded" id="map_is_loaded">map_is_loaded</a></h2>
+<div class="level2">
+<pre class="code">map_is_loaded()</pre>
+
+<p>
+Returns true if a <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global#map" class="wikilink1" title="main:modding_docs:lua:global">map</a></span> is loaded, otherwise false.
+</p>
+
+</div>
+
+<h2 class="sectionedit38"><a name="map_is_particle_pass" id="map_is_particle_pass">map_is_particle_pass</a></h2>
+<div class="level2">
+<pre class="code">map_is_particle_pass(x1, y1)</pre>
+
+<p>
+Returns true if the point (x1, y1) on the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:global#map" class="wikilink1" title="main:modding_docs:lua:global">map</a></span> is passable by particles.
+</p>
+
+</div>
+
+<h2 class="sectionedit39"><a name="maps" id="maps">maps</a></h2>
+<div class="level2">
+<pre class="code">maps()</pre>
+
+<p>
+Returns an iterator that iterates through all maps.
+</p>
+
+</div>
+
+<h2 class="sectionedit40"><a name="network_game_event" id="network_game_event">network_game_event</a></h2>
+<div class="level2">
+<pre class="code">network_game_event(name, handler)</pre>
+
+<p>
+Creates and returns a <a href="doku.php?id=main:modding_docs:lua:networkgameevent" class="wikilink1" title="main:modding_docs:lua:networkgameevent">NetworkGameEvent</a> object.
+<em>name</em> is any string that is unique to this NetworkGameEvent.
+<em>handler</em> is a function that is called when this event is recieved on this client/server.
+It has the the form:
+</p>
+<pre class="code">function(event, data)</pre>
+
+<p>
+Where <em>event</em> is the <a href="doku.php?id=main:modding_docs:lua:networkgameevent" class="wikilink1" title="main:modding_docs:lua:networkgameevent">NetworkGameEvent</a> returned by <em>network_game_event</em> and <em>data</em>
+is a bitstream with data sent with the event.
+</p>
+
+</div>
+
+<h2 class="sectionedit41"><a name="network_particle_event" id="network_particle_event">network_particle_event</a></h2>
+<div class="level2">
+<pre class="code">network_particle_event(name, handler)</pre>
+
+<p>
+Creates and returns a <a href="doku.php?id=main:modding_docs:lua:networkparticleevent" class="wikilink1" title="main:modding_docs:lua:networkparticleevent">NetworkParticleEvent</a> object.
+<em>name</em> is any string that is unique to this NetworkParticleEvent.
+<em>handler</em> is a function that is called when this event is recieved on this client/server.
+It has the the form:
+</p>
+<pre class="code">function(event, particle, data)</pre>
+
+<p>
+Where <em>event</em> is the <a href="doku.php?id=main:modding_docs:lua:networkparticleevent" class="wikilink1" title="main:modding_docs:lua:networkparticleevent">NetworkParticleEvent</a> returned by <em>network_particle_event</em>, <em>particle</em>
+is the <a href="doku.php?id=main:modding_docs:lua:particle" class="wikilink1" title="main:modding_docs:lua:particle">Particle</a> object the event was sent on, and <em>data</em> is a bitstream with data sent
+with the event.
+</p>
+
+</div>
+
+<h2 class="sectionedit42"><a name="network_player_event" id="network_player_event">network_player_event</a></h2>
+<div class="level2">
+<pre class="code">network_player_event(name, handler)</pre>
+
+<p>
+Creates and returns a <a href="doku.php?id=main:modding_docs:lua:networkplayerevent" class="wikilink1" title="main:modding_docs:lua:networkplayerevent">NetworkPlayerEvent</a> object.
+<em>name</em> is any string that is unique to this NetworkPlayerEvent.
+<em>handler</em> is a function that is called when this event is recieved on this client/server.
+It has the the form:
+</p>
+<pre class="code">function(event, player, data)</pre>
+
+<p>
+Where <em>event</em> is the <a href="doku.php?id=main:modding_docs:lua:networkplayerevent" class="wikilink1" title="main:modding_docs:lua:networkplayerevent">NetworkPlayerEvent</a> returned by <em>network_player_event</em>, <em>player</em>
+is the <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object the event was sent on, and <em>data</em> is a bitstream with data sent
+with the event.
+</p>
+
+</div>
+
+<h2 class="sectionedit43"><a name="network_worm_event" id="network_worm_event">network_worm_event</a></h2>
+<div class="level2">
+<pre class="code">network_worm_event(name, handler)</pre>
+
+<p>
+Creates and returns a <a href="doku.php?id=main:modding_docs:lua:networkwormevent" class="wikilink1" title="main:modding_docs:lua:networkwormevent">NetworkWormEvent</a> object.
+<em>name</em> is any string that is unique to this NetworkWormEvent.
+<em>handler</em> is a function that is called when this event is recieved on this client/server.
+It has the the form:
+</p>
+<pre class="code">function(event, worm, data)</pre>
+
+<p>
+Where <em>event</em> is the <a href="doku.php?id=main:modding_docs:lua:networkwormevent" class="wikilink1" title="main:modding_docs:lua:networkwormevent">NetworkWormEvent</a> returned by <em>network_worm_event</em>, <em>worm</em>
+is the <a href="doku.php?id=main:modding_docs:lua:worm" class="wikilink1" title="main:modding_docs:lua:worm">Worm</a> object the event was sent on, and <em>data</em> is a bitstream with data sent
+with the event.
+</p>
+
+</div>
+
+<h2 class="sectionedit44"><a name="new_bitstream" id="new_bitstream">new_bitstream</a></h2>
+<div class="level2">
+<pre class="code">new_bitstream()</pre>
+
+<p>
+Returns a new <a href="doku.php?id=main:modding_docs:lua:bitstream" class="wikilink1" title="main:modding_docs:lua:bitstream">Bitstream</a> object.
+</p>
+
+</div>
+
+<h2 class="sectionedit45"><a name="randomfloat" id="randomfloat">randomfloat</a></h2>
+<div class="level2">
+<pre class="code">randomfloat(l, u)</pre>
+
+<p>
+Returns a random floating point number in the interval [l, u].
+</p>
+
+</div>
+
+<h2 class="sectionedit46"><a name="randomint" id="randomint">randomint</a></h2>
+<div class="level2">
+<pre class="code">randomint(l, u)</pre>
+
+<p>
+Returns a random integer in the interval [l, u].
+</p>
+
+</div>
+
+<h2 class="sectionedit47"><a name="sounds" id="sounds">sounds</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">sounds</pre>
+
+<p>
+This table returns <a href="doku.php?id=main:modding_docs:lua:sound" class="wikilink1" title="main:modding_docs:lua:sound">Sound</a> objects when indexed with a valid sound name, and
+nil otherwise.
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">local mySound = sounds[&quot;bazooka.wav&quot;]
+mySound:play(10, 10)</pre>
+
+</div>
+
+<h2 class="sectionedit48"><a name="sprites_load" id="sprites_load">sprites_load</a></h2>
+<div class="level2">
+<pre class="code">sprites_load(name)</pre>
+
+<p>
+Loads and returns a <a href="doku.php?id=main:modding_docs:lua:spriteset" class="wikilink1" title="main:modding_docs:lua:spriteset">SpriteSet</a> object of the sprite set with the passed name.
+</p>
+
+<p>
+If the sprite set couldn&#039;t be loaded, nil is returned.
+</p>
+
+</div>
+
+<h2 class="sectionedit49"><a name="sqrt" id="sqrt">sqrt</a></h2>
+<div class="level2">
+<pre class="code">sqrt(n)</pre>
+
+<p>
+Returns the squareroot of n.
+</p>
+
+</div>
+
+<h2 class="sectionedit50"><a name="tcp_connect" id="tcp_connect">tcp_connect</a></h2>
+<div class="level2">
+<pre class="code">tcp_connect(addr, port)</pre>
+
+<p>
+Returns a <a href="doku.php?id=main:modding_docs:lua:tcpsocket" class="wikilink1" title="main:modding_docs:lua:tcpsocket">TCPSocket</a> object connecting to <em>addr</em> on port <em>port</em>.
+</p>
+
+</div>
+
+<h2 class="sectionedit51"><a name="to_time_string" id="to_time_string">to_time_string</a></h2>
+<div class="level2">
+<pre class="code">to_time_string(v)</pre>
+
+<p>
+Converts a frame count <em>v</em> to a string showing hours, minutes and seconds as HH:MM:SS.
+</p>
+
+</div>
+
+<h2 class="sectionedit52"><a name="vector_add" id="vector_add">vector_add</a></h2>
+<div class="level2">
+<pre class="code">vector_add(x1, y1, x2, y2)</pre>
+
+<p>
+Returns a tuple equal to (x1 + x2, y1 + y2)
+</p>
+
+</div>
+
+<h2 class="sectionedit53"><a name="vector_diff" id="vector_diff">vector_diff</a></h2>
+<div class="level2">
+<pre class="code">vector_diff(x1, y1, x2, y2)</pre>
+
+<p>
+Returns a tuple equal to (x2 - x1, y2 - y1)
+</p>
+
+</div>
+
+<h2 class="sectionedit54"><a name="vector_direction" id="vector_direction">vector_direction</a></h2>
+<div class="level2">
+<pre class="code">vector_direction(x1, y1, x2, y2)</pre>
+
+<p>
+Returns the angle between (x1, y1) and (x2, y2)
+in degrees.
+</p>
+
+</div>
+
+<h2 class="sectionedit55"><a name="vector_distance" id="vector_distance">vector_distance</a></h2>
+<div class="level2">
+<pre class="code">vector_distance(x1, y1, x2, y2)</pre>
+
+<p>
+Returns the distance from (x1, y1) to (x2, y2)
+</p>
+
+</div>
+
+<h2 class="sectionedit56"><a name="weapon_count" id="weapon_count">weapon_count</a></h2>
+<div class="level2">
+<pre class="code">weapon_count()</pre>
+
+<p>
+Returns the total number of weapons.
+</p>
+
+</div>
+
+<h2 class="sectionedit57"><a name="weapon_random" id="weapon_random">weapon_random</a></h2>
+<div class="level2">
+<pre class="code">weapon_random()</pre>
+
+<p>
+Returns a random <a href="doku.php?id=main:modding_docs:lua:weapontype" class="wikilink1" title="main:modding_docs:lua:weapontype">WeaponType</a> object.
+</p>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/modding_docs/lua/global.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:modding_docs:lua:global" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:modding_docs:lua:global" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:modding_docs:lua:global" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:modding_docs:lua:global#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="lib/exe/indexer.php?id=main%253Amodding_docs%253Alua%253Aglobal&amp;1433891997" width="2" height="1" alt="" /></div>
+</body>
+</html>

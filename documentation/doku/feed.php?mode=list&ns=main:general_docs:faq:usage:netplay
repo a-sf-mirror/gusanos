@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:general_docs:faq:usage:netplay</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:20:22+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:behindnat&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:port&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:serverlag&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:serverm&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:servern&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:slowdownload&amp;rev=1316364401&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:behindnat&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:general_docs:faq:usage:netplay:behindnat</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:behindnat&amp;rev=1316364402&amp;do=diff</link>
+        <description>NAT
+
+If you can connect to other servers, but other cannot connect to you, chances are you're behind NAT.
+
+If the machine performing NAT is a Linux machine, you could use:
+iptables -t nat -A PREROUTING -p udp -d 195.169.216.157 --dport 9898 -j DNAT --to 172.16.3.2:9898
+(where '195.169.216.157' is your public IP, and '172.16.3.2' the local IP of your machine)</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:port&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:general_docs:faq:usage:netplay:port</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:port&amp;rev=1316364402&amp;do=diff</link>
+        <description>When hosting, what port should I open for Gusanos to use?
+
+ You need to open port 9898 for players to be able to join your sever. You can change the port gusanos uses by using net_server_port. Open the console and type:
+net_server_port &lt;port&gt; (eg. net_server_port 9898)
+Please note though, players joining your server will also need to change the port from the console. This will be fixed in future releases. You can also add this to your config.cfg to have a different port as default.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:serverlag&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:netplay:serverlag</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:serverlag&amp;rev=1316364401&amp;do=diff</link>
+        <description>Why does it lag for people when many players join? I've got a fat pipe!
+
+The server limits upstream bandwidth to ~10kb/sec by default. To make Gusanos use more bandwidth, set the cvar NET_UP_LIMIT to a higher value.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:serverm&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:netplay:serverm</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:serverm&amp;rev=1316364401&amp;do=diff</link>
+        <description>Why can't I join some servers?
+
+You cannot join some servers because the host is either behind a NAT or firewall and hasn't opened the port Gusanos uses, or they are using a different port all together. 
+
+The current server menu is very incomplete, however the next version will filter servers you cannot join and change ports to join servers with different ports.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:servern&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:netplay:servern</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:servern&amp;rev=1316364401&amp;do=diff</link>
+        <description>How do I give my server a name?
+
+To give your server a name for the master server, open the console and type:
+net_server_name &quot;&lt;server name&gt;&quot; (eg. net_server_name &quot;Gusanos Server&quot;)
+You can also add this to your config.cfg so that gusanos has this settings every time you run it.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:slowdownload&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:usage:netplay:slowdownload</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:netplay:slowdownload&amp;rev=1316364401&amp;do=diff</link>
+        <description>Why is downloading maps so slow?
+
+The clients tells the server what speed it likes to have. Gusanos defaults to 20 packets with 200 bytes each per second, making a total of ~4 kb/sec. If you want more, set higher values for NET_DOWN_PPS (packets per second) and NET_DOWN_BPS (bytes per packet). Set NET_DOWN_BPS to 490, that should give you about 10kb/sec. Increasing the PPS is not recommended, as this will increase the serverload when you are playing.</description>
+    </item>
+</rdf:RDF>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:development:requirements</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:20:53+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:development:requirements:gui&amp;rev=1316364400&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:development:requirements:gui&amp;rev=1316364400&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:40+00:00</dc:date>
+        <title>main:development:requirements:gui</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:development:requirements:gui&amp;rev=1316364400&amp;do=diff</link>
+        <description>See also, GUI planning etc.
+
+General
+ Task      Priority        Done?           Save Configuration   Possibility to save your current config, please! Some support for mod config saving too.   P1      False         Minimal GUI  Simplify GUI to basics with more advanced stuff in advanced sections.    P1      False         Animations/Effects  Support for animations and effects other than the hover/hide etc.     P2      False         Translation/Locale Suppport  Possibility of support for multiple l…</description>
+    </item>
+</rdf:RDF>

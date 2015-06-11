@@ -1,0 +1,291 @@
+body {
+	margin: 0;
+	padding: 0;
+	background: white url('gusanos.png') no-repeat;
+	font-family: verdana, sans-serif;
+	font-size: 11px;
+}
+
+img {
+	border: none;
+}
+
+#logo {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#logo a {
+	display: block;
+}
+
+#logo a img {
+	visibility: hidden;
+}
+
+#logo a:hover img {
+	visibility: visible;
+}
+
+#menu {
+	position: absolute;
+	left: 300px;
+	top: 77px;
+}
+
+#menu a {
+	font-family: Courier New;
+	text-decoration: none;
+	color: white;
+	margin-right: 8px;
+}
+
+#menu a:hover {
+	border-bottom: 2px dotted white;
+}
+
+#menu a.current {
+	border-bottom: 1px solid #DF320F;
+}
+
+#menu a[href='news.php']
+{
+}
+
+#links {
+	position: absolute;
+	top: 150px;
+	left: 30px;
+	text-align: center;
+}
+
+#links a {
+	display: block;
+	margin: 0 0 25px 0;
+}
+
+#links img {
+	background: #C9C9C9;
+}
+
+#links a:hover img {
+	background: black;
+}
+
+#content {
+	margin-left: 160px;
+	margin-top: 170px;
+	margin-right: 150px;
+	background: url('contentbg.png') top left repeat-y;
+	padding: 10px 30px 30px 30px;
+	min-height: 350px;
+}
+
+#content p {
+	color: #333333;
+}
+
+.gusanos {
+	font-family: courier new;
+}
+
+h1 {
+	font-family: Impact, Courier new, sans-serif;
+	letter-spacing: 0.4em;
+	font-size: 20px;
+	font-weight: normal;
+	text-transform: lowercase;
+	background: url('h1bg.png') right no-repeat black;
+	color: white;
+}
+
+h1:first-letter {
+	background: white;
+	color: black;
+}
+
+h1:hover {
+	background-color: #DF320F;
+}
+
+h1:hover:first-letter {
+	color: #DF320F;
+}
+
+h2 {
+	font-family: Impact;
+	font-weight: normal;
+	font-size: 15px;
+	text-transform: lowercase;
+	letter-spacing: 0.3em;
+	text-shadow: 2px 2px #EEEEEE;
+}
+
+#content a {
+	text-decoration: underline;
+	color: black;
+}
+
+#content a:hover {
+	text-decoration: none;
+	background: #DF320F;
+	color: white;
+}
+
+/* BEGIN HOME */
+
+#introduction {
+	background: black url('intro-bg.png') no-repeat;
+	padding: 20px;
+}
+
+#introduction p {
+	font-family: verdana, sans-serif;
+	font-size: 14px;
+	background: black;
+	color: white;
+}
+
+#introduction strong {
+	/*font-weight: normal;*/
+	border-bottom: 1px solid #7A391E;
+}
+
+#intro2 {
+	margin-left: 30px;
+	font-style: italic;
+}
+
+#download {
+	margin: 40px 0 40px 10px;
+	text-transform: lowercase;
+	padding: 10px;
+	background: url('download-bg.png') no-repeat;
+}
+
+#download:hover {
+	border-color: #CCCCCC;
+}
+
+a#get {
+	font-family: impact, sans-serif;
+	font-size: 25px;
+	text-decoration: none;
+	letter-spacing: 0.3em;
+}
+
+#counter {
+	font-family: verdana, sans-serif;
+	font-size: 9px;
+	visibility: hidden;
+	letter-spacing: 0;
+	vertical-align: middle;
+	color: black;
+}
+
+#get:hover #counter {
+	visibility: visible;
+}
+
+#platform {
+	display: block;
+	font-size: 11px;
+	color: gray;
+}
+
+/* END HOME */
+
+/* BEGIN NEWS */
+
+.entry {
+	margin-top: 30px;
+	border-bottom: 1px solid #EEEEEE;
+	clear: both;
+}
+
+.date {
+	float: left;
+	background: /*url('datebg.png')*/ black;
+	color: white;
+	text-align: center;
+	padding: 0 5px 0 5px;
+	margin: 0 8px 8px 5px;
+}
+
+.entry:hover .date {
+	background-color: #DF320F;
+}
+
+.entry:hover h2 {
+	color: #DF320F;
+}
+
+.day {
+	font-size: 25px;
+	font-weight: bold;
+	font-family: Impact;
+}
+
+.month {
+	display: block;
+	font-size: 10px;
+	text-transform: lowercase;
+}
+
+.year {
+	/*display: none;*/
+}
+
+.entry p {
+	clear: left;
+	margin: 5px;
+}
+
+.meta {
+	color: #AAAAAA;
+	font-size: 11px;
+}
+
+/* END NEWS */
+
+#links .liero img {
+	background: white;
+}
+
+#footer {
+	/*height: 40px;*/
+	/*line-height: 40px;*/
+	background: url('footerbg.png') top left repeat-x black;
+	color: #CCCCCC;
+	font-family: Courier new, sans-serif;
+	font-size: 12px;
+	padding: 25px 0 20px 190px;
+	padding-left: 190px;
+}
+
+#sidebar {
+	position: absolute;
+	right: 20px;
+	width: 110px;
+}
+
+#sidebar h2 {
+	letter-spacing: 0;
+}
+
+img.s200x200 {
+	padding: 15px 17px 20px 17px;
+	background: url('http://gusanos.sourceforge.net/style/200x200bg.png');
+	float: right;
+}
+
+::selection {
+	background: black;
+	color: white;
+}
+
+::-moz-selection {
+	background: black;
+	color: white;
+}

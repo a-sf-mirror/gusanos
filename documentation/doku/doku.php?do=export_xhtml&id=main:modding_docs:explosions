@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:explosions</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,modding_docs,explosions"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:explosions&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:explosions"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs';var JSINFO = {"id":"main:modding_docs:explosions","namespace":"main:modding_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#properties" class="toc">Properties:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#alpha" class="toc">alpha</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#anim_type" class="toc">anim_type</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#blender" class="toc">blender</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#colour" class="toc">colour</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#dest_alpha" class="toc">dest_alpha</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#invisible" class="toc">invisible</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#occluded" class="toc">occluded</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#render_layer" class="toc">render_layer</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#sprite" class="toc">sprite</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#timeout" class="toc">timeout</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#timeout_variation" class="toc">timeout_variation</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#events" class="toc">Events:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#creation" class="toc">creation</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:explosions#detect_range" class="toc">detect_range</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="properties" id="properties">Properties:</a></h1>
+<div class="level1">
+
+<p>
+These properties may only be used in explosions; .exp files.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Properties:" [1-88] -->
+<h2 class="sectionedit2"><a name="alpha" id="alpha">alpha</a></h2>
+<div class="level2">
+<pre class="code">alpha = &lt;int&gt; ( from 0 to 255 )</pre>
+
+<p>
+Alpha is the value of transparency used by the blender. This cannot be used without specifying the blender.
+</p>
+
+<p>
+<strong>Default value:</strong> 255
+</p>
+
+</div>
+<!-- EDIT2 SECTION "alpha" [89-274] -->
+<h2 class="sectionedit3"><a name="anim_type" id="anim_type">anim_type</a></h2>
+<div class="level2">
+<pre class="code">anim_type = { ping_pong / loop_right / right_once }</pre>
+
+<p>
+Determines the behaviour of the sprite animation. See also <a href="doku.php?id=main:modding_docs:anim_types" class="wikilink2" title="main:modding_docs:anim_types" rel="nofollow">Anim_Types</a>.
+</p>
+
+<p>
+<strong>Default value:</strong> loop_right
+</p>
+
+</div>
+<!-- EDIT3 SECTION "anim_type" [275-458] -->
+<h2 class="sectionedit4"><a name="blender" id="blender">blender</a></h2>
+<div class="level2">
+<pre class="code">blender = &lt;alpha/add/alphach/none&gt;</pre>
+
+<p>
+Blender is the the blender used for manipulating the alpha of an object. There are two blenders, <strong>Alpha</strong> and <strong>Add</strong>. (possibly more later) Alpha will make the object translucent depending on the alpha value and add will make the object lit the background.
+</p>
+
+<p>
+<strong>Default value:</strong> none
+</p>
+
+</div>
+<!-- EDIT4 SECTION "blender" [459-801] -->
+<h2 class="sectionedit5"><a name="colour" id="colour">colour</a></h2>
+<div class="level2">
+<pre class="code">color = r, g, b</pre>
+
+<p>
+Determines the colour in which the explosion will be drawn.
+</p>
+
+<p>
+<strong>Default value:</strong> 255,255,255
+</p>
+
+</div>
+<!-- EDIT5 SECTION "colour" [802-932] -->
+<h2 class="sectionedit6"><a name="dest_alpha" id="dest_alpha">dest_alpha</a></h2>
+<div class="level2">
+<pre class="code">dest_alpha = &lt;int&gt; ( &lt;= 255 )</pre>
+
+<p>
+If the value is from 0 to 255 the explosion will interpolate its alpha value from the initial <strong>alpha</strong> to dest_alpha. The speed of the interpolation depends on the <strong>timeout</strong> value.
+</p>
+
+<p>
+<strong>Default value:</strong> -1
+</p>
+
+</div>
+<!-- EDIT6 SECTION "dest_alpha" [933-1196] -->
+<h2 class="sectionedit7"><a name="invisible" id="invisible">invisible</a></h2>
+<div class="level2">
+<pre class="code">invisible = &lt;int&gt;</pre>
+
+<p>
+If its not equal 0 then the explosion will not be displayed.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+<!-- EDIT7 SECTION "invisible" [1197-1323] -->
+<h2 class="sectionedit8"><a name="occluded" id="occluded">occluded</a></h2>
+<div class="level2">
+<pre class="code">occluded = &lt;int&gt;</pre>
+
+<p>
+If its not equal to 0 and the explosion has a sprite then the it will be rendered as an occluded light.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+<!-- EDIT8 SECTION "occluded" [1324-1491] -->
+<h2 class="sectionedit9"><a name="render_layer" id="render_layer">render_layer</a></h2>
+<div class="level2">
+<pre class="code">render_layer = &lt;int&gt; ( from 0 to 8 )</pre>
+
+<p>
+When the objects are rendered they are rendered in order of its layers, objects with <strong>render_layer</strong> = 0 will be rendered first than objects with greater values. Worms are rendered in layer 5. <code>Note that Objects in the same layer will be rendered in order of appearance.</code>
+</p>
+
+<p>
+<strong>Default value:</strong> 5
+</p>
+
+</div>
+<!-- EDIT9 SECTION "render_layer" [1492-1854] -->
+<h2 class="sectionedit10"><a name="sprite" id="sprite">sprite</a></h2>
+<div class="level2">
+<pre class="code">sprite = &lt;string&gt;</pre>
+
+<p>
+The string passed as parameter has to be the name of a sprite inside the sprites folder of the mod or default.
+If the file exists the explosion will be displayed with that image instead of a pixel.
+</p>
+
+</div>
+<!-- EDIT10 SECTION "sprite" [1855-2093] -->
+<h2 class="sectionedit11"><a name="timeout" id="timeout">timeout</a></h2>
+<div class="level2">
+<pre class="code">timeout = &lt;int&gt; ( &gt;= 0 )</pre>
+
+<p>
+Determines the time until the explosion will be removed. If the explosion has a sprite the duration of the animation will depend on this value.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+<!-- EDIT11 SECTION "timeout" [2094-2308] -->
+<h2 class="sectionedit12"><a name="timeout_variation" id="timeout_variation">timeout_variation</a></h2>
+<div class="level2">
+<pre class="code">timeout_variation = &lt;int&gt; ( &gt;= 0 )</pre>
+
+<p>
+Adds a variation to the timeout of the explosion.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+<!-- EDIT12 SECTION "timeout_variation" [2309-2451] -->
+<h1 class="sectionedit13"><a name="events" id="events">Events:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT13 SECTION "Events:" [2452-2475] -->
+<h2 class="sectionedit14"><a name="creation" id="creation">creation</a></h2>
+<div class="level2">
+<pre class="code">on creation ()</pre>
+
+<p>
+Gets triggered once when the explosion is just created.
+</p>
+
+</div>
+<!-- EDIT14 SECTION "creation" [2476-2571] -->
+<h2 class="sectionedit15"><a name="detect_range" id="detect_range">detect_range</a></h2>
+<div class="level2">
+<pre class="code">on detect_range ( &lt;float&gt; range,  &lt;bool&gt; detect_owner = true, &lt;[layer]&gt; layers = [worms] )</pre>
+
+<p>
+Gets triggered if there is an object with distance &lt; than range. Only the objects that are in the specified collision layer will be detected, there is a special layer called “worms” that has to be used to be able to detect worms. If detect_owner is false then the event wont trigger for object that have the same owner than the explosion.
+</p>
+
+</div>
+<!-- EDIT15 SECTION "detect_range" [2572-] --></div>
+</body>
+</html>

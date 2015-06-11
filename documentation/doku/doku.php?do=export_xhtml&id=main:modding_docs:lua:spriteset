@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:spriteset</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:43+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,spriteset"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:spriteset&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:spriteset"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:spriteset"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:spriteset","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:spriteset#class_spriteset" class="toc">Class SpriteSet</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:spriteset#see_also" class="toc">See also:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:spriteset#frames" class="toc">frames</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:spriteset#render" class="toc">render</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:spriteset#render_skinned_box" class="toc">render_skinned_box</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_spriteset" id="class_spriteset">Class SpriteSet</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class SpriteSet" [1-31] -->
+<h2 class="sectionedit2"><a name="see_also" id="see_also">See also:</a></h2>
+<div class="level2">
+
+<p>
+<a href="doku.php?id=main:modding_docs:lua:global#sprites_load" class="wikilink1" title="main:modding_docs:lua:global">sprites_load</a>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "See also:" [32-93] -->
+<h2 class="sectionedit3"><a name="frames" id="frames">frames</a></h2>
+<div class="level2">
+<pre class="code">frames()</pre>
+
+<p>
+Returns the number of <span class="curid"><a href="doku.php?id=main:modding_docs:lua:spriteset#frames" class="wikilink1" title="main:modding_docs:lua:spriteset">frames</a></span> in this sprite set.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "frames" [94-197] -->
+<h2 class="sectionedit4"><a name="render" id="render">render</a></h2>
+<div class="level2">
+<pre class="code">render(bitmap, frame, x, y)</pre>
+
+<p>
+Draws the frame <em>frame</em> of the sprite set on <em>bitmap</em> with the pivot at position (x, y).
+</p>
+
+</div>
+<!-- EDIT4 SECTION "render" [198-343] -->
+<h2 class="sectionedit5"><a name="render_skinned_box" id="render_skinned_box">render_skinned_box</a></h2>
+<div class="level2">
+<pre class="code">render_skinned_box(bitmap, x1, y1, x2, y2, color)</pre>
+
+<p>
+Draws the sprite set as a skinned box with the rectangle (x1, y1) - (x2, y2)
+and background color <em>color</em>.
+</p>
+
+<p>
+<strong>Note that in versions before 0.9c, color was specified as
+three parameters. This has been deprecated.</strong>
+</p>
+
+</div>
+<!-- EDIT5 SECTION "render_skinned_box" [344-] --></div>
+</body>
+</html>

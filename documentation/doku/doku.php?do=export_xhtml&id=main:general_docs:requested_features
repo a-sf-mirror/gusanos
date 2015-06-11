@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:requested_features</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,general_docs,requested_features"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:requested_features&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:requested_features"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:requested_features"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs';var JSINFO = {"id":"main:general_docs:requested_features","namespace":"main:general_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<ul>
+<li class="level1"><div class="li"> Level progression: end a map when a certain condition is met (acquire object, reach checkpoint, destroy enemies) and load the next one. Would give potential for complex games and missions.</div>
+</li>
+<li class="level1"><div class="li"> Ninja rope that latches on to other worms, like in Liero.</div>
+</li>
+<li class="level1"><div class="li"> The option for collectible power ups during gameplay, especially health.</div>
+</li>
+<li class="level1"><div class="li"> An option within the <acronym title="Graphical User Interface">GUI</acronym> to play without blood and gore.</div>
+</li>
+<li class="level1"><div class="li"> STEERABLES!!!! (eg the missile) they&#039;re an integral part of liero</div>
+</li>
+<li class="level1"><div class="li"> Option to disable weapon comboing.</div>
+</li>
+<li class="level1"><div class="li"> More of a <acronym title="Graphical User Interface">GUI</acronym>.</div>
+</li>
+<li class="level1"><div class="li"> Water, and being able to change the colour of it.</div>
+</li>
+<li class="level1"><div class="li"> Objects with sprites that can block worms like rock.</div>
+</li>
+<li class="level1"><div class="li"> Multiple layers of Paralax.</div>
+</li>
+<li class="level1"><div class="li"> Default mod to be updated, since no-one ever plays any other mods.</div>
+</li>
+<li class="level1"><div class="li"> More weapons in the default mod.</div>
+</li>
+<li class="level1"><div class="li"> Third hotseat player.</div>
+</li>
+<li class="level1"><div class="li"> More Structured games (e.g. deathmatch, tag, ctf, etc.)</div>
+</li>
+<li class="level1"><div class="li"> CTF Flags a part of maps, instead of just randomly appearing (as in old Liero) (Think First Person Shooter CTF)</div>
+</li>
+<li class="level1"><div class="li"> Vehicles (enabled/chosen/disabled by host pre gamestart)</div>
+</li>
+<li class="level1"><div class="li"> Health Handicaps</div>
+</li>
+<li class="level1"><div class="li"> Player colour changer in the <acronym title="Graphical User Interface">GUI</acronym></div>
+</li>
+<li class="level1"><div class="li"> Ability to change controls in <acronym title="Graphical User Interface">GUI</acronym></div>
+</li>
+<li class="level1"><div class="li"> Pause game feature (so you can walk away from the bots for a moment if needed)</div>
+</li>
+<li class="level1"><div class="li"> Bots able/know how to dig (they always seem to get stuck)</div>
+</li>
+<li class="level1"><div class="li"> Mouse aim control (like in Soldat)</div>
+</li>
+<li class="level1"><div class="li"> ebuild for Gentoo users (see this bug: <a href="http://bugs.gentoo.org/143322" class="urlextern" title="http://bugs.gentoo.org/143322"  rel="nofollow">http://bugs.gentoo.org/143322</a>)</div>
+</li>
+<li class="level1"><div class="li"> Source Releases? (Release .tar.gz archives of the source with each release?)</div>
+</li>
+<li class="level1"><div class="li"> ninja rope that interact with terrain and the ability to lengthen/shorten thru button commands.</div>
+</li>
+<li class="level1"><div class="li"> Weapon crates (as in old Liero)</div>
+</li>
+<li class="level1"><div class="li"> Ability to easily change loading times for all weapons (as in old Liero)</div>
+</li>
+<li class="level1"><div class="li"> Bouncing projectiles(eg. bouncy larpa,bouncy mine)</div>
+</li>
+<li class="level1"><div class="li"> Floating projectiles(eg. float mine)</div>
+</li>
+<li class="level1"><div class="li"> <acronym title="Graphical User Interface">GUI</acronym>-Option to change Worm HP as in old Liero</div>
+</li>
+<li class="level1"><div class="li"> Minimap where you can see where the other worms are (like in original Liero)</div>
+</li>
+<li class="level1"><div class="li"> Blood should not disappear, it should remain on the ground (like in original Liero) :)</div>
+</li>
+<li class="level1"><div class="li"> Frag limit</div>
+</li>
+<li class="level1"><div class="li"> Sniper window - opens when using laser sighted weapon, shows, what&#039;s at the end of laser line :)</div>
+</li>
+<li class="level1"><div class="li"> ability to use more/less weapons (from 1 to 20 for ex)</div>
+</li>
+</ul>
+</div>
+</body>
+</html>

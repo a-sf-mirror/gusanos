@@ -1,0 +1,1288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:console_docs:console_variables    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,console_docs,console_variables"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:console_docs:console_variables&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:console_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_variables"/>
+<link rel="canonical" href="doku.php?id=main:console_docs:console_variables"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:console_docs';var JSINFO = {"id":"main:console_docs:console_variables","namespace":"main:console_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:console_docs:console_variables&amp;do=backlink"  title="Backlinks">main:console_docs:console_variables</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:about"  class="breadcrumbs" title="main:general_docs:about">about</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:credits"  class="breadcrumbs" title="main:general_docs:credits">credits</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:changelog"  class="breadcrumbs" title="main:general_docs:changelog">changelog</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq"  class="breadcrumbs" title="main:general_docs:faq">faq</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:requested_features"  class="breadcrumbs" title="main:general_docs:requested_features">requested_features</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:installation_docs:windows"  class="breadcrumbs" title="main:installation_docs:windows">windows</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:installation_docs:linux"  class="breadcrumbs" title="main:installation_docs:linux">linux</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:console_docs:omfgconsole"  class="breadcrumbs" title="main:console_docs:omfgconsole">omfgconsole</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:console_docs:console_commands"  class="breadcrumbs" title="main:console_docs:console_commands">console_commands</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:console_docs:console_variables"  class="breadcrumbs" title="main:console_docs:console_variables">console_variables</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#console_variables" class="toc">Console variables:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#cl_log_death_messages" class="toc">CL_Log_Death_Messages</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#cl_showfps" class="toc">CL_ShowFps</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#cl_showdebug" class="toc">CL_ShowDebug</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#cl_show_death_messages" class="toc">CL_Show_Death_Messages</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#cl_show_map_debug" class="toc">CL_Show_Map_Debug</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#cl_splitscreen" class="toc">CL_SplitScreen</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#con_font" class="toc">CON_Font</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#con_height" class="toc">CON_Height</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#con_speed" class="toc">CON_Speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#host" class="toc">Host</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_autodownloads" class="toc">NET_AutoDownloads</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_check_crc" class="toc">NET_Check_CRC</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_down_bpp" class="toc">NET_Down_BPP</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_down_pps" class="toc">NET_Down_PPS</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_log" class="toc">NET_Log</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_server_port" class="toc">NET_Server_Port</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_server_name" class="toc">NET_Server_Name</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_server_desc" class="toc">NET_Server_Desc</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_register" class="toc">NET_Register</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_sim_lag" class="toc">NET_Sim_Lag</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_sim_loss" class="toc">NET_Sim_Loss</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#net_up_limit" class="toc">NET_Up_Limit</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#p_aim_accel" class="toc">P#_Aim_Accel</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#p_aim_friction" class="toc">P#_Aim_Friction</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#p_aim_speed" class="toc">P#_Aim_Speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#p_name" class="toc">P#_Name</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#p_rope_adjust_speed" class="toc">P#_Rope_Adjust_Speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#p_viewport_follow" class="toc">P#_Viewport_Follow</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#rcon_password" class="toc">RCON_Password</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sfx_volume" class="toc">SFX_Volume</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sfx_listener_distance" class="toc">SFX_Listener_Distance</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sfx_output_mode" class="toc">SFX_Output_Mode</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_max_respawn_time" class="toc">SV_Max_Respawn_Time</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_max_weapons" class="toc">SV_Max_Weapons</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_min_respawn_time" class="toc">SV_Min_Respawn_Time</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_ninjarope_pull_force" class="toc">SV_NinjaRope_Pull_Force</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_ninjarope_shoot_speed" class="toc">SV_NinjaRope_Shoot_Speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_ninjarope_start_distance" class="toc">SV_NinjaRope_Start_Distance</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_team_play" class="toc">SV_Team_Play</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_acceleration" class="toc">SV_Worm_Acceleration</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_air_acceleration_factor" class="toc">SV_Worm_Air_Acceleration_Factor</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_air_friction" class="toc">SV_Worm_Air_Friction</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_bounce_limit" class="toc">SV_Worm_Bounce_Limit</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_bounce_quotient" class="toc">SV_Worm_Bounce_Quotient</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_box_bottom" class="toc">SV_Worm_Box_Bottom</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_box_radius" class="toc">SV_Worm_Box_Radius</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_box_top" class="toc">SV_Worm_Box_Top</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_disable_wall_hugging" class="toc">SV_Worm_Disable_Wall_Hugging</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_friction" class="toc">SV_Worm_Friction</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_gravity" class="toc">SV_Worm_Gravity</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_height" class="toc">SV_Worm_Height</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_jump_force" class="toc">SV_Worm_Jump_Force</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_max_speed" class="toc">SV_Worm_Max_Speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_max_climb" class="toc">SV_Worm_Max_Climb</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_weapon_height" class="toc">SV_Worm_Weapon_Height</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#sv_worm_width" class="toc">SV_Worm_Width</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#vid_bitdepth" class="toc">VID_Bitdepth</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#vid_clear_buffer" class="toc">VID_Clear_Buffer</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#vid_doubleres" class="toc">VID_DoubleRes</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#vid_driver" class="toc">VID_Driver</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#vid_filter" class="toc">VID_Filter</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#vid_fullscreen" class="toc">VID_Fullscreen</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:console_variables#vid_vsync" class="toc">VID_VSync</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="console_variables" id="console_variables">Console variables:</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit2"><a name="cl_log_death_messages" id="cl_log_death_messages">CL_Log_Death_Messages</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> bool.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, death messages are logged to the console.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit3"><a name="cl_showfps" id="cl_showfps">CL_ShowFps</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 the amount of rendered frames per second will be shown on screen.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit4"><a name="cl_showdebug" id="cl_showdebug">CL_ShowDebug</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 useful information will be shown on the screen.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit5"><a name="cl_show_death_messages" id="cl_show_death_messages">CL_Show_Death_Messages</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> bool.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, death messages are shown in the left-bottom corner of the screen.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit6"><a name="cl_show_map_debug" id="cl_show_map_debug">CL_Show_Map_Debug</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, circles are drawn at worm spawn points when those are used by a map.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit7"><a name="cl_splitscreen" id="cl_splitscreen">CL_SplitScreen</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 you can have two players on the same computer.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit8"><a name="con_font" id="con_font">CON_Font</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> string.
+</p>
+
+<p>
+<strong>Description:</strong> The font that is used in the console.
+</p>
+
+<p>
+<strong>Default value:</strong> “minifont”.
+</p>
+
+</div>
+
+<h2 class="sectionedit9"><a name="con_height" id="con_height">CON_Height</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> The amount of pixels the console height will be when open.
+</p>
+
+<p>
+<strong>Default value:</strong> 120.
+</p>
+
+</div>
+
+<h2 class="sectionedit10"><a name="con_speed" id="con_speed">CON_Speed</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> The speed with which the console will animate when being opened.
+</p>
+
+<p>
+<strong>Default value:</strong> 4.
+</p>
+
+</div>
+
+<h2 class="sectionedit11"><a name="host" id="host">Host</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 the next time a map is loaded a network server will be created.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit12"><a name="net_autodownloads" id="net_autodownloads">NET_AutoDownloads</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, if the next game requires a map not available in the computer, it will try to download it from the server.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit13"><a name="net_check_crc" id="net_check_crc">NET_Check_CRC</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 (in the server), all clients in the next game will have their mods and maps checked against the server&#039;s for compatibility (CRC).
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit14"><a name="net_down_bpp" id="net_down_bpp">NET_Down_BPP</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Specifies the number of bytes per packet the downstream, the traffic limit from the server to the client, can have in the next game. Higher values improve ping times for heavier data, but it is required for everybody in the same game to use the same increased speed, and this can only be set by the server. Recommended to increase when having better connections than 4KB/s.
+</p>
+
+<p>
+<strong>Default value:</strong> 200.
+</p>
+
+</div>
+
+<h2 class="sectionedit15"><a name="net_down_pps" id="net_down_pps">NET_Down_PPS</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Specifies the number of packets per second the downstream, the traffic limit from the server to the client, can have in the next game. Higher values improve ping times for greater quantities of data, but it is required for everybody in the same game to use the same increased speed, and this can only be set by the server. Not recommended to increase as it makes slower connections to suffer.
+</p>
+
+<p>
+<strong>Default value:</strong> 20.
+</p>
+
+</div>
+
+<h2 class="sectionedit16"><a name="net_log" id="net_log">NET_Log</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, the program command-line window will show extra information about connection, like connection quality, how nodes are split, and etc. This can only be used inside a configuration file and can&#039;t be enabled or disabled during the program execution.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit17"><a name="net_server_port" id="net_server_port">NET_Server_Port</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Port the game will try to use when creating a network server.
+</p>
+
+<p>
+<strong>Default value:</strong> 9898.
+</p>
+
+</div>
+
+<h2 class="sectionedit18"><a name="net_server_name" id="net_server_name">NET_Server_Name</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> words.
+</p>
+
+<p>
+<strong>Description:</strong> The name of the server you&#039;ll host. Remember, put the name in quotation marks after NET_Server_Name.
+</p>
+
+<p>
+<strong>Default value:</strong> “Unnamed server”
+</p>
+
+</div>
+
+<h2 class="sectionedit19"><a name="net_server_desc" id="net_server_desc">NET_Server_Desc</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> words.
+</p>
+
+<p>
+<strong>Description:</strong> The description for the server. Put long descriptions in quotation marks. Not yet supported by the 0.9c default mod.
+</p>
+
+<p>
+<strong>Default value:</strong> ””
+</p>
+
+</div>
+
+<h2 class="sectionedit20"><a name="net_register" id="net_register">NET_Register</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, when the next time a map is loaded, the server will be registered in the network.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit21"><a name="net_sim_lag" id="net_sim_lag">NET_Sim_Lag</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Ping amount for the server or client to simulate in the next game.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit22"><a name="net_sim_loss" id="net_sim_loss">NET_Sim_Loss</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Packet loss percentage as a decimal number for the server to simulate in the next game. If the value is ”-1”, then this simulation is disabled.
+</p>
+
+<p>
+<strong>Default value:</strong> -1.
+</p>
+
+</div>
+
+<h2 class="sectionedit23"><a name="net_up_limit" id="net_up_limit">NET_Up_Limit</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Sets the upstream limit, the traffic limit from the client to the server, of the client or server. Higher values improve the dirt removal update time, but also uses much more of the network connection.
+</p>
+
+<p>
+<strong>Default value:</strong> 10000.
+</p>
+
+</div>
+
+<h2 class="sectionedit24"><a name="p_aim_accel" id="p_aim_accel">P#_Aim_Accel</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> The acceleration in which the aim speed will be affected with the aim up or down command.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.129991.
+</p>
+
+</div>
+
+<h2 class="sectionedit25"><a name="p_aim_friction" id="p_aim_friction">P#_Aim_Friction</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> How fast the aim speed will be lost when not moving it.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.921665.
+</p>
+
+</div>
+
+<h2 class="sectionedit26"><a name="p_aim_speed" id="p_aim_speed">P#_Aim_Speed</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> The maximum value the aim speed can reach.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.69998.
+</p>
+
+</div>
+
+<h2 class="sectionedit27"><a name="p_name" id="p_name">P#_Name</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> string.
+</p>
+
+<p>
+<strong>Description:</strong> Player name. Use “p#_name &#039;Ctrl+K&#039;xxString” for colored names, where xx is number 00-20. You can define the name with a color using 0B <acronym title="American Standard Code for Information Interchange">ASCII</acronym> code char instead of &#039;Ctrl-K&#039; in config file. example: P0_NAME 00Name
+</p>
+
+<p>
+<strong>Default value:</strong> “GusPlayer”.
+</p>
+
+</div>
+
+<h2 class="sectionedit28"><a name="p_rope_adjust_speed" id="p_rope_adjust_speed">P#_Rope_Adjust_Speed</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> How fast the rope desired length will be change.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.5.
+</p>
+
+</div>
+
+<h2 class="sectionedit29"><a name="p_viewport_follow" id="p_viewport_follow">P#_Viewport_Follow</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> How fast the player viewport will follow the owned worm. Values should be between 0 and 1.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.1.
+</p>
+
+</div>
+
+<h2 class="sectionedit30"><a name="rcon_password" id="rcon_password">RCON_Password</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> words.
+</p>
+
+<p>
+<strong>Description:</strong> Password to be used by a client user to have server privileges, like changing maps and mods, if the server specifies one. Using ”” as a password in the server removes this ability. Useful for dedicated servers. To send commands to the server, use the <a href="doku.php?id=main:console_docs:console_commands#rcon" class="wikilink1" title="main:console_docs:console_commands">RCON</a> console command.
+</p>
+
+<p>
+<strong>Default value:</strong> ””.
+</p>
+
+</div>
+
+<h2 class="sectionedit31"><a name="sfx_volume" id="sfx_volume">SFX_Volume</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Adjusts the game main sound volume.
+</p>
+
+<p>
+<strong>Value range:</strong> 0-255.
+<strong>Default value:</strong> 255.
+</p>
+
+</div>
+
+<h2 class="sectionedit32"><a name="sfx_listener_distance" id="sfx_listener_distance">SFX_Listener_Distance</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> The 3d distance the player listener will have from the plane in which objects are placed. <code>Note: Its a quite technical variable, you most likely wont need to use it.</code>
+</p>
+
+<p>
+<strong>Default value:</strong> 20.
+</p>
+
+</div>
+
+<h2 class="sectionedit33"><a name="sfx_output_mode" id="sfx_output_mode">SFX_Output_Mode</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> enum.
+</p>
+
+<p>
+<strong>Description:</strong> Decides what audio device is used for sound output.
+</p>
+
+<p>
+<strong>Acceptable values:</strong> AUTO, NOSFX. For Windows: WINMM, DSOUND. For Linux: A3D, <acronym title="Open Source Software">OSS</acronym>, ESD, ALSA.
+<strong>Default value:</strong> AUTO.
+</p>
+
+</div>
+
+<h2 class="sectionedit34"><a name="sv_max_respawn_time" id="sv_max_respawn_time">SV_Max_Respawn_Time</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Maximum time in frames for a worm to respawn after it gets killed in seconds. If it is -1, then no maximum time will be assigned.
+</p>
+
+<p>
+<strong>Default value:</strong> -1.
+</p>
+
+</div>
+
+<h2 class="sectionedit35"><a name="sv_max_weapons" id="sv_max_weapons">SV_Max_Weapons</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Sets the number of weapons supported internally for the next game. Menus do not still get updated.
+</p>
+
+<p>
+<strong>Default value:</strong> 5.
+</p>
+
+</div>
+
+<h2 class="sectionedit36"><a name="sv_min_respawn_time" id="sv_min_respawn_time">SV_Min_Respawn_Time</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Minimum time in frames for a worm to respawn after it gets killed.
+</p>
+
+<p>
+<strong>Default value:</strong> 100.
+</p>
+
+</div>
+
+<h2 class="sectionedit37"><a name="sv_ninjarope_pull_force" id="sv_ninjarope_pull_force">SV_NinjaRope_Pull_Force</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Force with which the rope will pull worms when attached to ground. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.031.
+</p>
+
+</div>
+
+<h2 class="sectionedit38"><a name="sv_ninjarope_shoot_speed" id="sv_ninjarope_shoot_speed">SV_NinjaRope_Shoot_Speed</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Speed in which the rope will be thrown. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 2.
+</p>
+
+</div>
+
+<h2 class="sectionedit39"><a name="sv_ninjarope_start_distance" id="sv_ninjarope_start_distance">SV_NinjaRope_Start_Distance</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> The default distance at which the rope will stop pulling the worm. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 249.
+</p>
+
+</div>
+
+<h2 class="sectionedit40"><a name="sv_team_play" id="sv_team_play">SV_Team_Play</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, it enables team play spawn points.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit41"><a name="sv_worm_acceleration" id="sv_worm_acceleration">SV_Worm_Acceleration</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Acceleration a worm will have when moving left or right. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.03.
+</p>
+
+</div>
+
+<h2 class="sectionedit42"><a name="sv_worm_air_acceleration_factor" id="sv_worm_air_acceleration_factor">SV_Worm_Air_Acceleration_Factor</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Will multiply the worm acceleration when the worm is not touching the ground. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit43"><a name="sv_worm_air_friction" id="sv_worm_air_friction">SV_Worm_Air_Friction</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Friction that is always applied to the worm. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit44"><a name="sv_worm_bounce_limit" id="sv_worm_bounce_limit">SV_Worm_Bounce_Limit</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Minimum speed in which the worm will bounce ( Speeds smaller than this value will make the worm just stop without bouncing ). This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 2.
+</p>
+
+</div>
+
+<h2 class="sectionedit45"><a name="sv_worm_bounce_quotient" id="sv_worm_bounce_quotient">SV_Worm_Bounce_Quotient</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> How much of the worm speed will be conserved when bouncing. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.333.
+</p>
+
+</div>
+
+<h2 class="sectionedit46"><a name="sv_worm_box_bottom" id="sv_worm_box_bottom">SV_Worm_Box_Bottom</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> The bottom coordinate of the worm hitbox relative from the worm center position. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 4.
+</p>
+
+</div>
+
+<h2 class="sectionedit47"><a name="sv_worm_box_radius" id="sv_worm_box_radius">SV_Worm_Box_Radius</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Is how wide the worm hitbox is. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 2.
+</p>
+
+</div>
+
+<h2 class="sectionedit48"><a name="sv_worm_box_top" id="sv_worm_box_top">SV_Worm_Box_Top</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> The top coordinate of the worm hitbox relative from the worm center position. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 3.
+</p>
+
+</div>
+
+<h2 class="sectionedit49"><a name="sv_worm_disable_wall_hugging" id="sv_worm_disable_wall_hugging">SV_Worm_Disable_Wall_Hugging</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 worms will not stop falling if they walk against a wall. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit50"><a name="sv_worm_friction" id="sv_worm_friction">SV_Worm_Friction</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Friction applied to the worm when its touching ground. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.921665.
+</p>
+
+</div>
+
+<h2 class="sectionedit51"><a name="sv_worm_gravity" id="sv_worm_gravity">SV_Worm_Gravity</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Vertical acceleration the worms will suffer in the game. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.009.
+</p>
+
+</div>
+
+<h2 class="sectionedit52"><a name="sv_worm_height" id="sv_worm_height">SV_Worm_Height</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Height of the worm with ground collision detection ( From bottom to top ). This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 9.
+</p>
+
+</div>
+
+<h2 class="sectionedit53"><a name="sv_worm_jump_force" id="sv_worm_jump_force">SV_Worm_Jump_Force</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Speed which will be added to the worm speed when the worm jumps. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.6.
+</p>
+
+</div>
+
+<h2 class="sectionedit54"><a name="sv_worm_max_speed" id="sv_worm_max_speed">SV_Worm_Max_Speed</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Maximum speed a worm can reach by walking left or right. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.45.
+</p>
+
+</div>
+
+<h2 class="sectionedit55"><a name="sv_worm_max_climb" id="sv_worm_max_climb">SV_Worm_Max_Climb</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Maximum amount of pixels a worm is able to climb. This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 4.
+</p>
+
+</div>
+
+<h2 class="sectionedit56"><a name="sv_worm_weapon_height" id="sv_worm_weapon_height">SV_Worm_Weapon_Height</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Height of the worm weapon axis ( From the bottom ). This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 5.
+</p>
+
+</div>
+
+<h2 class="sectionedit57"><a name="sv_worm_width" id="sv_worm_width">SV_Worm_Width</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> float.
+</p>
+
+<p>
+<strong>Description:</strong> Width of the worm with ground collision detection ( From left to right ). This is a server side variable.
+</p>
+
+<p>
+<strong>Default value:</strong> 3.
+</p>
+
+</div>
+
+<h2 class="sectionedit58"><a name="vid_bitdepth" id="vid_bitdepth">VID_Bitdepth</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> Specifies the color quality of the game in the amount of bits of data internally to represent an unique color. Maximum supported is “32” bits (best quality). Mininum supported is “16” bits (best speed).
+</p>
+
+<p>
+<strong>Note:</strong> Gusanos accepts the “8” bits setting, but it crashes before showing the menu.
+</p>
+
+<p>
+<strong>Default value:</strong> 32.
+</p>
+
+</div>
+
+<h2 class="sectionedit59"><a name="vid_clear_buffer" id="vid_clear_buffer">VID_Clear_Buffer</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1, the variable used to draw images will be cleared every rendering cycle.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit60"><a name="vid_doubleres" id="vid_doubleres">VID_DoubleRes</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 the resolution will be doubled. <code>Note: Video filters will only work if this is set to 1.</code>
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit61"><a name="vid_driver" id="vid_driver">VID_Driver</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> enum
+</p>
+
+<p>
+<strong>Description:</strong> Decides what video device is used for graphics.
+</p>
+
+<p>
+<strong>Possible values:</strong> { AUTO, DIRECTX, XDGA, XDGA2, XWINDOWS }
+</p>
+
+<p>
+<strong>Default value:</strong> AUTO.
+</p>
+
+</div>
+
+<h2 class="sectionedit62"><a name="vid_filter" id="vid_filter">VID_Filter</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> enum
+</p>
+
+<p>
+<strong>Description:</strong> Sets what video filter to use. <code>Note: Only works if the game is running with <a href="doku.php?id=main:console_docs:console_variables#vid_doubleres" title="main:console_docs:console_variables &crarr;" class="wikilink1">double res</a></code>
+</p>
+
+<p>
+<strong>Possible values:</strong> { BILINEAR, NOFILTER, NOFILTER2, SCANLINES, SCANLINES2, SUPER2XSAI, SUPEREAGLE }
+</p>
+
+<p>
+<strong>Default value:</strong> NOFILTER.
+</p>
+
+</div>
+
+<h2 class="sectionedit63"><a name="vid_fullscreen" id="vid_fullscreen">VID_Fullscreen</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 the game will try to run on fullscreen, if set to 0 it will run windowed.
+</p>
+
+<p>
+<strong>Default value:</strong> 1.
+</p>
+
+</div>
+
+<h2 class="sectionedit64"><a name="vid_vsync" id="vid_vsync">VID_VSync</a></h2>
+<div class="level2">
+
+<p>
+<strong>Variable type:</strong> int.
+</p>
+
+<p>
+<strong>Description:</strong> If set to 1 the game will wait for the screen refresh signal to render.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.
+</p>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/console_docs/console_variables.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:console_docs:console_variables" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:console_docs:console_variables" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:console_docs:console_variables" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:console_docs:console_variables#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="lib/exe/indexer.php?id=main%253Aconsole_docs%253Aconsole_variables&amp;1433891953" width="2" height="1" alt="" /></div>
+</body>
+</html>

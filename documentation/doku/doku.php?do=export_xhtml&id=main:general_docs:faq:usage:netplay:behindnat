@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:faq:usage:netplay:behindnat</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,general_docs,faq,usage,netplay,behindnat"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:usage:netplay:behindnat&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:usage:netplay"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:netplay:behindnat"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:faq:usage:netplay:behindnat"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:usage:netplay';var JSINFO = {"id":"main:general_docs:faq:usage:netplay:behindnat","namespace":"main:general_docs:faq:usage:netplay"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+
+<h5><a name="nat" id="nat">NAT</a></h5>
+<div class="level5">
+
+<p>
+If you can connect to other servers, but other cannot connect to you, chances are you&#039;re behind NAT.
+</p>
+
+<p>
+If the machine performing NAT is a Linux machine, you could use:
+</p>
+<pre class="code">iptables -t nat -A PREROUTING -p udp -d 195.169.216.157 --dport 9898 -j DNAT --to 172.16.3.2:9898</pre>
+
+<p>
+(where &#039;195.169.216.157&#039; is your public IP, and &#039;172.16.3.2&#039; the local IP of your machine)
+</p>
+
+</div>
+
+<h5><a name="port_forwarding" id="port_forwarding">Port Forwarding</a></h5>
+<div class="level5">
+
+<p>
+Another common problem is that you are simply behind a router or firewall. The most common solution is to open your ports, or port forwarding. For more information on port forwarding and router-specific instructions, visit <a href="http://www.portforward.com/" class="urlextern" title="http://www.portforward.com/"  rel="nofollow">http://www.portforward.com/</a>
+</p>
+
+</div>
+</div>
+</body>
+</html>

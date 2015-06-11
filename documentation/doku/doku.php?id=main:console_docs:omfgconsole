@@ -1,0 +1,535 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:console_docs:omfgconsole    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,console_docs,omfgconsole"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:console_docs:omfgconsole&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:console_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:console_docs:omfgconsole"/>
+<link rel="canonical" href="doku.php?id=main:console_docs:omfgconsole"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:console_docs';var JSINFO = {"id":"main:console_docs:omfgconsole","namespace":"main:console_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:console_docs:omfgconsole&amp;do=backlink"  title="Backlinks">main:console_docs:omfgconsole</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:main"  class="breadcrumbs" title="main:main">main</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:about"  class="breadcrumbs" title="main:general_docs:about">about</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:credits"  class="breadcrumbs" title="main:general_docs:credits">credits</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:changelog"  class="breadcrumbs" title="main:general_docs:changelog">changelog</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq"  class="breadcrumbs" title="main:general_docs:faq">faq</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:requested_features"  class="breadcrumbs" title="main:general_docs:requested_features">requested_features</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:installation_docs:windows"  class="breadcrumbs" title="main:installation_docs:windows">windows</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:installation_docs:linux"  class="breadcrumbs" title="main:installation_docs:linux">linux</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:console_docs:omfgconsole"  class="breadcrumbs" title="main:console_docs:omfgconsole">omfgconsole</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#command-line_syntax" class="toc">Command-line Syntax</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#using_the_console" class="toc">Using the console</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#command-line_syntax1" class="toc">Command-line syntax</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#configuration_files" class="toc">Configuration files</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#console_messages" class="toc">Console messages</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#typing_aids" class="toc">Typing aids</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#instruction_names_completion_feature" class="toc">Instruction names completion feature</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#key_combinations_for_text_typing" class="toc">Key combinations for text typing</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?id=main:console_docs:omfgconsole#text_colors" class="toc">Text colors</a></span></div></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="command-line_syntax" id="command-line_syntax">Command-line Syntax</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit2"><a name="using_the_console" id="using_the_console">Using the console</a></h2>
+<div class="level2">
+
+<p>
+The <em>console</em> is a command-line interface in which the user can send instructions to interact with the game. This could also be an alternative way to interact with the game besides using the <em>windowed</em> or <em><acronym title="Graphical User Interface">GUI</acronym> interface</em>. It can be accessed any time with the keyboard shortcut “`” by default.
+</p>
+
+<p>
+When the <em>command-line interface</em> is active, it does accept only keyboard input, so the mouse has to be forgotten at this time.
+</p>
+
+<p>
+There is no way to copy and paste text into the console. See the “configuration files” section for information on how to store information to be read by Gusanos in files.
+</p>
+
+<p>
+As the user can type some text into the console, the console might also output some extra text. See the “console messages” section for a description about the types of messages that can be shown.
+</p>
+
+<p>
+Some examples of lines that can be typed in the console to produce results:
+</p>
+<pre class="code">Host 1 -- lets the next game to be hosted.
+NET_Register 1 -- registers the host after it has been initialized.
+Game default -- loads the &quot;default&quot; mod (comes with the game package).
+Map poo -- loads the &quot;poo&quot; map (comes with the game package).</pre>
+
+</div>
+
+<h2 class="sectionedit3"><a name="command-line_syntax1" id="command-line_syntax1">Command-line syntax</a></h2>
+<div class="level2">
+
+<p>
+An <em>instruction</em> or <em>command</em> is an aliase used to call a function previously defined in the console. Commands can contain this set of characters in their names:
+</p>
+<pre class="code">[A-Za-z0-9_]</pre>
+
+<p>
+The full list of instructions can be found in the <a href="doku.php?id=main:console_docs:console_commands" class="wikilink1" title="main:console_docs:console_commands">console commands</a> page.
+</p>
+
+<p>
+A <em>parameter</em> is one of the values that is supported by an instruction. An instruction can contain more than one parameter value separated by the space or return characters. Example:
+</p>
+<pre class="code">Map poo -- &quot;Map&quot; is the command, &quot;poo&quot; is a parameter value.</pre>
+
+<p>
+The <em>data type</em> of a parameter is the type of information that can be used in a parameter of an instruction. As this is a command-line interface, string is always the data type, but it is more useful to describe the data types of the original function or the data types that best describe the range of answers supported. Some types used by the documentation:
+</p>
+<div class="table sectionedit4"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Data type    </th><th class="col1 leftalign"> Description                                                  </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0 leftalign"> bool         </th><td class="col1 leftalign"> Supports only numbers 0 (for False) and 1 (for True).        </td>
+	</tr>
+	<tr class="row2">
+		<th class="col0 leftalign"> int          </th><td class="col1 leftalign"> Supports only integer numbers (whole numbers).               </td>
+	</tr>
+	<tr class="row3">
+		<th class="col0 leftalign"> float        </th><td class="col1"> Supports only floating point numbers up to 6 decimal digits. </td>
+	</tr>
+	<tr class="row4">
+		<th class="col0"> string/words </th><td class="col1 leftalign"> Supports a string of characters.                             </td>
+	</tr>
+	<tr class="row5">
+		<th class="col0 leftalign"> enum         </th><td class="col1 leftalign"> Supports a limited choice of options from a list.            </td>
+	</tr>
+</table></div>
+
+<p>
+Depending on the answers supported by a parameter, its <em>parameter value</em> can contain this set of characters:
+</p>
+<pre class="code">[A-Za-z0-9_&quot;\]</pre>
+
+<p>
+The double quotes and the back-slash characters are special in this case. Whenever a parameter value is started with a double quotes character, the parameter value will only end until another double quotes character is used:
+</p>
+<pre class="code">Say &quot;I sheep now&quot;</pre>
+
+<p>
+The back-slash character is used to escape characters, like itself and the double quotes character.
+</p>
+<pre class="code">Say &quot;And he said \&quot;WTF?\&quot;&quot;</pre>
+
+<p>
+An <em>instruction block</em>, a <em>command block</em>, or simply a <em>code block</em> is a block combining the instruction and all parameters it supports. Instruction blocks have to be either separated by new line or ”;” characters. Example:
+</p>
+<pre class="code">Game default;Map poo</pre>
+
+<p>
+Special types of instructions exist:
+</p>
+<ul>
+<li class="level1"><div class="li"> A <em>variable</em> stores information of one parameter. Examples are game physics variables, like the following:</div>
+</li>
+</ul>
+<pre class="code">  P0_Name &quot;GusPlayer&quot;</pre>
+<ul>
+<li class="level1"><div class="li"> An <em>action</em> is a command that can be activated and later deactivated. Those start with ”+” or ”-” characters along with their names. The ”+” character activates the action, and ”-” character deactivates it. Examples are player actions, like the following:</div>
+</li>
+</ul>
+<pre class="code">  +P0_Fire -- holds the fire button
+  -P0_Fire -- releases the fire button</pre>
+
+<p>
+For both special types, the full list of actions can be found in the <a href="doku.php?id=main:console_docs:console_commands" class="wikilink1" title="main:console_docs:console_commands">console commands</a> page, and the list of variables in the <a href="doku.php?id=main:console_docs:console_variables" class="wikilink1" title="main:console_docs:console_variables">console variables</a> page.
+</p>
+
+<p>
+The console does not need to have only instructions, it can also have comments. <em>Comments</em> clarify the instruction it is describing. A comment starts with two ”-” (dash) characters. Comments can only come right before the instruction block separator character. Example:
+</p>
+<pre class="code">Say &quot;My bad :(&quot; --sends text to other users
+VID_Fullscreen 1 --makes the game to be in fullscreen mode; VID_DoubleRes 1 --activates the double resolution mode</pre>
+
+<p>
+The return value of an instruction block can be used as text for other purposes. To do that, enclose the instruction block with ”{” and ”}” (bracket) characters, like in the example below:
+</p>
+<pre class="code">-- Code to use the server name as the name of the player (useful in dedicated servers):
+P0_Name {NET_Server_Name}</pre>
+
+<p>
+This is an one-time assignment, so if the return value of the <a href="doku.php?id=main:console_docs:console_variables#net_server_name" class="wikilink1" title="main:console_docs:console_variables">NET_Server_Name</a> variable is changed after being assigned, the <a href="doku.php?id=main:console_docs:console_variables#p0_name" class="wikilink1" title="main:console_docs:console_variables">P0_Name</a> variable value will not be changed.
+</p>
+
+</div>
+
+<h2 class="sectionedit5"><a name="configuration_files" id="configuration_files">Configuration files</a></h2>
+<div class="level2">
+
+<p>
+<em>Configuration files</em> are the .cfg files located in the folder of the mod used. Those can be used to store a sequence of instructions to be later read by Gusanos the same way as typed in the console. The following default files are used in the initialization:
+</p>
+<pre class="code">1st -- config.cfg -- runs before Gusanos is first initialized.
+    -- config-ded.cfg -- run before the dedicated server is first initialized.
+2nd -- mod.cfg -- runs after a map is changed (even when Gusanos is starting).
+3rd -- autoexec.cfg -- runs after Gusanos is first initialized.
+    -- autoexec-ded.cfg -- runs after the dedicated server is first initialized.</pre>
+
+<p>
+The <a href="doku.php?id=main:console_docs:console_commands#exec" class="wikilink1" title="main:console_docs:console_commands">Exec</a> instruction can be used to run a configuration file.
+</p>
+
+</div>
+
+<h2 class="sectionedit6"><a name="console_messages" id="console_messages">Console messages</a></h2>
+<div class="level2">
+
+<p>
+<em>Console messages</em> are messages that shown in the console mostly for debugging purposes. Basic console messages are syntax errors but can be composed of these types of messages:
+</p>
+
+<p>
+<em>Syntax errors</em> appear when a syntax that is not proper is used and is not recognized by the console. An extra message is used to identify where the error can be found in the line. Example:
+</p>
+<pre class="code">]&quot;Test
+&quot;Test
+^
+Expected EOF</pre>
+
+<p>
+<em>User messages</em> are messages given by the use of the <a href="doku.php?id=main:console_docs:console_commands#echo" class="wikilink1" title="main:console_docs:console_commands">Echo</a> instruction in the command-line, any other console instructions or by LUA instructions. Those always appear between ”&lt;” and ”&gt;” characters. Example:
+</p>
+<pre class="code">]Game
+&lt;GAME &lt;MODGAME&gt; : SET THE MOD TO LOAD THE NEXT MAP CHANGE&gt;</pre>
+
+<p>
+<em>Player messages</em> are messages sent by users by using the <a href="doku.php?id=main:console_docs:console_commands#echo" class="wikilink1" title="main:console_docs:console_commands">Say</a> instruction, or by LUA instructions. Those always show the player name between ”&lt;” and ”&gt;” characters and the player message right beside it.
+</p>
+<pre class="code">]Say &quot;WTF?&quot;
+&lt;GusPlayer&gt; WTF?</pre>
+
+<p>
+<em>Worm death messages</em> are messages that appear on the bottom-left corner of the screen, principally to indicate which worms died recently. Those messages may also appear in the console if the console variable <a href="doku.php?id=main:console_docs:console_variables#cl_log_death_messages" class="wikilink1" title="main:console_docs:console_variables">CL_Log_Death_Messages</a> has the value of “1”. Those messages always have the same kind of syntax as the following:
+</p>
+<pre class="code">&lt;playername&gt; commited suicide
+&lt;playername&gt; got killed by &lt;playername2&gt;
+&lt;playername&gt; got killed by 05anonymous</pre>
+
+<p>
+The last one only happens after a map effect kills the worm (it also has color, as described in the section below). Example:
+</p>
+<pre class="code">bot got killed by GusPlayer
+bot(2) got killed by 05anonymous
+GusPlayer commited suicide</pre>
+
+</div>
+
+<h2 class="sectionedit7"><a name="typing_aids" id="typing_aids">Typing aids</a></h2>
+<div class="level2">
+
+<p>
+The Gusanos console has many typing aids that can be used by the user. The following are examples of those:
+</p>
+
+</div>
+
+<h3 class="sectionedit8"><a name="instruction_names_completion_feature" id="instruction_names_completion_feature">Instruction names completion feature</a></h3>
+<div class="level3">
+
+<p>
+The console supports the feature of completing the instruction name being typed or suggesting one from what is being typed. To use it, type the first letters of an instruction, and then press the “Tab” key. If there is only one suggestion, Gusanos will automatically type the rest of the instruction&#039;s name. If there is more than one, it will show a list of them.
+</p>
+
+</div>
+
+<h3 class="sectionedit9"><a name="key_combinations_for_text_typing" id="key_combinations_for_text_typing">Key combinations for text typing</a></h3>
+<div class="level3">
+
+<p>
+The console supports key combinations that specially for text typing. The following is a list of all key combinations that can be used to produce a new character in the console:
+</p>
+<div class="table sectionedit10"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Num   </th><th class="col1"> Key combinations </th><th class="col2 leftalign"> Name                                                      </th>
+	</tr>
+	<tr class="row1">
+		<td class="col0 leftalign"> 0     </td><td class="col1 leftalign"> Any              </td><td class="col2"> Blank character (used when an invalid character is typed) </td>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> 1     </td><td class="col1 leftalign"> Ctrl+A           </td><td class="col2 leftalign"> Black smiling face                                        </td>
+	</tr>
+	<tr class="row3">
+		<td class="col0 leftalign"> 2     </td><td class="col1 leftalign"> Ctrl+B           </td><td class="col2 leftalign"> Heart                                                     </td>
+	</tr>
+	<tr class="row4">
+		<td class="col0 leftalign"> 3     </td><td class="col1 leftalign"> Ctrl+C           </td><td class="col2 leftalign"> Black diamond suit                                        </td>
+	</tr>
+	<tr class="row5">
+		<td class="col0 leftalign"> 4     </td><td class="col1 leftalign"> Ctrl+D           </td><td class="col2 leftalign"> Windmil                                                   </td>
+	</tr>
+	<tr class="row6">
+		<td class="col0 leftalign"> 5     </td><td class="col1 leftalign"> Ctrl+E           </td><td class="col2 leftalign"> Black spade suit                                          </td>
+	</tr>
+	<tr class="row7">
+		<td class="col0 leftalign"> 6     </td><td class="col1 leftalign"> Ctrl+F           </td><td class="col2 leftalign"> Small plus sign                                           </td>
+	</tr>
+	<tr class="row8">
+		<td class="col0 leftalign"> 7     </td><td class="col1 leftalign"> Ctrl+G           </td><td class="col2 leftalign"> Small plus sign in a card                                 </td>
+	</tr>
+	<tr class="row9">
+		<td class="col0 leftalign"> 8     </td><td class="col1 leftalign"> Ctrl+H           </td><td class="col2 leftalign"> Small aim sign                                            </td>
+	</tr>
+	<tr class="row10">
+		<td class="col0 leftalign"> 9     </td><td class="col1 leftalign"> Ctrl+I           </td><td class="col2 leftalign"> Small aim sign in a card                                  </td>
+	</tr>
+	<tr class="row11">
+		<td class="col0 leftalign"> 10    </td><td class="col1 leftalign"> Ctrl+J           </td><td class="col2 leftalign"> Male sign                                                 </td>
+	</tr>
+	<tr class="row12">
+		<td class="col0 leftalign"> 11    </td><td class="col1 leftalign"> Ctrl+K           </td><td class="col2 leftalign"> Female sign                                               </td>
+	</tr>
+	<tr class="row13">
+		<td class="col0 leftalign"> 12    </td><td class="col1 leftalign"> Ctrl+L           </td><td class="col2 leftalign"> Eighth note                                               </td>
+	</tr>
+	<tr class="row14">
+		<td class="col0 leftalign"> 13    </td><td class="col1 leftalign"> Ctrl+M           </td><td class="col2 leftalign"> Beamed eighth notes                                       </td>
+	</tr>
+	<tr class="row15">
+		<td class="col0 leftalign"> 14    </td><td class="col1 leftalign"> Ctrl+N           </td><td class="col2 leftalign"> White sun with rays                                       </td>
+	</tr>
+	<tr class="row16">
+		<td class="col0 leftalign"> 15    </td><td class="col1 leftalign"> Ctrl+O           </td><td class="col2 leftalign"> Right arrow head                                          </td>
+	</tr>
+	<tr class="row17">
+		<td class="col0 leftalign"> 16    </td><td class="col1 leftalign"> Ctrl+P           </td><td class="col2 leftalign"> Left arrow head                                           </td>
+	</tr>
+	<tr class="row18">
+		<td class="col0 leftalign"> 17    </td><td class="col1 leftalign"> Ctrl+Q           </td><td class="col2 leftalign"> Double dagger                                             </td>
+	</tr>
+	<tr class="row19">
+		<td class="col0 leftalign"> 18    </td><td class="col1 leftalign"> Ctrl+R           </td><td class="col2 leftalign"> Double exclamation mark                                   </td>
+	</tr>
+	<tr class="row20">
+		<td class="col0 leftalign"> 19    </td><td class="col1 leftalign"> Ctrl+S           </td><td class="col2 leftalign"> Pilcrow sign                                              </td>
+	</tr>
+	<tr class="row21">
+		<td class="col0 leftalign"> 20    </td><td class="col1 leftalign"> Ctrl+T           </td><td class="col2 leftalign"> Section sign                                              </td>
+	</tr>
+	<tr class="row22">
+		<td class="col0 leftalign"> 21    </td><td class="col1 leftalign"> Ctrl+U           </td><td class="col2 leftalign"> Macron                                                    </td>
+	</tr>
+	<tr class="row23">
+		<td class="col0 leftalign"> 22    </td><td class="col1 leftalign"> Ctrl+V           </td><td class="col2 leftalign"> Triple dagger                                             </td>
+	</tr>
+	<tr class="row24">
+		<td class="col0 leftalign"> 23    </td><td class="col1 leftalign"> Ctrl+W           </td><td class="col2 leftalign"> Up arrow                                                  </td>
+	</tr>
+	<tr class="row25">
+		<td class="col0 leftalign"> 24    </td><td class="col1 leftalign"> Ctrl+X           </td><td class="col2 leftalign"> Down arrow                                                </td>
+	</tr>
+	<tr class="row26">
+		<td class="col0 leftalign"> 25    </td><td class="col1 leftalign"> Ctrl+Y           </td><td class="col2 leftalign"> Right arrow                                               </td>
+	</tr>
+	<tr class="row27">
+		<td class="col0 leftalign"> 26    </td><td class="col1 leftalign"> Ctrl+Z           </td><td class="col2 leftalign"> Left arrow                                                </td>
+	</tr>
+	<tr class="row28">
+		<td class="col0 leftalign"> 27    </td><td class="col1 leftalign"> Ctrl+[           </td><td class="col2 leftalign"> Left right arrow                                          </td>
+	</tr>
+	<tr class="row29">
+		<td class="col0 leftalign"> 28    </td><td class="col1 leftalign"> Ctrl+Vert. Bar   </td><td class="col2 leftalign"> Not sign                                                  </td>
+	</tr>
+	<tr class="row30">
+		<td class="col0 leftalign"> 29    </td><td class="col1 leftalign"> Ctrl+]           </td><td class="col2 leftalign"> Up down arrow                                             </td>
+	</tr>
+	<tr class="row31">
+		<td class="col0 leftalign"> 30    </td><td class="col1 leftalign"> Ctrl+Circumflex  </td><td class="col2 leftalign"> Up arrow head                                             </td>
+	</tr>
+	<tr class="row32">
+		<td class="col0 leftalign"> 31    </td><td class="col1 leftalign"> Ctrl+-           </td><td class="col2 leftalign"> Down arrow head                                           </td>
+	</tr>
+	<tr class="row33">
+		<td class="col0 leftalign"> 127   </td><td class="col1 leftalign"> Ctrl+Backspace   </td><td class="col2 leftalign"> Backspace feed                                            </td>
+	</tr>
+</table></div>
+
+<p>
+Those characters still obey the orignal role as system characters have. For example, the character num. 8 is used as backspace, so when you press its respective key combination, the last letter before the caret is removed, like the original backspace button does.
+</p>
+
+</div>
+
+<h3 class="sectionedit11"><a name="text_colors" id="text_colors">Text colors</a></h3>
+<div class="level3">
+
+<p>
+<em>Text colors</em> specify the color of the text to be shown in the console. This does not work for instructions, but it works in parameter values and comments. To use it, use the character “” or use Ctrl+K (as seen in the list of console key combinations) and type the wished color index number:
+</p>
+<div class="table sectionedit12"><table class="inline">
+	<tr class="row0">
+		<th class="col0"> Index </th><th class="col1 leftalign"> Name         </th><th class="col2 leftalign"> Red  </th><th class="col3"> Green </th><th class="col4 leftalign"> Blue  </th><th class="col5"> in #RRGGBB format </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0 leftalign"> 00    </th><td class="col1 leftalign"> White        </td><td class="col2 leftalign"> 255  </td><td class="col3 leftalign"> 255   </td><td class="col4 leftalign"> 255   </td><td class="col5 leftalign"> #FFFFFF           </td>
+	</tr>
+	<tr class="row2">
+		<th class="col0 leftalign"> 01    </th><td class="col1 leftalign"> Black        </td><td class="col2 leftalign"> 0    </td><td class="col3 leftalign"> 0     </td><td class="col4 leftalign"> 0     </td><td class="col5 leftalign"> #000000           </td>
+	</tr>
+	<tr class="row3">
+		<th class="col0 leftalign"> 02    </th><td class="col1 leftalign"> Red          </td><td class="col2 leftalign"> 255  </td><td class="col3 leftalign"> 0     </td><td class="col4 leftalign"> 0     </td><td class="col5 leftalign"> #FF0000           </td>
+	</tr>
+	<tr class="row4">
+		<th class="col0 leftalign"> 03    </th><td class="col1 leftalign"> Green        </td><td class="col2 leftalign"> 0    </td><td class="col3 leftalign"> 255   </td><td class="col4 leftalign"> 0     </td><td class="col5 leftalign"> #00FF00           </td>
+	</tr>
+	<tr class="row5">
+		<th class="col0 leftalign"> 04    </th><td class="col1 leftalign"> Blue         </td><td class="col2 leftalign"> 0    </td><td class="col3 leftalign"> 0     </td><td class="col4 leftalign"> 255   </td><td class="col5 leftalign"> #0000FF           </td>
+	</tr>
+	<tr class="row6">
+		<th class="col0 leftalign"> 05    </th><td class="col1 leftalign"> Yellow       </td><td class="col2 leftalign"> 255  </td><td class="col3 leftalign"> 255   </td><td class="col4 leftalign"> 0     </td><td class="col5 leftalign"> #FFFF00           </td>
+	</tr>
+	<tr class="row7">
+		<th class="col0 leftalign"> 06    </th><td class="col1 leftalign"> Cyan         </td><td class="col2 leftalign"> 0    </td><td class="col3 leftalign"> 255   </td><td class="col4 leftalign"> 255   </td><td class="col5 leftalign"> #00FFFF           </td>
+	</tr>
+	<tr class="row8">
+		<th class="col0 leftalign"> 07    </th><td class="col1 leftalign"> Magenta      </td><td class="col2 leftalign"> 255  </td><td class="col3 leftalign"> 0     </td><td class="col4 leftalign"> 255   </td><td class="col5 leftalign"> #FF00FF           </td>
+	</tr>
+	<tr class="row9">
+		<th class="col0 leftalign"> 08    </th><td class="col1 leftalign"> Dark gray    </td><td class="col2 leftalign"> 64   </td><td class="col3 leftalign"> 64    </td><td class="col4 leftalign"> 64    </td><td class="col5 leftalign"> #404040           </td>
+	</tr>
+	<tr class="row10">
+		<th class="col0 leftalign"> 09    </th><td class="col1 leftalign"> Light gray   </td><td class="col2 leftalign"> 192  </td><td class="col3 leftalign"> 192   </td><td class="col4 leftalign"> 192   </td><td class="col5 leftalign"> #C0C0C0           </td>
+	</tr>
+	<tr class="row11">
+		<th class="col0 leftalign"> 10    </th><td class="col1 leftalign"> Brown        </td><td class="col2 leftalign"> 128  </td><td class="col3 leftalign"> 0     </td><td class="col4 leftalign"> 0     </td><td class="col5 leftalign"> #800000           </td>
+	</tr>
+	<tr class="row12">
+		<th class="col0 leftalign"> 11    </th><td class="col1 leftalign"> Dark green   </td><td class="col2 leftalign"> 0    </td><td class="col3 leftalign"> 128   </td><td class="col4 leftalign"> 0     </td><td class="col5 leftalign"> #008000           </td>
+	</tr>
+	<tr class="row13">
+		<th class="col0 leftalign"> 12    </th><td class="col1 leftalign"> Dark blue    </td><td class="col2 leftalign"> 0    </td><td class="col3 leftalign"> 0     </td><td class="col4 leftalign"> 128   </td><td class="col5 leftalign"> #000080           </td>
+	</tr>
+	<tr class="row14">
+		<th class="col0 leftalign"> 13    </th><td class="col1 leftalign"> Dark yellow  </td><td class="col2 leftalign"> 128  </td><td class="col3 leftalign"> 128   </td><td class="col4 leftalign"> 0     </td><td class="col5 leftalign"> #808000           </td>
+	</tr>
+	<tr class="row15">
+		<th class="col0 leftalign"> 14    </th><td class="col1 leftalign"> Dark cyan    </td><td class="col2 leftalign"> 0    </td><td class="col3 leftalign"> 128   </td><td class="col4 leftalign"> 128   </td><td class="col5 leftalign"> #008080           </td>
+	</tr>
+	<tr class="row16">
+		<th class="col0 leftalign"> 15    </th><td class="col1"> Dark magenta </td><td class="col2 leftalign"> 128  </td><td class="col3 leftalign"> 0     </td><td class="col4 leftalign"> 128   </td><td class="col5 leftalign"> #800080           </td>
+	</tr>
+</table></div>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/console_docs/omfgconsole.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:console_docs:omfgconsole" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:console_docs:omfgconsole" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:console_docs:omfgconsole" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:console_docs:omfgconsole#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="lib/exe/indexer.php?id=main%253Aconsole_docs%253Aomfgconsole&amp;1433891952" width="2" height="1" alt="" /></div>
+</body>
+</html>

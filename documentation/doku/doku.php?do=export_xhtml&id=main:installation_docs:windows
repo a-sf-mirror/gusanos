@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:installation_docs:windows</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,installation_docs,windows"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:installation_docs:windows&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:installation_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:installation_docs:windows"/>
+<link rel="canonical" href="doku.php?id=main:installation_docs:windows"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:installation_docs';var JSINFO = {"id":"main:installation_docs:windows","namespace":"main:installation_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+
+<p>
+Installing Gusanos on windows is so simple it hurts.
+</p>
+
+<p>
+Download the zip file, unzip it to something like C:\Program Files\Gusanos.
+Enter that directory and double-click gusanos.exe to play. If you want a shortcut
+on your desktop, hold [ALT] and drag gusanos.exe to your desk. Rename it to
+Gusanos or something suitable.
+</p>
+
+<p>
+The file contains no icon, so to spice things up a little, I&#039;ll show you
+how to add one yourself. Right-click the shortcut, and choose properties.
+Press the Change Icon… button. You should get some error message about
+how the file contains no icon. That&#039;s fine, we&#039;ll just rip something off
+Microsoft. After clicking OK in that dialogue, you can now choose an icon.
+Double-click the one you want, press OK, and voila! Gusanos is installed!
+</p>
+
+<p>
+(Small guide written by SausageBoy, because I thought the red on the windows install link looked pathetic)
+</p>
+</div>
+</body>
+</html>

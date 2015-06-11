@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:object</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:43+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,object"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:object&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:object"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:object","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#class_object" class="toc">Class Object</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#angle" class="toc">angle</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#closest_worm" class="toc">closest_worm</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#damage" class="toc">damage</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#data" class="toc">data</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#player" class="toc">player</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#pos" class="toc">pos</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#push" class="toc">push</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#remove" class="toc">remove</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#set_pos" class="toc">set_pos</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#set_spd" class="toc">set_spd</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#shoot" class="toc">shoot</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:object#spd" class="toc">spd</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_object" id="class_object">Class Object</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class Object" [1-28] -->
+<h2 class="sectionedit2"><a name="angle" id="angle">angle</a></h2>
+<div class="level2">
+<pre class="code">angle()</pre>
+
+<p>
+(Known as get_angle before 0.9c)
+Returns the current <span class="curid"><a href="doku.php?id=main:modding_docs:lua:object#angle" class="wikilink1" title="main:modding_docs:lua:object">angle</a></span> of the object.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "angle" [29-152] -->
+<h2 class="sectionedit3"><a name="closest_worm" id="closest_worm">closest_worm</a></h2>
+<div class="level2">
+<pre class="code">closest_worm()</pre>
+
+<p>
+(Known as get_closest_worm before 0.9c)
+</p>
+
+<p>
+Returns the closest worm that fulfills these requirements:
+</p>
+<ul>
+<li class="level1"><div class="li"> It is not the owner of the object.</div>
+</li>
+<li class="level1"><div class="li"> It is visible and active.</div>
+</li>
+<li class="level1"><div class="li"> The straight path to it from the object is not, for particles, blocked.</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT3 SECTION "closest_worm" [153-444] -->
+<h2 class="sectionedit4"><a name="damage" id="damage">damage</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">damage(amount[, player])</pre>
+
+<p>
+Causes <span class="curid"><a href="doku.php?id=main:modding_docs:lua:object#damage" class="wikilink1" title="main:modding_docs:lua:object">damage</a></span> to the object. <em>player</em> is the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:object#player" class="wikilink1" title="main:modding_docs:lua:object">player</a></span> inflicting the damage.
+If <em>player</em> isn&#039;t specified or nil, the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:object#damage" class="wikilink1" title="main:modding_docs:lua:object">damage</a></span> is anonymous.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "damage" [445-718] -->
+<h2 class="sectionedit5"><a name="data" id="data">data</a></h2>
+<div class="level2">
+<pre class="code">data()</pre>
+
+<p>
+Returns a table associated with this object that can
+be used by Lua scripts to store values.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "data" [719-841] -->
+<h2 class="sectionedit6"><a name="player" id="player">player</a></h2>
+<div class="level2">
+<pre class="code">player()</pre>
+
+<p>
+(Known as get_player before 0.9c)
+</p>
+
+<p>
+Returns a <a href="doku.php?id=main:modding_docs:lua:player" class="wikilink1" title="main:modding_docs:lua:player">Player</a> object of the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:object#player" class="wikilink1" title="main:modding_docs:lua:object">player</a></span> that owns this object.
+</p>
+
+</div>
+<!-- EDIT6 SECTION "player" [842-1000] -->
+<h2 class="sectionedit7"><a name="pos" id="pos">pos</a></h2>
+<div class="level2">
+<pre class="code">pos()</pre>
+
+<p>
+Returns the position of this object as a tuple.
+i.e.:
+</p>
+<pre class="code">local x, y = object:pos()</pre>
+
+</div>
+<!-- EDIT7 SECTION "pos" [1001-1123] -->
+<h2 class="sectionedit8"><a name="push" id="push">push</a></h2>
+<div class="level2">
+<pre class="code">push(x, y)</pre>
+
+<p>
+Accelerates the object in the direction (x, y)
+e.g.:
+</p>
+<pre class="code">object:push(0, 10) -- Accelerates the object downwards</pre>
+
+</div>
+<!-- EDIT8 SECTION "push" [1124-1280] -->
+<h2 class="sectionedit9"><a name="remove" id="remove">remove</a></h2>
+<div class="level2">
+<pre class="code">remove()</pre>
+
+<p>
+Removes the object in the next frame.
+</p>
+
+</div>
+<!-- EDIT9 SECTION "remove" [1281-1352] -->
+<h2 class="sectionedit10"><a name="set_pos" id="set_pos">set_pos</a></h2>
+<div class="level2">
+<pre class="code">set_pos(x, y)</pre>
+
+<p>
+Moves the object to the location (x, y)
+e.g.:
+</p>
+<pre class="code">object:set_spd(0, 0) -- Moves the object to the upper-left corner</pre>
+
+</div>
+<!-- EDIT10 SECTION "set_pos" [1353-1519] -->
+<h2 class="sectionedit11"><a name="set_spd" id="set_spd">set_spd</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">set_spd(x, y)</pre>
+
+<p>
+Changes the speed of this object to (x, y)
+e.g.:
+</p>
+<pre class="code">object:set_spd(10, 0) -- Makes the object move to the right</pre>
+
+</div>
+<!-- EDIT11 SECTION "set_spd" [1520-1713] -->
+<h2 class="sectionedit12"><a name="shoot" id="shoot">shoot</a></h2>
+<div class="level2">
+<pre class="code">shoot(type, amount, speed, speedVariation, motionInheritance, amountVariation, distribution, angleOffset, distanceOffset)</pre>
+
+<p>
+Shoots an object of ParticleType &#039;type&#039;. All parameters except &#039;type&#039; are optional.
+</p>
+
+</div>
+<!-- EDIT12 SECTION "shoot" [1714-1943] -->
+<h2 class="sectionedit13"><a name="spd" id="spd">spd</a></h2>
+<div class="level2">
+<pre class="code">spd()</pre>
+
+<p>
+Returns the speed of this object as a tuple.
+e.g.:
+</p>
+<pre class="code">local vx, vy = object:spd()</pre>
+
+</div>
+<!-- EDIT13 SECTION "spd" [1944-] --></div>
+</body>
+</html>

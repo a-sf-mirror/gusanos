@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:bitmap</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:44+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,bitmap"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:bitmap&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:bitmap"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:bitmap","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#class_bitmap" class="toc">Class Bitmap</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#see_also" class="toc">See also:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#draw_box" class="toc">draw_box</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#h" class="toc">h</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#hline" class="toc">hline</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#line" class="toc">line</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#linewu" class="toc">linewu</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#putpixel" class="toc">putpixel</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#putpixelwu" class="toc">putpixelwu</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:bitmap#w" class="toc">w</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_bitmap" id="class_bitmap">Class Bitmap</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class Bitmap" [1-28] -->
+<h2 class="sectionedit2"><a name="see_also" id="see_also">See also:</a></h2>
+<div class="level2">
+
+<p>
+<a href="doku.php?id=main:modding_docs:lua:global#gfx_draw_box" class="wikilink1" title="main:modding_docs:lua:global">gfx_draw_box</a>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "See also:" [29-90] -->
+<h2 class="sectionedit3"><a name="draw_box" id="draw_box">draw_box</a></h2>
+<div class="level2">
+<pre class="code">draw_box(bitmap, x1, y1, x2, y2, color)</pre>
+
+<p>
+Draws a filled box with the corners (x1, y1) and (x2, y2)
+with the color <em>color</em> using the currently selected blender.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "draw_box" [91-278] -->
+<h2 class="sectionedit4"><a name="h" id="h">h</a></h2>
+<div class="level2">
+<pre class="code">h()</pre>
+
+<p>
+Returns the width of this bitmap.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "h" [279-336] -->
+<h2 class="sectionedit5"><a name="hline" id="hline">hline</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">hline(x1, y1, x2, color)</pre>
+
+<p>
+Draws a horizontal <span class="curid"><a href="doku.php?id=main:modding_docs:lua:bitmap#line" class="wikilink1" title="main:modding_docs:lua:bitmap">line</a></span> from (x1, y1) to (x2, y1)
+with the color <em>color</em> using the currently selected blender.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "hline" [337-544] -->
+<h2 class="sectionedit6"><a name="line" id="line">line</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">line(x1, y1, x2, y2, color)</pre>
+
+<p>
+Draws a <span class="curid"><a href="doku.php?id=main:modding_docs:lua:bitmap#line" class="wikilink1" title="main:modding_docs:lua:bitmap">line</a></span> from (x1, y1) to (x2, y2)
+with the color <em>color</em> using the currently selected blender.
+</p>
+
+</div>
+<!-- EDIT6 SECTION "line" [545-743] -->
+<h2 class="sectionedit7"><a name="linewu" id="linewu">linewu</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">linewu(x1, y1, x2, y2, color)</pre>
+
+<p>
+Draws a Wu-line from (x1, y1) to (x2, y2)
+with the color <em>colour</em> using the currently selected blender.
+</p>
+
+</div>
+<!-- EDIT7 SECTION "linewu" [744-934] -->
+<h2 class="sectionedit8"><a name="putpixel" id="putpixel">putpixel</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">putpixel(x1, y1, color)</pre>
+
+<p>
+Draws a pixel at position (x1, y1)
+with the color <em>color</em> using the currently selected blender.
+</p>
+
+</div>
+<!-- EDIT8 SECTION "putpixel" [935-1113] -->
+<h2 class="sectionedit9"><a name="putpixelwu" id="putpixelwu">putpixelwu</a></h2>
+<div class="level2">
+
+<p>
+(available from version 0.9c)
+</p>
+<pre class="code">putpixelwu(x1, y1, color)</pre>
+
+<p>
+Draws a Wu-pixel at position (x1, y1)
+with the color <em>color</em> using the currently selected blender.
+</p>
+
+</div>
+<!-- EDIT9 SECTION "putpixelwu" [1114-1299] -->
+<h2 class="sectionedit10"><a name="w" id="w">w</a></h2>
+<div class="level2">
+<pre class="code">w()</pre>
+
+<p>
+Returns the width of this bitmap.
+</p>
+
+</div>
+<!-- EDIT10 SECTION "w" [1300-] --></div>
+</body>
+</html>

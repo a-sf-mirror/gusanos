@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    start    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=start&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns="/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=start"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='';var JSINFO = {"id":"start","namespace":""};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=start&amp;do=backlink"  title="Backlinks">start</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:objects"  class="breadcrumbs" title="main:modding_docs:objects">objects</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:weapons"  class="breadcrumbs" title="main:modding_docs:weapons">weapons</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:classes"  class="breadcrumbs" title="main:modding_docs:lua:classes">classes</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:fonts"  class="breadcrumbs" title="main:modding_docs:fonts">fonts</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:sprites"  class="breadcrumbs" title="main:modding_docs:sprites">sprites</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:sounds"  class="breadcrumbs" title="main:modding_docs:sounds">sounds</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers"  class="breadcrumbs" title="main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers">creating_explosive_drums_using_collision_layers</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:mapping_docs:level_format"  class="breadcrumbs" title="main:mapping_docs:level_format">level_format</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:tutorials:implementing_dark_mode_and_lights"  class="breadcrumbs" title="main:modding_docs:tutorials:implementing_dark_mode_and_lights">implementing_dark_mode_and_lights</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:development:requirements"  class="breadcrumbs" title="main:development:requirements">requirements</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    
+<h1 class="sectionedit1"><a name="sitemap" id="sitemap">Sitemap</a></h1>
+<div class="level1">
+
+<p>
+This is a sitemap over all available pages ordered by <a href="http://www.dokuwiki.org/namespaces" class="interwiki iw_doku" title="http://www.dokuwiki.org/namespaces">namespaces</a>.
+</p>
+
+</div>
+<div id="index__tree">
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=start&amp;idx=faq" class="idx_dir"><strong>faq</strong></a></div></li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=start&amp;idx=main" class="idx_dir"><strong>main</strong></a></div></li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=start&amp;idx=wiki" class="idx_dir"><strong>wiki</strong></a></div></li>
+<li class="level1"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=gus_planning" class="wikilink1" title="gus_planning">gus_planning</a></div></li>
+</ul>
+</div>
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+              </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="start" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="start" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="start" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=start&amp;do=index#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"></div>
+</body>
+</html>

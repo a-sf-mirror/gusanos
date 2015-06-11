@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:general_docs:faq:usage:general:videomode    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:usage:general:videomode&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:usage:general"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:videomode"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:usage:general';var JSINFO = {"id":"main:general_docs:faq:usage:general:videomode","namespace":"main:general_docs:faq:usage:general"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:general_docs:faq:usage:general:videomode&amp;do=backlink"  title="Backlinks">main:general_docs:faq:usage:general:videomode</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:particle"  class="breadcrumbs" title="main:modding_docs:lua:particle">particle</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:player"  class="breadcrumbs" title="main:modding_docs:lua:player">player</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:sound"  class="breadcrumbs" title="main:modding_docs:lua:sound">sound</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:spriteset"  class="breadcrumbs" title="main:modding_docs:lua:spriteset">spriteset</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:tcpsocket"  class="breadcrumbs" title="main:modding_docs:lua:tcpsocket">tcpsocket</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:viewport"  class="breadcrumbs" title="main:modding_docs:lua:viewport">viewport</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:weapon"  class="breadcrumbs" title="main:modding_docs:lua:weapon">weapon</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:weapontype"  class="breadcrumbs" title="main:modding_docs:lua:weapontype">weapontype</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:worm"  class="breadcrumbs" title="main:modding_docs:lua:worm">worm</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:development:requirements:gui"  class="breadcrumbs" title="main:development:requirements:gui">gui</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    
+<h1 class="sectionedit1"><a name="sitemap" id="sitemap">Sitemap</a></h1>
+<div class="level1">
+
+<p>
+This is a sitemap over all available pages ordered by <a href="http://www.dokuwiki.org/namespaces" class="interwiki iw_doku" title="http://www.dokuwiki.org/namespaces">namespaces</a>.
+</p>
+
+</div>
+<div id="index__tree">
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=faq" class="idx_dir"><strong>faq</strong></a></div></li>
+<li class="open"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main" class="idx_dir"><strong>main</strong></a></div>
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Aconsole_docs" class="idx_dir"><strong>console_docs</strong></a></div></li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Adevelopment" class="idx_dir"><strong>development</strong></a></div></li>
+<li class="open"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ageneral_docs" class="idx_dir"><strong>general_docs</strong></a></div>
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ageneral_docs%3Afaq" class="idx_dir"><strong>faq</strong></a></div>
+<ul class="idx">
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ageneral_docs%3Afaq%3Acrashes" class="idx_dir"><strong>crashes</strong></a></div></li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ageneral_docs%3Afaq%3Aperformance" class="idx_dir"><strong>performance</strong></a></div></li>
+<li class="open"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ageneral_docs%3Afaq%3Ausage" class="idx_dir"><strong>usage</strong></a></div>
+<ul class="idx">
+<li class="open"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ageneral_docs%3Afaq%3Ausage%3Ageneral" class="idx_dir"><strong>general</strong></a></div>
+<ul class="idx">
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:changemod" class="wikilink1" title="main:general_docs:faq:usage:general:changemod">changemod</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:console" class="wikilink1" title="main:general_docs:faq:usage:general:console">console</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:installmod" class="wikilink1" title="main:general_docs:faq:usage:general:installmod">installmod</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:keys" class="wikilink1" title="main:general_docs:faq:usage:general:keys">keys</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:lxrope" class="wikilink1" title="main:general_docs:faq:usage:general:lxrope">lxrope</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:playercolour" class="wikilink1" title="main:general_docs:faq:usage:general:playercolour">playercolour</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:playername" class="wikilink1" title="main:general_docs:faq:usage:general:playername">playername</a></div></li>
+<li class="level6"><div class="li"><a href="doku.php?id=main:general_docs:faq:usage:general:splitscreen" class="wikilink1" title="main:general_docs:faq:usage:general:splitscreen">splitscreen</a></div></li>
+<li class="level6"><div class="li"><span class="curid"><a href="doku.php?id=main:general_docs:faq:usage:general:videomode" class="wikilink1" title="main:general_docs:faq:usage:general:videomode">videomode</a></span></div></li>
+</ul>
+</li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ageneral_docs%3Afaq%3Ausage%3Anetplay" class="idx_dir"><strong>netplay</strong></a></div></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="level3"><div class="li"><a href="doku.php?id=main:general_docs:about" class="wikilink1" title="main:general_docs:about">about</a></div></li>
+<li class="level3"><div class="li"><a href="doku.php?id=main:general_docs:changelog" class="wikilink1" title="main:general_docs:changelog">changelog</a></div></li>
+<li class="level3"><div class="li"><a href="doku.php?id=main:general_docs:credits" class="wikilink1" title="main:general_docs:credits">credits</a></div></li>
+<li class="level3"><div class="li"><a href="doku.php?id=main:general_docs:faq" class="wikilink1" title="main:general_docs:faq">faq</a></div></li>
+<li class="level3"><div class="li"><a href="doku.php?id=main:general_docs:requested_features" class="wikilink1" title="main:general_docs:requested_features">requested_features</a></div></li>
+</ul>
+</li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Ainstallation_docs" class="idx_dir"><strong>installation_docs</strong></a></div></li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Amapping_docs" class="idx_dir"><strong>mapping_docs</strong></a></div></li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Amodding_docs" class="idx_dir"><strong>modding_docs</strong></a></div></li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=main%3Aresources" class="idx_dir"><strong>resources</strong></a></div></li>
+<li class="level2"><div class="li"><a href="doku.php?id=main:main" class="wikilink1" title="main:main">main</a></div></li>
+</ul>
+</li>
+<li class="closed"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:usage:general:videomode&amp;idx=wiki" class="idx_dir"><strong>wiki</strong></a></div></li>
+<li class="level1"><div class="li"><a href="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=gus_planning" class="wikilink1" title="gus_planning">gus_planning</a></div></li>
+</ul>
+</div>
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/general_docs/faq/usage/general/videomode.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:general_docs:faq:usage:general:videomode" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:general_docs:faq:usage:general:videomode" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:general_docs:faq:usage:general:videomode" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:general_docs:faq:usage:general:videomode&amp;do=index#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="http://gusanos.sourceforge.net/documentation/doku/lib/exe/indexer.php?id=main%3Ageneral_docs%3Afaq%3Ausage%3Ageneral%3Avideomode&amp;1433892021" width="2" height="1" alt="" /></div>
+</body>
+</html>

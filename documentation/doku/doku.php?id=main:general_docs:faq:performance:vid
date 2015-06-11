@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:general_docs:faq:performance:vid    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:41+0000"/>
+<meta name="keywords" content="main,general_docs,faq,performance,vid"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:performance:vid&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:performance"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:performance:vid"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:faq:performance:vid"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:performance';var JSINFO = {"id":"main:general_docs:faq:performance:vid","namespace":"main:general_docs:faq:performance"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:general_docs:faq:performance:vid&amp;do=backlink"  title="Backlinks">main:general_docs:faq:performance:vid</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:serverm"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:serverm">serverm</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:slowdownload"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:slowdownload">slowdownload</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:behindnat"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:behindnat">behindnat</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:port"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:port">port</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:servern"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:servern">servern</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:usage:netplay:serverlag"  class="breadcrumbs" title="main:general_docs:faq:usage:netplay:serverlag">serverlag</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:crashes:lowres"  class="breadcrumbs" title="main:general_docs:faq:crashes:lowres">lowres</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:crashes:lowrescrash"  class="breadcrumbs" title="main:general_docs:faq:crashes:lowrescrash">lowrescrash</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:faq:performance:soundwin"  class="breadcrumbs" title="main:general_docs:faq:performance:soundwin">soundwin</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:general_docs:faq:performance:vid"  class="breadcrumbs" title="main:general_docs:faq:performance:vid">vid</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    
+<h1 class="sectionedit1"><a name="faq" id="faq">FAQ:</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit2"><a name="increasing_video_performance" id="increasing_video_performance">Increasing video performance</a></h2>
+<div class="level2">
+
+<p>
+There are several ways to increase video performance in Gusanos: 
+</p>
+
+</div>
+
+<h5><a name="running_in_16_bit" id="running_in_16_bit">Running in 16 bit</a></h5>
+<div class="level5">
+
+<p>
+You can run Gusanos in 16 bit rather than 32 bit by adding this to your <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a>:
+</p>
+<pre class="code">vid_bitdepth 16</pre>
+
+</div>
+
+<h5><a name="changing_which_video_driver_gusanos_uses" id="changing_which_video_driver_gusanos_uses">Changing which video driver Gusanos uses</a></h5>
+<div class="level5">
+
+<p>
+You can change which video driver Gusanos uses which in some cases could increase video performance. 
+</p>
+
+<p>
+To get a list of which drivers Gusanos can use, open the console, and enter VID_DRIVER and an incorrect value (for example: “blah”). Then add this to your <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a>.
+</p>
+<pre class="code">vid_driver &lt;chosen driver&gt;</pre>
+
+<p>
+Possible values for windows vid_driver = AUTO, DIRECTX
+</p>
+
+</div>
+
+<h5><a name="running_without_doubleresolution" id="running_without_doubleresolution">Running without DoubleResolution</a></h5>
+<div class="level5">
+
+<p>
+By default DoubleRes is turned off.
+Open your <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a> and enter the following line (or simply change it if it already exists):
+</p>
+<pre class="code">vid_doubleres 0</pre>
+
+<p>
+You can greatly increase your FPS by disabling DoubleRes, however filters will not work.
+</p>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/general_docs/faq/performance/vid.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:general_docs:faq:performance:vid" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:general_docs:faq:performance:vid" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:general_docs:faq:performance:vid" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:general_docs:faq:performance:vid#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="lib/exe/indexer.php?id=main%253Ageneral_docs%253Afaq%253Aperformance%253Avid&amp;1433891983" width="2" height="1" alt="" /></div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:weapon</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:43+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,weapon"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:weapon&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:weapon"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:weapon"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:weapon","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:weapon#class_weapon" class="toc">Class Weapon</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:weapon#ammo" class="toc">ammo</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:weapon#is_reloading" class="toc">is_reloading</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:weapon#reload_time" class="toc">reload_time</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:weapon#type" class="toc">type</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_weapon" id="class_weapon">Class Weapon</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class Weapon" [1-28] -->
+<h2 class="sectionedit2"><a name="ammo" id="ammo">ammo</a></h2>
+<div class="level2">
+<pre class="code">ammo()</pre>
+
+<p>
+Returns the amount of <span class="curid"><a href="doku.php?id=main:modding_docs:lua:weapon#ammo" class="wikilink1" title="main:modding_docs:lua:weapon">ammo</a></span> left in this weapon.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "ammo" [29-123] -->
+<h2 class="sectionedit3"><a name="is_reloading" id="is_reloading">is_reloading</a></h2>
+<div class="level2">
+<pre class="code">is_reloading()</pre>
+
+<p>
+Returns true if this weapon is reloading.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "is_reloading" [124-211] -->
+<h2 class="sectionedit4"><a name="reload_time" id="reload_time">reload_time</a></h2>
+<div class="level2">
+<pre class="code">reload_time()</pre>
+
+<p>
+Returns the reload time left on this weapon.
+Does only make sense if is_reloading() is true.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "reload_time" [212-348] -->
+<h2 class="sectionedit5"><a name="type" id="type">type</a></h2>
+<div class="level2">
+<pre class="code">type()</pre>
+
+<p>
+Returns the weapon <span class="curid"><a href="doku.php?id=main:modding_docs:lua:weapon#type" class="wikilink1" title="main:modding_docs:lua:weapon">type</a></span> in the form of a <a href="doku.php?id=main:modding_docs:lua:weapontype" class="wikilink1" title="main:modding_docs:lua:weapontype">WeaponType</a> object.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "type" [349-] --></div>
+</body>
+</html>

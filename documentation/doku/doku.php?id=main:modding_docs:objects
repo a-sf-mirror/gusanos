@@ -1,0 +1,697 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:modding_docs:objects    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,modding_docs,objects"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:objects&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:objects"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:objects"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs';var JSINFO = {"id":"main:modding_docs:objects","namespace":"main:modding_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:modding_docs:objects&amp;do=backlink"  title="Backlinks">main:modding_docs:objects</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:general_docs:requested_features"  class="breadcrumbs" title="main:general_docs:requested_features">requested_features</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:installation_docs:windows"  class="breadcrumbs" title="main:installation_docs:windows">windows</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:installation_docs:linux"  class="breadcrumbs" title="main:installation_docs:linux">linux</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:console_docs:omfgconsole"  class="breadcrumbs" title="main:console_docs:omfgconsole">omfgconsole</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:console_docs:console_commands"  class="breadcrumbs" title="main:console_docs:console_commands">console_commands</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:console_docs:console_variables"  class="breadcrumbs" title="main:console_docs:console_variables">console_variables</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:game_actions"  class="breadcrumbs" title="main:modding_docs:game_actions">game_actions</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:explosions"  class="breadcrumbs" title="main:modding_docs:explosions">explosions</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:map_effects"  class="breadcrumbs" title="main:modding_docs:map_effects">map_effects</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:modding_docs:objects"  class="breadcrumbs" title="main:modding_docs:objects">objects</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#properties" class="toc">Properties:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#acceleration" class="toc">acceleration</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#alpha" class="toc">alpha</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#angular_friction" class="toc">angular_friction</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#anim_duration" class="toc">anim_duration</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#anim_on_ground" class="toc">anim_on_ground</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#anim_type" class="toc">anim_type</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#blender" class="toc">blender</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#bounce_factor" class="toc">bounce_factor</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#color_colour" class="toc">color/colour</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#col_layer" class="toc">col_layer</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#damping" class="toc">damping</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#distortion" class="toc">distortion</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#distort_magnitude" class="toc">distort_magnitude</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#distort_gen_buggy" class="toc">distort_gen (buggy)</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#distort_size_buggy" class="toc">distort_size (buggy)</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#gravity" class="toc">gravity</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#ground_friction" class="toc">ground_friction</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#health" class="toc">health</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#invisible" class="toc">invisible</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#light_radius" class="toc">light_radius</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#light_gen" class="toc">light_gen</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#light_size" class="toc">light_size</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#line_to_origin" class="toc">line_to_origin</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#max_speed" class="toc">max_speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#network_init_-_sync_reload" class="toc">network_init (-&gt;sync_reload)</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#occluded" class="toc">occluded</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#radius_not_useful_buggy" class="toc">radius (not useful/buggy)</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#render_layer" class="toc">render_layer</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#repeat" class="toc">repeat</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#sprite" class="toc">sprite</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#sync_pos_-_sync_reload" class="toc">sync_pos (-&gt;sync_reload)</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#sync_reload" class="toc">sync_reload</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#sync_shot_-_sync_reload" class="toc">sync_shot (-&gt;sync_reload)</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#wu_pixels" class="toc">wu_pixels</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#events" class="toc">Events:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#creation" class="toc">creation</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#custom_event" class="toc">custom_event</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#death" class="toc">death</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#detect_range" class="toc">detect_range</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#ground_collision" class="toc">ground_collision</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:modding_docs:objects#timer" class="toc">timer</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="properties" id="properties">Properties:</a></h1>
+<div class="level1">
+
+<p>
+Object properties must be added to the .obj file before events. These properties may only be used in .obj files.
+</p>
+
+</div>
+
+<h2 class="sectionedit2"><a name="acceleration" id="acceleration">acceleration</a></h2>
+<div class="level2">
+<pre class="code">acceleration = &lt;float&gt;</pre>
+
+<p>
+Determines the speed value that will be added to the object each frame. The speed will be added in the direction of the object angle. <code>Note that this speed can be capped using the <strong>max_speed</strong> property.</code>
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit3"><a name="alpha" id="alpha">alpha</a></h2>
+<div class="level2">
+<pre class="code">alpha = &lt;int&gt; ( from 0 to 255 )</pre>
+
+<p>
+Alpha is the value of transparency used by the blender. This cannot be used without specifying the blender.
+</p>
+
+<p>
+<strong>Default value:</strong> 255
+</p>
+
+</div>
+
+<h2 class="sectionedit4"><a name="angular_friction" id="angular_friction">angular_friction</a></h2>
+<div class="level2">
+<pre class="code">angular_friction = &lt;float&gt;</pre>
+
+<p>
+Each frame the angular speed will be decremented by this value.
+</p>
+<blockquote><div class="no">
+<blockquote><div class="no">
+ This may change to work like a factor instead of this silly friction method.</div></blockquote>
+</div></blockquote>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit5"><a name="anim_duration" id="anim_duration">anim_duration</a></h2>
+<div class="level2">
+<pre class="code">anim_duration = &lt;int&gt;</pre>
+
+<p>
+Determines how much time ( in frames ) will pass until 1 cycle of the sprite animation ends.
+</p>
+
+<p>
+<strong>Default value:</strong> 100
+</p>
+
+</div>
+
+<h2 class="sectionedit6"><a name="anim_on_ground" id="anim_on_ground">anim_on_ground</a></h2>
+<div class="level2">
+<pre class="code">anim_on_ground = &lt;bool&gt;</pre>
+
+<p>
+If true, the animation will not stop while the object is on the ground.
+</p>
+
+<p>
+<strong>Default value:</strong> false
+</p>
+
+</div>
+
+<h2 class="sectionedit7"><a name="anim_type" id="anim_type">anim_type</a></h2>
+<div class="level2">
+<pre class="code">anim_type = { ping_pong / loop_right / right_once }</pre>
+
+<p>
+Determines the behaviour of the sprite animation. See also <a href="doku.php?id=main:modding_docs:anim_types" class="wikilink2" title="main:modding_docs:anim_types" rel="nofollow">Anim_Types</a>.
+</p>
+
+<p>
+<strong>Default value:</strong> loop_right
+</p>
+
+</div>
+
+<h2 class="sectionedit8"><a name="blender" id="blender">blender</a></h2>
+<div class="level2">
+<pre class="code">blender = &lt;alpha/add/alphach/none&gt;</pre>
+
+<p>
+Blender is the the blender used for manipulating the alpha of an object. There are two blenders, <strong>Alpha</strong> and <strong>Add</strong>. (possibly more later) Alpha will make the object translucent depending on the alpha value and add will make the object light up the background.
+</p>
+
+<p>
+<strong>Default value:</strong> none
+</p>
+
+</div>
+
+<h2 class="sectionedit9"><a name="bounce_factor" id="bounce_factor">bounce_factor</a></h2>
+<div class="level2">
+<pre class="code">bounce_factor = &lt;float&gt;</pre>
+
+<p>
+When the particle collides against a wall one of the speed will be multiplied by this factor. So values between 0 and 1 will make the object lose speed after a collision. <code>Note that only one axis of the speed will be affected which depends in if the wall was an horizontal or vertical one.</code>
+</p>
+
+<p>
+<strong>Default value:</strong> 1
+</p>
+
+</div>
+
+<h2 class="sectionedit10"><a name="color_colour" id="color_colour">color/colour</a></h2>
+<div class="level2">
+<pre class="code">color/colour = [r, g, b]</pre>
+
+<p>
+Determines the colour in which the object will be drawn.
+</p>
+
+<p>
+<strong>Default value:</strong> 255,255,255
+</p>
+
+</div>
+
+<h2 class="sectionedit11"><a name="col_layer" id="col_layer">col_layer</a></h2>
+<div class="level2">
+<pre class="code">col_layer = &lt;int&gt; ( from 0 to 7 )</pre>
+
+<p>
+Determines in which collision layer the object will be placed.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit12"><a name="damping" id="damping">damping</a></h2>
+<div class="level2">
+<pre class="code">damping = &lt;float&gt;</pre>
+
+<p>
+Each frame the object speed will be multiplied by this value. Its normally used to simulate air friction, but it can also be used to make an object accelerate if the value is bigger than 1.
+</p>
+
+<p>
+<strong>Default value:</strong> 1
+</p>
+
+</div>
+
+<h2 class="sectionedit13"><a name="distortion" id="distortion">distortion</a></h2>
+<div class="level2">
+<pre class="code">distortion = &lt;distortFunction&gt;(radius)</pre>
+
+<p>
+If this is set to a distortion function then the object will apply a distortion to the screen after it draws itself.
+The possible distortion functions are lens, swirl, spin, ripple and random.
+</p>
+
+</div>
+
+<h4><a name="example" id="example">Example:</a></h4>
+<div class="level4">
+<pre class="code">distortion = lens(30)</pre>
+
+</div>
+
+<h2 class="sectionedit14"><a name="distort_magnitude" id="distort_magnitude">distort_magnitude</a></h2>
+<div class="level2">
+<pre class="code">distort_magnitude = &lt;float&gt;</pre>
+
+<p>
+<strong>distort_magnitude</strong> will multiply the effect of the <strong>distortion</strong>.
+</p>
+
+<p>
+<strong>Default value:</strong> 0.8
+</p>
+
+</div>
+
+<h2 class="sectionedit15"><a name="distort_gen_buggy" id="distort_gen_buggy">distort_gen (buggy)</a></h2>
+<div class="level2">
+
+</div>
+
+<h2 class="sectionedit16"><a name="distort_size_buggy" id="distort_size_buggy">distort_size (buggy)</a></h2>
+<div class="level2">
+
+</div>
+
+<h2 class="sectionedit17"><a name="gravity" id="gravity">gravity</a></h2>
+<div class="level2">
+<pre class="code">gravity = &lt;float&gt;</pre>
+
+<p>
+Each frame the object vertical speed will increase by the number passed.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit18"><a name="ground_friction" id="ground_friction">ground_friction</a></h2>
+<div class="level2">
+<pre class="code">ground_friction = &lt;float&gt;</pre>
+
+<p>
+When an object collides against a wall the speed of the object in the direction of the wall will be multiplied by this value.
+</p>
+
+<p>
+<strong>Default value:</strong> 1
+</p>
+
+</div>
+
+<h2 class="sectionedit19"><a name="health" id="health">health</a></h2>
+<div class="level2">
+<pre class="code">health = &lt;float&gt; ( &gt; 0 )</pre>
+
+<p>
+Determines the initial health of the object.
+</p>
+
+<p>
+<strong>Default value:</strong> 100
+</p>
+
+</div>
+
+<h2 class="sectionedit20"><a name="invisible" id="invisible">invisible</a></h2>
+<div class="level2">
+<pre class="code">invisible = &lt;int&gt;</pre>
+
+<p>
+If its not equal 0 then the particle will not be displayed.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit21"><a name="light_radius" id="light_radius">light_radius</a></h2>
+<div class="level2">
+<pre class="code">light_radius = &lt;int&gt;</pre>
+
+<p>
+It will render a light of radius <strong>light_radius</strong> centered on the particle. Works only on darkmode.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit22"><a name="light_gen" id="light_gen">light_gen</a></h2>
+<div class="level2">
+<pre class="code">light_gen = &lt;pie&gt;</pre>
+
+<p>
+Description.
+</p>
+
+<p>
+<strong>Default value:</strong> zomg
+</p>
+
+</div>
+
+<h2 class="sectionedit23"><a name="light_size" id="light_size">light_size</a></h2>
+<div class="level2">
+<pre class="code">light_size = [&lt;int&gt;, &lt;int&gt;]</pre>
+
+<p>
+The height and width to generate the light within.
+</p>
+
+<p>
+<strong>Default value:</strong> Unknown.
+</p>
+
+</div>
+
+<h2 class="sectionedit24"><a name="line_to_origin" id="line_to_origin">line_to_origin</a></h2>
+<div class="level2">
+<pre class="code">line_to_origin = &lt;bool&gt;</pre>
+
+<p>
+If true a line will be rendered from where the object was created to the position of the object.
+</p>
+
+<p>
+<strong>Default value:</strong> false
+</p>
+
+</div>
+
+<h2 class="sectionedit25"><a name="max_speed" id="max_speed">max_speed</a></h2>
+<div class="level2">
+<pre class="code">max_speed = &lt;float&gt;</pre>
+
+<p>
+This value will cap the <strong>acceleration</strong> of the object, Once the speed is greater than this value the object will stop accelerating. Negative values will make it have no limit to the speed.
+</p>
+
+<p>
+<strong>Default value:</strong> -1
+</p>
+
+</div>
+
+<h2 class="sectionedit26"><a name="network_init_-_sync_reload" id="network_init_-_sync_reload">network_init (-&gt;sync_reload)</a></h2>
+<div class="level2">
+<pre class="code">network_init = &lt;string&gt;</pre>
+
+<p>
+Syncronizes whenever the screen is reloaded when the string is different than ””.
+</p>
+
+<p>
+<strong>Default value:</strong> ””
+</p>
+
+</div>
+
+<h2 class="sectionedit27"><a name="occluded" id="occluded">occluded</a></h2>
+<div class="level2">
+<pre class="code">occluded = &lt;int&gt;</pre>
+
+<p>
+If its not equal to 0 and the particle has a sprite then the particle will be rendered as an occluded light.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit28"><a name="radius_not_useful_buggy" id="radius_not_useful_buggy">radius (not useful/buggy)</a></h2>
+<div class="level2">
+<pre class="code">radius = &lt;int&gt;</pre>
+
+<p>
+This sets the radius of the particle when trying to hit scenary. It&#039;s not fully syncronized for network play. Also, the particle might hit the scenary if it is fast enough, or it finds it in certain angles. If the radius is greater than the hit radius, it will bounce infinitely…
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+
+<h2 class="sectionedit29"><a name="render_layer" id="render_layer">render_layer</a></h2>
+<div class="level2">
+<pre class="code">render_layer = &lt;int&gt; ( from 0 to 8 )</pre>
+
+<p>
+When the objects are rendered they are rendered in order of its layers, objects with <strong>render_layer</strong> = 0 will be rendered before objects with greater values. Worms are rendered in layer 5. <code>Note that Objects in the same layer will be rendered in order of appearance.</code>
+</p>
+
+<p>
+<strong>Default value:</strong> 5
+</p>
+
+</div>
+
+<h2 class="sectionedit30"><a name="repeat" id="repeat">repeat</a></h2>
+<div class="level2">
+<pre class="code">repeat = &lt;int&gt; ( &gt;= 1 )</pre>
+
+<p>
+Determines the amount of times an object will repeat its logic per game frame. Its usually used to make fast objects without skipping collisions. <code>Note that all properties, events or actions that depend on the object frames will be affected since the frames will pass repeat times faster.</code>
+</p>
+
+<p>
+<strong>Default value:</strong> 1
+</p>
+
+</div>
+
+<h2 class="sectionedit31"><a name="sprite" id="sprite">sprite</a></h2>
+<div class="level2">
+<pre class="code">sprite = &lt;string&gt;</pre>
+
+<p>
+The string passed as parameter has to be the name of a sprite inside the sprites folder of the mod or default.
+If the file exists the object will be displayed with that image instead of a pixel.
+</p>
+
+</div>
+
+<h2 class="sectionedit32"><a name="sync_pos_-_sync_reload" id="sync_pos_-_sync_reload">sync_pos (-&gt;sync_reload)</a></h2>
+<div class="level2">
+
+</div>
+
+<h2 class="sectionedit33"><a name="sync_reload" id="sync_reload">sync_reload</a></h2>
+<div class="level2">
+<pre class="code">sync_reload = &lt;bool&gt;</pre>
+
+<p>
+Syncronizes whenever the next game cycle is reloaded.
+</p>
+
+<p>
+<strong>Default value:</strong> false
+</p>
+
+</div>
+
+<h2 class="sectionedit34"><a name="sync_shot_-_sync_reload" id="sync_shot_-_sync_reload">sync_shot (-&gt;sync_reload)</a></h2>
+<div class="level2">
+
+</div>
+
+<h2 class="sectionedit35"><a name="wu_pixels" id="wu_pixels">wu_pixels</a></h2>
+<div class="level2">
+<pre class="code">wu_pixels = &lt;bool&gt;</pre>
+
+<p>
+If true and the object would be rendered as a pixel, it will be rendered as a wu pixel instead.
+</p>
+
+<p>
+<strong>Default value:</strong> false
+</p>
+
+</div>
+
+<h1 class="sectionedit36"><a name="events" id="events">Events:</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit37"><a name="creation" id="creation">creation</a></h2>
+<div class="level2">
+<pre class="code">on creation ()</pre>
+
+<p>
+Gets triggered once when the object was just created.
+</p>
+
+</div>
+
+<h2 class="sectionedit38"><a name="custom_event" id="custom_event">custom_event</a></h2>
+<div class="level2">
+<pre class="code">on custom_event ( &lt;int&gt; index )</pre>
+
+<p>
+Will get triggered when some other object uses the custom_event action with the specified <strong>index</strong> on this particle.
+</p>
+
+</div>
+
+<h2 class="sectionedit39"><a name="death" id="death">death</a></h2>
+<div class="level2">
+<pre class="code">on death ()</pre>
+
+<p>
+Gets triggered when the object health is ⇐ 0.
+</p>
+
+</div>
+
+<h2 class="sectionedit40"><a name="detect_range" id="detect_range">detect_range</a></h2>
+<div class="level2">
+<pre class="code">on detect_range ( &lt;float&gt; range,  &lt;bool&gt; detect_owner = true, &lt;[layer]&gt; layers = [worms] )</pre>
+
+<p>
+Gets triggered if there is an object with distance &lt; than <strong>range</strong>. Only the objects that are in the specified collision layer will be detected, there is a special layer called “worms” that has to be used to be able to detect worms. If <strong>detect_owner</strong> is false then the event wont trigger for object that have the same owner than the particle.
+</p>
+
+</div>
+
+<h2 class="sectionedit41"><a name="ground_collision" id="ground_collision">ground_collision</a></h2>
+<div class="level2">
+<pre class="code">on ground_collision ()</pre>
+
+<p>
+Gets triggered when the object collides with ground.
+</p>
+
+</div>
+
+<h2 class="sectionedit42"><a name="timer" id="timer">timer</a></h2>
+<div class="level2">
+<pre class="code">on timer ( &lt;int&gt; delay, &lt;int&gt; delay_var = 0, &lt;int&gt; trigger_times = 0 )</pre>
+
+<p>
+The timer will get triggered every <strong>delay</strong> frames plus the <strong>delay_var</strong>. If the <strong>trigger_times</strong> param is bigger than 0 then the timer will only be triggered that amount of times.
+</p>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/modding_docs/objects.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:modding_docs:objects" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:modding_docs:objects" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:modding_docs:objects" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:modding_docs:objects#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="lib/exe/indexer.php?id=main%253Amodding_docs%253Aobjects&amp;1433891954" width="2" height="1" alt="" /></div>
+</body>
+</html>

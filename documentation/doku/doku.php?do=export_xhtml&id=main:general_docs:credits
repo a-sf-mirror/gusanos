@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:credits</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,general_docs,credits"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:credits&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:credits"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs';var JSINFO = {"id":"main:general_docs:credits","namespace":"main:general_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#credits" class="toc">Credits:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#developers" class="toc">Developers:</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#basara" class="toc">Basara</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#gliptic" class="toc">Gliptic</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#ak47" class="toc">AK47</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#nym" class="toc">Nym</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#other_well_deserved_credits" class="toc">Other well deserved credits:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:credits#libraries_used_in_gusanos" class="toc">Libraries used in gusanos:</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="credits" id="credits">Credits:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Credits:" [1-24] -->
+<h2 class="sectionedit2"><a name="developers" id="developers">Developers:</a></h2>
+<div class="level2">
+
+<p>
+<code>Sorted by position and nick alphabetical order.</code>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Developers:" [25-101] -->
+<h3 class="sectionedit3"><a name="basara" id="basara">Basara</a></h3>
+<div class="level3">
+
+<p>
+<strong>Real name:</strong> Mario E. Carbajal<br/>
+
+<strong>Position:</strong> Project co-leader<br/>
+
+<strong>Location:</strong> Argentina, Buenos Aires
+</p>
+
+</div>
+<!-- EDIT3 SECTION "Basara" [102-227] -->
+<h3 class="sectionedit4"><a name="gliptic" id="gliptic">Gliptic</a></h3>
+<div class="level3">
+
+<p>
+<strong>Real name:</strong> Erik Lindroos<br/>
+
+<strong>Position:</strong> Project co-leader<br/>
+
+<strong>Location:</strong> Sweden, Växjö<br/>
+
+</p>
+
+</div>
+<!-- EDIT4 SECTION "Gliptic" [228-344] -->
+<h3 class="sectionedit5"><a name="ak47" id="ak47">AK47</a></h3>
+<div class="level3">
+
+<p>
+<strong>Real name:</strong> Yoni (Yonathan) Roll<br/>
+
+<strong>Position:</strong> Support coder<br/>
+
+<strong>Location:</strong> Israel, Givataim
+</p>
+
+</div>
+<!-- EDIT5 SECTION "AK47" [345-461] -->
+<h3 class="sectionedit6"><a name="nym" id="nym">Nym</a></h3>
+<div class="level3">
+
+<p>
+<strong>Real name:</strong> Aaron Marks<br/>
+
+<strong>Position:</strong> Support coder<br/>
+
+<strong>Location</strong> Australia, Brisbane
+</p>
+
+</div>
+<!-- EDIT6 SECTION "Nym" [462-569] -->
+<h2 class="sectionedit7"><a name="other_well_deserved_credits" id="other_well_deserved_credits">Other well deserved credits:</a></h2>
+<div class="level2">
+
+<p>
+( ordered by random )
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong><a href="http://www.jonsully.co.uk/" class="urlextern" title="http://www.jonsully.co.uk/"  rel="nofollow">Jonny</a></strong> | For making mods and being with the Liero community since the beginning</div>
+</li>
+<li class="level1"><div class="li"> <strong>Jerrec</strong> | For making mods and his support to all Liero related stuff</div>
+</li>
+<li class="level1"><div class="li"> <strong>martinBFG10k</strong> | HE IS FROM LA PAMPA!!</div>
+</li>
+<li class="level1"><div class="li"> <strong>Wei-Zhi-Hui</strong> | Gave us emotional support and made l33t maps!</div>
+</li>
+<li class="level1"><div class="li"> <strong>pixelcacaman</strong> | Basara wouldn&#039;t have played liero if it weren&#039;t for him</div>
+</li>
+<li class="level1"><div class="li"> <strong>MrEvil</strong> | Is evil</div>
+</li>
+<li class="level1"><div class="li"> <strong><a href="http://fagerburg.com/nils" class="urlextern" title="http://fagerburg.com/nils"  rel="nofollow">Pils</a></strong> | blah, supporter and mod maker </div>
+</li>
+<li class="level1"><div class="li"> <strong>Joosa</strong> | For being god… and making the original Liero!</div>
+</li>
+<li class="level1"><div class="li"> <strong>Sharky-X</strong> | For his help with his networking library</div>
+</li>
+<li class="level1"><div class="li"> <strong>C3M</strong> | For being our funny clown for a long time</div>
+</li>
+<li class="level1"><div class="li"> <strong>darka</strong> | For caring about freedom</div>
+</li>
+<li class="level1"><div class="li"> <strong>Greybrow</strong> | For being an important member of the Liga Liero clan</div>
+</li>
+<li class="level1"><div class="li"> <strong>Pilaf</strong> | For being basara&#039;s brother and helping with random stuff</div>
+</li>
+<li class="level1"><div class="li"> <strong><a href="http://home.wanadoo.nl/zanderz/lieronet/" class="urlextern" title="http://home.wanadoo.nl/zanderz/lieronet/"  rel="nofollow">ZanderZ</a></strong> | For creating the LieroNet forum</div>
+</li>
+<li class="level1"><div class="li"> <strong><a href="http://patrys.jogger.pl/" class="urlextern" title="http://patrys.jogger.pl/"  rel="nofollow">Patrys</a></strong> | For making the l33t Liero clone Wurmz!</div>
+</li>
+<li class="level1"><div class="li"> <strong>LMX</strong> | He added himself here &gt;:o</div>
+</li>
+<li class="level1"><div class="li"> <strong>Podex</strong> | Big time supporter :&gt;</div>
+</li>
+<li class="level1"><div class="li"> Anyone who I missed from adding ( please add someone if you think he should )</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT7 SECTION "Other well deserved credits:" [570-1827] -->
+<h2 class="sectionedit8"><a name="libraries_used_in_gusanos" id="libraries_used_in_gusanos">Libraries used in gusanos:</a></h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <a href="http://www.fmod.org/" class="urlextern" title="http://www.fmod.org/"  rel="nofollow">FMOD</a> - Sound library</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.zoidcom.com/" class="urlextern" title="http://www.zoidcom.com/"  rel="nofollow">Zoidcom</a> - Networking library done by Sharky-X </div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.talula.demon.co.uk/allegro/" class="urlextern" title="http://www.talula.demon.co.uk/allegro/"  rel="nofollow">Allegro</a> - Game developing library</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.boost.org/" class="urlextern" title="http://www.boost.org/"  rel="nofollow">Boost</a> - Libs for C++</div>
+</li>
+<li class="level1"><div class="li"> ADD MORE <img src="lib/images/smileys/fixme.gif" class="middle" alt="FIXME" /></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT8 SECTION "Libraries used in gusanos:" [1828-] --></div>
+</body>
+</html>

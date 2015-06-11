@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:faq:usage:general:changemod</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:41+0000"/>
+<meta name="keywords" content="main,general_docs,faq,usage,general,changemod"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:usage:general:changemod&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:usage:general"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:changemod"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:faq:usage:general:changemod"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:usage:general';var JSINFO = {"id":"main:general_docs:faq:usage:general:changemod","namespace":"main:general_docs:faq:usage:general"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+
+<h1 class="sectionedit1"><a name="faq" id="faq">FAQ:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "FAQ:" [1-20] -->
+<h2 class="sectionedit2"><a name="how_do_i_change_to_a_different_mod" id="how_do_i_change_to_a_different_mod">How do I change to a different mod?</a></h2>
+<div class="level2">
+
+<p>
+ To change to a different map, <a href="doku.php?id=main:general_docs:faq:usage:general:console" class="wikilink1" title="main:general_docs:faq:usage:general:console">open the console</a>, and type:
+</p>
+<pre class="code">game &lt;modname&gt; (eg. game default)</pre>
+
+<p>
+This command will only take effect when map is changed. You can set it before hosting and it will autochange for anyone who joins the server ( If they have the mod ). You can also add this into <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a> so that gusanos has this settings every time you run it.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "How do I change to a different mod?" [21-] --></div>
+</body>
+</html>

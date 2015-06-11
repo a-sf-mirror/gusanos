@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:weapons</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,modding_docs,weapons"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:weapons&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:weapons"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs';var JSINFO = {"id":"main:modding_docs:weapons","namespace":"main:modding_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#general" class="toc">General:</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#properties" class="toc">Properties:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#ammo" class="toc">ammo</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#laser_sight_alpha" class="toc">laser_sight_alpha</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#laser_sight_blender" class="toc">laser_sight_blender</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#laser_sight_color_laser_sight_colour" class="toc">laser_sight_color / laser_sight_colour</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#laser_sight_intensity" class="toc">laser_sight_intensity</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#laser_sight_range" class="toc">laser_sight_range</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#name" class="toc">name</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#reload_time" class="toc">reload_time</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#skin" class="toc">skin</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#sync_reload" class="toc">sync_reload</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#events" class="toc">Events:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#active_timer" class="toc">active_timer</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#primary_shoot" class="toc">primary_shoot</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#primary_press" class="toc">primary_press</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#primary_release" class="toc">primary_release</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#out_of_ammo" class="toc">out_of_ammo</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#reload_end" class="toc">reload_end</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:weapons#timer" class="toc">timer</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="general" id="general">General:</a></h1>
+<div class="level1">
+
+<p>
+Weapon files should be named .wpn and placed under the <code>gusanos/mod/weapons/</code> directory.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "General:" [1-116] -->
+<h1 class="sectionedit2"><a name="properties" id="properties">Properties:</a></h1>
+<div class="level1">
+
+<p>
+Weapon properties must be added to the .wpn file before events. These properties may only be used in .wpn files.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Properties:" [117-258] -->
+<h2 class="sectionedit3"><a name="ammo" id="ammo">ammo</a></h2>
+<div class="level2">
+<pre class="code">ammo = &lt;int&gt;</pre>
+
+<p>
+Determines how much ammo the weapon holds.
+</p>
+
+<p>
+<strong>Default value:</strong> 1
+</p>
+
+<p>
+Also use <strong>use_ammo</strong> to drain ammo from weapons from now on.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "ammo" [259-421] -->
+<h2 class="sectionedit4"><a name="laser_sight_alpha" id="laser_sight_alpha">laser_sight_alpha</a></h2>
+<div class="level2">
+<pre class="code">laser_sight_alpha = &lt;int&gt; ( from 0 to 255 )</pre>
+
+<p>
+Determines the translucency of the lasersight. It only works if <strong>laser_sight_blender</strong> is not equal to “none”.
+</p>
+
+<p>
+<strong>Default value:</strong> 255
+</p>
+
+</div>
+<!-- EDIT4 SECTION "laser_sight_alpha" [422-635] -->
+<h2 class="sectionedit5"><a name="laser_sight_blender" id="laser_sight_blender">laser_sight_blender</a></h2>
+<div class="level2">
+<pre class="code">laser_sight_blender = { add, alpha, none }</pre>
+
+<p>
+Determines the blender with which the laser sight will be drawn.
+</p>
+
+<p>
+<strong>Default value:</strong> none
+</p>
+
+</div>
+<!-- EDIT5 SECTION "laser_sight_blender" [636-805] -->
+<h2 class="sectionedit6"><a name="laser_sight_color_laser_sight_colour" id="laser_sight_color_laser_sight_colour">laser_sight_color / laser_sight_colour</a></h2>
+<div class="level2">
+<pre class="code">laser_sight_colour = [ &lt;int&gt; r, &lt;int&gt; g, &lt;int&gt; b ] ( All ranging from 0 to 255 )</pre>
+<pre class="code">e.g.
+laser_sight_colour = [ 255, 128, 0] # Makes an orange laser sight</pre>
+
+<p>
+Determines the colour ( in RGB format ) with which the laser sight will be drawn.
+</p>
+
+<p>
+<strong>Default value:</strong> [ 255, 0, 0 ]
+</p>
+
+</div>
+<!-- EDIT6 SECTION "laser_sight_color / laser_sight_colour" [806-1134] -->
+<h2 class="sectionedit7"><a name="laser_sight_intensity" id="laser_sight_intensity">laser_sight_intensity</a></h2>
+<div class="level2">
+<pre class="code">laser_sight_intensity = &lt;float&gt; ( from 0 to 1 )</pre>
+
+<p>
+Its the intensity of the laser sight of the weapon. 1 is full intensity, 0.5 half, 0 no laser sight.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+<!-- EDIT7 SECTION "laser_sight_intensity" [1135-1343] -->
+<h2 class="sectionedit8"><a name="laser_sight_range" id="laser_sight_range">laser_sight_range</a></h2>
+<div class="level2">
+<pre class="code">laser_sight_range = &lt;float&gt;</pre>
+
+<p>
+Is the distance in which the lasersight will fade completely from the given laser_sight_intensity to 0 intensity. -1 will make it not fade.
+</p>
+
+<p>
+<strong>Default value:</strong> -1
+</p>
+
+</div>
+<!-- EDIT8 SECTION "laser_sight_range" [1344-1568] -->
+<h2 class="sectionedit9"><a name="name" id="name">name</a></h2>
+<div class="level2">
+<pre class="code">name = &lt;string&gt;</pre>
+
+<p>
+The name of the weapon.
+</p>
+
+<p>
+<strong>Default value:</strong> ””
+</p>
+
+</div>
+<!-- EDIT9 SECTION "name" [1569-1652] -->
+<h2 class="sectionedit10"><a name="reload_time" id="reload_time">reload_time</a></h2>
+<div class="level2">
+<pre class="code">reload_time = &lt;int&gt;</pre>
+
+<p>
+Determines the time in frames that will take for the weapon to reload.
+</p>
+
+<p>
+<strong>Default value:</strong> 0
+</p>
+
+</div>
+<!-- EDIT10 SECTION "reload_time" [1653-1793] -->
+<h2 class="sectionedit11"><a name="skin" id="skin">skin</a></h2>
+<div class="level2">
+<pre class="code">skin = &lt;string&gt;</pre>
+
+<p>
+The image that will be displayed on top of the worm.
+</p>
+
+<p>
+<strong>Default value:</strong> null
+</p>
+
+</div>
+<!-- EDIT11 SECTION "skin" [1794-1908] -->
+<h2 class="sectionedit12"><a name="sync_reload" id="sync_reload">sync_reload</a></h2>
+<div class="level2">
+<pre class="code">sync_reload = &lt;bool&gt;</pre>
+
+</div>
+<!-- EDIT12 SECTION "sync_reload" [1909-1956] -->
+<h1 class="sectionedit13"><a name="events" id="events">Events:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT13 SECTION "Events:" [1957-1981] -->
+<h2 class="sectionedit14"><a name="active_timer" id="active_timer">active_timer</a></h2>
+<div class="level2">
+<pre class="code">on active_timer( &lt;int&gt; delay, &lt;int&gt; delay_var = 0, &lt;int&gt; max_trigger = 0 , &lt;int&gt; start_delay = 0 )</pre>
+
+<p>
+It behaves the same as a normal timer except that it will only count time when the weapon is selected and it gets reset when the player changes to another weapon. <strong>start_delay</strong> is how much time it should wait to start counting time, if set to -1 the time will be equal to the delay + variation.
+</p>
+
+<p>
+<strong>Example:</strong>
+</p>
+<pre class="code">on active_timer( 0, max_trigger = 1 )
+play_sound( sword_chosen.wav )</pre>
+
+<p>
+This would play the sound sword_chosen.wav every time the player changes to the sword (this) weapon.
+</p>
+
+</div>
+<!-- EDIT14 SECTION "active_timer" [1982-2595] -->
+<h2 class="sectionedit15"><a name="primary_shoot" id="primary_shoot">primary_shoot</a></h2>
+<div class="level2">
+<pre class="code">on primary_shoot()</pre>
+
+<p>
+It will trigger while the gun is shooting.
+</p>
+
+</div>
+<!-- EDIT15 SECTION "primary_shoot" [2596-2687] -->
+<h2 class="sectionedit16"><a name="primary_press" id="primary_press">primary_press</a></h2>
+<div class="level2">
+<pre class="code">on primary_press()</pre>
+
+<p>
+It will trigger <strong>once</strong> when the player presses the fire button.
+</p>
+
+</div>
+<!-- EDIT16 SECTION "primary_press" [2688-2802] -->
+<h2 class="sectionedit17"><a name="primary_release" id="primary_release">primary_release</a></h2>
+<div class="level2">
+<pre class="code">on primary_release()</pre>
+
+<p>
+It will trigger <strong>once</strong> when the player releases the fire button.
+</p>
+
+</div>
+<!-- EDIT17 SECTION "primary_release" [2803-2922] -->
+<h2 class="sectionedit18"><a name="out_of_ammo" id="out_of_ammo">out_of_ammo</a></h2>
+<div class="level2">
+<pre class="code">on out_of_ammo()</pre>
+
+<p>
+It will trigger <strong>once</strong> when the weapon gets out of ammo.
+</p>
+
+</div>
+<!-- EDIT18 SECTION "out_of_ammo" [2923-3026] -->
+<h2 class="sectionedit19"><a name="reload_end" id="reload_end">reload_end</a></h2>
+<div class="level2">
+<pre class="code">on reload_end()</pre>
+
+<p>
+It will trigger <strong>once</strong> when the weapon reloading ends.
+</p>
+
+</div>
+<!-- EDIT19 SECTION "reload_end" [3027-3126] -->
+<h2 class="sectionedit20"><a name="timer" id="timer">timer</a></h2>
+<div class="level2">
+<pre class="code">on timer ( &lt;int&gt; delay, &lt;int&gt; delay_var = 0, &lt;int&gt; trigger_times = 0 )</pre>
+
+<p>
+The timer will get triggered every <strong>delay</strong> frames plus the <strong>delay_var</strong>. If the <strong>trigger_times</strong> param is bigger than 0 then the timer will only be triggered that amount of times.
+</p>
+
+</div>
+<!-- EDIT20 SECTION "timer" [3127-] --></div>
+</body>
+</html>

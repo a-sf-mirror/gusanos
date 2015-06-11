@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:variations</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,modding_docs,variations"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:variations&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:variations"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:variations"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs';var JSINFO = {"id":"main:modding_docs:variations","namespace":"main:modding_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:variations#variation_types" class="toc">Variation types</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:variations#positive_variation" class="toc">Positive Variation</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:variations#ratio_variation" class="toc">Ratio Variation</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="variation_types" id="variation_types">Variation types</a></h1>
+<div class="level1">
+
+<p>
+Variations are usually a parameter of a game action or event that adds random to some other parameter of the action/event. An example good of this are the parameters <strong>speed</strong> and <strong>speedVariation</strong> of the <a href="doku.php?id=main:modding_docs:game_actions#shoot_particles" class="wikilink1" title="main:modding_docs:game_actions">shoot_particles</a> game action where <strong>speedVariation</strong> will modify the final value of the <strong>speed</strong> parameter.
+</p>
+
+<p>
+There are two kind of variations that will be explained below.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Variation types" [1-428] -->
+<h2 class="sectionedit2"><a name="positive_variation" id="positive_variation">Positive Variation</a></h2>
+<div class="level2">
+
+<p>
+Positive variation will add to the main value another value that ranges from 0 to the value of the variation variable. For example, in <a href="doku.php?id=main:modding_docs:game_actions#shoot_particles" class="wikilink1" title="main:modding_docs:game_actions">shoot_particles</a> the parameter <strong>amount</strong> is positivelly variated by <strong>amountVariation</strong>, if amount were 5 and amount variation were 6 the final result could range from 5 to 11.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Positive Variation" [429-791] -->
+<h2 class="sectionedit3"><a name="ratio_variation" id="ratio_variation">Ratio Variation</a></h2>
+<div class="level2">
+
+<p>
+<img src="lib/images/smileys/fixme.gif" class="middle" alt="FIXME" />
+</p>
+
+<p>
+<em>If the speed of the object is 1, speed_var 0.4 will create speeds which are between 1 and 1.4</em>
+</p>
+
+</div>
+<!-- EDIT3 SECTION "Ratio Variation" [792-] --></div>
+</body>
+</html>

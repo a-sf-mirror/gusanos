@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:modding_docs</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:19:50+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:explosions&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:explosive_drums&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:fonts&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:game_actions&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:map_effects&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:objects&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:sounds&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:sprites&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:supported_sound_formats&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:variations&amp;rev=1316364402&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:weapons&amp;rev=1316364402&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:explosions&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:explosions</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:explosions&amp;rev=1316364402&amp;do=diff</link>
+        <description>These properties may only be used in explosions; .exp files.
+
+alpha
+alpha = &lt;int&gt; ( from 0 to 255 )
+Alpha is the value of transparency used by the blender. This cannot be used without specifying the blender.
+
+Default value: 255
+
+anim_type
+anim_type = { ping_pong / loop_right / right_once }
+Determines the behaviour of the sprite animation. See also Anim_Types.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:explosive_drums&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:explosive_drums</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:explosive_drums&amp;rev=1316364402&amp;do=diff</link>
+        <description>This tutorial can of course be modified for other objects as well. However, the “explosive drum” idea is one that we surely all recognize from FPS's. This tutorial will deal with several concepts: collision layers, detection, and object death. For this tutorial, we will make two objects: the explosive drum and a bullet that will trigger it.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:fonts&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:fonts</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:fonts&amp;rev=1316364402&amp;do=diff</link>
+        <description>Fonts are special types of graphic files that can be loaded into Gusanos to set the text font of the console (using CON_Font console variable) or as a font resource in LUA. The font formats supported by Gusanos are .bmp and .png (image format), .lfn (LOSP font), and .lft (liero font) files. Those are described below:</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:game_actions&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:game_actions</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:game_actions&amp;rev=1316364402&amp;do=diff</link>
+        <description>General actions can be used in both objects and explosions.
+
+apply_map_effect
+apply_map_effect ( &lt;string&gt; map_effect )
+	*  &lt;string&gt; map_effect - Map effect name (map effect file name without the ”.mfx” extension).
+
+It will apply a map effect to the map. This is usually used for digging holes on dirt materials and such. See also: Modding Docs: Map effects</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:map_effects&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:map_effects</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:map_effects&amp;rev=1316364402&amp;do=diff</link>
+        <description>These properties may only be used in map effects; .mfx files.
+
+mask
+mask = &lt;string&gt;
+Uses the sprite set to remove the dirt from the map. Any other color besides magenta (transparent color) in the sprite will remove dirt.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:objects&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:objects</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:objects&amp;rev=1316364402&amp;do=diff</link>
+        <description>Object properties must be added to the .obj file before events. These properties may only be used in .obj files.
+
+acceleration
+acceleration = &lt;float&gt;
+Determines the speed value that will be added to the object each frame. The speed will be added in the direction of the object angle. Note that this speed can be capped using the max_speed property.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:sounds&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:sounds</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:sounds&amp;rev=1316364402&amp;do=diff</link>
+        <description>A sound resource is the data created for the waveform sound heard to reproduce the same effect when needed.
+
+File types supported by Gusanos: .wav, .ogg.
+
+If there are 2 files with the same name but with different extentions, the one with the .ogg extention is used first.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:sprites&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:sprites</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:sprites&amp;rev=1316364402&amp;do=diff</link>
+        <description>A sprite is the name given to images that gusanos can display ( Being for objects, explosions, HUD elements, etc ). Gusanos supports BMP and PNG image formats.
+
+The first horizontal and vertical lines of the Sprite image are used to separate the image into sub sprites and to choose the pivot ( If the pivot is not set the image will be drawn centered ). The pivot marker is a pixel of colour values RGB = 255, 0, 0. The sub Sprite separator is a pixel of colour values RGB = 0, 0, 0.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:supported_sound_formats&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:supported_sound_formats</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:supported_sound_formats&amp;rev=1316364402&amp;do=diff</link>
+        <description>.wav
+.ogg
+(others?)</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:variations&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:variations</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:variations&amp;rev=1316364402&amp;do=diff</link>
+        <description>Variations are usually a parameter of a game action or event that adds random to some other parameter of the action/event. An example good of this are the parameters speed and speedVariation of the shoot_particles game action where speedVariation will modify the final value of the speed parameter.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:weapons&amp;rev=1316364402&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:42+00:00</dc:date>
+        <title>main:modding_docs:weapons</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:modding_docs:weapons&amp;rev=1316364402&amp;do=diff</link>
+        <description>Weapon files should be named .wpn and placed under the gusanos/mod/weapons/ directory.
+
+Weapon properties must be added to the .wpn file before events. These properties may only be used in .wpn files.
+
+ammo
+ammo = &lt;int&gt;
+Determines how much ammo the weapon holds.</description>
+    </item>
+</rdf:RDF>

@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:installation_docs:linux</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,installation_docs,linux"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:installation_docs:linux&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:installation_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:installation_docs:linux"/>
+<link rel="canonical" href="doku.php?id=main:installation_docs:linux"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:installation_docs';var JSINFO = {"id":"main:installation_docs:linux","namespace":"main:installation_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+
+<h3 class="sectionedit1"><a name="gnu_linux_instructions" id="gnu_linux_instructions">GNU/Linux Instructions</a></h3>
+<div class="level3">
+
+<p>
+No binary packages of Gusanos are available at this time, and everything must be built from source.<br/>
+
+</p>
+
+</div>
+
+<h4><a name="downloading_source" id="downloading_source">Downloading Source</a></h4>
+<div class="level4">
+
+<p>
+The source code must be downloaded from the Gusanos <acronym title="Concurrent Versions System">CVS</acronym> repositry hosted on SourceForge.net.
+</p>
+
+<p>
+To download the source code, use the program &#039;<acronym title="Concurrent Versions System">CVS</acronym>&#039;, like this:
+</p>
+<pre class="code">cvs -z3 -d:pserver:anonymous@gusanos.cvs.sourceforge.net:/cvsroot/gusanos co ./</pre>
+
+<p>
+That will download all files to the present working directory so make sure you create a dedicated directory first (~/gusanos).
+</p>
+
+</div>
+
+<h4><a name="building_gusanos" id="building_gusanos">Building Gusanos</a></h4>
+<div class="level4">
+
+<p>
+Gusanos has a few dependancies which are required to be installed appropriately on the system in order to build (&amp; run) Gusanos. These dependancies include:
+</p>
+<ul>
+<li class="level1"><div class="li"> <a href="http://gcc.gnu.org/" class="urlextern" title="http://gcc.gnu.org/"  rel="nofollow">GCC</a> - C/C++ compiler (&gt;= 3.4 – 3.3 won&#039;t do! Preferably 4.0)</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://alleg.sf.net" class="urlextern" title="http://alleg.sf.net"  rel="nofollow">Allegro</a> - Game library (&gt;= 4.2.0)</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.boost.org" class="urlextern" title="http://www.boost.org"  rel="nofollow">Boost</a> - C++ libraries (&gt;= 1.33 - You&#039;ll need libboost-filesystem and libboost-signals.)</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.fmod.org" class="urlextern" title="http://www.fmod.org"  rel="nofollow">fmod</a> - Sound library (&gt;= 3.74 - You can get it <a href="http://www.fmod.org/files/fmodapi375linux.tar.gz" class="urlextern" title="http://www.fmod.org/files/fmodapi375linux.tar.gz"  rel="nofollow">here</a>)</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.zoidcom.com" class="urlextern" title="http://www.zoidcom.com"  rel="nofollow">Zoidcom</a> - Networking library (0.6.x Get it <a href="http://www.zoidcom.com/download/zoidcom-0.6.5.tar.gz" class="urlextern" title="http://www.zoidcom.com/download/zoidcom-0.6.5.tar.gz"  rel="nofollow">here</a>)</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://www.scons.org" class="urlextern" title="http://www.scons.org"  rel="nofollow">SCons</a> - Software construction tool (⇐ 0.96.1)</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://re2c.sourceforge.net" class="urlextern" title="http://re2c.sourceforge.net"  rel="nofollow">re2c</a> - Tool for generating fast C-based recognizers (or use &#039;scons no-parser=yes&#039;) [note: in my experience re2c is mandatory, if not a compile error will come up because one of the .h files was not properly generated]</div>
+</li>
+</ul>
+
+<p>
+If you want to run a dedicated server on a linux box that has no X (only <acronym title="Secure Shell">SSH</acronym> access) you might need to get the SVN version of Allegro from the 4.2 branch, otherwise allegro_init() will fail and Gusanos will segfault.
+</p>
+
+<p>
+For more instructions on how to install these software, check your distro package database or see the website for build instructions.
+</p>
+
+<p>
+Gentoo users can simply do:
+</p>
+<pre class="code">emerge allegro fmod boost scons re2c</pre>
+
+<p>
+Note that Zoidcom (the networking lib) is closed source and not really popular, so most distros won&#039;t distribute it. To install it download the Linux version from the website (zoidcom.com) and then copy the include and lib files manually to your system directories (generally /usr/include and /usr/lib).
+</p>
+
+<p>
+Note: There is no fmod for 64-bit linux as of the time of this edit, so if you are using a 64-bit system, you&#039;re going to have to compile in a 32-bit chroot or in a 32-bit system. <em><strong>Personal comment</strong>: This sucks. Why not use a decent free sound library instead of this proprietary shit?</em> <em><strong>Personal comment</strong>: Probably because FMOD simply rocks.</em> <em><strong>Personal question</strong>: have you tried <a href="http://sam.zoy.org/flessd/" class="urlextern" title="http://sam.zoy.org/flessd/"  rel="nofollow">FLESSD</a>, it is a free (open-source) FMOD rewrite, and the functions are named the same, it&#039;s not complete, but maybe enough for Gusanos</em>
+</p>
+
+<p>
+You might also need to create a few symlinks to libs that scons fails to find:
+</p>
+<pre class="code">ln -s /usr/lib/libboost_filesystem.so /usr/lib/libboost_filesystem-gcc.so
+ln -s /usr/lib/libboost_signals.so /usr/lib/libboost_signals-gcc.so
+ln -s /usr/local/lib/libfmod-3.75.so /usr/local/lib/libfmod-3.74.1.so
+ln -s /usr/lib/libpng12.so.0.1.2.8 /usr/lib/libpng12.so
+ln -s /usr/local/lib/libzoidcom.so.0.6.5 /usr/local/lib/libzoidcom.so</pre>
+
+<p>
+To build Gusanos, just change to the Gusanos top directory and run:
+</p>
+<pre class="code">scons</pre>
+
+<p>
+or
+</p>
+<pre class="code">scons no-parsers=1</pre>
+
+<p>
+This should build a Gusanos and place an executable binary in <code>bin/posix/</code>.
+</p>
+
+</div>
+
+<h4><a name="adding_the_data" id="adding_the_data">Adding the data</a></h4>
+<div class="level4">
+
+<p>
+As <a href="doku.php?id=main:installation_docs:cvs" class="wikilink2" title="main:installation_docs:cvs" rel="nofollow">CVS</a> only contains the code, the data must be added: get the zip for windows, and put the &#039;default&#039; folder in the same directory where the executable is.
+</p>
+
+</div>
+
+<h4><a name="running_gusanos" id="running_gusanos">Running Gusanos</a></h4>
+<div class="level4">
+
+<p>
+To run Gusanos, type:
+</p>
+<pre class="code">cd bin/posix
+./gusanos</pre>
+
+<p>
+If this gives a &#039;video mode not supported&#039; message from your monitor, look at the <acronym title="Frequently Asked Questions">FAQ</acronym>
+</p>
+
+</div>
+</div>
+</body>
+</html>

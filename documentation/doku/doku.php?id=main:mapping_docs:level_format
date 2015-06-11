@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:mapping_docs:level_format    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,mapping_docs,level_format"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:mapping_docs:level_format&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:mapping_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:mapping_docs:level_format"/>
+<link rel="canonical" href="doku.php?id=main:mapping_docs:level_format"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:mapping_docs';var JSINFO = {"id":"main:mapping_docs:level_format","namespace":"main:mapping_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:mapping_docs:level_format&amp;do=backlink"  title="Backlinks">main:mapping_docs:level_format</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:explosions"  class="breadcrumbs" title="main:modding_docs:explosions">explosions</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:map_effects"  class="breadcrumbs" title="main:modding_docs:map_effects">map_effects</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:objects"  class="breadcrumbs" title="main:modding_docs:objects">objects</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:weapons"  class="breadcrumbs" title="main:modding_docs:weapons">weapons</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:lua:classes"  class="breadcrumbs" title="main:modding_docs:lua:classes">classes</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:fonts"  class="breadcrumbs" title="main:modding_docs:fonts">fonts</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:sprites"  class="breadcrumbs" title="main:modding_docs:sprites">sprites</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:sounds"  class="breadcrumbs" title="main:modding_docs:sounds">sounds</a> <span class="bcsep">&bull;</span> <a href="doku.php?id=main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers"  class="breadcrumbs" title="main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers">creating_explosive_drums_using_collision_layers</a> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:mapping_docs:level_format"  class="breadcrumbs" title="main:mapping_docs:level_format">level_format</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:mapping_docs:level_format#basic_mapping_tutorial" class="toc">Basic mapping tutorial</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:mapping_docs:level_format#configcfg" class="toc">config.cfg</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:mapping_docs:level_format#levelpng" class="toc">level.png</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:mapping_docs:level_format#materialpng" class="toc">material.png</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:mapping_docs:level_format#backgroundpng" class="toc">background.png</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:mapping_docs:level_format#lightmappng" class="toc">lightmap.png</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:mapping_docs:level_format#paralaxpng" class="toc">paralax.png</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="basic_mapping_tutorial" id="basic_mapping_tutorial">Basic mapping tutorial</a></h1>
+<div class="level1">
+
+<p>
+To create a map for use with any mod just create a directory of the desired level name in the &#039;default/maps&#039; directory.
+</p>
+
+<p>
+Inside this directory you need three files: config.cfg, level.png, and material.png. Depending on needs you can use additional files such as: background.png, lightmap.png, and paralax.png.
+</p>
+
+</div>
+
+<h2 class="sectionedit2"><a name="configcfg" id="configcfg">config.cfg</a></h2>
+<div class="level2">
+
+<p>
+This file contains imformation on where the worm spawns, and other object related things. This file must be present in a level folder or Gusanos will not reconise the folder as a level.
+</p>
+
+<p>
+<a href="http://ragzouken.com/gus/level/config.cfg" class="urlextern" title="http://ragzouken.com/gus/level/config.cfg"  rel="nofollow">config.cfg example</a>
+</p>
+
+</div>
+
+<h2 class="sectionedit3"><a name="levelpng" id="levelpng">level.png</a></h2>
+<div class="level2">
+
+<p>
+This image contains the artwork that is visable when playing the map; it can be any size and any colour depth.
+</p>
+
+<p>
+Note: If you use only a few colors for your map (such as shades of brown and gray) you might want to optimize the color palette to reduce the final size of the map (but be careful!).
+</p>
+
+<p>
+Note: if you intend to make a map based on a <acronym title="Joint Photographics Experts Group">JPEG</acronym> image, you should make sure it has good quality by zooming in a few times and looking for artifacts. <acronym title="Joint Photographics Experts Group">JPEG</acronym> (unlike <acronym title="Portable Network Graphics">PNG</acronym>) is a lossy compression format, and too much compression makes an image look like crap, especially on low screen resolutions as GUSANOS uses. Consider resizing the <acronym title="Joint Photographics Experts Group">JPEG</acronym> to become smaller rather than cropping it to increase quality.
+</p>
+
+<p>
+<a href="http://ragzouken.com/gus/level/level.png" class="urlextern" title="http://ragzouken.com/gus/level/level.png"  rel="nofollow">level.png example</a>
+</p>
+
+</div>
+
+<h2 class="sectionedit4"><a name="materialpng" id="materialpng">material.png</a></h2>
+<div class="level2">
+
+<p>
+This file contains all the information on how objects should interact with the level, it acts as a mask for level.png, telling Gusanos which parts of the map are passable and destructable.
+</p>
+
+<p>
+This image should be in png format at the same size as level.png, and use an indexed colour palette (256 colors max).  The colours in the palette are irrelevant, what matters is which index of the palette they are. For example: to make a square that is impassable the first colour in the palette (0 index) should be used.
+</p>
+<div class="table sectionedit5"><table class="inline">
+	<tr class="row0">
+		<th class="col0"> Index </th><th class="col1 leftalign"> Material     </th><th class="col2 leftalign"> Description   </th>
+	</tr>
+	<tr class="row1">
+		<td class="col0 leftalign"> #0    </td><td class="col1 leftalign"> Rock         </td><td class="col2 leftalign"> Solid.        </td>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> #1    </td><td class="col1 leftalign"> Background   </td><td class="col2 leftalign"> Air.          </td>
+	</tr>
+	<tr class="row3">
+		<td class="col0 leftalign"> #2    </td><td class="col1 leftalign"> Dirt         </td><td class="col2"> Destructible. </td>
+	</tr>
+	<tr class="row4">
+		<td class="col0 leftalign"> #3    </td><td class="col1"> Special dirt </td><td class="col2"> Destructible. Worms can go through it but particles can&#039;t. </td>
+	</tr>
+	<tr class="row5">
+		<td class="col0 leftalign"> #4    </td><td class="col1"> Special rock </td><td class="col2"> Solid. Worms can&#039;t go through it but particles can. </td>
+	</tr>
+</table></div>
+
+<p>
+<a href="http://ragzouken.com/gus/level/material.png" class="urlextern" title="http://ragzouken.com/gus/level/material.png"  rel="nofollow">material.png example</a>
+</p>
+
+<p>
+Note: Annoyingly some programs will try to optimise the pallete and destroy the order, thus b0rking your level, so be careful.
+</p>
+
+</div>
+
+<h2 class="sectionedit6"><a name="backgroundpng" id="backgroundpng">background.png</a></h2>
+<div class="level2">
+
+<p>
+This image is used to work out what should be displayed when destructable terrain is removed. You only need to draw anything in places where dirt is in the material file.
+</p>
+
+<p>
+This image should be in png format at the same size as level.png.
+</p>
+
+<p>
+<a href="http://ragzouken.com/gus/level/background.png" class="urlextern" title="http://ragzouken.com/gus/level/background.png"  rel="nofollow">background.png example</a>
+</p>
+
+</div>
+
+<h2 class="sectionedit7"><a name="lightmappng" id="lightmappng">lightmap.png</a></h2>
+<div class="level2">
+
+<p>
+This image is used to darken the level and all object sprites in it. 
+</p>
+
+<p>
+This image should be in png format at the same size as level.png, and be a greyscale image. Where white is normal brightness and black is not visible. It will only be used when in the config.cfg file the line: &#039;dark_mode = 1&#039; is present.
+</p>
+
+<p>
+<a href="http://ragzouken.com/gus/level/lightmap.png" class="urlextern" title="http://ragzouken.com/gus/level/lightmap.png"  rel="nofollow">lightmap.png example</a>
+</p>
+
+</div>
+
+<h2 class="sectionedit8"><a name="paralaxpng" id="paralaxpng">paralax.png</a></h2>
+<div class="level2">
+
+<p>
+This image is used as a background to the level that moves in the opposite direction to the worm, it will display under any magenta (255,0,255) pixels in level.png.
+</p>
+
+<p>
+This image should be in png format and should be bigger than 320*240. The smaller the paralax, the further away the background will seem.
+</p>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/mapping_docs/level_format.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:mapping_docs:level_format" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:mapping_docs:level_format" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:mapping_docs:level_format" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:mapping_docs:level_format#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="lib/exe/indexer.php?id=main%253Amapping_docs%253Alevel_format&amp;1433891956" width="2" height="1" alt="" /></div>
+</body>
+</html>

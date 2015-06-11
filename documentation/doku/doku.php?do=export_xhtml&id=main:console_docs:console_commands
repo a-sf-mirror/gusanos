@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:console_docs:console_commands</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,console_docs,console_commands"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:console_docs:console_commands&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:console_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands"/>
+<link rel="canonical" href="doku.php?id=main:console_docs:console_commands"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:console_docs';var JSINFO = {"id":"main:console_docs:console_commands","namespace":"main:console_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#console_commands" class="toc">Console commands:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#player_actions" class="toc">Player actions</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_left" class="toc">P#_Left</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_right" class="toc">P#_Right</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_jump" class="toc">P#_Jump</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_up" class="toc">P#_Up</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_down" class="toc">P#_Down</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_change" class="toc">P#_Change</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_fire" class="toc">P#_Fire</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#game_commands" class="toc">Game commands</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#addbot" class="toc">Addbot</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#alias" class="toc">Alias</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#ban" class="toc">Ban</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#bind" class="toc">Bind</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#connect" class="toc">Connect</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#echo" class="toc">Echo</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#exec" class="toc">Exec</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#game" class="toc">Game</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#map" class="toc">Map</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#net_set_proxy" class="toc">NET_Set_Proxy</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#kick" class="toc">Kick</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_colour" class="toc">P#_Colour</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#p_team" class="toc">P#_Team</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#rest" class="toc">Rest</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#rnd_seed" class="toc">RND_Seed</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#rcon" class="toc">RCON</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#say" class="toc">Say</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#screenshot" class="toc">Screenshot</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#setconsolekey" class="toc">SetConsoleKey</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#quit" class="toc">Quit</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#deprecated_game_commands_supported_on_09b" class="toc">Deprecated game commands (supported on 0.9b)</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#execscript" class="toc">ExecScript</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#setaltchar" class="toc">SetAltChar</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#setchar" class="toc">SetChar</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#setshiftchar" class="toc">SetShiftChar</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#swapkeys" class="toc">SwapKeys</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#deprecated_game_commands_supported_on_09c" class="toc">Deprecated game commands (supported on 0.9c)</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#gui_focus" class="toc">GUI_Focus</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#gui_gss" class="toc">GUI_GSS</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#gui_load_gss" class="toc">GUI_Load_GSS</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#gui_load_xml" class="toc">GUI_Load_XML</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#default_mod_game_commands_09c" class="toc">Default mod game commands (0.9c)</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#double" class="toc">Double</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#fullscreen" class="toc">Fullscreen</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#showchat" class="toc">ShowChat</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#showmenu" class="toc">ShowMenu</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#undouble" class="toc">Undouble</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#windowed" class="toc">Windowed</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#default_mod_game_actions_09c" class="toc">Default mod game actions (0.9c)</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:console_docs:console_commands#scores" class="toc">Scores</a></span></div></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="console_commands" id="console_commands">Console commands:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Console commands:" [1-33] -->
+<h2 class="sectionedit2"><a name="player_actions" id="player_actions">Player actions</a></h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> +&lt;action&gt; = activates when its assigned key is held.</div>
+</li>
+<li class="level1"><div class="li"> -&lt;action&gt; = activates when its assigned key is released.</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT2 SECTION "Player actions" [34-180] -->
+<h3 class="sectionedit3"><a name="p_left" id="p_left">P#_Left</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT3 SECTION "P#_Left" [181-198] -->
+<h3 class="sectionedit4"><a name="p_right" id="p_right">P#_Right</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT4 SECTION "P#_Right" [199-217] -->
+<h3 class="sectionedit5"><a name="p_jump" id="p_jump">P#_Jump</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT5 SECTION "P#_Jump" [218-235] -->
+<h3 class="sectionedit6"><a name="p_up" id="p_up">P#_Up</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT6 SECTION "P#_Up" [236-251] -->
+<h3 class="sectionedit7"><a name="p_down" id="p_down">P#_Down</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT7 SECTION "P#_Down" [252-269] -->
+<h3 class="sectionedit8"><a name="p_change" id="p_change">P#_Change</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT8 SECTION "P#_Change" [270-289] -->
+<h3 class="sectionedit9"><a name="p_fire" id="p_fire">P#_Fire</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT9 SECTION "P#_Fire" [290-308] -->
+<h2 class="sectionedit10"><a name="game_commands" id="game_commands">Game commands</a></h2>
+<div class="level2">
+
+</div>
+<!-- EDIT10 SECTION "Game commands" [309-335] -->
+<h3 class="sectionedit11"><a name="addbot" id="addbot">Addbot</a></h3>
+<div class="level3">
+<pre class="code">Addbot &lt;team&gt;</pre>
+
+<p>
+Adds a bot to the game. Team specifies to which team the bot is playing for.
+</p>
+
+</div>
+<!-- EDIT11 SECTION "Addbot" [336-448] -->
+<h3 class="sectionedit12"><a name="alias" id="alias">Alias</a></h3>
+<div class="level3">
+<pre class="code">Alias &lt;newname&gt; &lt;variable/text&gt;</pre>
+
+<p>
+Uses another name either for another variable, allowing to set the value of it, or to input text in the console. Example:
+</p>
+<pre class="code">Alias SvrName NET_Server_Name
+SvrName Test</pre>
+
+<p>
+&lt;newname&gt; cannot be the name of any of the built-in console instructions.
+</p>
+
+</div>
+<!-- EDIT12 SECTION "Alias" [449-746] -->
+<h3 class="sectionedit13"><a name="ban" id="ban">Ban</a></h3>
+<div class="level3">
+<pre class="code">Ban &lt;player_name&gt;</pre>
+
+<p>
+Bans the player until the server shuts down. It doesn&#039;t kick the player immediately, so accompany it with <span class="curid"><a href="doku.php?id=main:console_docs:console_commands#kick" class="wikilink1" title="main:console_docs:console_commands">Kick</a></span> console command.
+</p>
+
+</div>
+<!-- EDIT13 SECTION "Ban" [747-937] -->
+<h3 class="sectionedit14"><a name="bind" id="bind">Bind</a></h3>
+<div class="level3">
+<pre class="code">Bind &lt;key_name&gt; &lt;action&gt;</pre>
+
+<p>
+Binds the given key to input the given text in the console. Example:
+</p>
+<pre class="code">Bind 1 &quot;map poo&quot;</pre>
+
+</div>
+<!-- EDIT14 SECTION "Bind" [938-1071] -->
+<h3 class="sectionedit15"><a name="connect" id="connect">Connect</a></h3>
+<div class="level3">
+<pre class="code">Connect &lt;ip:port&gt;</pre>
+
+<p>
+Connects you to the game being played at the given ip and port. If the first parameter value is “localhost”, it connects to the server hosted with the person&#039;s own IP address.
+</p>
+
+</div>
+<!-- EDIT15 SECTION "Connect" [1072-1288] -->
+<h3 class="sectionedit16"><a name="echo" id="echo">Echo</a></h3>
+<div class="level3">
+<pre class="code">Echo &lt;message&gt;</pre>
+
+<p>
+Displays a message which is seen in the console.
+</p>
+
+</div>
+<!-- EDIT16 SECTION "Echo" [1289-1372] -->
+<h3 class="sectionedit17"><a name="exec" id="exec">Exec</a></h3>
+<div class="level3">
+<pre class="code">Exec &lt;file.cfg&gt;</pre>
+
+<p>
+Executes a given configuration file in the mod folder.
+</p>
+
+</div>
+<!-- EDIT17 SECTION "Exec" [1373-1463] -->
+<h3 class="sectionedit18"><a name="game" id="game">Game</a></h3>
+<div class="level3">
+<pre class="code">Game &lt;folder_name&gt;</pre>
+
+<p>
+Loads the given mod to be used on the next map change.
+</p>
+
+</div>
+<!-- EDIT18 SECTION "Game" [1464-1557] -->
+<h3 class="sectionedit19"><a name="map" id="map">Map</a></h3>
+<div class="level3">
+<pre class="code">Map &lt;map_name&gt;</pre>
+
+<p>
+Loads the map specified.
+</p>
+
+</div>
+<!-- EDIT19 SECTION "Map" [1558-1616] -->
+<h3 class="sectionedit20"><a name="net_set_proxy" id="net_set_proxy">NET_Set_Proxy</a></h3>
+<div class="level3">
+<pre class="code">NET_Set_Proxy &lt;address&gt; &lt;port&gt;</pre>
+
+<p>
+Uses a proxy server for your <acronym title="Local Area Network">LAN</acronym> connection with the address and port specified. To disable the proxy, use an empty value for the address.
+</p>
+
+<p>
+<strong>Default value if not used:</strong> ”” ””.
+</p>
+
+</div>
+<!-- EDIT20 SECTION "NET_Set_Proxy" [1617-1854] -->
+<h3 class="sectionedit21"><a name="kick" id="kick">Kick</a></h3>
+<div class="level3">
+<pre class="code">Kick &lt;player_name&gt;</pre>
+
+<p>
+Kicks the player with the name specified out of the current game. This include bots added using <span class="curid"><a href="doku.php?id=main:console_docs:console_commands#addbot" class="wikilink1" title="main:console_docs:console_commands">AddBot</a></span>.
+</p>
+
+</div>
+<!-- EDIT21 SECTION "Kick" [1855-2025] -->
+<h3 class="sectionedit22"><a name="p_colour" id="p_colour">P#_Colour</a></h3>
+<div class="level3">
+<pre class="code">P#_Colour &lt;R&gt; &lt;G&gt; &lt;B&gt;</pre>
+
+<p>
+Specifies the player worm color to be shown.
+</p>
+
+<p>
+<strong>Default value if not used:</strong> 100 100 250.
+</p>
+
+</div>
+<!-- EDIT22 SECTION "P#_Colour" [2026-2162] -->
+<h3 class="sectionedit23"><a name="p_team" id="p_team">P#_Team</a></h3>
+<div class="level3">
+<pre class="code">P#_Team &lt;Team_#&gt;</pre>
+
+<p>
+Specifies the player team. Used generally for team spawnpoints. Team_# value range is from -255 to 255 (511 teams in total).
+</p>
+
+<p>
+<strong>Default value if not used:</strong> -1.
+</p>
+
+</div>
+<!-- EDIT23 SECTION "P#_Team" [2163-2363] -->
+<h3 class="sectionedit24"><a name="rest" id="rest">Rest</a></h3>
+<div class="level3">
+<pre class="code">Rest &lt;milliseconds&gt;</pre>
+
+<p>
+Rests Gusanos by the amount of milliseconds specified.
+</p>
+
+</div>
+<!-- EDIT24 SECTION "Rest" [2364-2458] -->
+<h3 class="sectionedit25"><a name="rnd_seed" id="rnd_seed">RND_Seed</a></h3>
+<div class="level3">
+<pre class="code">RND_Seed &lt;seed_number&gt;</pre>
+
+<p>
+Assigns all random generators results to the ones with the seed_number specified. Used for debugging purposes.
+</p>
+
+</div>
+<!-- EDIT25 SECTION "RND_Seed" [2459-2616] -->
+<h3 class="sectionedit26"><a name="rcon" id="rcon">RCON</a></h3>
+<div class="level3">
+<pre class="code">RCON &lt;command&gt;</pre>
+
+<p>
+Sends an specific console command or variable value to be set in the server, when the <a href="doku.php?id=main:console_docs:console_variables#rcon_password" class="wikilink1" title="main:console_docs:console_variables">RCON_Password</a> console variable is set and the value is the same as set for the server. Example:
+</p>
+<pre class="code">RCON map pokol</pre>
+
+</div>
+<!-- EDIT26 SECTION "RCON" [2617-2887] -->
+<h3 class="sectionedit27"><a name="say" id="say">Say</a></h3>
+<div class="level3">
+<pre class="code">Say &lt;message&gt;</pre>
+
+<p>
+Sends a message from the local player # 0 to all players in a game. Remember to use quotes if there are spaces in the message field.
+</p>
+
+</div>
+<!-- EDIT27 SECTION "Say" [2888-3053] -->
+<h3 class="sectionedit28"><a name="screenshot" id="screenshot">Screenshot</a></h3>
+<div class="level3">
+<pre class="code">Screenshot</pre>
+
+<p>
+Saves a screenshot of the game in the “screenshots” folder.
+</p>
+
+</div>
+<!-- EDIT28 SECTION "Screenshot" [3054-3150] -->
+<h3 class="sectionedit29"><a name="setconsolekey" id="setconsolekey">SetConsoleKey</a></h3>
+<div class="level3">
+<pre class="code">SetConsoleKey &lt;key_name&gt;</pre>
+
+<p>
+Sets the key to open the console.
+</p>
+
+</div>
+<!-- EDIT29 SECTION "SetConsoleKey" [3151-3238] -->
+<h3 class="sectionedit30"><a name="quit" id="quit">Quit</a></h3>
+<div class="level3">
+<pre class="code">Quit</pre>
+
+<p>
+Closes the game.
+</p>
+
+</div>
+<!-- EDIT30 SECTION "Quit" [3239-3280] -->
+<h2 class="sectionedit31"><a name="deprecated_game_commands_supported_on_09b" id="deprecated_game_commands_supported_on_09b">Deprecated game commands (supported on 0.9b)</a></h2>
+<div class="level2">
+
+</div>
+<!-- EDIT31 SECTION "Deprecated game commands (supported on 0.9b)" [3281-3338] -->
+<h3 class="sectionedit32"><a name="execscript" id="execscript">ExecScript</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT32 SECTION "ExecScript" [3339-3359] -->
+<h3 class="sectionedit33"><a name="setaltchar" id="setaltchar">SetAltChar</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT33 SECTION "SetAltChar" [3360-3380] -->
+<h3 class="sectionedit34"><a name="setchar" id="setchar">SetChar</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT34 SECTION "SetChar" [3381-3398] -->
+<h3 class="sectionedit35"><a name="setshiftchar" id="setshiftchar">SetShiftChar</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT35 SECTION "SetShiftChar" [3399-3421] -->
+<h3 class="sectionedit36"><a name="swapkeys" id="swapkeys">SwapKeys</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT36 SECTION "SwapKeys" [3422-3441] -->
+<h2 class="sectionedit37"><a name="deprecated_game_commands_supported_on_09c" id="deprecated_game_commands_supported_on_09c">Deprecated game commands (supported on 0.9c)</a></h2>
+<div class="level2">
+
+</div>
+<!-- EDIT37 SECTION "Deprecated game commands (supported on 0.9c)" [3442-3499] -->
+<h3 class="sectionedit38"><a name="gui_focus" id="gui_focus">GUI_Focus</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT38 SECTION "GUI_Focus" [3500-3519] -->
+<h3 class="sectionedit39"><a name="gui_gss" id="gui_gss">GUI_GSS</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT39 SECTION "GUI_GSS" [3520-3537] -->
+<h3 class="sectionedit40"><a name="gui_load_gss" id="gui_load_gss">GUI_Load_GSS</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT40 SECTION "GUI_Load_GSS" [3538-3560] -->
+<h3 class="sectionedit41"><a name="gui_load_xml" id="gui_load_xml">GUI_Load_XML</a></h3>
+<div class="level3">
+
+</div>
+<!-- EDIT41 SECTION "GUI_Load_XML" [3561-3584] -->
+<h2 class="sectionedit42"><a name="default_mod_game_commands_09c" id="default_mod_game_commands_09c">Default mod game commands (0.9c)</a></h2>
+<div class="level2">
+
+</div>
+<!-- EDIT42 SECTION "Default mod game commands (0.9c)" [3585-3630] -->
+<h3 class="sectionedit43"><a name="double" id="double">Double</a></h3>
+<div class="level3">
+<pre class="code">Double</pre>
+
+<p>
+Sets the console variable <a href="doku.php?id=main:console_docs:console_variables#vid_doubleres" class="wikilink1" title="main:console_docs:console_variables">VID_DoubleRes</a> to “1”, which makes the game to have 2x zoom.
+</p>
+
+</div>
+<!-- EDIT43 SECTION "Double" [3631-3781] -->
+<h3 class="sectionedit44"><a name="fullscreen" id="fullscreen">Fullscreen</a></h3>
+<div class="level3">
+<pre class="code">Fullscreen</pre>
+
+<p>
+Sets the console variable <a href="doku.php?id=main:console_docs:console_variables#vid_fullscreen" class="wikilink1" title="main:console_docs:console_variables">VID_Fullscreen</a> to “1”, which makes the game to be shown fullscreen.
+</p>
+
+</div>
+<!-- EDIT44 SECTION "Fullscreen" [3782-3949] -->
+<h3 class="sectionedit45"><a name="showchat" id="showchat">ShowChat</a></h3>
+<div class="level3">
+<pre class="code">ShowChat</pre>
+
+<p>
+Shows/hides the chat window when playing the game.
+</p>
+
+</div>
+<!-- EDIT45 SECTION "ShowChat" [3950-4033] -->
+<h3 class="sectionedit46"><a name="showmenu" id="showmenu">ShowMenu</a></h3>
+<div class="level3">
+<pre class="code">ShowMenu</pre>
+
+<p>
+Shows/hides the main window when playing the game.
+</p>
+
+</div>
+<!-- EDIT46 SECTION "ShowMenu" [4034-4117] -->
+<h3 class="sectionedit47"><a name="undouble" id="undouble">Undouble</a></h3>
+<div class="level3">
+<pre class="code">Undouble</pre>
+
+<p>
+Sets the console variable <a href="doku.php?id=main:console_docs:console_variables#vid_doubleres" class="wikilink1" title="main:console_docs:console_variables">VID_DoubleRes</a> to “0”, which makes the game to have 1x zoom restored.
+</p>
+
+</div>
+<!-- EDIT47 SECTION "Undouble" [4118-4281] -->
+<h3 class="sectionedit48"><a name="windowed" id="windowed">Windowed</a></h3>
+<div class="level3">
+<pre class="code">Windowed</pre>
+
+<p>
+Sets the console variable <a href="doku.php?id=main:console_docs:console_variables#vid_fullscreen" class="wikilink1" title="main:console_docs:console_variables">VID_Fullscreen</a> to “0”, which makes the game to be shown in a window.
+</p>
+
+</div>
+<!-- EDIT48 SECTION "Windowed" [4282-4446] -->
+<h2 class="sectionedit49"><a name="default_mod_game_actions_09c" id="default_mod_game_actions_09c">Default mod game actions (0.9c)</a></h2>
+<div class="level2">
+
+</div>
+<!-- EDIT49 SECTION "Default mod game actions (0.9c)" [4447-4491] -->
+<h3 class="sectionedit50"><a name="scores" id="scores">Scores</a></h3>
+<div class="level3">
+<pre class="code">+Scores</pre>
+
+<p>
+Shows the scoreboard window.
+</p>
+<ul>
+<li class="level1"><div class="li">-Scores</div>
+</li>
+</ul>
+
+<p>
+Hides the scoreboard window.
+</p>
+
+</div>
+<!-- EDIT50 SECTION "Scores" [4492-] --></div>
+</body>
+</html>

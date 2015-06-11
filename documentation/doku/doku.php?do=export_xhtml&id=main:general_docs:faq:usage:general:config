@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:faq:usage:general:config</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:41+0000"/>
+<meta name="keywords" content="main,general_docs,faq,usage,general,config"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:usage:general:config&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:usage:general"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:config"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:faq:usage:general:config"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:usage:general';var JSINFO = {"id":"main:general_docs:faq:usage:general:config","namespace":"main:general_docs:faq:usage:general"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+
+<h1 class="sectionedit1"><a name="faq" id="faq">FAQ:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "FAQ:" [1-20] -->
+<h2 class="sectionedit2"><a name="what_is_and_where_is_the_configcfg" id="what_is_and_where_is_the_configcfg">What is, and where is the &quot;config.cfg&quot;?</a></h2>
+<div class="level2">
+
+<p>
+The config.cfg file is a file that contains commands and variables the Gusanos executes when Gusanos is first loaded. Player key binds and other common binds (chat, scoreboard etc) are also located in this file.
+</p>
+
+<p>
+config.cfg is located in the default/ folder in your Gusanos folder. For more information on Gusanos console commands and variables view the <a href="doku.php?id=main:console_docs:console_commands" class="wikilink1" title="main:console_docs:console_commands">omfgConsole</a> page.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "What is, and where is the config.cfg?" [21-] --></div>
+</body>
+</html>

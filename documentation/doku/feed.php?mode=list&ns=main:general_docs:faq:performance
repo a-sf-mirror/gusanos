@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:general_docs:faq:performance</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:20:29+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:performance:soundwin&amp;rev=1316364401&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:performance:vid&amp;rev=1316364401&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:performance:soundwin&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:performance:soundwin</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:performance:soundwin&amp;rev=1316364401&amp;do=diff</link>
+        <description>Increasing sound performance in Windows
+
+In some cases when there are lots of sounds, Gusanos can freeze for a few seconds. We are not sure why this happens, but adding “sfx_output_mode winmm” to your config.cfg file seems to fix this. 
+
+A way to test if you get this performance issue, is to catch a larpa using the manipulator in the defaut mod, hold it for around half a minute and then release it. If Gusanos stops rendering for a second or two then try the above.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:performance:vid&amp;rev=1316364401&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:41+00:00</dc:date>
+        <title>main:general_docs:faq:performance:vid</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq:performance:vid&amp;rev=1316364401&amp;do=diff</link>
+        <description>Increasing video performance
+
+There are several ways to increase video performance in Gusanos: 
+
+Running in 16 bit
+
+You can run Gusanos in 16 bit rather than 32 bit by adding this to your config.cfg:
+vid_bitdepth 16
+Changing which video driver Gusanos uses
+
+You can change which video driver Gusanos uses which in some cases could increase video performance.</description>
+    </item>
+</rdf:RDF>

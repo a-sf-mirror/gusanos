@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:networkgameevent</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:43+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,networkgameevent"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:networkgameevent&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkgameevent"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:networkgameevent"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:networkgameevent","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkgameevent#class_networkgameevent" class="toc">Class NetworkGameEvent</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkgameevent#see_also" class="toc">See also:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:networkgameevent#send" class="toc">send</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_networkgameevent" id="class_networkgameevent">Class NetworkGameEvent</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class NetworkGameEvent" [1-38] -->
+<h2 class="sectionedit2"><a name="see_also" id="see_also">See also:</a></h2>
+<div class="level2">
+
+<p>
+<a href="doku.php?id=main:modding_docs:lua:global#bindingsgamenetworkinit" class="wikilink1" title="main:modding_docs:lua:global">bindings.gameNetworkInit</a>, <a href="doku.php?id=main:modding_docs:lua:global#network_game_event" class="wikilink1" title="main:modding_docs:lua:global">network_game_event</a>, <a href="doku.php?id=main:modding_docs:lua:global#network_game_event" class="wikilink1" title="main:modding_docs:lua:global">network_game_event</a>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "See also:" [39-224] -->
+<h2 class="sectionedit3"><a name="send" id="send">send</a></h2>
+<div class="level2">
+<pre class="code">send([data[, connection[, mode[, rules]]]])</pre>
+
+<p>
+Sends a game event to one or more computers.
+</p>
+
+<p>
+<em>data</em> is a bitstream to <span class="curid"><a href="doku.php?id=main:modding_docs:lua:networkgameevent#send" class="wikilink1" title="main:modding_docs:lua:networkgameevent">send</a></span> with the event.
+</p>
+
+<p>
+<em>connection</em> is a connection ID to <span class="curid"><a href="doku.php?id=main:modding_docs:lua:networkgameevent#send" class="wikilink1" title="main:modding_docs:lua:networkgameevent">send</a></span> the event on. If it&#039;s 0, the <em>rules</em> parameter decides who to <span class="curid"><a href="doku.php?id=main:modding_docs:lua:networkgameevent#send" class="wikilink1" title="main:modding_docs:lua:networkgameevent">send</a></span> to.
+</p>
+
+<p>
+<em>mode</em> is one of these values (default is SendMode.ReliableOrdered):
+SendMode.ReliableUnordered : The events always arrive, but may come in a different order than sent.
+SendMode.ReliableOrdered : The events always arrive and in the order sent.
+SendMode.Unreliable : The events may or may not arrive and in any order.
+</p>
+
+<p>
+<em>rules</em> decides what computers to <span class="curid"><a href="doku.php?id=main:modding_docs:lua:networkgameevent#send" class="wikilink1" title="main:modding_docs:lua:networkgameevent">send</a></span> the event to if <em>connection</em> is 0 or left out.
+It can be any (or sometimes a sum) of:
+RepRule.Auth2All : Event is sent from the server to clients.
+RepRule.Auth2Owner : Event is sent from the server to clients owning the node.
+RepRule.Auth2Proxy : Event is sent from the server to clients not owning the node.
+RepRule.None : Event is not sent.
+RepRule.Owner2Auth : Event is sent from clients owning the node to the server.
+</p>
+
+<p>
+A valid combination is (RepRule.Owner2Auth + RepRule.Auth2All) which sends the event
+from owners to the server or from the server to all clients (depending on if we&#039;re the server or not).
+</p>
+
+</div>
+<!-- EDIT3 SECTION "send" [225-] --></div>
+</body>
+</html>

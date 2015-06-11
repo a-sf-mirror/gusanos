@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:lua:player</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:43+0000"/>
+<meta name="keywords" content="main,modding_docs,lua,player"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:lua:player&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs:lua"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:lua:player"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs:lua';var JSINFO = {"id":"main:modding_docs:lua:player","namespace":"main:modding_docs:lua"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#class_player" class="toc">Class Player</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#see_also" class="toc">See also:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#data" class="toc">data</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#deaths" class="toc">deaths</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#is_local" class="toc">is_local</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#kills" class="toc">kills</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#name" class="toc">name</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#say" class="toc">say</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#select_weapons" class="toc">select_weapons</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#stats" class="toc">stats</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#team" class="toc">team</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:lua:player#worm" class="toc">worm</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="class_player" id="class_player">Class Player</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Class Player" [1-28] -->
+<h2 class="sectionedit2"><a name="see_also" id="see_also">See also:</a></h2>
+<div class="level2">
+
+<p>
+<a href="doku.php?id=main:modding_docs:lua:global#bindingswormrender" class="wikilink1" title="main:modding_docs:lua:global">bindings.wormRender</a>, <a href="doku.php?id=main:modding_docs:lua:global#bindingsviewportrender" class="wikilink1" title="main:modding_docs:lua:global">bindings.viewportRender</a>, <a href="doku.php?id=main:modding_docs:lua:global#bindingsplayerupdate" class="wikilink1" title="main:modding_docs:lua:global">bindings.playerUpdate</a>, <a href="doku.php?id=main:modding_docs:lua:global#bindingsplayerinit" class="wikilink1" title="main:modding_docs:lua:global">bindings.playerInit</a>, <a href="doku.php?id=main:modding_docs:lua:global#bindingsplayerremoved" class="wikilink1" title="main:modding_docs:lua:global">bindings.playerRemoved</a>, <a href="doku.php?id=main:modding_docs:lua:networkplayerevent#send" class="wikilink1" title="main:modding_docs:lua:networkplayerevent">NetworkPlayerEvent:send</a>, <a href="doku.php?id=main:modding_docs:lua:global#network_player_event" class="wikilink1" title="main:modding_docs:lua:global">network_player_event</a>, <a href="doku.php?id=main:modding_docs:lua:object#player" class="wikilink1" title="main:modding_docs:lua:object">Object:player</a>, <a href="doku.php?id=main:modding_docs:lua:global#console_register_control" class="wikilink1" title="main:modding_docs:lua:global">console_register_control</a>, <a href="doku.php?id=main:modding_docs:lua:global#game_players" class="wikilink1" title="main:modding_docs:lua:global">game_players</a>, <a href="doku.php?id=main:modding_docs:lua:global#game_local_player" class="wikilink1" title="main:modding_docs:lua:global">game_local_player</a>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "See also:" [29-618] -->
+<h2 class="sectionedit3"><a name="data" id="data">data</a></h2>
+<div class="level2">
+<pre class="code">data()</pre>
+
+<p>
+Returns a lua table associated with this player.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "data" [619-697] -->
+<h2 class="sectionedit4"><a name="deaths" id="deaths">deaths</a></h2>
+<div class="level2">
+<pre class="code">deaths()</pre>
+
+<p>
+Returns the number of <span class="curid"><a href="doku.php?id=main:modding_docs:lua:player#deaths" class="wikilink1" title="main:modding_docs:lua:player">deaths</a></span> a player has suffered.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "deaths" [698-801] -->
+<h2 class="sectionedit5"><a name="is_local" id="is_local">is_local</a></h2>
+<div class="level2">
+<pre class="code">is_local()</pre>
+
+<p>
+Returns true if this player is a local player, otherwise false.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "is_local" [802-903] -->
+<h2 class="sectionedit6"><a name="kills" id="kills">kills</a></h2>
+<div class="level2">
+<pre class="code">kills()</pre>
+
+<p>
+Returns the number of <span class="curid"><a href="doku.php?id=main:modding_docs:lua:player#kills" class="wikilink1" title="main:modding_docs:lua:player">kills</a></span> a player has made.
+</p>
+
+</div>
+<!-- EDIT6 SECTION "kills" [904-999] -->
+<h2 class="sectionedit7"><a name="name" id="name">name</a></h2>
+<div class="level2">
+<pre class="code">name()</pre>
+
+<p>
+Returns the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:player#name" class="wikilink1" title="main:modding_docs:lua:player">name</a></span> of the player.
+</p>
+
+</div>
+<!-- EDIT7 SECTION "name" [1000-1077] -->
+<h2 class="sectionedit8"><a name="say" id="say">say</a></h2>
+<div class="level2">
+<pre class="code">say(text)</pre>
+
+<p>
+Makes the player send &#039;text&#039; as a chat message.
+</p>
+
+</div>
+<!-- EDIT8 SECTION "say" [1078-1157] -->
+<h2 class="sectionedit9"><a name="select_weapons" id="select_weapons">select_weapons</a></h2>
+<div class="level2">
+<pre class="code">select_weapons(weapons)</pre>
+
+<p>
+Tries to change the player&#039;s weapons to the <a href="doku.php?id=main:modding_docs:lua:weapontype" class="wikilink1" title="main:modding_docs:lua:weapontype">WeaponType</a> objects
+in the array <em>weapons</em>.
+</p>
+
+</div>
+<!-- EDIT9 SECTION "select_weapons" [1158-1318] -->
+<h2 class="sectionedit10"><a name="stats" id="stats">stats</a></h2>
+<div class="level2">
+<pre class="code">stats()</pre>
+
+<p>
+Returns a lua table associated with the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:player#stats" class="wikilink1" title="main:modding_docs:lua:player">stats</a></span> of this player.
+</p>
+
+</div>
+<!-- EDIT10 SECTION "stats" [1319-1429] -->
+<h2 class="sectionedit11"><a name="team" id="team">team</a></h2>
+<div class="level2">
+<pre class="code">team()</pre>
+
+<p>
+Returns the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:player#team" class="wikilink1" title="main:modding_docs:lua:player">team</a></span> number of the player.
+</p>
+
+</div>
+<!-- EDIT11 SECTION "team" [1430-1514] -->
+<h2 class="sectionedit12"><a name="worm" id="worm">worm</a></h2>
+<div class="level2">
+<pre class="code">worm()</pre>
+
+<p>
+Returns the <span class="curid"><a href="doku.php?id=main:modding_docs:lua:player#worm" class="wikilink1" title="main:modding_docs:lua:player">worm</a></span> of the player.
+</p>
+
+</div>
+<!-- EDIT12 SECTION "worm" [1515-] --></div>
+</body>
+</html>

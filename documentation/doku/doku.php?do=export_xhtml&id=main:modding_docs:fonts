@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:fonts</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,modding_docs,fonts"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:fonts&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:fonts"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:fonts"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs';var JSINFO = {"id":"main:modding_docs:fonts","namespace":"main:modding_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:fonts#description" class="toc">Description</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:fonts#bmp_png_image_fonts" class="toc">.bmp/.png image fonts</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:fonts#lfn_fonts" class="toc">.lfn fonts</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:fonts#lft_fonts" class="toc">.lft fonts</a></span></div></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="description" id="description">Description</a></h1>
+<div class="level1">
+
+<p>
+<em>Fonts</em> are special types of graphic files that can be loaded into Gusanos to set the text font of the console (using <a href="doku.php?id=main:console_docs:console_variables#con_font" class="wikilink1" title="main:console_docs:console_variables">CON_Font</a> console variable) or as a font resource in LUA. The font formats supported by Gusanos are .bmp and .png (image format), .lfn (LOSP font), and .lft (liero font) files. Those are described below:
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Description" [1-400] -->
+<h1 class="sectionedit2"><a name="bmp_png_image_fonts" id="bmp_png_image_fonts">.bmp/.png image fonts</a></h1>
+<div class="level1">
+
+<p>
+The .bmp/.png image fonts are used by Gusanos as an easy way to create new fonts by developers, and is recommended over the other file types supported by Gusanos.
+</p>
+
+<p>
+Font properties:
+</p>
+<ul>
+<li class="level1"><div class="li"> height: specifies the maximum character height.</div>
+</li>
+<li class="level1"><div class="li"> width: specifies the maximum character width for all 256 characters that the font has to contain.</div>
+</li>
+</ul>
+
+<p>
+Notes:
+</p>
+<ul>
+<li class="level1"><div class="li"> Even though the image can contain colors, any color besides transparent will be considered black.</div>
+</li>
+<li class="level1"><div class="li"> Gusanos uses the <acronym title="American Standard Code for Information Interchange">ASCII</acronym> charset, where there are 33 special characters that are reserved but could be used in the game. Those are assigned to specific key combinations, as shown below:</div>
+</li>
+</ul>
+<div class="table sectionedit3"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Num   </th><th class="col1"> Key combinations </th><th class="col2 leftalign"> Name                                                      </th>
+	</tr>
+	<tr class="row1">
+		<td class="col0 leftalign"> 0     </td><td class="col1 leftalign"> Any              </td><td class="col2"> Blank character (used when an invalid character is typed) </td>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> 1     </td><td class="col1 leftalign"> Ctrl+A           </td><td class="col2 leftalign"> Black smiling face                                        </td>
+	</tr>
+	<tr class="row3">
+		<td class="col0 leftalign"> 2     </td><td class="col1 leftalign"> Ctrl+B           </td><td class="col2 leftalign"> Heart                                                     </td>
+	</tr>
+	<tr class="row4">
+		<td class="col0 leftalign"> 3     </td><td class="col1 leftalign"> Ctrl+C           </td><td class="col2 leftalign"> Black diamond suit                                        </td>
+	</tr>
+	<tr class="row5">
+		<td class="col0 leftalign"> 4     </td><td class="col1 leftalign"> Ctrl+D           </td><td class="col2 leftalign"> Windmil                                                   </td>
+	</tr>
+	<tr class="row6">
+		<td class="col0 leftalign"> 5     </td><td class="col1 leftalign"> Ctrl+E           </td><td class="col2 leftalign"> Black spade suit                                          </td>
+	</tr>
+	<tr class="row7">
+		<td class="col0 leftalign"> 6     </td><td class="col1 leftalign"> Ctrl+F           </td><td class="col2 leftalign"> Small plus sign                                           </td>
+	</tr>
+	<tr class="row8">
+		<td class="col0 leftalign"> 7     </td><td class="col1 leftalign"> Ctrl+G           </td><td class="col2 leftalign"> Small plus sign in a card                                 </td>
+	</tr>
+	<tr class="row9">
+		<td class="col0 leftalign"> 8     </td><td class="col1 leftalign"> Ctrl+H           </td><td class="col2 leftalign"> Small aim sign                                            </td>
+	</tr>
+	<tr class="row10">
+		<td class="col0 leftalign"> 9     </td><td class="col1 leftalign"> Ctrl+I           </td><td class="col2 leftalign"> Small aim sign in a card                                  </td>
+	</tr>
+	<tr class="row11">
+		<td class="col0 leftalign"> 10    </td><td class="col1 leftalign"> Ctrl+J           </td><td class="col2 leftalign"> Male sign                                                 </td>
+	</tr>
+	<tr class="row12">
+		<td class="col0 leftalign"> 11    </td><td class="col1 leftalign"> Ctrl+K           </td><td class="col2 leftalign"> Female sign                                               </td>
+	</tr>
+	<tr class="row13">
+		<td class="col0 leftalign"> 12    </td><td class="col1 leftalign"> Ctrl+L           </td><td class="col2 leftalign"> Eighth note                                               </td>
+	</tr>
+	<tr class="row14">
+		<td class="col0 leftalign"> 13    </td><td class="col1 leftalign"> Ctrl+M           </td><td class="col2 leftalign"> Beamed eighth notes                                       </td>
+	</tr>
+	<tr class="row15">
+		<td class="col0 leftalign"> 14    </td><td class="col1 leftalign"> Ctrl+N           </td><td class="col2 leftalign"> White sun with rays                                       </td>
+	</tr>
+	<tr class="row16">
+		<td class="col0 leftalign"> 15    </td><td class="col1 leftalign"> Ctrl+O           </td><td class="col2 leftalign"> Right arrow head                                          </td>
+	</tr>
+	<tr class="row17">
+		<td class="col0 leftalign"> 16    </td><td class="col1 leftalign"> Ctrl+P           </td><td class="col2 leftalign"> Left arrow head                                           </td>
+	</tr>
+	<tr class="row18">
+		<td class="col0 leftalign"> 17    </td><td class="col1 leftalign"> Ctrl+Q           </td><td class="col2 leftalign"> Double dagger                                             </td>
+	</tr>
+	<tr class="row19">
+		<td class="col0 leftalign"> 18    </td><td class="col1 leftalign"> Ctrl+R           </td><td class="col2 leftalign"> Double exclamation mark                                   </td>
+	</tr>
+	<tr class="row20">
+		<td class="col0 leftalign"> 19    </td><td class="col1 leftalign"> Ctrl+S           </td><td class="col2 leftalign"> Pilcrow sign                                              </td>
+	</tr>
+	<tr class="row21">
+		<td class="col0 leftalign"> 20    </td><td class="col1 leftalign"> Ctrl+T           </td><td class="col2 leftalign"> Section sign                                              </td>
+	</tr>
+	<tr class="row22">
+		<td class="col0 leftalign"> 21    </td><td class="col1 leftalign"> Ctrl+U           </td><td class="col2 leftalign"> Macron                                                    </td>
+	</tr>
+	<tr class="row23">
+		<td class="col0 leftalign"> 22    </td><td class="col1 leftalign"> Ctrl+V           </td><td class="col2 leftalign"> Triple dagger                                             </td>
+	</tr>
+	<tr class="row24">
+		<td class="col0 leftalign"> 23    </td><td class="col1 leftalign"> Ctrl+W           </td><td class="col2 leftalign"> Up arrow                                                  </td>
+	</tr>
+	<tr class="row25">
+		<td class="col0 leftalign"> 24    </td><td class="col1 leftalign"> Ctrl+X           </td><td class="col2 leftalign"> Down arrow                                                </td>
+	</tr>
+	<tr class="row26">
+		<td class="col0 leftalign"> 25    </td><td class="col1 leftalign"> Ctrl+Y           </td><td class="col2 leftalign"> Right arrow                                               </td>
+	</tr>
+	<tr class="row27">
+		<td class="col0 leftalign"> 26    </td><td class="col1 leftalign"> Ctrl+Z           </td><td class="col2 leftalign"> Left arrow                                                </td>
+	</tr>
+	<tr class="row28">
+		<td class="col0 leftalign"> 27    </td><td class="col1 leftalign"> Ctrl+[           </td><td class="col2 leftalign"> Left right arrow                                          </td>
+	</tr>
+	<tr class="row29">
+		<td class="col0 leftalign"> 28    </td><td class="col1 leftalign"> Ctrl+Vert. Bar   </td><td class="col2 leftalign"> Not sign                                                  </td>
+	</tr>
+	<tr class="row30">
+		<td class="col0 leftalign"> 29    </td><td class="col1 leftalign"> Ctrl+]           </td><td class="col2 leftalign"> Up down arrow                                             </td>
+	</tr>
+	<tr class="row31">
+		<td class="col0 leftalign"> 30    </td><td class="col1 leftalign"> Ctrl+Circumflex  </td><td class="col2 leftalign"> Up arrow head                                             </td>
+	</tr>
+	<tr class="row32">
+		<td class="col0 leftalign"> 31    </td><td class="col1 leftalign"> Ctrl+-           </td><td class="col2 leftalign"> Down arrow head                                           </td>
+	</tr>
+	<tr class="row33">
+		<td class="col0 leftalign"> 127   </td><td class="col1 leftalign"> Ctrl+Backspace   </td><td class="col2 leftalign"> Backspace feed                                            </td>
+	</tr>
+</table></div>
+<!-- EDIT3 TABLE [1072-4097] -->
+<p>
+Other characters between 31 and 127, and 128 and 255 are in the “<acronym title="American Standard Code for Information Interchange">ASCII</acronym>” or “DOS: United States” charset. Any character after the 127 is not used by Gusanos (to be verified).  
+</p>
+
+</div>
+<!-- EDIT2 SECTION ".bmp/.png image fonts" [401-4275] -->
+<h1 class="sectionedit4"><a name="lfn_fonts" id="lfn_fonts">.lfn fonts</a></h1>
+<div class="level1">
+
+<p>
+This type of font was first introduced in LOSP and later passed to Gusanos.
+</p>
+
+<p>
+Advantages:
+</p>
+<ul>
+<li class="level1"><div class="li"> Ability to use different size characters</div>
+</li>
+<li class="level1"><div class="li"> Support grayscale colors.</div>
+</li>
+<li class="level1"><div class="li"> Uses the “Windows: Western” charset (to be verified).</div>
+</li>
+</ul>
+
+<p>
+Disadvantages:
+</p>
+<ul>
+<li class="level1"><div class="li"> Difficult editing (no editor to edit this file type).</div>
+</li>
+<li class="level1"><div class="li"> Doesn&#039;t support the special characters.</div>
+</li>
+</ul>
+
+<p>
+As there is no editor available, the file syntax is shown below:
+</p>
+<div class="table sectionedit5"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Byte Range (Hex)  </th><th class="col1"> Var Type </th><th class="col2 leftalign"> Name                                           </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0 leftalign" colspan="3"> HEAD                                                                        </th>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> 00-03             </td><td class="col1 leftalign"> uint     </td><td class="col2 leftalign"> Width of character rect                        </td>
+	</tr>
+	<tr class="row3">
+		<td class="col0 leftalign"> 04-08             </td><td class="col1 leftalign"> uint     </td><td class="col2 leftalign"> Height of character rect                       </td>
+	</tr>
+	<tr class="row4">
+		<th class="col0 leftalign" colspan="3"> CHARACTER PLACEMENT (for each item)                                         </th>
+	</tr>
+	<tr class="row5">
+		<td class="col0 leftalign"> 00-03             </td><td class="col1 leftalign"> int      </td><td class="col2 leftalign"> character “x” position in image                </td>
+	</tr>
+	<tr class="row6">
+		<td class="col0 leftalign"> 04-08             </td><td class="col1 leftalign"> int      </td><td class="col2 leftalign"> character “y” position in image                </td>
+	</tr>
+	<tr class="row7">
+		<td class="col0 leftalign"> 08-0B             </td><td class="col1 leftalign"> int      </td><td class="col2 leftalign"> character width                                </td>
+	</tr>
+	<tr class="row8">
+		<td class="col0 leftalign"> 0C-0F             </td><td class="col1 leftalign"> int      </td><td class="col2 leftalign"> character height                               </td>
+	</tr>
+	<tr class="row9">
+		<th class="col0 leftalign" colspan="3"> GRAYSCALE IMAGE (first fill the line, then fill the next, and so on)        </th>
+	</tr>
+	<tr class="row10">
+		<td class="col0"> 00-(width*height) </td><td class="col1 leftalign"> uchar    </td><td class="col2 leftalign"> Grayscale color (00 - black to FF - white)     </td>
+	</tr>
+</table></div>
+<!-- EDIT5 TABLE [4709-5610] -->
+<p>
+There can only be 224 characters with this font type, and only the first 96 characters are used by Gusanos (to be verified).
+</p>
+
+</div>
+<!-- EDIT4 SECTION ".lfn fonts" [4276-5737] -->
+<h1 class="sectionedit6"><a name="lft_fonts" id="lft_fonts">.lft fonts</a></h1>
+<div class="level1">
+
+<p>
+These fonts are used by Liero and are easily edited using the <a href="http://comser.liero.org.pl/wiki/index.php?title=LieroKit" class="urlextern" title="http://comser.liero.org.pl/wiki/index.php?title=LieroKit"  rel="nofollow">LieroKit</a> (<a href="http://www.kgivler.com/files/liero/Lk16b2.zip" class="urlextern" title="http://www.kgivler.com/files/liero/Lk16b2.zip"  rel="nofollow">download</a>). You need first to have a bitmap file of the font in the proper format to later convert to a font file.
+</p>
+
+<p>
+Use this type of font when you need compatibility between Liero and Gusanos.
+</p>
+
+<p>
+It&#039;s very similar to the .bmp/.png file, except that:
+</p>
+<ul>
+<li class="level1"><div class="li"> the characters are in order from top to bottom, only then from left to right.</div>
+</li>
+<li class="level1"><div class="li"> it uses 240 characters instead of 256.</div>
+</li>
+<li class="level1"><div class="li"> it doesn&#039;t have the “blank” and “Up down arrow” special characters.</div>
+</li>
+<li class="level1"><div class="li"> it trims the last 10 characters in the “<acronym title="American Standard Code for Information Interchange">ASCII</acronym>” or “DOS: United States” charset.</div>
+</li>
+</ul>
+
+<p>
+Notes:
+</p>
+<ul>
+<li class="level1"><div class="li"> Even though the image can contain colors, any color besides transparent will be considered black.</div>
+</li>
+<li class="level1"><div class="li"> .lft fonts use a pixel to identify the color of the character when it is selected, but it is ignored by Gusanos.</div>
+</li>
+<li class="level1"><div class="li"> Any character after the 127 is not used by Gusanos (to be verified).</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT6 SECTION ".lft fonts" [5738-] --></div>
+</body>
+</html>

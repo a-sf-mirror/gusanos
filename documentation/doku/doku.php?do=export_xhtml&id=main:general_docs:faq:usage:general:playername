@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:faq:usage:general:playername</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:41+0000"/>
+<meta name="keywords" content="main,general_docs,faq,usage,general,playername"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:usage:general:playername&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:usage:general"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:playername"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:faq:usage:general:playername"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:usage:general';var JSINFO = {"id":"main:general_docs:faq:usage:general:playername","namespace":"main:general_docs:faq:usage:general"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:playername#faq" class="toc">FAQ:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:playername#how_do_i_change_my_player_name" class="toc">How do I change my player name?</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:playername#how_do_i_make_my_name_multicoloured" class="toc">How do I make my name multicoloured?</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="faq" id="faq">FAQ:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "FAQ:" [1-20] -->
+<h2 class="sectionedit2"><a name="how_do_i_change_my_player_name" id="how_do_i_change_my_player_name">How do I change my player name?</a></h2>
+<div class="level2">
+
+<p>
+ Depending on which player you are, you use p#_name to change your name. <a href="doku.php?id=main:general_docs:faq:usage:general:console" class="wikilink1" title="main:general_docs:faq:usage:general:console">open the console</a>, and type:
+</p>
+<pre class="code">p0_name &quot;My Name&quot;</pre>
+
+<p>
+By default, your player number is 0 (zero). However, if you are using splitscreen, the player on the left is p0 and the player on the right is p1. You can also add this into <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a> so that gusanos has this settings every time you run it.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "How do I change my player name?" [21-527] -->
+<h2 class="sectionedit3"><a name="how_do_i_make_my_name_multicoloured" id="how_do_i_make_my_name_multicoloured">How do I make my name multicoloured?</a></h2>
+<div class="level2">
+
+<p>
+When changing your name, you can put in formatting controls. By pressing Control + K, you put in a little symbol of an arrow pointing downwards. You then put any of the following numbers after it:
+01 02 03 04 05 06 07 08 09 10 11 12 13 14 15
+Where 01 is black, and the bright colours are first, with them getting darker in the two digit numbers. To get a listing of all the different colours, bring up the speech box with F1, and replace the K in the following text with the control and k symbol:
+</p>
+<pre class="code">k0101k0202k0303k0404k0505k0606k0707k0808k0909k1010k1111k1212k1313k1414k1515</pre>
+
+</div>
+<!-- EDIT3 SECTION "How do I make my name multicoloured?" [528-] --></div>
+</body>
+</html>

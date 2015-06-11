@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="FeedCreator 1.7.2-ppt DokuWiki" -->
+<?xml-stylesheet href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/css.php?s=feed" type="text/css"?>
+<rdf:RDF
+    xmlns="http://purl.org/rss/1.0/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel rdf:about="http://gusanos.sourceforge.net/documentation/doku/feed.php">
+        <title>Gusanos Docs main:general_docs</title>
+        <description></description>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <image rdf:resource="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico" />
+       <dc:date>2015-06-09T23:19:33+00:00</dc:date>
+        <items>
+            <rdf:Seq>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:about&amp;rev=1316364400&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:changelog&amp;rev=1316364400&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:credits&amp;rev=1316364400&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq&amp;rev=1316364400&amp;do=diff"/>
+                <rdf:li rdf:resource="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:requested_features&amp;rev=1316364400&amp;do=diff"/>
+            </rdf:Seq>
+        </items>
+    </channel>
+    <image rdf:about="http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico">
+        <title>Gusanos Docs</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/</link>
+        <url>http://gusanos.sourceforge.net/documentation/doku/lib/tpl/default/images/favicon.ico</url>
+    </image>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:about&amp;rev=1316364400&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:40+00:00</dc:date>
+        <title>main:general_docs:about</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:about&amp;rev=1316364400&amp;do=diff</link>
+        <description>GUSANOS is, as other similar projects, a clone of the DOS game Liero.
+
+Just as in Liero, in GUSANOS each player takes control over a worm, a small crawling creature armed to the teeth, and shoots their opponents to death as many times as possible. The game type can be described in short as “Real-time Worms” or “2D Quake”, or a combination of both.</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:changelog&amp;rev=1316364400&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:40+00:00</dc:date>
+        <title>main:general_docs:changelog</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:changelog&amp;rev=1316364400&amp;do=diff</link>
+        <description></description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:credits&amp;rev=1316364400&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:40+00:00</dc:date>
+        <title>main:general_docs:credits</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:credits&amp;rev=1316364400&amp;do=diff</link>
+        <description>Developers:
+
+Sorted by position and nick alphabetical order.
+
+Basara
+
+Real name: Mario E. Carbajal
+
+Position: Project co-leader
+
+Location: Argentina, Buenos Aires
+
+Gliptic
+
+Real name: Erik Lindroos
+
+Position: Project co-leader
+
+Location: Sweden, Växjö</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq&amp;rev=1316364400&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:40+00:00</dc:date>
+        <title>main:general_docs:faq</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:faq&amp;rev=1316364400&amp;do=diff</link>
+        <description>Usage
+
+General
+
+	*  How do I open/use the console?
+		*  How do I change my keys?
+		*  How do I use the ninja rope with a single key like LieroX?
+		*  What is, and where is the &quot;config.cfg&quot;?
+		*  How do I run Gusanos in splitscreen?
+		*  How do I install a new mod? 
+		*  How do I change to a different mod?
+		*  How do I change my player name?
+		*  How do I change my worm colour?
+		*  My monitor doesn't seem to support gusanos!</description>
+    </item>
+    <item rdf:about="http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:requested_features&amp;rev=1316364400&amp;do=diff">
+        <dc:format>text/html</dc:format>
+        <dc:date>2011-09-18T16:46:40+00:00</dc:date>
+        <title>main:general_docs:requested_features</title>
+        <link>http://gusanos.sourceforge.net/documentation/doku/doku.php?id=main:general_docs:requested_features&amp;rev=1316364400&amp;do=diff</link>
+        <description>*  Level progression: end a map when a certain condition is met (acquire object, reach checkpoint, destroy enemies) and load the next one. Would give potential for complex games and missions.
+	*  Ninja rope that latches on to other worms, like in Liero.
+	*  The option for collectible power ups during gameplay, especially health.
+	*  An option within the GUI to play without blood and gore.
+	*  STEERABLES!!!! (eg the missile) they're an integral part of liero
+	*  Option to disable weapon comboing.…</description>
+    </item>
+</rdf:RDF>

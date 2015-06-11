@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>
+    main:main    [Gusanos Docs]
+  </title>
+
+  <meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,main"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:main&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:main"/>
+<link rel="canonical" href="doku.php?id=main:main"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main';var JSINFO = {"id":"main:main","namespace":"main"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+  <link rel="shortcut icon" href="lib/tpl/default/images/favicon.ico" />
+<link rel="apple-touch-icon" href="lib/tpl/default/images/apple-touch-icon.png" />
+
+  </head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="doku.php?id=main:main&amp;do=backlink"  title="Backlinks">main:main</a>]]
+      </div>
+      <div class="logo">
+        <a href="doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">Gusanos Docs</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+                      </div>
+
+      <div class="bar-right" id="bar__topright">
+                <form action="doku.php" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" /><input type="submit" value="Search" class="button" title="Search" /><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&bull;</span> <span class="curid"><a href="doku.php?id=main:main"  class="breadcrumbs" title="main:main">main</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:main#gusanos_documentation_wiki" class="toc">Gusanos Documentation Wiki</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:main#general_docs" class="toc">General Docs</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:main#installation_docs" class="toc">Installation Docs</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:main#console_docs" class="toc">Console Docs</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:main#modding_docs" class="toc">Modding Docs</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?id=main:main#gusanos_scripting" class="toc">Gusanos Scripting</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?id=main:main#other" class="toc">Other</a></span></div></li>
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?id=main:main#tutorials" class="toc">Tutorials</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:main#mapping_docs" class="toc">Mapping Docs</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="doku.php?id=main:main#tutorials1" class="toc">Tutorials</a></span></div></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?id=main:main#gusanos_development" class="toc">Gusanos Development</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?id=main:main#gusanos_10_development" class="toc">Gusanos 1.0 Development</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="gusanos_documentation_wiki" id="gusanos_documentation_wiki">Gusanos Documentation Wiki</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit2"><a name="general_docs" id="general_docs">General Docs</a></h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:general_docs:about" class="wikilink1" title="main:general_docs:about">About</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:general_docs:credits" class="wikilink1" title="main:general_docs:credits">Credits</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:general_docs:changelog" class="wikilink1" title="main:general_docs:changelog">Change log</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:general_docs:faq" class="wikilink1" title="main:general_docs:faq">FAQ</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:general_docs:requested_features" class="wikilink1" title="main:general_docs:requested_features">Requested features</a></div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit3"><a name="installation_docs" id="installation_docs">Installation Docs</a></h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:installation_docs:windows" class="wikilink1" title="main:installation_docs:windows">Windows</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:installation_docs:linux" class="wikilink1" title="main:installation_docs:linux">Linux</a></div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit4"><a name="console_docs" id="console_docs">Console Docs</a></h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:console_docs:omfgconsole" class="wikilink1" title="main:console_docs:omfgconsole">omfgConsole</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:console_docs:console_commands" class="wikilink1" title="main:console_docs:console_commands">Console commands</a> list</div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:console_docs:console_variables" class="wikilink1" title="main:console_docs:console_variables">Console variables</a> list</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit5"><a name="modding_docs" id="modding_docs">Modding Docs</a></h2>
+<div class="level2">
+
+</div>
+
+<h3 class="sectionedit6"><a name="gusanos_scripting" id="gusanos_scripting">Gusanos Scripting</a></h3>
+<div class="level3">
+
+</div>
+
+<h4><a name="script" id="script">Script</a></h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:game_actions" class="wikilink1" title="main:modding_docs:game_actions">Game actions</a> list</div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:explosions" class="wikilink1" title="main:modding_docs:explosions">Explosions</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:map_effects" class="wikilink1" title="main:modding_docs:map_effects">Map effects</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:objects" class="wikilink1" title="main:modding_docs:objects">Objects</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:weapons" class="wikilink1" title="main:modding_docs:weapons">Weapons</a></div>
+</li>
+</ul>
+
+</div>
+
+<h4><a name="lua_scripting" id="lua_scripting">LUA Scripting</a></h4>
+<div class="level4">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:lua:classes" class="wikilink1" title="main:modding_docs:lua:classes">Lua classes</a></div>
+</li>
+</ul>
+
+</div>
+
+<h3 class="sectionedit7"><a name="other" id="other">Other</a></h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:fonts" class="wikilink1" title="main:modding_docs:fonts">Fonts</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:sprites" class="wikilink1" title="main:modding_docs:sprites">Sprites</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:sounds" class="wikilink1" title="main:modding_docs:sounds">Sounds</a></div>
+</li>
+</ul>
+
+</div>
+
+<h3 class="sectionedit8"><a name="tutorials" id="tutorials">Tutorials</a></h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers" class="wikilink1" title="main:modding_docs:tutorials:creating_explosive_drums_using_collision_layers">Creating explosive drums using collision layers</a></div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit9"><a name="mapping_docs" id="mapping_docs">Mapping Docs</a></h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:mapping_docs:level_format" class="wikilink1" title="main:mapping_docs:level_format">Level format</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:mapping_docs:materials" class="wikilink2" title="main:mapping_docs:materials" rel="nofollow">Materials</a></div>
+</li>
+</ul>
+
+</div>
+
+<h3 class="sectionedit10"><a name="tutorials1" id="tutorials1">Tutorials</a></h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:modding_docs:tutorials:implementing_dark_mode_and_lights" class="wikilink1" title="main:modding_docs:tutorials:implementing_dark_mode_and_lights">Implementing dark mode and lights</a></div>
+</li>
+</ul>
+
+</div>
+
+<h1 class="sectionedit11"><a name="gusanos_development" id="gusanos_development">Gusanos Development</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit12"><a name="gusanos_10_development" id="gusanos_10_development">Gusanos 1.0 Development</a></h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <a href="doku.php?id=main:development:requirements" class="wikilink1" title="main:development:requirements">Requirements</a></div>
+</li>
+</ul>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer"></div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        main/main.txt &middot; Last modified: 2011/09/18 16:46 (external edit)      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+                              </div>
+      <div class="bar-right" id="bar__bottomright">
+                <form class="button btn_media" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="media" /><input type="hidden" name="id" value="main:main" /><input type="submit" value="Media Manager" class="button" title="Media Manager" /></div></form>                        <form class="button btn_login" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="login" /><input type="hidden" name="sectok" value="ee2695517457e85939d3b5dcc55f0e52" /><input type="hidden" name="id" value="main:main" /><input type="submit" value="Login" class="button" title="Login" /></div></form>        <form class="button btn_index" method="get" action="doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="main:main" /><input type="submit" value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" /></div></form>        <a class="nolink" href="doku.php?id=main:main#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+  
+</div>
+
+<div class="footerinc">
+
+  <a  href="feed.php" title="Recent changes RSS feed"><img src="lib/tpl/default/images/button-rss.png" width="80" height="15" alt="Recent changes RSS feed" /></a>
+
+  
+  <a  href="http://www.dokuwiki.org/donate" title="Donate"><img src="lib/tpl/default/images/button-donate.gif" alt="Donate" width="80" height="15" /></a>
+
+  <a  href="http://www.php.net" title="Powered by PHP"><img src="lib/tpl/default/images/button-php.gif" width="80" height="15" alt="Powered by PHP" /></a>
+
+  <a  href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="lib/tpl/default/images/button-xhtml.png" width="80" height="15" alt="Valid XHTML 1.0" /></a>
+
+  <a  href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="lib/tpl/default/images/button-css.png" width="80" height="15" alt="Valid CSS" /></a>
+
+  <a  href="http://dokuwiki.org/" title="Driven by DokuWiki"><img src="lib/tpl/default/images/button-dw.png" width="80" height="15" alt="Driven by DokuWiki" /></a>
+
+
+
+</div>
+
+<div class="no"><img src="lib/exe/indexer.php?id=main%253Amain&amp;1433891944" width="2" height="1" alt="" /></div>
+</body>
+</html>

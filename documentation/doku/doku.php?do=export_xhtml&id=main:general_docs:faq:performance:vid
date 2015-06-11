@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:faq:performance:vid</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:41+0000"/>
+<meta name="keywords" content="main,general_docs,faq,performance,vid"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:performance:vid&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:performance"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:performance:vid"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:faq:performance:vid"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:performance';var JSINFO = {"id":"main:general_docs:faq:performance:vid","namespace":"main:general_docs:faq:performance"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+
+<h1 class="sectionedit1"><a name="faq" id="faq">FAQ:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "FAQ:" [1-20] -->
+<h2 class="sectionedit2"><a name="increasing_video_performance" id="increasing_video_performance">Increasing video performance</a></h2>
+<div class="level2">
+
+<p>
+There are several ways to increase video performance in Gusanos: 
+</p>
+
+</div>
+
+<h5><a name="running_in_16_bit" id="running_in_16_bit">Running in 16 bit</a></h5>
+<div class="level5">
+
+<p>
+You can run Gusanos in 16 bit rather than 32 bit by adding this to your <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a>:
+</p>
+<pre class="code">vid_bitdepth 16</pre>
+
+</div>
+
+<h5><a name="changing_which_video_driver_gusanos_uses" id="changing_which_video_driver_gusanos_uses">Changing which video driver Gusanos uses</a></h5>
+<div class="level5">
+
+<p>
+You can change which video driver Gusanos uses which in some cases could increase video performance. 
+</p>
+
+<p>
+To get a list of which drivers Gusanos can use, open the console, and enter VID_DRIVER and an incorrect value (for example: “blah”). Then add this to your <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a>.
+</p>
+<pre class="code">vid_driver &lt;chosen driver&gt;</pre>
+
+<p>
+Possible values for windows vid_driver = AUTO, DIRECTX
+</p>
+
+</div>
+
+<h5><a name="running_without_doubleresolution" id="running_without_doubleresolution">Running without DoubleResolution</a></h5>
+<div class="level5">
+
+<p>
+By default DoubleRes is turned off.
+Open your <a href="doku.php?id=main:general_docs:faq:usage:general:config" class="wikilink1" title="main:general_docs:faq:usage:general:config">config.cfg</a> and enter the following line (or simply change it if it already exists):
+</p>
+<pre class="code">vid_doubleres 0</pre>
+
+<p>
+You can greatly increase your FPS by disabling DoubleRes, however filters will not work.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Increasing video performance" [21-] --></div>
+</body>
+</html>

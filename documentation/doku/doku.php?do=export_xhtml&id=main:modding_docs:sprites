@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:sprites</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,modding_docs,sprites"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:sprites&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:sprites"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:sprites"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs';var JSINFO = {"id":"main:modding_docs:sprites","namespace":"main:modding_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:sprites#description" class="toc">Description</a></span></div></li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:sprites#image_structure" class="toc">Image Structure</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:sprites#example_of_a_pure_animation_no_directional_frames_image" class="toc">Example of a pure animation (No directional frames) image:</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:sprites#example_of_a_pure_directional_image" class="toc">Example of a pure directional image:</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="description" id="description">Description</a></h1>
+<div class="level1">
+
+<p>
+A sprite is the name given to images that gusanos can display ( Being for objects, explosions, HUD elements, etc ). Gusanos supports BMP and <acronym title="Portable Network Graphics">PNG</acronym> image formats.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Description" [1-188] -->
+<h1 class="sectionedit2"><a name="image_structure" id="image_structure">Image Structure</a></h1>
+<div class="level1">
+
+<p>
+The first horizontal and vertical lines of the Sprite image are used to separate the image into sub sprites and to choose the pivot ( If the pivot is not set the image will be drawn centered ). The <strong>pivot marker</strong> is a pixel of colour values <strong>RGB = 255, 0, 0</strong>. The <strong>sub Sprite separator</strong> is a pixel of colour values <strong>RGB = 0, 0, 0.</strong>
+</p>
+
+<p>
+Gusanos sprites use the colour of values <strong>RGB = 255, 0, 255</strong> as a <strong>mask colour</strong>. The pixels marked with this colour will not be drawn making those parts invisible.
+</p>
+
+<p>
+Alpha channel is also supported for a special blender mode “alphach”.
+</p>
+
+<p>
+<a href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/detail.php?id=main%3Amodding_docs%3Asprites&amp;media=gusimages:sprite_example_1.png" class="media wikilink2" title="gusimages:sprite_example_1.png"><img src="http://gusanos.sourceforge.net/documentation/doku/lib/exe/fetch.php?media=gusimages:sprite_example_1.png" class="mediacenter" alt="" /></a>
+</p>
+
+<p>
+Sub sprites are used to separate images for both frames of an animation and angle ranges resulting in a matrix of sub sprites. Each column is a different frame of the animation, and each row is a different range of angles. Note that objects with no directions ( Like explosions ) will always be drawn using the first angle row.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Image Structure" [189-1169] -->
+<h2 class="sectionedit3"><a name="example_of_a_pure_animation_no_directional_frames_image" id="example_of_a_pure_animation_no_directional_frames_image">Example of a pure animation (No directional frames) image:</a></h2>
+<div class="level2">
+
+<p>
+<a href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/detail.php?id=main%3Amodding_docs%3Asprites&amp;media=gusimages:animationex.png" class="media wikilink2" title="gusimages:animationex.png"><img src="http://gusanos.sourceforge.net/documentation/doku/lib/exe/fetch.php?media=gusimages:animationex.png" class="media" alt="" /></a>
+</p>
+
+</div>
+<!-- EDIT3 SECTION "Example of a pure animation (No directional frames) image:" [1170-1272] -->
+<h2 class="sectionedit4"><a name="example_of_a_pure_directional_image" id="example_of_a_pure_directional_image">Example of a pure directional image:</a></h2>
+<div class="level2">
+
+<p>
+The angle ranges will be calculated automatically from the amount of rows the image has, the more rows the thinner the range will be.
+</p>
+
+<p>
+The image displays for which angle ranges each frame will be shown.
+</p>
+
+<p>
+<a href="http://gusanos.sourceforge.net/documentation/doku/lib/exe/detail.php?id=main%3Amodding_docs%3Asprites&amp;media=gusimages:directionalex.png" class="media wikilink2" title="gusimages:directionalex.png"><img src="http://gusanos.sourceforge.net/documentation/doku/lib/exe/fetch.php?media=gusimages:directionalex.png" class="media" alt="" /></a>
+</p>
+
+</div>
+<!-- EDIT4 SECTION "Example of a pure directional image:" [1273-] --></div>
+</body>
+</html>

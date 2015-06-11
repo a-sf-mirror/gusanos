@@ -1,0 +1,536 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:modding_docs:game_actions</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:42+0000"/>
+<meta name="keywords" content="main,modding_docs,game_actions"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:modding_docs:game_actions&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:modding_docs"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions"/>
+<link rel="canonical" href="doku.php?id=main:modding_docs:game_actions"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:modding_docs';var JSINFO = {"id":"main:modding_docs:game_actions","namespace":"main:modding_docs"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#general_actions" class="toc">General Actions:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#apply_map_effect" class="toc">apply_map_effect</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#add_angle_speed" class="toc">add_angle_speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#add_speed" class="toc">add_speed</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#create_explosion" class="toc">create_explosion</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#custom_event" class="toc">custom_event</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#damage" class="toc">damage</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#damp" class="toc">damp</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#push" class="toc">push</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#put_particle" class="toc">put_particle</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#remove" class="toc">remove</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#repel" class="toc">repel</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#run_script" class="toc">run_script</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#set_alpha_fade" class="toc">set_alpha_fade</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#shoot_particles" class="toc">shoot_particles</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#uniform_shoot_particles" class="toc">uniform_shoot_particles</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#weapon_specific_actions" class="toc">Weapon Specific Actions:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#delay_fire" class="toc">delay_fire</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#show_firecone" class="toc">show_firecone</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#use_ammo_09c" class="toc">use_ammo (0.9c)</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#sound_actions" class="toc">Sound Actions:</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#play_sound" class="toc">play_sound</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#play_sound_static" class="toc">play_sound_static</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#play_global_sound" class="toc">play_global_sound</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="general_actions" id="general_actions">General Actions:</a></h1>
+<div class="level1">
+
+<p>
+General actions can be used in both objects and explosions.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "General Actions:" [1-92] -->
+<h2 class="sectionedit2"><a name="apply_map_effect" id="apply_map_effect">apply_map_effect</a></h2>
+<div class="level2">
+<pre class="code">apply_map_effect ( &lt;string&gt; map_effect )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;string&gt; <em>map_effect</em> - Map effect name (map effect file name without the ”.mfx” extension).</div>
+</li>
+</ul>
+
+<p>
+It will apply a <a href="doku.php?id=main:modding_docs:map_effects" class="wikilink1" title="main:modding_docs:map_effects">map effect</a> to the map. This is usually used for digging holes on dirt materials and such. See also: <a href="doku.php?id=main:modding_docs:map_effects" class="wikilink1" title="main:modding_docs:map_effects">Modding Docs: Map effects</a>
+</p>
+
+</div>
+<!-- EDIT2 SECTION "apply_map_effect" [93-441] -->
+<h2 class="sectionedit3"><a name="add_angle_speed" id="add_angle_speed">add_angle_speed</a></h2>
+<div class="level2">
+<pre class="code">add_angle_speed ( &lt;float&gt; amount,
+                  &lt;float&gt; amount_var = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>amount</em> - Amount of angular speed.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>amount_var</em> - Amount of angular speed variation.</div>
+</li>
+</ul>
+
+<p>
+Adds a specific amount and amount variation to the angular speed of the object. See also:  <a href="doku.php?id=main:modding_docs:variations#ratio_variation" class="wikilink1" title="main:modding_docs:variations">Ratio variation</a>
+</p>
+
+</div>
+<!-- EDIT3 SECTION "add_angle_speed" [442-806] -->
+<h2 class="sectionedit4"><a name="add_speed" id="add_speed">add_speed</a></h2>
+<div class="level2">
+<pre class="code">add_speed ( &lt;float&gt; amount,
+            &lt;float&gt; amount_var = 0,
+            &lt;float&gt; offset = 0,
+            &lt;float&gt; offset_var = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>amount</em> - Amount of angular speed.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>amount_var</em> - Amount of angular speed variation.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>offset</em> - Angle offset.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>offset_var</em> - Angle offset variation.</div>
+</li>
+</ul>
+
+<p>
+Adds a specific amount and amount variation to the angular speed of the object using a different angle offset and offset variation. See also: <a href="doku.php?id=main:modding_docs:variations#ratio_variation" class="wikilink1" title="main:modding_docs:variations">Ratio variation</a>
+</p>
+
+</div>
+<!-- EDIT4 SECTION "add_speed" [807-1368] -->
+<h2 class="sectionedit5"><a name="create_explosion" id="create_explosion">create_explosion</a></h2>
+<div class="level2">
+<pre class="code">create_explosion( &lt;string&gt; explosion )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;string&gt; <em>explosion</em> - Explosion name (explosion file name without the ”.exp” extension).</div>
+</li>
+</ul>
+
+<p>
+Creates an <a href="doku.php?id=modding_docs:explosions" class="wikilink2" title="modding_docs:explosions" rel="nofollow">explosion</a> on the current position of the object.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "create_explosion" [1369-1627] -->
+<h2 class="sectionedit6"><a name="custom_event" id="custom_event">custom_event</a></h2>
+<div class="level2">
+<pre class="code">custom_event( &lt;int&gt; index )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;int&gt; <em>index</em> - custom event number</div>
+</li>
+</ul>
+
+<p>
+Will trigger the custom event indexed as <strong>index</strong> in the target particle. Note that this action needs to be inside a detection event or an event that interacts with other objects.
+</p>
+
+</div>
+<!-- EDIT6 SECTION "custom_event" [1628-1909] -->
+<h2 class="sectionedit7"><a name="damage" id="damage">damage</a></h2>
+<div class="level2">
+<pre class="code">damage ( &lt;float&gt; amount,
+         &lt;float&gt; amount_var,
+         &lt;float&gt; max_distance )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>amount</em> - damage amount</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>amount_var</em> - damage amount variation to <em>amount</em></div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>max_distance</em> - distance where damage will equal zero. Object will have reduced damage if within range but farther from damage center.</div>
+</li>
+</ul>
+
+<p>
+Will damage the object by the <strong>amount</strong> value. Will only work on detection events involving an object with health, specified by the property health = &lt;float&gt;. If the <strong>max_distance</strong> parameter is set to a number &gt; 0 the damage will fade from <strong>amount</strong> to 0 damage when the distance from the damaged object to the damager is equal to max_distance.
+</p>
+
+<p>
+Good usage would be if it was used with on detect_range(a,b,[x1,x2,x3]), then it would damage all objects in collision layers and/or worms specified in the [].
+</p>
+
+</div>
+<!-- EDIT7 SECTION "damage" [1910-2790] -->
+<h2 class="sectionedit8"><a name="damp" id="damp">damp</a></h2>
+<div class="level2">
+<pre class="code">damp ( &lt;float&gt; factor )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>factor</em> - speed multiplication factor.</div>
+</li>
+</ul>
+
+<p>
+It will multiply the detected object speed by this factor. When the <strong>factor</strong>:
+</p>
+<ul>
+<li class="level1"><div class="li"> F&gt;1: increases its speed.</div>
+</li>
+<li class="level1"><div class="li"> F is 1: speed stays the same.</div>
+</li>
+<li class="level1"><div class="li"> 0&lt;F&lt;1: reduces its speed.</div>
+</li>
+<li class="level1"><div class="li"> F is 0: object returns to inertia.</div>
+</li>
+<li class="level1"><div class="li"> F&lt;0: speed is inversed.</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT8 SECTION "damp" [2791-3132] -->
+<h2 class="sectionedit9"><a name="push" id="push">push</a></h2>
+<div class="level2">
+<pre class="code">push ( &lt;float&gt; factor )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>factor</em> - speed multiplication factor.</div>
+</li>
+</ul>
+
+<p>
+Adds the speed of the owner object to the object that caused the event to trigger. The <strong>factor</strong> variable will multiply the speed to be added. Note that this action will obviously only work when called in an event that gets triggered by an object, for example, it wont do anything if you use it on a timer trigger.
+</p>
+
+</div>
+<!-- EDIT9 SECTION "push" [3133-3549] -->
+<h2 class="sectionedit10"><a name="put_particle" id="put_particle">put_particle</a></h2>
+<div class="level2">
+<pre class="code">put_particle ( &lt;string&gt; type,
+               &lt;float&gt; x,
+               &lt;float&gt; y,
+               &lt;float&gt; xspd = 0,
+               &lt;float&gt; yspd = 0,
+               &lt;float&gt; angle = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>type</em> - particle type.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>x</em> - horizontal position.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>y</em> - vertical position.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>xspd</em> - horizontal speed.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>yspd</em> - vertical speed.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>angle</em> - angle of direction.</div>
+</li>
+</ul>
+
+<p>
+It will create a single particle of the <strong>type</strong> passed in the position specified on the map. This is normally used not for mods, but for map objects that need to create things on some other position ( Like buttons etc ).
+</p>
+
+</div>
+<!-- EDIT10 SECTION "put_particle" [3550-4238] -->
+<h2 class="sectionedit11"><a name="remove" id="remove">remove</a></h2>
+<div class="level2">
+<pre class="code">remove ()</pre>
+
+<p>
+After this action gets called, the owner particle will disappear.
+</p>
+
+<p>
+Good usage would be to make SURE all objects you create are removed eventually (unless you specifically don&#039;t want to remove them). Unremoved objects may slow down the game severely. For example, in a bazooka you may want to use it like this:
+</p>
+<pre class="code">on ground_collision()
+ create_explosion(x.exp)
+ remove()
+on detect_range(10,0,[worms])
+ create_explosion(x.exp)
+ remove()</pre>
+
+</div>
+<!-- EDIT11 SECTION "remove" [4239-4716] -->
+<h2 class="sectionedit12"><a name="repel" id="repel">repel</a></h2>
+<div class="level2">
+<pre class="code">repel ( &lt;float&gt; max_force,
+        &lt;float&gt; max_distance,
+        &lt;float&gt; min_force = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>max_force</em> - force when object is in distance 0.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>max_distance</em> - maximum distance in which the repelling action will be applied.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>min_force</em> - force when object is in distance <em>max_distance</em>.</div>
+</li>
+</ul>
+
+<p>
+It will push the target object away from the owner object. If the distance between the two objects is 0 the force of repel will be equal to <strong>max_force</strong>, if the distance between both is equal to max_distance the repel force will be equal to <strong>min_force</strong>.
+</p>
+
+</div>
+<!-- EDIT12 SECTION "repel" [4717-5328] -->
+<h2 class="sectionedit13"><a name="run_script" id="run_script">run_script</a></h2>
+<div class="level2">
+<pre class="code">run_script( &lt;string&gt; file_name )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>file_name</em> - file name of the script, without extention and path.</div>
+</li>
+</ul>
+
+</div>
+
+<h4><a name="description" id="description">Description:</a></h4>
+<div class="level4">
+
+<p>
+It will run the script that matches with <strong>name</strong>. The script will be passed the reference to the object that called it, and if this action was triggered from an event that involves a second object it will also be passed as a second parameter.
+</p>
+
+</div>
+<!-- EDIT13 SECTION "run_script" [5329-5735] -->
+<h2 class="sectionedit14"><a name="set_alpha_fade" id="set_alpha_fade">set_alpha_fade</a></h2>
+<div class="level2">
+<pre class="code">set_alpha_fade( &lt;int&gt; frames ,
+                &lt;int&gt; dest = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;float&gt; <em>frames</em> - number of frames for the duration of the fade.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>dest</em> - alpha level to fade to.</div>
+</li>
+</ul>
+
+<p>
+Once this action is called the objects alpha fades to the <strong>dest</strong> alpha in the specified <strong>frames</strong>. Can only be used if the object property <em>blender</em> is set to something different than <em>NONE</em>.
+</p>
+
+<p>
+An example of usage would be:
+</p>
+<pre class="code">blender=add
+alpha=100
+on_creation()
+ set_alpha_fade(100,0)
+on timer(100)
+ remove()</pre>
+
+<p>
+This would cause a particle to begin with 100 alpha and gradually fade to 0 over 100 frames and remove itself.
+</p>
+
+</div>
+<!-- EDIT14 SECTION "set_alpha_fade" [5736-6391] -->
+<h2 class="sectionedit15"><a name="shoot_particles" id="shoot_particles">shoot_particles</a></h2>
+<div class="level2">
+<pre class="code">shoot_particles ( &lt;string&gt; type,
+                  &lt;int&gt; amount, 
+                  &lt;float&gt; speed = 0,
+                  &lt;float&gt; speed_var = 0,
+                  &lt;float&gt; motion_inheritance = 0,
+                  &lt;int&gt; amount_var = 0,
+                  &lt;float&gt; distribution = 360,
+                  &lt;float&gt; angle_offs = 0,
+                  &lt;float&gt; distance_offs = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;string&gt; <em>type</em> - filename of the object to shoot ( See <a href="doku.php?id=main:modding_docs:objects" class="wikilink1" title="main:modding_docs:objects">objects</a> ).</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>amount</em> - the amount of objects to shoot.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>speed</em> - the speed at which objects will be shot.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>speed_var</em> - the <a href="doku.php?id=main:modding_docs:variations#ratio_variation" class="wikilink1" title="main:modding_docs:variations">ratio variation</a> of the speed in which objects will be shot.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; <em>motion_inheritance</em> - a factor that will decide how much of the speed of the owner particle will be transferred to the shot particles. <code>For example, motionInheritance = 2 transfers twice the amount of speed of the owner to the shot particles.</code><br/>
+</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>amount_var</em> - the <a href="doku.php?id=main:modding_docs:variations#positive_variation" class="wikilink1" title="main:modding_docs:variations">positive variation</a> of amount of particles that will be shot.</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>distribution</em> - a <a href="doku.php?id=main:modding_docs:variations#ratio_variation" class="wikilink1" title="main:modding_docs:variations">ratio variation</a> of the angle in which the particles will be shot relative to the current particle angle.</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>angle_offs</em> - the angular offset in which particles will be shot relative to the angle of the owner.</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>distance_offs</em> - how far the object will be created from the position of the owner object. <code>This is a useful feature for making particles not detect the particle that created them.</code></div>
+</li>
+</ul>
+
+<p>
+Will shoot particles from the position the owner object is placed.
+</p>
+
+</div>
+<!-- EDIT15 SECTION "shoot_particles" [6392-8012] -->
+<h2 class="sectionedit16"><a name="uniform_shoot_particles" id="uniform_shoot_particles">uniform_shoot_particles</a></h2>
+<div class="level2">
+<pre class="code">uniform_shoot_particles ( &lt;string&gt; type,
+                          &lt;int&gt; amount, 
+                          &lt;float&gt; speed = 0,
+                          &lt;float&gt; speed_var = 0,
+                          &lt;float&gt; motion_inheritance = 0,
+                          &lt;int&gt; amount_var = 0,
+                          &lt;float&gt; distribution = 360,
+                          &lt;float&gt; angle_offs = 0,
+                          &lt;float&gt; distance_offs = 0 )</pre>
+
+<p>
+Works in the same way as <strong>shoot_particles</strong> except the particles wont be shot at random directions inside the distribution. Instead, the angle in which particles will be shot is distribution / ( total number of particles ).
+TODO: Add an image that explains this.
+</p>
+
+</div>
+<!-- EDIT16 SECTION "uniform_shoot_particles" [8013-8773] -->
+<h1 class="sectionedit17"><a name="weapon_specific_actions" id="weapon_specific_actions">Weapon Specific Actions:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT17 SECTION "Weapon Specific Actions:" [8774-8813] -->
+<h2 class="sectionedit18"><a name="delay_fire" id="delay_fire">delay_fire</a></h2>
+<div class="level2">
+<pre class="code">delay_fire ( &lt;int&gt; time,
+             &lt;int&gt; time_var = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;int&gt; <em>time</em> - amount of time for the weapon to fire.</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>time_var</em> - amount of time variation for the weapon to fire.</div>
+</li>
+</ul>
+
+<p>
+Will disable firing of the weapon for <strong>time</strong> + random from 0 to <strong>time_var</strong> ( <strong>time_var</strong> is a <a href="doku.php?id=main:modding_docs:variations#positive_variation" class="wikilink1" title="main:modding_docs:variations">positive variation</a>. Works only on weapon events.)
+</p>
+
+<p>
+delay_fire is used not as reload time, but as the amount of time between each projectile (aka, firing rate). If used in the “on_primary_press” event, delay_fire equates to the amount of time needed before the weapon fires the “on_primary_shoot” event. If used in the “on_primary_shoot” event, delay_fire equates to firing rate.
+</p>
+
+</div>
+<!-- EDIT18 SECTION "delay_fire" [8814-9530] -->
+<h2 class="sectionedit19"><a name="show_firecone" id="show_firecone">show_firecone</a></h2>
+<div class="level2">
+<pre class="code">show_firecone ( &lt;string&gt; sprite,
+                &lt;int&gt; frames,
+                &lt;int&gt; draw_distance = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;string&gt; <em>sprite</em> - sprite to show.</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>frames</em> - amount of frames in which the animation ends.</div>
+</li>
+<li class="level1"><div class="li"> &lt;int&gt; <em>draw_distance</em> - distance offset from the worm at the worm&#039;s own angle in which to draw the center of the animation.</div>
+</li>
+</ul>
+
+<p>
+It will show the firecone image passed as <strong>sprite</strong> during the passed number of <strong>frames</strong>. <strong>draw_distance</strong> will offset the image away from the center of the worm.
+</p>
+
+</div>
+<!-- EDIT19 SECTION "show_firecone" [9531-10079] -->
+<h2 class="sectionedit20"><a name="use_ammo_09c" id="use_ammo_09c">use_ammo (0.9c)</a></h2>
+<div class="level2">
+<pre class="code">use_ammo ( &lt;int&gt; amount )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;int&gt; <em>amount</em> - amount to use by the weapon.</div>
+</li>
+</ul>
+
+<p>
+It drains an amount of weapon ammo. This is needed whenever a bullet is shot from the weapon. If this is not used, the weapon has unlimited ammunition, even if there is a limit specified (never spends the amount).
+</p>
+
+</div>
+<!-- EDIT20 SECTION "use_ammo (0.9c)" [10080-10405] -->
+<h1 class="sectionedit21"><a name="sound_actions" id="sound_actions">Sound Actions:</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT21 SECTION "Sound Actions:" [10406-10435] -->
+<h2 class="sectionedit22"><a name="play_sound" id="play_sound">play_sound</a></h2>
+<div class="level2">
+<pre class="code">play_sound ( &lt;string[]|string&gt; sound,
+             &lt;float&gt; loudness = 100,
+             &lt;float&gt; pitch = 1,
+             &lt;float&gt; pitch_var = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;string[]|string&gt; sound - Sound file without extention and path.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; loudness - Loudness level in percent.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; pitch - Frequency multiplier at which the sound is to be played.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; pitch_var- Frequency multiplier variation at which the sound is to be played.</div>
+</li>
+</ul>
+
+<p>
+Will play a 3D sound that will follow the position of the owner object, <strong>soundFile</strong> is the name of the sound to play ( See the list of <a href="doku.php?id=main:modding_docs:supported_sound_formats" class="wikilink1" title="main:modding_docs:supported_sound_formats">supported sound formats</a> ). <strong>loudness</strong> is directly related to how loud it will be heard from the distance. <strong>pitch</strong> is a modifier of the sound play frequency and <strong>pitchVariation</strong> is a <a href="doku.php?id=main:modding_docs:variations#ratio_variation" class="wikilink1" title="main:modding_docs:variations">ratio variation</a> of it.
+</p>
+
+<p>
+<strong>Tip:</strong> Rather than creating several different sounds for a single object (dropping shells, for example), you can use pitch variation to create differences between each time the sound is played.
+</p>
+
+</div>
+<!-- EDIT22 SECTION "play_sound" [10436-11464] -->
+<h2 class="sectionedit23"><a name="play_sound_static" id="play_sound_static">play_sound_static</a></h2>
+<div class="level2">
+<pre class="code">play_sound_static ( &lt;string[]|string&gt; sound,
+                    &lt;float&gt; loudness = 100,
+                    &lt;float&gt; pitch = 1,
+                    &lt;float&gt; pitch_var = 0 )</pre>
+
+<p>
+Behaves exactly the same as <a href="doku.php?do=export_xhtml&amp;id=main:modding_docs:game_actions#play_sound" title="main:modding_docs:game_actions &crarr;" class="wikilink1">play_sound</a> but the sound will not follow the object. Once the sound is created, it will stay in the same place and not move.
+</p>
+
+</div>
+<!-- EDIT23 SECTION "play_sound_static" [11465-11835] -->
+<h2 class="sectionedit24"><a name="play_global_sound" id="play_global_sound">play_global_sound</a></h2>
+<div class="level2">
+<pre class="code">play_global_sound ( &lt;string[]|string&gt; sound,
+                    &lt;float&gt; volume, 
+                    &lt;float&gt; volume_var,
+                    &lt;float&gt; pitch = 1,
+                    &lt;float&gt; pitch_var = 0 )</pre>
+<ul>
+<li class="level1"><div class="li"> &lt;string[]|string&gt; sound - Sound file without extention and path.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; volume - Volume of the sound to be played.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; volume_var - Volume variation of the sound to be played.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; pitch - Frequency multiplier at which the sound is to be played.</div>
+</li>
+<li class="level1"><div class="li"> &lt;float&gt; pitch_var- Frequency multiplier variation at which the sound is to be played.</div>
+</li>
+</ul>
+
+<p>
+Will play a sound in no particular position. The sound can always be heard no and wont fade with distance. If more than one sound is passed as first param then the sound to play will be chosen at random from that list.
+</p>
+
+</div>
+<!-- EDIT24 SECTION "play_global_sound" [11836-] --></div>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:general_docs:faq:usage:general:keys</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:41+0000"/>
+<meta name="keywords" content="main,general_docs,faq,usage,general,keys"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:general_docs:faq:usage:general:keys&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:general_docs:faq:usage:general"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:general_docs:faq:usage:general:keys"/>
+<link rel="canonical" href="doku.php?id=main:general_docs:faq:usage:general:keys"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:general_docs:faq:usage:general';var JSINFO = {"id":"main:general_docs:faq:usage:general:keys","namespace":"main:general_docs:faq:usage:general"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+
+<h2 class="sectionedit1"><a name="how_do_i_change_my_keys" id="how_do_i_change_my_keys">How do i change my keys</a></h2>
+<div class="level2">
+
+<p>
+You can change your keys by opening file named “config.cfg” in Gusanosfolder/default/
+Player one keys are “p0_&lt;effect&gt;”, and player 2 keys are “p1_&lt;effect&gt;”.
+</p>
+<hr />
+
+</div>
+
+<h4><a name="example" id="example">Example:</a></h4>
+<div class="level4">
+
+</div>
+
+<h5><a name="bind_w_p0_up" id="bind_w_p0_up">bind W +P0_UP</a></h5>
+<div class="level5">
+
+</div>
+
+<h5><a name="bind_s_p0_down" id="bind_s_p0_down">bind S +P0_DOWN</a></h5>
+<div class="level5">
+
+</div>
+
+<h5><a name="bind_a_p0_left" id="bind_a_p0_left">bind A +P0_LEFT</a></h5>
+<div class="level5">
+
+</div>
+
+<h5><a name="bind_d_p0_right" id="bind_d_p0_right">bind D +P0_RIGHT</a></h5>
+<div class="level5">
+
+</div>
+
+<h5><a name="bind_f_p0_fire" id="bind_f_p0_fire">bind F +P0_FIRE</a></h5>
+<div class="level5">
+
+</div>
+
+<h5><a name="bind_h_p0_change" id="bind_h_p0_change">bind H +P0_CHANGE</a></h5>
+<div class="level5">
+
+</div>
+
+<h5><a name="bind_g_p0_jump" id="bind_g_p0_jump">bind G +P0_JUMP</a></h5>
+<div class="level5">
+<hr />
+
+</div>
+
+<h4><a name="results" id="results">Results</a></h4>
+<div class="level4">
+
+<p>
+That makes WASD for moving, F fires, H changes, and G jumps.
+</p>
+<hr />
+
+</div>
+<!-- EDIT1 SECTION "How do i change my keys" [1-463] -->
+<h3 class="sectionedit2"><a name="available_keys" id="available_keys">Available keys</a></h3>
+<div class="level3">
+
+<p>
+These are the key names accepted by the bind command:
+</p>
+
+<p>
+A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,
+</p>
+
+<p>
+0,1,2,3,4,5,6,7,8,9,
+</p>
+
+<p>
+0_PAD,1_PAD,2_PAD,3_PAD,4_PAD,5_PAD,6_PAD,7_PAD,8_PAD,9_PAD,
+</p>
+
+<p>
+SLASH_PAD,
+MINUS_PAD,
+PLUS_PAD,
+DEL_PAD,
+ENTER_PAD,
+</p>
+
+<p>
+F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,
+</p>
+
+<p>
+ESC,
+TILDE,
+MINUS,
+EQUALS,
+BACKSPACE,
+TAB,
+OPENBRACE,
+CLOSEBRACE,
+ENTER,
+SEMICOLON,
+QUOTE,
+BACKSLASH,
+BACKSLASH2,
+COMMA,
+STOP,
+SLASH,
+SPACE,
+</p>
+
+<p>
+INSERT,
+DEL,
+HOME,
+END,
+PGUP,
+PGDN,
+</p>
+
+<p>
+LEFT,
+RIGHT,
+UP,
+DOWN,
+</p>
+
+<p>
+ASTERISK,
+PRTSCR,
+PAUSE,
+ABNT_C1,
+YEN,
+KANA,
+CONVERT,
+NOCONVERT,
+AT,
+CIRCUMFLEX,
+COLON2,
+MODIFIERS,
+MAX,
+</p>
+
+<p>
+SCRLOCK,
+NUMLOCK,
+CAPSLOCK,
+</p>
+
+<p>
+LSHIFT,
+RSHIFT,
+LCONTROL,
+RCONTROL,
+ALT,
+ALTGR,
+LWIN,
+RWIN,
+MENU
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Available keys" [464-] --></div>
+</body>
+</html>

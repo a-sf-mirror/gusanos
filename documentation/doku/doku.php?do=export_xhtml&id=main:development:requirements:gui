@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>main:development:requirements:gui</title>
+<meta name="generator" content="DokuWiki"/>
+<meta name="robots" content="index,follow"/>
+<meta name="date" content="2011-09-18T16:46:40+0000"/>
+<meta name="keywords" content="main,development,requirements,gui"/>
+<link rel="search" type="application/opensearchdescription+xml" href="lib/exe/opensearch.php" title="Gusanos Docs"/>
+<link rel="start" href="http://gusanos.sourceforge.net/documentation/doku/"/>
+<link rel="contents" href="doku.php?id=main:development:requirements:gui&amp;do=index" title="Sitemap"/>
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="feed.php"/>
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="feed.php?mode=list&amp;ns=main:development:requirements"/>
+<link rel="alternate" type="text/html" title="Plain HTML" href="doku.php?do=export_xhtml&amp;id=main:development:requirements:gui"/>
+<link rel="canonical" href="doku.php?id=main:development:requirements:gui"/>
+<link rel="stylesheet" media="screen" type="text/css" href="lib/exe/css.php?t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="all" type="text/css" href="lib/exe/css.php?s=all&amp;t=default&amp;tseed=1339351970"/>
+<link rel="stylesheet" media="print" type="text/css" href="lib/exe/css.php?s=print&amp;t=default&amp;tseed=1339351970"/>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='main:development:requirements';var JSINFO = {"id":"main:development:requirements:gui","namespace":"main:development:requirements"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="lib/exe/js.php?tseed=1339351970"></script>
+</head>
+<body>
+<div class="dokuwiki export">
+<!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements:gui#gusanos_10_gui" class="toc">Gusanos 1.0 GUI</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements:gui#general" class="toc">General</a></span></div></li>
+</ul>
+</li>
+<li class="level1"><div class="li"><span class="li"><a href="doku.php?do=export_xhtml&amp;id=main:development:requirements:gui#discussion" class="toc">Discussion</a></span></div></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="gusanos_10_gui" id="gusanos_10_gui">Gusanos 1.0 GUI</a></h1>
+<div class="level1">
+
+<p>
+See also, <acronym title="Graphical User Interface">GUI</acronym> planning etc.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Gusanos 1.0 GUI" [1-60] -->
+<h2 class="sectionedit2"><a name="general" id="general">General</a></h2>
+<div class="level2">
+<div class="table sectionedit3"><table class="inline">
+	<tr class="row0">
+		<th class="col0 leftalign"> Task     </th><th class="col1 leftalign"> Priority       </th><th class="col2 leftalign"> Done?          </th>
+	</tr>
+	<tr class="row1">
+		<th class="col0 leftalign" colspan="3"> Save Configuration  </th>
+	</tr>
+	<tr class="row2">
+		<td class="col0 leftalign"> Possibility to save your current config, please! Some support for mod config saving too.  </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+	<tr class="row3">
+		<th class="col0" colspan="3"> Minimal <acronym title="Graphical User Interface">GUI</acronym> </th>
+	</tr>
+	<tr class="row4">
+		<td class="col0 leftalign"> Simplify <acronym title="Graphical User Interface">GUI</acronym> to basics with more advanced stuff in advanced sections.   </td><td class="col1 leftalign"> P1     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+	<tr class="row5">
+		<th class="col0" colspan="3"> Animations/Effects </th>
+	</tr>
+	<tr class="row6">
+		<td class="col0 leftalign"> Support for animations and effects other than the hover/hide etc.    </td><td class="col1 leftalign"> P2     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+	<tr class="row7">
+		<th class="col0" colspan="3"> Translation/Locale Suppport </th>
+	</tr>
+	<tr class="row8">
+		<td class="col0 leftalign"> Possibility of support for multiple languages, should be easy for modders to implement.    </td><td class="col1 leftalign"> P4     </td><td class="col2 leftalign"> False        </td>
+	</tr>
+</table></div>
+<!-- EDIT3 TABLE [82-665] -->
+</div>
+<!-- EDIT2 SECTION "General" [61-666] -->
+<h1 class="sectionedit4"><a name="discussion" id="discussion">Discussion</a></h1>
+<div class="level1">
+
+</div>
+<!-- EDIT4 SECTION "Discussion" [667-] --></div>
+</body>
+</html>
